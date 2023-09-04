@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon ./src/app.js",
     "lint": "eslint . --fix",
-    "start:dev": "npx nodemon"
+    "dev": "npx nodemon"
   },
   "keywords": [],
   "author": "",
