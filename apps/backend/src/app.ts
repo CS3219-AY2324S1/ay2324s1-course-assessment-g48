@@ -1,13 +1,23 @@
 import express from "express";
-import { createServer } from "http";
 
 const app = express();
 
-const server = createServer(app);
+// Dictates default port and URI
+const config = require('./utils/config')
 
-app.get("/", function (req, res) {
-  console.log("HELLO");
-  res.send("hello World!");
-});
+const logger = require('./utils/logger')
 
-server.listen(8000);
+const mongoose = require('mongoose')
+
+logger.info('connecting to', config.MONGODB_URI)
+
+mongoose.connect(config.MONGODB_URI)
+    .then(() => {
+        logger.info('connected to MongoDB')
+    })
+    .catch((error: any) => {
+        logger.error('error connection to MongoDB:', error.message)
+    })
+
+module.exports = app
+
