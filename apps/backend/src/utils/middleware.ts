@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 
 const logger = require('./logger')
 
-const requestLogger = (request: Request, response: Response, next: NextFunction) => {
+export const requestLogger = (request: Request, response: Response, next: NextFunction) => {
     logger.info('Method:', request.method)
     logger.info('Path:  ', request.path)
     logger.info('Body:  ', request.body)
@@ -11,11 +11,11 @@ const requestLogger = (request: Request, response: Response, next: NextFunction)
 }
 
 // Shows a 404 error for a note with unknown id
-const unknownEndpoint = (request: Request, response: Response) => {
+export const unknownEndpoint = (request: Request, response: Response) => {
     response.status(404).send({ error: 'unknown endpoint' });
 };
 
-const errorHandler = (error: any, request: Request, response: Response, next: NextFunction) => {
+export const errorHandler = (error: any, request: Request, response: Response, next: NextFunction) => {
     if (error.name === 'CastError') {
         return response.status(400).send({
             error: 'malformatted id',
@@ -38,9 +38,3 @@ const errorHandler = (error: any, request: Request, response: Response, next: Ne
 
     next(error);
 };
-
-module.exports = {
-    requestLogger,
-    unknownEndpoint,
-    errorHandler
-}
