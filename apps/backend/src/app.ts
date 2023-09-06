@@ -19,13 +19,7 @@ mongoose.connect(config.MONGODB_URI || "")
 
 app.use(express.json())
 
-app.get('/', (request, response) => {
-    response.send('<h1>Hello World!</h1>')
-    response.end()
-})
-
-app.use('/api/questions', questionRouter)
-
+app.use('/api/question', questionRouter)
 
 app.use(middleware.requestLogger)
 app.use(middleware.unknownEndpoint)

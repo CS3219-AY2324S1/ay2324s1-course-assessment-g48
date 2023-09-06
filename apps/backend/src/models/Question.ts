@@ -11,7 +11,6 @@ interface Question extends Document {
 const questionSchema = new Schema({
   id: {
     type: Number,
-    required: true,
     unique: true,
     min: 1,
   },
