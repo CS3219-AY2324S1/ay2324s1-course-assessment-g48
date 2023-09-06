@@ -17,7 +17,7 @@ mongoose.connect(config.MONGODB_URI || "")
         logger.error('error connection to MongoDB:', error.message)
     })
 
-// app.use(express.json())
+app.use(express.json())
 
 app.get('/', (request, response) => {
     response.send('<h1>Hello World!</h1>')
@@ -30,6 +30,6 @@ app.use('/api/questions', questionRouter)
 app.use(middleware.requestLogger)
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)
-    
+
 module.exports = app
 
