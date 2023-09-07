@@ -1,7 +1,7 @@
 import mongoose, { Document, Schema } from "mongoose";
 
 interface Question extends Document {
-  id: number;
+  id: string;
   title: string;
   description: string;
   categories: string[];
@@ -9,40 +9,25 @@ interface Question extends Document {
 }
 
 const questionSchema = new Schema({
-  id: {
-    type: Number,
-    unique: true,
-    min: 1,
-  },
   title: {
     type: String,
     required: true,
-    minLength: 3,
+    unique: true,
   },
   description: {
     type: String,
-    required: true,
-    minLength: 3,
+    required: false,
   },
   categories: {
     type: Array,
-    required: true,
-    minLength: 1,
+    required: false,
   },
   complexity: {
     type: String,
-    required: true,
-    minLength: 1,
+    required: false,
   }
 });
 
-questionSchema.set('toJSON', {
-  transform: (document: Document, returnedObject) => {
-    returnedObject.id = returnedObject._id.toString();
-    delete returnedObject._id;
-    delete returnedObject.__v;
-  },
-});
 
 const QuestionModel = mongoose.model("Question", questionSchema);
 

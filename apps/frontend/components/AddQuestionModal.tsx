@@ -16,8 +16,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
     title: "",
     description: "",
     categories: [],
-    complexity: "",
-    onDelete: () => {},
+    complexity: ""
   });
 
   const handleAddQuestion = () => {
@@ -27,8 +26,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
       title: "",
       description: "",
       categories: [],
-      complexity: "",
-      onDelete: () => {},
+      complexity: ""
     });
   };
   return (

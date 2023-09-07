@@ -3,7 +3,7 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 
 type ViewQuestionModalProps = {
-    onViewQuestion: {id: number, title: string, description: string, categories: string[], complexity: string, onDelete: () => void}
+    onViewQuestion: {id: number, title: string, description: string, categories: string[], complexity: string}
 };
 
 const ViewQuestionModal:React.FC<ViewQuestionModalProps> = ({

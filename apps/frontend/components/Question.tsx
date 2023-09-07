@@ -4,5 +4,4 @@ export type Question = {
   description: string;
   categories: string[];
   complexity: string;
-  onDelete: () => void;
 };

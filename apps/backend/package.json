@@ -26,7 +26,7 @@
   },
   "dependencies": {
     "@prisma/client": "^5.2.0",
-    "dotenv": "^16.3.1",
+    "cors": "^2.8.5",
     "http": "^0.0.1-security",
     "mongodb": "^6.0.0",
     "mongoose": "^7.5.0",

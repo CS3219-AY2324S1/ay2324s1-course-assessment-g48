@@ -4,6 +4,7 @@ import { Question } from "./Question";
 import { mockQuestions } from "./MockQuestions";
 import AddQuestionModal from "./AddQuestionModal";
 import ViewQuestionModal from "./ViewQuestionModal";
+import { postNewQuestion, getQuestions } from "../src/utils/database/question/Question";
 
 type QuestionTableProps = {};
 
@@ -15,7 +16,6 @@ const QuestionTable: React.FC<QuestionTableProps> = () => {
     description: "",
     categories: [],
     complexity: "",
-    onDelete: () => {},
   });
   const viewButton = React.useRef<HTMLButtonElement>(null);
   const handleSaveQuestion = (newQuestion: Question) => {
@@ -23,6 +23,7 @@ const QuestionTable: React.FC<QuestionTableProps> = () => {
     const questionToAdd = { ...newQuestion, id: newId };
 
     setQuestions([...questions, questionToAdd]);
+    postNewQuestion(questionToAdd);
   };
 
   const handleDeleteQuestion = (id: number) => {
