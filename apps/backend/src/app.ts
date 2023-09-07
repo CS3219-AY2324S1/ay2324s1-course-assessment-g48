@@ -21,21 +21,6 @@ mongoose
 
 app.use(express.json());
 
-app.get("/", async (request, response) => {
-  await prisma.users.create({
-    data: {
-      email: "pnws@gmail.com",
-      password: "123987123",
-    },
-  });
-  response.send("<h1>Hello World!</h1>");
-  response.end();
-});
-
-app.use("/api/questions", questionRouter);
-
-app.use(middleware.requestLogger);
-app.use(middleware.unknownEndpoint);
-app.use(middleware.errorHandler);
+app.use("/api/question", questionRouter);
 
 module.exports = app;
