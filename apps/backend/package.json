@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon ./src/app.js",
+    "start": "nodemon ./src/index.ts",
     "lint": "eslint . --fix",
     "dev": "npx nodemon"
   },
@@ -23,5 +23,13 @@
     "nodemon": "^3.0.1",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.2.0",
+    "cors": "^2.8.5",
+    "http": "^0.0.1-security",
+    "mongodb": "^6.0.0",
+    "mongoose": "^7.5.0",
+    "prisma": "^5.2.0"
   }
 }

@@ -1,0 +1,10 @@
+html,
+body {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.markdown-content img {
+  max-width: 100%; /* Limit the maximum width of images to 100% of their container */
+  height: auto;    /* Automatically adjust the height to maintain aspect ratio */
+}
