@@ -1,13 +1,26 @@
-import express from "express";
-import { createServer } from "http";
+import express, { response } from "express";
+import mongoose from "mongoose";
+import * as middleware from "./utils/middleware";
+import * as logger from "./utils/logger";
+import * as config from "./utils/config";
+import { questionRouter } from "./controllers/Question";
+import { prisma } from "./database/prisma";
 
 const app = express();
 
-const server = createServer(app);
+logger.info("connecting to", config.MONGODB_URI);
 
-app.get("/", function (req, res) {
-  console.log("HELLO");
-  res.send("hello World!");
-});
+mongoose
+  .connect(config.MONGODB_URI || "")
+  .then(() => {
+    logger.info("connected to MongoDB");
+  })
+  .catch((error: any) => {
+    logger.error("error connection to MongoDB:", error.message);
+  });
 
-server.listen(8000);
+app.use(express.json());
+
+app.use("/api/question", questionRouter);
+
+module.exports = app;
