@@ -4,7 +4,7 @@ import { Question } from "./Question";
 import { mockQuestions } from "./MockQuestions";
 import AddQuestionModal from "./AddQuestionModal";
 import ViewQuestionModal from "./ViewQuestionModal";
-import { postNewQuestion, getQuestions } from "../src/utils/database/question/Question";
+import { postNewQuestion, getAllQuestions, getQuestionById, deleteQuestionById, updateQuestionById } from "../src/utils/database/question/Question";
 
 type QuestionTableProps = {};
 
