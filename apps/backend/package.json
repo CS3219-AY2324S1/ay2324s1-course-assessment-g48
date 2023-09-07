@@ -25,9 +25,11 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
+    "@prisma/client": "^5.2.0",
     "dotenv": "^16.3.1",
     "http": "^0.0.1-security",
     "mongodb": "^6.0.0",
-    "mongoose": "^7.5.0"
+    "mongoose": "^7.5.0",
+    "prisma": "^5.2.0"
   }
 }
