@@ -5,35 +5,35 @@ import { mockQuestions } from "./MockQuestions";
 import AddQuestionModal from "./AddQuestionModal";
 import ViewQuestionModal from "./ViewQuestionModal";
 import { postNewQuestion, getQuestions } from "../src/utils/database/question/Question";
+import useQuestion from "../hook/useQuestion";
 
 type QuestionTableProps = {};
 
 const QuestionTable: React.FC<QuestionTableProps> = () => {
-  const [questions, setQuestions] = React.useState<Question[]>(mockQuestions);
+  const {questions, setQuestions} = useQuestion();
   const [viewQuestion, setViewQuestion] = React.useState<Question>({
-    id: -1,
+    id: "",
     title: "",
     description: "",
     categories: [],
     complexity: "",
   });
-  const viewButton = React.useRef<HTMLButtonElement>(null);
+
   const handleSaveQuestion = (newQuestion: Question) => {
-    const newId = Math.max(...questions.map((question) => question.id), -1) + 1;
-    const questionToAdd = { ...newQuestion, id: newId };
+    const questionToAdd = { ...newQuestion, id: "" };
 
     setQuestions([...questions, questionToAdd]);
     postNewQuestion(questionToAdd);
   };
 
-  const handleDeleteQuestion = (id: number) => {
+  const handleDeleteQuestion = (id: string) => {
     const updatedQuestions = questions.filter((question) => question.id !== id);
     setQuestions(updatedQuestions);
   }
 
   const handleViewQuestion = (question: Question) => {
     setViewQuestion(question);
-    viewButton.current?.click();
+    // viewButton.current?.click();
   }
 
   return (
@@ -43,7 +43,7 @@ const QuestionTable: React.FC<QuestionTableProps> = () => {
           <thead className="">
             <tr>
               <th scope="col" className="py-3 col-1">
-                Id
+                S/N
               </th>
               <th scope="col" className="py-3">
                 Title
@@ -55,17 +55,28 @@ const QuestionTable: React.FC<QuestionTableProps> = () => {
                 Complexity
               </th>
               <th scope="col" className="py-3 col-1">
+                View
+              </th>
+              <th scope="col" className="py-3 col-1">
                 Delete
               </th>
             </tr>
           </thead>
           <tbody>
-            {questions.map((question) => (
-              <tr key={question.id}>
-                <th scope="row" className="py-2">{question.id}</th>
+            {questions.map((question, index) => (
+              <tr key={index}>
+                <th scope="row" className="py-2">{index+1}</th>
                 <td className="py-2" onClick={() =>handleViewQuestion(question)}>{question.title}</td>
                 <td className="py-2">{question.categories.join(", ")}</td>
                 <td className="py-2">{question.complexity}</td>
+                <td className="py-2">
+                  <button className="btn btn-success" 
+                    data-bs-toggle="modal"
+                    data-bs-target="#viewQuestionModal"
+                    onClick={() => handleViewQuestion(question)
+                      }
+                      >View</button>
+                      </td>
                 <td className="py-2"><button className="btn btn-danger" onClick={() => handleDeleteQuestion(question.id)}>Delete</button></td>
                 {/* <td><ReactMarkdown rehypePlugins={[rehypeRaw]} remarkPlugins={[[remarkGfm,]]}>{question.description}</ReactMarkdown></td> */}
               </tr>
@@ -77,7 +88,7 @@ const QuestionTable: React.FC<QuestionTableProps> = () => {
       <AddQuestionModal
         onSave={handleSaveQuestion}
       />
-      <div className="text-center">
+      {/* <div className="text-center">
         <button
           ref = {viewButton}
           hidden
@@ -86,7 +97,7 @@ const QuestionTable: React.FC<QuestionTableProps> = () => {
         >
           View Question
         </button>
-      </div>
+      </div> */}
       <ViewQuestionModal 
         onViewQuestion={viewQuestion}
          />

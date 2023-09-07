@@ -4,7 +4,7 @@ import { Complexity } from "./enums/Complexity";
 
 export const mockQuestions: Question[] = [
   {
-    id: 1,
+    id: "",
     title: "Reverse a String",
     description: `
 Write a function that reverses a string. The input string is given as an array of characters \`s\`.
@@ -24,10 +24,9 @@ Constraints:
       `,
     categories: [Categories.Strings, Categories.Algorithms],
     complexity: Complexity.Easy,
-    onDelete: () => {},
   },
   {
-    id: 2,
+    id: "",
     title: "Linked List Cycle Detection",
     description: `
 Given \`head\`, the head of a linked list, determine if the linked list has a cycle in it.  
@@ -62,6 +61,5 @@ Constraints:
 Follow up: Can you solve it using \`O(1)\` (i.e. constant) memory?`,
     categories: [Categories.DataStructures, Categories.Algorithms],
     complexity: Complexity.Easy,
-    onDelete: () => {},
   },
 ];

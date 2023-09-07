@@ -12,7 +12,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
 }) => {
   
   const [newQuestion, setNewQuestion] = React.useState<Question>({
-    id: -1,
+    id: "",
     title: "",
     description: "",
     categories: [],
@@ -22,7 +22,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
   const handleAddQuestion = () => {
     onSave(newQuestion);
     setNewQuestion({
-      id: -1,
+      id: "",
       title: "",
       description: "",
       categories: [],

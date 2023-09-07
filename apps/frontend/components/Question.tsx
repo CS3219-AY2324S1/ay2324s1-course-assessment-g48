@@ -1,5 +1,5 @@
 export type Question = {
-  id: number;
+  id: string;
   title: string;
   description: string;
   categories: string[];
