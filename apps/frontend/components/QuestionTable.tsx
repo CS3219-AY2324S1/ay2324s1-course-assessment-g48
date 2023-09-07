@@ -1,6 +1,6 @@
-import React from "react";
+import React, { Suspense } from "react";
 import styles from "../styles/table.module.css";
-import { Question } from "./Question";
+import { Question } from "../type/Question";
 import { mockQuestions } from "./MockQuestions";
 import AddQuestionModal from "./AddQuestionModal";
 import ViewQuestionModal from "./ViewQuestionModal";
@@ -12,7 +12,7 @@ type QuestionTableProps = {};
 const QuestionTable: React.FC<QuestionTableProps> = () => {
   const {questions, setQuestions} = useQuestion();
   const [viewQuestion, setViewQuestion] = React.useState<Question>({
-    id: "",
+    _id: "",
     title: "",
     description: "",
     categories: [],
@@ -27,8 +27,12 @@ const QuestionTable: React.FC<QuestionTableProps> = () => {
   };
 
   const handleDeleteQuestion = (id: string) => {
-    const updatedQuestions = questions.filter((question) => question.id !== id);
-    setQuestions(updatedQuestions);
+    console.log(id);
+    deleteQuestionById(id).then(()=> {
+      const updatedQuestions = questions.filter((question:Question) => question._id !== id);
+      setQuestions(updatedQuestions);
+    }
+    )
   }
 
   const handleViewQuestion = (question: Question) => {
@@ -39,6 +43,7 @@ const QuestionTable: React.FC<QuestionTableProps> = () => {
   return (
     <>
       <div className={styles["custom-margin"]}>
+        
         <table className="table table-dark table-hover table-striped-columns table-bordered mx-auto text-center align-middle border-warning-subtle">
           <thead className="">
             <tr>
@@ -62,6 +67,7 @@ const QuestionTable: React.FC<QuestionTableProps> = () => {
               </th>
             </tr>
           </thead>
+          
           <tbody>
             {questions.map((question, index) => (
               <tr key={index}>
@@ -77,12 +83,13 @@ const QuestionTable: React.FC<QuestionTableProps> = () => {
                       }
                       >View</button>
                       </td>
-                <td className="py-2"><button className="btn btn-danger" onClick={() => handleDeleteQuestion(question.id)}>Delete</button></td>
+                <td className="py-2"><button className="btn btn-danger" onClick={() => handleDeleteQuestion(question._id)}>Delete</button></td>
                 {/* <td><ReactMarkdown rehypePlugins={[rehypeRaw]} remarkPlugins={[[remarkGfm,]]}>{question.description}</ReactMarkdown></td> */}
               </tr>
             ))}
           </tbody>
         </table>
+        
       </div>
 
       <AddQuestionModal

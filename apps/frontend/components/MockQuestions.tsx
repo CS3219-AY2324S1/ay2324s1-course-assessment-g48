@@ -1,10 +1,10 @@
-import { Question } from "./Question";
+import { Question } from "../type/Question";
 import { Categories } from "./enums/Categories";
 import { Complexity } from "./enums/Complexity";
 
 export const mockQuestions: Question[] = [
   {
-    id: "",
+    _id: "",
     title: "Reverse a String",
     description: `
 Write a function that reverses a string. The input string is given as an array of characters \`s\`.
@@ -26,7 +26,7 @@ Constraints:
     complexity: Complexity.Easy,
   },
   {
-    id: "",
+    _id: "",
     title: "Linked List Cycle Detection",
     description: `
 Given \`head\`, the head of a linked list, determine if the linked list has a cycle in it.  
