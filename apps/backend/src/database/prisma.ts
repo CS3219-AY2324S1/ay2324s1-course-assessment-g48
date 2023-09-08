@@ -8,3 +8,27 @@ export const prisma = new PrismaClient();
 //     username: "alksdja",
 //   },
 // });
+
+// async function main() {
+// ... you will write your Prisma Client queries here
+// await prisma.user.create({
+//   data: {
+//     id: 1,
+//     email: "abc@gmail.com",
+//     username: "alksdja",
+//     password: "alksdja",
+//   },
+// });
+// const allUsers = await prisma.user.findMany();
+// console.log(allUsers);
+// }
+
+// main()
+//   .then(async () => {
+//     await prisma.$disconnect();
+//   })
+//   .catch(async (e) => {
+//     console.error(e);
+//     await prisma.$disconnect();
+//     process.exit(1);
+//   });
