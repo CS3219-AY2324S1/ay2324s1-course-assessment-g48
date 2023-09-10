@@ -3,7 +3,8 @@ import { Question } from "../type/Question";
 import { Complexity } from "./enums/Complexity";
 import { Categories } from "./enums/Categories";
 import useInput from "../hook/useInput";
-import useQuestion from "../hook/useQuestion";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 type AddQuestionModalProps = {
   onSave: (newQuestion: Question) => void;
@@ -12,8 +13,6 @@ type AddQuestionModalProps = {
 const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
   onSave,
 }) => {
-  const {questions} = useQuestion();
-  questions.map((question:Question) => question.title);
   const {value, valueIsValid, hasError, valueChangeHandler, inputBlurHandler, reset} = useInput((s:string) => s.length > 0);
   const [newQuestion, setNewQuestion] = React.useState<Question>({
     _id: "",
@@ -81,6 +80,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                     onChange={valueChangeHandler}
                     onBlur={inputBlurHandler}
                   />
+                {hasError ? <label className="error-message" style={{ color: 'red' }}>Input cannot be empty.</label> : null}
                 </div>
                 <div className="mb-3">
                   <label
@@ -101,6 +101,17 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                       })
                     }
                   ></textarea>
+                  
+                </div>
+                <div className="mb-3">
+                  <label
+                      className="form-label text-white"
+                    >
+                      Preview:
+                    </label>
+                    <ReactMarkdown className="form-text text-white markdown-content" remarkPlugins={[remarkGfm]}>
+                      {newQuestion.description}
+                    </ReactMarkdown>
                 </div>
                 <div className="mb-3">
                   <label className="form-label text-white">Complexity:</label>
@@ -175,6 +186,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                 type="button"
                 className="btn btn-danger"
                 data-bs-dismiss="modal"
+                onClick={reset}
               >
                 Cancel
               </button>
