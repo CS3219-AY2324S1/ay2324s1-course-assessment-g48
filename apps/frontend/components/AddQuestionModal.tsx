@@ -5,6 +5,7 @@ import { Categories } from "./enums/Categories";
 import useInput from "../hook/useInput";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import useQuestion from "../hook/useQuestion";
 
 type AddQuestionModalProps = {
   onSave: (newQuestion: Question) => void;
@@ -13,7 +14,6 @@ type AddQuestionModalProps = {
 const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
   onSave,
 }) => {
-  const {value, valueIsValid, hasError, valueChangeHandler, inputBlurHandler, reset} = useInput((s:string) => s.length > 0);
   const [newQuestion, setNewQuestion] = React.useState<Question>({
     _id: "",
     title: "",
@@ -21,7 +21,8 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
     categories: [],
     complexity: ""
   });
-
+  const {questions} = useQuestion();
+  const {value, valueIsValid, hasError, valueChangeHandler, inputBlurHandler, reset} = useInput((s:string) => s.trim().length > 0 && questions.filter((question:Question) => question.title == s).length != 1);
   const handleAddQuestion = () => {
     onSave(newQuestion);
     setNewQuestion({
@@ -31,6 +32,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
       categories: [],
       complexity: ""
     });
+    reset();
   };
   return (
     <>
@@ -63,6 +65,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                 className="btn-close"
                 data-bs-dismiss="modal"
                 aria-label="Close"
+                onClick={reset}
               ></button>
             </div>
 
@@ -76,11 +79,24 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                     type="text"
                     className={`form-control ${hasError ? "invalid" : ""}`}
                     id="title"
+                    onKeyDown={(event:React.KeyboardEvent<HTMLInputElement>) => {
+                      if (event.keyCode === 13) {
+                      event.preventDefault(); // Prevent form submission on Enter key press
+                    }}}
                     value={value}
-                    onChange={valueChangeHandler}
+                    onChange={(event:React.ChangeEvent<HTMLInputElement>) => 
+                      {valueChangeHandler(event) 
+                      setNewQuestion({
+                        ...newQuestion,
+                        title: event.target.value,
+                      })
+                      }}
                     onBlur={inputBlurHandler}
                   />
-                {hasError ? <label className="error-message" style={{ color: 'red' }}>Input cannot be empty.</label> : null}
+                {hasError && value.trim().length <= 0 ? <label className="error-message" style={{ color: 'red' }}>Input cannot be empty.</label> 
+                : hasError && questions.filter((question:Question) => question.title == value).length == 1 
+                ? <label className="error-message" style={{ color: 'red' }}>Question already exists.</label>
+                : null}
                 </div>
                 <div className="mb-3">
                   <label

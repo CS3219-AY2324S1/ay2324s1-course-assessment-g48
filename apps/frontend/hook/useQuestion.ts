@@ -9,7 +9,7 @@ function useQuestion() {
       getAllQuestions().then((questions) => {
         setQuestions(questions);
       });
-    }, [])
+    }, [questions])
     return {questions, setQuestions}
 }
 
