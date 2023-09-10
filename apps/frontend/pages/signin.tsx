@@ -1,12 +1,12 @@
-import AuthForm from "../components/forms/AuthForm";
-import { Auth } from "../components/enums/Auth";
+import UserForm from "../components/forms/UserForm";
+import { UserManagement } from "../components/enums/UserManagement";
 import { useRouter } from "next/router";
 
 export default function Signin() {
   const router = useRouter();
   const handleSignUpRedirect = () => {
     router.push("/signup");
-  }
+  };
   return (
     <div className="container mt-5">
       <div className="row justify-content-center">
@@ -16,13 +16,16 @@ export default function Signin() {
               <h1 className="mb-2">Sign in to PeerPrep</h1>
             </div>
             <div className="card-body">
-              <AuthForm buttonText={Auth.SignIn} />
+              <UserForm formType={UserManagement.SignIn} />
               <div className="text-center d-flex mt-3 justify-content-center">
                 <p className="mb-0 py-1">
                   <em>New to PeerPrep?</em>
                 </p>
-                <button className="btn btn-link text-light py-1 px-2" onClick={handleSignUpRedirect}>
-                  {Auth.SignUp}
+                <button
+                  className="btn btn-link text-light py-1 px-2"
+                  onClick={handleSignUpRedirect}
+                >
+                  {UserManagement.SignUp}
                 </button>
               </div>
             </div>

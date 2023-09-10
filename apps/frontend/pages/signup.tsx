@@ -1,5 +1,5 @@
-import AuthForm from "../components/forms/AuthForm";
-import { Auth } from "../components/enums/Auth";
+import UserForm from "../components/forms/UserForm";
+import { UserManagement } from "../components/enums/UserManagement";
 import { signIn } from "next-auth/react";
 
 export default function Signup() {
@@ -12,13 +12,16 @@ export default function Signup() {
               <h1 className="mb-2">Sign up with PeerPrep</h1>
             </div>
             <div className="card-body">
-              <AuthForm buttonText={Auth.SignUp} />
+              <UserForm formType={UserManagement.SignUp} />
               <div className="text-center d-flex mt-3 justify-content-center">
                 <p className="mb-0 py-1">
                   <em>Already have an existing account?</em>
                 </p>
-                <button className="btn btn-link text-light py-1 px-2" onClick={() => signIn()}>
-                  {Auth.SignIn}
+                <button
+                  className="btn btn-link text-light py-1 px-2"
+                  onClick={() => signIn()}
+                >
+                  {UserManagement.SignIn}
                 </button>
               </div>
             </div>

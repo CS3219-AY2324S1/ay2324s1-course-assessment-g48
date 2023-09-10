@@ -15,6 +15,7 @@ declare module "next-auth" {
 declare module "next-auth" {
   interface Session {
     id: number;
+    user?: User;
   }
 }
 
@@ -58,12 +59,14 @@ export default NextAuth({
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
+        token.user = user;
       }
       return token;
     },
     async session({ session, token }) {
       if (token) {
         session.id = token.id as number;
+        session.user = token.user as User;
       }
       return session;
     },
