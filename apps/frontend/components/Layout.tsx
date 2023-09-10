@@ -8,7 +8,7 @@ const Layout = ({ children }: PropsWithChildren) => {
   const { data: session, status } = useSession();
   const router = useRouter();
 
-  const redirectToSignIn = !session && router.pathname !== "/signin";
+  const redirectToSignIn = !session && router.pathname !== "/signin" && router.pathname !== "/signup";
   const isLoading = status === "loading";
 
   if (isLoading) {

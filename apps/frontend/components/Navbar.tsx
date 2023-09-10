@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { signIn, signOut } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import { Session } from "next-auth";
+import { Auth } from "./enums/Auth";
 
 type NavbarProps = {
   session: Session | null;
@@ -40,7 +41,7 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
                 className="btn btn-outline-warning py-1 px-2 cursor-pointer rounded"
                 onClick={() => signOut()}
               >
-                Sign out
+                {Auth.SignOut}
               </button>
             </div>
           </>
@@ -49,7 +50,7 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
             <Link
               className="navbar-brand"
               href="#"
-              onClick={() => window.alert("Please sign in to access PeerPrep!")}
+              onClick={() => window.alert("Please sign in first to access PeerPrep!")}
             >
               PeerPrep
             </Link>

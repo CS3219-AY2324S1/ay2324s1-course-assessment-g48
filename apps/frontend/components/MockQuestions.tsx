@@ -1,5 +1,5 @@
 import { Question } from "./Question";
-import { Categories } from "./enums/Categories";
+import { Category } from "./enums/Category";
 import { Complexity } from "./enums/Complexity";
 
 export const mockQuestions: Question[] = [
@@ -22,7 +22,7 @@ Constraints:
 - \`1 <= s.length <= 105\`
 - \`s[i]\` is a printable ASCII character.
       `,
-    categories: [Categories.Strings, Categories.Algorithms],
+    categories: [Category.Strings, Category.Algorithms],
     complexity: Complexity.Easy,
   },
   {
@@ -59,7 +59,7 @@ Constraints:
 - \`pos\` is -1 or a valid index in the linked-list.
 
 Follow up: Can you solve it using \`O(1)\` (i.e. constant) memory?`,
-    categories: [Categories.DataStructures, Categories.Algorithms],
+    categories: [Category.DataStructures, Category.Algorithms],
     complexity: Complexity.Easy,
   },
 ];

@@ -1,4 +1,4 @@
-export enum Categories {
+export enum Category {
   Algorithms = "Algorithms",
   BitManipulation = "Bit Manipulation",
   Brainteaser = "Brainteaser",

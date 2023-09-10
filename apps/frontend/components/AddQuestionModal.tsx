@@ -1,7 +1,7 @@
 import React from "react";
 import { Question } from "./Question";
 import { Complexity } from "./enums/Complexity";
-import { Categories } from "./enums/Categories";
+import { Category } from "./enums/Category";
 import styles from "../styles/modal.module.css";
 
 type AddQuestionModalProps = {
@@ -150,7 +150,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                       })
                     }
                   >
-                    {Object.values(Categories).map((category) => (
+                    {Object.values(Category).map((category) => (
                       <option key={category} value={category}>
                         {category}
                       </option>
