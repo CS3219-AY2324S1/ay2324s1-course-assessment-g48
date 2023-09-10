@@ -2,6 +2,7 @@ import React from "react";
 import { Question } from "./Question";
 import { Complexity } from "./enums/Complexity";
 import { Categories } from "./enums/Categories";
+import styles from "../styles/modal.module.css";
 
 type AddQuestionModalProps = {
   onSave: (newQuestion: Question) => void;
@@ -42,7 +43,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
       </div>
 
       <div
-        className="modal fade"
+        className="modal modal-xl fade"
         id="addQuestionModal"
         tabIndex={-1}
         aria-labelledby="addQuestionLabel"
@@ -88,7 +89,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                   </label>
                   {/* change to markdown later*/}
                   <textarea
-                    className="form-control"
+                    className={`form-control ${styles["custom-description"]}`}
                     id="description"
                     value={newQuestion.description}
                     onChange={(e) =>

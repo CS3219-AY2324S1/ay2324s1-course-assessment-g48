@@ -1,16 +1,15 @@
 import React from "react";
 import styles from "../styles/table.module.css";
 import { Question } from "./Question";
-import { mockQuestions } from "./MockQuestions";
 import AddQuestionModal from "./AddQuestionModal";
 import ViewQuestionModal from "./ViewQuestionModal";
-import { postNewQuestion, getAllQuestions, getQuestionById, deleteQuestionById, updateQuestionById } from "../src/utils/database/question/Question";
+import { postNewQuestion } from "../src/utils/database/question/Question";
 import useQuestion from "../hook/useQuestion";
 
 type QuestionTableProps = {};
 
 const QuestionTable: React.FC<QuestionTableProps> = () => {
-  const {questions, setQuestions} = useQuestion();
+  const { questions, setQuestions } = useQuestion();
   const [viewQuestion, setViewQuestion] = React.useState<Question>({
     id: "",
     title: "",
@@ -22,19 +21,21 @@ const QuestionTable: React.FC<QuestionTableProps> = () => {
   const handleSaveQuestion = (newQuestion: Question) => {
     const questionToAdd = { ...newQuestion, id: "" };
 
-    setQuestions([...questions, questionToAdd]);
+    setQuestions([...(questions ?? []), questionToAdd]);
     postNewQuestion(questionToAdd);
   };
 
   const handleDeleteQuestion = (id: string) => {
-    const updatedQuestions = questions.filter((question) => question.id !== id);
+    const updatedQuestions = questions?.filter(
+      (question) => question.id !== id
+    );
     setQuestions(updatedQuestions);
-  }
+  };
 
   const handleViewQuestion = (question: Question) => {
     setViewQuestion(question);
     // viewButton.current?.click();
-  }
+  };
 
   return (
     <>
@@ -63,31 +64,48 @@ const QuestionTable: React.FC<QuestionTableProps> = () => {
             </tr>
           </thead>
           <tbody>
-            {questions.map((question, index) => (
+            {questions?.map((question, index) => (
               <tr key={index}>
-                <th scope="row" className="py-2">{index+1}</th>
-                <td className="py-2" onClick={() =>handleViewQuestion(question)}>{question.title}</td>
+                <th scope="row" className="py-2">
+                  {index + 1}
+                </th>
+                <td className="py-2">
+                  <button
+                    className="btn btn-link text-white"
+                    data-bs-toggle="modal"
+                    data-bs-target="#viewQuestionModal"
+                    onClick={() => handleViewQuestion(question)}
+                  >
+                    {question.title}
+                  </button>
+                </td>
                 <td className="py-2">{question.categories.join(", ")}</td>
                 <td className="py-2">{question.complexity}</td>
                 <td className="py-2">
-                  <button className="btn btn-success" 
+                  <button
+                    className="btn btn-success"
                     data-bs-toggle="modal"
                     data-bs-target="#viewQuestionModal"
-                    onClick={() => handleViewQuestion(question)
-                      }
-                      >View</button>
-                      </td>
-                <td className="py-2"><button className="btn btn-danger" onClick={() => handleDeleteQuestion(question.id)}>Delete</button></td>
-                {/* <td><ReactMarkdown rehypePlugins={[rehypeRaw]} remarkPlugins={[[remarkGfm,]]}>{question.description}</ReactMarkdown></td> */}
+                    onClick={() => handleViewQuestion(question)}
+                  >
+                    View
+                  </button>
+                </td>
+                <td className="py-2">
+                  <button
+                    className="btn btn-danger"
+                    onClick={() => handleDeleteQuestion(question.id)}
+                  >
+                    Delete
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
 
-      <AddQuestionModal
-        onSave={handleSaveQuestion}
-      />
+      <AddQuestionModal onSave={handleSaveQuestion} />
       {/* <div className="text-center">
         <button
           ref = {viewButton}
@@ -98,9 +116,7 @@ const QuestionTable: React.FC<QuestionTableProps> = () => {
           View Question
         </button>
       </div> */}
-      <ViewQuestionModal 
-        onViewQuestion={viewQuestion}
-         />
+      <ViewQuestionModal onViewQuestion={viewQuestion} />
     </>
   );
 };
