@@ -1,5 +1,5 @@
-import { PrismaClient, User } from "@prisma/client";
-import { prisma } from "../database/prisma";
+import { User } from "@prisma/client";
+import { prisma } from "./prisma";
 
 export async function createUser(data: User) {
   console.log(data);

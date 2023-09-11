@@ -1,12 +1,17 @@
-import { Router, NextFunction, Request, Response } from "express";
-import * as userHelper from "./UserHelper";
+import { Router, Request, Response } from "express";
+import {
+  createUser,
+  deleteUser,
+  getAllUsers,
+  updateUser,
+} from "../../database/user";
 
 export const userRouter = Router();
 
 // Creates a new user with all attributes from `data`
 userRouter.post("/", async (req: Request, res: Response) => {
   try {
-    const newUser = await userHelper.createUser(req.body);
+    const newUser = await createUser(req.body);
     res.status(201).json(newUser);
   } catch (error) {
     console.error(error);
@@ -17,7 +22,7 @@ userRouter.post("/", async (req: Request, res: Response) => {
 // Returns all users
 userRouter.get("/", async (req: Request, res: Response) => {
   try {
-    const allUsers = await userHelper.getAllUsers();
+    const allUsers = await getAllUsers();
     res.json(allUsers);
   } catch (error) {
     console.error(error);
@@ -31,7 +36,7 @@ userRouter.put("/:id", async (req: Request, res: Response) => {
     const { id } = req.params;
     const { email, username, password } = req.body;
 
-    const updatedUser = await userHelper.updateUser(parseInt(id), {
+    const updatedUser = await updateUser(parseInt(id), {
       email,
       username,
       password,
@@ -49,7 +54,7 @@ userRouter.delete("/:id", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
-    await userHelper.deleteUser(parseInt(id));
+    await deleteUser(parseInt(id));
 
     res.status(204).send();
   } catch (error) {

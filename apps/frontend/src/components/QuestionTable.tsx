@@ -1,16 +1,15 @@
-import React from "react";
-import styles from "../styles/table.module.css";
+import React, { Suspense } from "react";
+import styles from "../../styles/table.module.css";
 import { Question } from "./Question";
-import { mockQuestions } from "./MockQuestions";
 import AddQuestionModal from "./AddQuestionModal";
 import ViewQuestionModal from "./ViewQuestionModal";
-import { postNewQuestion, getAllQuestions, getQuestionById, deleteQuestionById, updateQuestionById } from "../src/utils/database/question/Question";
+import { postNewQuestion } from "@/utils/database/question/Question";
 import useQuestion from "../hook/useQuestion";
 
 type QuestionTableProps = {};
 
 const QuestionTable: React.FC<QuestionTableProps> = () => {
-  const {questions, setQuestions} = useQuestion();
+  const {questions, setQuestions, isLoading} = useQuestion();
   const [viewQuestion, setViewQuestion] = React.useState<Question>({
     id: "",
     title: "",
@@ -38,6 +37,7 @@ const QuestionTable: React.FC<QuestionTableProps> = () => {
 
   return (
     <>
+    {isLoading ? <p> LOADING </p> : 
       <div className={styles["custom-margin"]}>
         <table className="table table-dark table-hover table-striped-columns table-bordered mx-auto text-center align-middle border-warning-subtle">
           <thead className="">
@@ -84,7 +84,7 @@ const QuestionTable: React.FC<QuestionTableProps> = () => {
           </tbody>
         </table>
       </div>
-
+    }
       <AddQuestionModal
         onSave={handleSaveQuestion}
       />
@@ -101,6 +101,7 @@ const QuestionTable: React.FC<QuestionTableProps> = () => {
       <ViewQuestionModal 
         onViewQuestion={viewQuestion}
          />
+         
     </>
   );
 };
