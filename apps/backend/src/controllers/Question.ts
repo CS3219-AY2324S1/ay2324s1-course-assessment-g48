@@ -2,7 +2,7 @@ import { Router,NextFunction, Request, Response } from "express";
 
 import Question from "../models/Question";
 
-export const questionRouter = express.Router();
+export const questionRouter = Router();
 
 // Gets question from mongodb
 questionRouter.get("/", async (request: Request, response: Response) => {
