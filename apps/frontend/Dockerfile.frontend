@@ -1,0 +1,20 @@
+FROM node:16
+
+WORKDIR /app
+
+COPY .next ./.next
+COPY . .
+
+# COPY frontend/package*.json ./
+
+RUN yarn install
+
+# COPY frontend/ ./
+
+RUN yarn build
+
+EXPOSE 3000
+
+CMD ["yarn", "start"]
+
+ 

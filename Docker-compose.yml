@@ -1,0 +1,24 @@
+version: '3'
+
+services:
+  peerprep-frontend:
+    container_name: peerprep-frontend     # Name of the container
+    build:
+      context: ./apps/frontend            # Build context is the path to the frontend directory
+      dockerfile: Dockerfile.frontend     # Path to the Dockerfile for the frontend
+    ports:
+      - "3000:3000"                       # Map frontend container's port 3000 to host's port 3000
+    volumes:
+      - ./apps/frontend:/app              # Mount the frontend directory as a volume
+    depends_on:
+      - peerprep-backend                  # Ensure that the backend service is started first
+
+  peerprep-backend:
+    container_name: peerprep-backend      # Name of the container
+    build:
+      context: ./apps/backend             # Build context is the path to the backend directory
+      dockerfile: Dockerfile.backend      # Path to the Dockerfile for the backend
+    ports:
+      - "8000:8000"                       # Map backend container's port 8000 to host's port 8000
+    volumes:
+      - ./apps/backend:/app               # Mount the backend directory as a volume
