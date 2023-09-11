@@ -25,5 +25,5 @@ export async function updateUser(id: number, data: Partial<User>) {
 }
 
 export async function deleteUser(id: number) {
-  return prisma.user.delete({ where: { id } });
+  return await prisma.user.delete({ where: { id } });
 }

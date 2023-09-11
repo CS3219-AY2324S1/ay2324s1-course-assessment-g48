@@ -1,4 +1,4 @@
-import QuestionTable from "../components/QuestionTable";
+import QuestionTable from "@/components/questions/QuestionTable";
 
 export default function HomePage() {
   return (
