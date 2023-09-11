@@ -10,7 +10,7 @@ datasource db {
   url      = env("PSQL_DATABASE_URL")
 }
 
-model Users {
+model User {
   id      Int      @id @default(autoincrement())
   email   String   @unique
   username    String
