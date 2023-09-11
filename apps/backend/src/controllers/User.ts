@@ -1,7 +1,7 @@
-import express, { NextFunction, Request, Response } from "express";
+import { Router, NextFunction, Request, Response } from "express";
 import * as userHelper from "./UserHelper";
 
-export const userRouter = express.Router();
+export const userRouter = Router();
 
 // Creates a new user with all attributes from `data`
 userRouter.post("/", async (req: Request, res: Response) => {

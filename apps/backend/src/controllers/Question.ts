@@ -1,4 +1,4 @@
-import { Router,NextFunction, Request, Response } from "express";
+import { Router, NextFunction, Request, Response } from "express";
 
 import Question from "../models/Question";
 
