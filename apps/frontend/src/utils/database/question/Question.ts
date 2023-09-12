@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Question } from "../../../../components/Question";
+import { Question } from "@/components/Question";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL + "/api/question"
 

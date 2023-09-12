@@ -2,7 +2,7 @@ import React from "react";
 import { Question } from "./Question";
 import { Complexity } from "./enums/Complexity";
 import { Category } from "./enums/Category";
-import styles from "../styles/modal.module.css";
+import styles from "/styles/modal.module.css";
 
 type AddQuestionModalProps = {
   onSave: (newQuestion: Question) => void;
