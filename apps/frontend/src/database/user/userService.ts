@@ -36,12 +36,12 @@ export const deleteUserById = async (id: number) => {
 
 export const updateUserById = async (
   id: number,
-  updatedQuestion: Partial<User>
+  updatedUser: Partial<User>
 ) => {
   const response = await axios.put(BASE_URL + "/" + id, {
-    email: updatedQuestion.email,
-    username: updatedQuestion.username,
-    password: updatedQuestion.password,
+    email: updatedUser.email,
+    username: updatedUser.username,
+    password: updatedUser.password,
   });
   return response.data;
 };
