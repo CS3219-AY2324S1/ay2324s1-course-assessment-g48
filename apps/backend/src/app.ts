@@ -1,14 +1,13 @@
-import express, { response } from "express";
+import express from "express";
 import mongoose from "mongoose";
-import * as middleware from "./utils/middleware";
 import * as logger from "./utils/logger";
 import * as config from "./utils/config";
-import { questionRouter } from "./controllers/Question";
-import { prisma } from "./database/prisma";
-var cors = require('cors')
+import { questionRouter } from "./controllers/api/questionRouter";
+import { userRouter } from "./controllers/api/userRouter";
+import cors from "cors";
 
 const app = express();
-app.use(cors())
+app.use(cors());
 
 logger.info("connecting to", config.MONGODB_URI);
 
@@ -17,12 +16,13 @@ mongoose
   .then(() => {
     logger.info("connected to MongoDB");
   })
-  .catch((error: any) => {
+  .catch((error) => {
     logger.error("error connection to MongoDB:", error.message);
   });
 
 app.use(express.json());
 
+app.use("/api/users", userRouter);
 app.use("/api/question", questionRouter);
 
 module.exports = app;

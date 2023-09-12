@@ -1,17 +1,19 @@
-import React, { useEffect } from 'react'
-import { Question } from '../components/Question';
-import { mockQuestions } from '../utils/mock-questions/MockQuestions';
-import { getAllQuestions } from "../utils/database/question/Question";
+import { useEffect, useState } from "react";
+import { getAllQuestions } from "../database/question/questionService";
+import { Question } from "../../type/Question";
 
 function useQuestion() {
-    const [questions, setQuestions] = React.useState<Question[]>(mockQuestions);
-    
-    useEffect(() => {
-      getAllQuestions().then((questions) => {
-        setQuestions(questions);
-      });
-    }, [])
-    return {questions, setQuestions}
+  const [isLoading, setIsLoading] = useState(true);
+  const [questions, setQuestions] = useState<Question[]>([]);
+
+  useEffect(() => {
+    setIsLoading(true);
+    getAllQuestions().then((questions) => {
+      setQuestions(questions);
+      setIsLoading(false);
+    });
+  }, []);
+  return { questions, setQuestions, isLoading };
 }
 
-export default useQuestion
+export default useQuestion;

@@ -1,7 +1,8 @@
-import { NextFunction, Request, Response } from "express";
+import { Router, NextFunction, Request, Response } from "express";
+import Question from "../../models/question";
+import logger from "../../utils/logger";
 
-export const questionRouter = require("express").Router();
-import Question from "../models/Question";
+export const questionRouter = Router();
 
 // Gets question from mongodb
 questionRouter.get("/", async (request: Request, response: Response) => {
@@ -14,6 +15,7 @@ questionRouter.get("/", async (request: Request, response: Response) => {
 questionRouter.get(
   "/:id",
   (request: Request, response: Response, next: NextFunction) => {
+    logger.info(`Finding question id ${request.params.id}`);
     Question.findById(request.params.id)
       .then((question) => {
         if (question) {
@@ -31,13 +33,10 @@ questionRouter.get(
 );
 
 // Deletes question from mongodb
-questionRouter.delete(
-  "/:id",
-  async (request: Request, response: Response) => {
-    await Question.findByIdAndRemove(request.params.id);
-    response.status(204).end();
-  }
-);
+questionRouter.delete("/:id", async (request: Request, response: Response) => {
+  await Question.findByIdAndRemove(request.params.id);
+  response.status(204).end();
+});
 
 // Adds question to mongodb
 questionRouter.post("/", async (request: Request, response: Response) => {
@@ -59,7 +58,7 @@ questionRouter.put(
   "/:id",
   (request: Request, response: Response, next: NextFunction) => {
     const { title, description, categories, complexity } = request.body;
-    const id = request.params.id
+    const id = request.params.id;
 
     Question.findByIdAndUpdate(
       id,
