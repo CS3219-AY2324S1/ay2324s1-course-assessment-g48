@@ -1,10 +1,10 @@
 import React from "react";
 import styles from "/styles/table.module.css";
-import { Question } from "./Question";
 import AddQuestionModal from "./AddQuestionModal";
 import ViewQuestionModal from "./ViewQuestionModal";
-import { postNewQuestion } from "../utils/database/question/Question";
-import useQuestion from "../hook/useQuestion";
+import { Question } from "../Question";
+import useQuestion from "@/hook/useQuestion";
+import { postNewQuestion } from "@/utils/database/question/Question";
 
 type QuestionTableProps = {};
 

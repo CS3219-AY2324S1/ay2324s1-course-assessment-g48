@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { Question } from '../components/Question';
-import { mockQuestions } from '../components/MockQuestions';
+import { mockQuestions } from '../utils/mock-questions/MockQuestions';
 import { getAllQuestions } from "../utils/database/question/Question";
 
 function useQuestion() {
