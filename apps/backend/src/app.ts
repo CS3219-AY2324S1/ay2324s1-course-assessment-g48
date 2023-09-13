@@ -1,11 +1,9 @@
-import express, { response } from "express";
+import express from "express";
 import mongoose from "mongoose";
-import * as middleware from "./utils/middleware";
 import * as logger from "./utils/logger";
 import * as config from "./utils/config";
-import { questionRouter } from "./controllers/Question";
-import { userRouter } from "./controllers/User";
-import { prisma } from "./database/prisma";
+import { questionRouter } from "./controllers/api/questionRouter";
+import { userRouter } from "./controllers/api/userRouter";
 import cors from "cors";
 
 const app = express();
@@ -18,7 +16,7 @@ mongoose
   .then(() => {
     logger.info("connected to MongoDB");
   })
-  .catch((error: any) => {
+  .catch((error) => {
     logger.error("error connection to MongoDB:", error.message);
   });
 

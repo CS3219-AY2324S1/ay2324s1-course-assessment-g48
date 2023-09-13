@@ -1,6 +1,6 @@
-import { Question } from "../type/Question";
-import { Categories } from "./enums/Categories";
-import { Complexity } from "./enums/Complexity";
+import { Categories } from "../../components/enums/Categories";
+import { Complexity } from "../../components/enums/Complexity";
+import { Question } from "../../database/question/entities/question.entity";
 
 export const mockQuestions: Question[] = [
   {

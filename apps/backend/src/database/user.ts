@@ -1,5 +1,5 @@
-import { PrismaClient, User } from "@prisma/client";
-import { prisma } from "../database/prisma";
+import { User } from "@prisma/client";
+import { prisma } from "./prisma";
 
 export async function createUser(data: User) {
   console.log(data);
@@ -25,5 +25,5 @@ export async function updateUser(id: number, data: Partial<User>) {
 }
 
 export async function deleteUser(id: number) {
-  return prisma.user.delete({ where: { id } });
+  return await prisma.user.delete({ where: { id } });
 }

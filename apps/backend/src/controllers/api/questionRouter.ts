@@ -1,6 +1,6 @@
 import { Router, NextFunction, Request, Response } from "express";
-
-import Question from "../models/Question";
+import Question from "../../models/question";
+import logger from "../../utils/logger";
 
 export const questionRouter = Router();
 
@@ -15,6 +15,7 @@ questionRouter.get("/", async (request: Request, response: Response) => {
 questionRouter.get(
   "/:id",
   (request: Request, response: Response, next: NextFunction) => {
+    logger.info(`Finding question id ${request.params.id}`);
     Question.findById(request.params.id)
       .then((question) => {
         if (question) {
