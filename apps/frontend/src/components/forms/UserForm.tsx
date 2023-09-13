@@ -6,7 +6,11 @@ import { UserManagement } from "../../utils/enums/UserManagement";
 import FormInput from "./FormInput";
 import { UpdateUserDto, User } from "@/database/user/entities/user.entity";
 import { mockUsers } from "@/database/user/mockUsers";
-import { createNewUser, updateUserById } from "@/database/user/userService";
+import {
+  createNewUser,
+  deleteUserById,
+  updateUserById,
+} from "@/database/user/userService";
 import { AxiosResponse } from "axios";
 
 interface UserFormProps {
@@ -76,7 +80,6 @@ const UserForm: React.FC<UserFormProps> = ({
       };
 
       const response = await createNewUser(newUser);
-      console.log(response);
       if (response.error) {
         setErrorMessage(response.error);
         return;
@@ -135,6 +138,11 @@ const UserForm: React.FC<UserFormProps> = ({
 
   const handleProfileDelete = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
+    const response = await deleteUserById(Number(id));
+    if (response.error) {
+      setErrorMessage(response.error);
+      return;
+    }
     signOut();
   };
 

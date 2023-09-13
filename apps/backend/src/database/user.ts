@@ -1,5 +1,6 @@
 import { Prisma, User } from "@prisma/client";
 import { prisma } from "./prisma";
+import { Response } from "express";
 
 export async function createUser(data: User) {
   console.log(data);

@@ -37,13 +37,6 @@ export default NextAuth({
         },
       },
       authorize: async (credentials) => {
-        // const users = mockUsers;
-        // const user = users.find(
-        //   (user: User) =>
-        //     user.email === credentials?.email &&
-        //     user.password === credentials.password
-        // );
-
         const user = await login(credentials?.email, credentials?.password);
         if (user) {
           return {

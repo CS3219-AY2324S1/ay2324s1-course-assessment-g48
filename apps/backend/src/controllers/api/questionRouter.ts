@@ -5,96 +5,98 @@ import logger from "../../utils/logger";
 export const questionRouter = Router();
 
 // Gets question from mongodb
-questionRouter.get("/", async (request: Request, response: Response) => {
+questionRouter.get("/", async (req: Request, res: Response) => {
   Question.find({}).then((question) => {
-    response.json(question);
+    res.json(question);
   });
 });
 
 // Fetches individual question by id
 questionRouter.get(
   "/:id",
-  (request: Request, response: Response, next: NextFunction) => {
-    logger.info(`Finding question id ${request.params.id}`);
-    Question.findById(request.params.id)
+  (req: Request, res: Response, next: NextFunction) => {
+    logger.info(`Finding question id ${req.params.id}`);
+    Question.findById(req.params.id)
       .then((question) => {
         if (question) {
-          response.json(question);
+          res.json(question);
         } else {
-          response.status(404).end();
+          res.status(404).json({
+            error: `A question with id ${req.params.id} does not exist`,
+          });
         }
       })
       .catch((err) => {
-        // console.log(err);
-        // response.status(400).send({ error: "malformatted id" });
         next(err);
       });
   }
 );
 
-// Fetches individual question by title
-// questionRouter.get(
-//   "/:title",
-//   (request: Request, response: Response, next: NextFunction) => {
-//     logger.info(`Finding question with title ${request.params.title}`);
-//     Question.find({ title: request.params.title })
-//       .then((question) => {
-//         if (question) {
-//           response.json(question);
-//         } else {
-//           response.status(404).end();
-//         }
-//       })
-//       .catch((err) => {
-//         next(err);
-//       });
-//   }
-// );
-
 // Deletes question from mongodb
-questionRouter.delete("/:id", async (request: Request, response: Response) => {
-  await Question.findByIdAndRemove(request.params.id);
-  response.status(204).end();
-});
+questionRouter.delete(
+  "/:id",
+  async (req: Request, res: Response, next: NextFunction) => {
+    await Question.findByIdAndRemove(req.params.id)
+      .then((question) => {
+        if (!question) {
+          res.status(404).json({
+            error: `A question with id ${req.params.id} does not exist`,
+          });
+        }
+        res.status(204).json(question);
+      })
+      .catch((e) => next(e));
+  }
+);
 
 // Adds question to mongodb
-questionRouter.post("/", async (request: Request, response: Response) => {
-  const body = request.body;
+questionRouter.post(
+  "/",
+  async (req: Request, res: Response, next: NextFunction) => {
+    const body = req.body;
 
-  const isExisting = await Question.findOne({ title: body.title });
+    const isExisting = await Question.findOne({ title: body.title });
 
-  if (isExisting) {
-    response
-      .status(400)
-      .json({ error: "A question with this title already exists" });
-    return;
+    if (isExisting) {
+      res
+        .status(400)
+        .json({ error: "A question with this title already exists" });
+      return;
+    }
+
+    const question = new Question({
+      title: body.title,
+      description: body.description,
+      categories: body.categories,
+      complexity: body.complexity,
+    });
+    question
+      .save()
+      .then((savedQuestion) => res.status(201).json(savedQuestion))
+      .catch((e) => next(e));
   }
-
-  const question = new Question({
-    title: body.title,
-    description: body.description,
-    categories: body.categories,
-    complexity: body.complexity,
-  });
-  const savedQuestion = await question.save();
-
-  response.status(201).json(savedQuestion);
-});
+);
 
 // Updates question in mongodb
 questionRouter.put(
   "/:id",
-  (request: Request, response: Response, next: NextFunction) => {
-    const { title, description, categories, complexity } = request.body;
-    const id = request.params.id;
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { title, description, categories, complexity } = req.body;
+    const id = req.params.id;
 
-    Question.findByIdAndUpdate(
+    await Question.findByIdAndUpdate(
       id,
       { title, description, categories, complexity },
       { new: true, runValidators: true, context: "query" }
     )
       .then((updatedQuestion) => {
-        response.json(updatedQuestion);
+        if (!updatedQuestion) {
+          res
+            .status(404)
+            .json({ error: `A question with id ${id} does not exist` });
+          return;
+        }
+        res.json(updatedQuestion);
       })
       .catch((err) => next(err));
   }
