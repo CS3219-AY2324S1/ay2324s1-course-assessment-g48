@@ -15,7 +15,8 @@ export const postNewQuestion = async (newQuestion: Question) => {
       return response.data;
     })
     .catch((error) => {
-      console.log(error);
+      console.error(error);
+      throw new String(error.response.data.error)
     });
 };
 

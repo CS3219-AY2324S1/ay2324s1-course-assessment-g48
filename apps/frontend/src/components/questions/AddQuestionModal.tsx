@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Complexity } from "../../utils/enums/Complexity";
 import { Category } from "../../utils/enums/Category";
 import useInput from "../../hook/useInput";
@@ -10,12 +10,10 @@ import styles from "/styles/modal.module.css";
 
 type AddQuestionModalProps = {
   onSave: (newQuestion: Question) => Promise<boolean>;
-  errorMessage: string | undefined;
 };
 
 const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
   onSave,
-  errorMessage,
 }) => {
   const [newQuestion, setNewQuestion] = React.useState<Question>({
     _id: "",
@@ -24,7 +22,13 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
     categories: [],
     complexity: "",
   });
-
+  const [error, setError] = useState<string>("");
+  const closeModalRef = useRef<HTMLButtonElement | null>(null);
+  const closeModal = () => {
+    if (closeModalRef.current) {
+      closeModalRef.current.click();
+    }
+  };
   const { questions } = useQuestion();
   const {
     value,
@@ -35,12 +39,10 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
     reset,
   } = useInput(
     (s: string) =>
-      s.trim().length > 0 &&
-      questions.filter((question: Question) => question.title == s).length != 1
+      s.trim().length > 0
   );
   const handleAddQuestion = async () => {
-    if (await onSave(newQuestion)) {
-      console.log("HIII");
+    await onSave(newQuestion).then(() => {
       setNewQuestion({
         _id: "",
         title: "",
@@ -49,10 +51,12 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
         complexity: "",
       });
       reset();
-    }
+      setError("")
+      closeModal()
+    }).catch(e => {
+      setError(e)
+    })
   };
-
-  const [isShowModal, setIsShowModal] = useState<boolean>(false);
 
   return (
     <>
@@ -82,9 +86,13 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
               <button
                 type="button"
                 className="btn-close"
+                ref={closeModalRef}
                 data-bs-dismiss="modal"
                 aria-label="Close"
-                onClick={reset}
+                onClick={() => {
+                  reset()
+                  setError("")
+                }}
               ></button>
             </div>
 
@@ -215,9 +223,9 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                   </select>
                 </div>
               </form>
-              {errorMessage ? (
+              {error ? (
                 <label className="error-message" style={{ color: "red" }}>
-                  {errorMessage}
+                  {error}
                 </label>
               ) : (
                 <></>
@@ -236,7 +244,10 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                 type="button"
                 className="btn btn-danger"
                 data-bs-dismiss="modal"
-                onClick={reset}
+                onClick={() => {
+                  reset()
+                  setError("")
+                }}
               >
                 Cancel
               </button>
