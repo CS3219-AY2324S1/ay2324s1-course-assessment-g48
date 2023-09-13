@@ -1,11 +1,12 @@
 import React from "react";
 import { Complexity } from "../enums/Complexity";
-import { Categories } from "../enums/Categories";
+import { Category } from "../enums/Category";
 import useInput from "../../hook/useInput";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import useQuestion from "../../hook/useQuestion";
 import { Question } from "../../database/question/entities/question.entity";
+import styles from "/styles/modal.module.css";
 
 type AddQuestionModalProps = {
   onSave: (newQuestion: Question) => void;
@@ -56,7 +57,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({ onSave }) => {
       </div>
 
       <div
-        className="modal fade"
+        className="modal modal-xl fade"
         id="addQuestionModal"
         tabIndex={-1}
         aria-labelledby="addQuestionLabel"
@@ -127,7 +128,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({ onSave }) => {
                   </label>
                   {/* change to markdown later*/}
                   <textarea
-                    className="form-control"
+                    className={`form-control ${styles["custom-description"]}`}
                     id="description"
                     value={newQuestion.description}
                     onChange={(e) =>
@@ -197,7 +198,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({ onSave }) => {
                       })
                     }
                   >
-                    {Object.values(Categories).map((category) => (
+                    {Object.values(Category).map((category) => (
                       <option key={category} value={category}>
                         {category}
                       </option>

@@ -106,7 +106,6 @@ const QuestionTable: FC<QuestionTableProps> = () => {
                       Delete
                     </button>
                   </td>
-                  {/* <td><ReactMarkdown rehypePlugins={[rehypeRaw]} remarkPlugins={[[remarkGfm,]]}>{question.description}</ReactMarkdown></td> */}
                 </tr>
               ))}
             </tbody>

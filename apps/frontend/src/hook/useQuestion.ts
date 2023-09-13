@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { getAllQuestions } from "../database/question/questionService";
-import { mockQuestions } from "@/utils/mock-questions/MockQuestions";
 import { Question } from "../../type/Question";
 
 function useQuestion() {
