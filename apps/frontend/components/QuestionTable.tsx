@@ -6,6 +6,7 @@ import AddQuestionModal from "./AddQuestionModal";
 import ViewQuestionModal from "./ViewQuestionModal";
 import { postNewQuestion, getAllQuestions, getQuestionById, deleteQuestionById, updateQuestionById } from "../src/utils/database/question/Question";
 import useQuestion from "../hook/useQuestion";
+import EditQuestionModal from "./EditQuestionModal";
 
 type QuestionTableProps = {};
 
@@ -18,18 +19,37 @@ const QuestionTable: React.FC<QuestionTableProps> = () => {
     categories: [],
     complexity: "",
   });
+  const [questionToEdit, setQuestionToEdit] = React.useState<Question>({
+    _id: "",
+    title: "",
+    description: "",
+    categories: [],
+    complexity: "",
+  })
 
   const handleSaveQuestion = (newQuestion: Question) => {
-    const questionToAdd = { ...newQuestion, id: "" };
+    const questionToAdd = { ...newQuestion, _id: "" };
+    console.log(questionToAdd)
 
     setQuestions([...questions, questionToAdd]);
     postNewQuestion(questionToAdd);
   };
 
+  const handleEditQuestion = (editQuestion: Question) => {
+    setQuestionToEdit(editQuestion)
+    // updateQuestionById(id, questions[index]).then(()=> {
+    //   questions[index].title = editQuestion.title
+    //   questions[index].description = editQuestion.description
+    //   questions[index].categories = editQuestion.categories
+    //   questions[index].complexity = editQuestion.complexity
+    // }
+    // )
+  }
+
   const handleDeleteQuestion = (id: string) => {
     console.log(id);
     deleteQuestionById(id).then(()=> {
-      const updatedQuestions = questions.filter((question:Question) => question._id !== id);
+      const updatedQuestions = questions.filter((question:Question) => question._id == id);
       setQuestions(updatedQuestions);
     }
     )
@@ -63,6 +83,9 @@ const QuestionTable: React.FC<QuestionTableProps> = () => {
                 View
               </th>
               <th scope="col" className="py-3 col-1">
+                Edit
+              </th>
+              <th scope="col" className="py-3 col-1">
                 Delete
               </th>
             </tr>
@@ -72,7 +95,7 @@ const QuestionTable: React.FC<QuestionTableProps> = () => {
             {questions.map((question, index) => (
               <tr key={index}>
                 <th scope="row" className="py-2">{index+1}</th>
-                <td className="py-2" onClick={() =>handleViewQuestion(question)}>{question.title}</td>
+                <td className="py-2">{question.title}</td>
                 <td className="py-2">{question.categories.join(", ")}</td>
                 <td className="py-2">{question.complexity}</td>
                 <td className="py-2">
@@ -83,6 +106,8 @@ const QuestionTable: React.FC<QuestionTableProps> = () => {
                       }
                       >View</button>
                       </td>
+                <td className="py-2"><button className="btn btn-warning" data-bs-toggle="modal"
+                    data-bs-target="#editQuestionModal" onClick={() => handleEditQuestion(question)}>Edit</button></td>
                 <td className="py-2"><button className="btn btn-danger" onClick={() => handleDeleteQuestion(question._id)}>Delete</button></td>
                 {/* <td><ReactMarkdown rehypePlugins={[rehypeRaw]} remarkPlugins={[[remarkGfm,]]}>{question.description}</ReactMarkdown></td> */}
               </tr>
@@ -105,6 +130,9 @@ const QuestionTable: React.FC<QuestionTableProps> = () => {
           View Question
         </button>
       </div> */}
+      <EditQuestionModal
+         onEditQuestion={questionToEdit}
+         />
       <ViewQuestionModal 
         onViewQuestion={viewQuestion}
          />
