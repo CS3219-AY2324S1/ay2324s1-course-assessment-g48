@@ -33,23 +33,23 @@ questionRouter.get(
 );
 
 // Fetches individual question by title
-questionRouter.get(
-  "/:title",
-  (request: Request, response: Response, next: NextFunction) => {
-    logger.info(`Finding question with title ${request.params.title}`);
-    Question.find({ title: request.params.title })
-      .then((question) => {
-        if (question) {
-          response.json(question);
-        } else {
-          response.status(404).end();
-        }
-      })
-      .catch((err) => {
-        next(err);
-      });
-  }
-);
+// questionRouter.get(
+//   "/:title",
+//   (request: Request, response: Response, next: NextFunction) => {
+//     logger.info(`Finding question with title ${request.params.title}`);
+//     Question.find({ title: request.params.title })
+//       .then((question) => {
+//         if (question) {
+//           response.json(question);
+//         } else {
+//           response.status(404).end();
+//         }
+//       })
+//       .catch((err) => {
+//         next(err);
+//       });
+//   }
+// );
 
 // Deletes question from mongodb
 questionRouter.delete("/:id", async (request: Request, response: Response) => {

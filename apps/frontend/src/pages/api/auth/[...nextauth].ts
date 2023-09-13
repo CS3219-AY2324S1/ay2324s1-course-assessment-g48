@@ -2,6 +2,7 @@ import NextAuth from "next-auth";
 import CredentialProvider from "next-auth/providers/credentials";
 import { User } from "../../../database/user/entities/user.entity";
 import { mockUsers } from "@/database/user/mockUsers";
+import { login } from "@/database/user/userService";
 
 declare module "next-auth" {
   interface User {
@@ -36,12 +37,14 @@ export default NextAuth({
         },
       },
       authorize: async (credentials) => {
-        const users = mockUsers;
-        const user = users.find(
-          (user: User) =>
-            user.email === credentials?.email &&
-            user.password === credentials.password
-        );
+        // const users = mockUsers;
+        // const user = users.find(
+        //   (user: User) =>
+        //     user.email === credentials?.email &&
+        //     user.password === credentials.password
+        // );
+
+        const user = await login(credentials?.email, credentials?.password);
         if (user) {
           return {
             id: user.id,

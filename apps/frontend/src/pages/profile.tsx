@@ -18,6 +18,7 @@ export default function Signup() {
                 username={session?.user?.username}
                 email={session?.user?.email}
                 password={session?.user?.password}
+                id={session?.user?.id}
               />
             </div>
           </div>
