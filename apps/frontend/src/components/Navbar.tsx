@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { signOut } from "next-auth/react";
 import { Session } from "next-auth";
-import { UserManagement } from "./enums/UserManagement";
+import { UserManagement } from "../../enums/UserManagement";
 import Image from "next/image";
 import { useRef, useState } from "react";
 import { Overlay, Tooltip } from "react-bootstrap";

@@ -1,14 +1,14 @@
 import NextAuth from "next-auth";
 import CredentialProvider from "next-auth/providers/credentials";
-import { User } from "../../../components/User";
-import { mockUsers } from "../../../components/MockUsers";
+import { mockUsers } from "../../../utils/mock-users/MockUsers";
+import { User } from "@/database/user/entities/user.entity";
 
 declare module "next-auth" {
   interface User {
-    id: number;
+    id?: number;
     username: string;
     email: string;
-    password: string;
+    password?: string;
   }
 }
 

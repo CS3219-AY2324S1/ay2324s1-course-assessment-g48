@@ -2,10 +2,8 @@ import { signIn, signOut } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import router from "next/router";
 import React, { useState } from "react";
-import { UserManagement } from "../enums/UserManagement";
+import { UserManagement } from "../../../enums/UserManagement";
 import FormInput from "./FormInput";
-import { mockUsers } from "../MockUsers";
-import { User } from "../User";
 
 interface UserFormProps {
   formType: string;
@@ -64,16 +62,7 @@ const UserForm: React.FC<UserFormProps> = ({
   const handleSignUp = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     try {
-      const newId =
-        Math.max(...mockUsers.map((question: User) => question.id), -1) + 1;
-      const newUser = {
-        id: newId,
-        username: newUsername,
-        email: newEmail,
-        password: newPassword,
-      };
-
-      mockUsers.push(newUser); // not sure how to persist mockUsers
+      // TODO: add user to database here
 
       // nextauth uses default mockUsers without new user, thats why this fails
       const result = await signIn("credentials", {
@@ -96,6 +85,9 @@ const UserForm: React.FC<UserFormProps> = ({
 
   const handleProfileUpdate = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
+    
+    //TODO: update user in database here
+
     try {
       const result = await signIn("credentials", {
         redirect: false,
@@ -117,6 +109,7 @@ const UserForm: React.FC<UserFormProps> = ({
   const handleProfileDelete = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     signOut();
+    // TODO: Delete user from database here
   };
 
   return (
@@ -155,7 +148,10 @@ const UserForm: React.FC<UserFormProps> = ({
           {formType === UserManagement.Profile ? "Save Changes" : formType}
         </button>
         {formType === UserManagement.Profile && (
-          <button className="btn btn-danger py-1 px-2 cursor-pointer rounded mt-3" onClick={handleProfileDelete}>
+          <button
+            className="btn btn-danger py-1 px-2 cursor-pointer rounded mt-3"
+            onClick={handleProfileDelete}
+          >
             Delete Profile
           </button>
         )}

@@ -1,6 +1,6 @@
 import React from "react";
-import { Complexity } from "../enums/Complexity";
-import { Category } from "../enums/Category";
+import { Complexity } from "../../../enums/Complexity";
+import { Category } from "../../../enums/Category";
 import useInput from "../../hook/useInput";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
