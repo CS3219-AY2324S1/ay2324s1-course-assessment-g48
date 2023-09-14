@@ -15,6 +15,8 @@ function useQuestion() {
     getAllQuestions().then((questions) => {
       setQuestions(questions);
       setIsLoading(false);
+    }).catch((error) => {
+    console.error(error);
     });
   }, [trigger]);
   return { questions, setQuestions, isLoading, handleTrigger };
