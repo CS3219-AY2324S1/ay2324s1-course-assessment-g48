@@ -10,8 +10,11 @@ COPY . .
 # Install all dependencies in the package.json
 RUN yarn install
 
+RUN npx prisma generate
+
 # Informs Docker that the container listens on the specified network ports at runtime.
 EXPOSE 8000
+EXPOSE 5432
 
 # Provides defaults for an executing container
 CMD ["yarn", "start"]

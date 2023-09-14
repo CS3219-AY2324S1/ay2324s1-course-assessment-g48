@@ -31,6 +31,20 @@ To run the backend container
 docker run -p 8000:8000 peerprep-backend
 ```
 
+PSQL
+```
+# Pull the PostgreSQL Docker Image
+docker pull postgres
+
+# Create a Docker Container
+docker run --name peerprep-postgres -e POSTGRES_PASSWORD=AxFteAdXM2a4Aa -d postgres
+
+# Accessing PostgreSQL
+docker exec -it peerprep-postgres psql -U postgres
+
+
+```
+
 ### Common commands
 ```
 # Check running containers
@@ -48,3 +62,8 @@ docker images
 # Remove an image
 docker rmi <IMAGE ID>
 ```
+
+### Useful References
+[Dockerise FE BE](https://patrickdesjardins.com/blog/docker-nodejs-frontend-backend)
+[Dockerise FE BE](https://milanwittpohl.com/projects/tutorials/Full-Stack-Web-App/dockerizing-our-front-and-backend)
+[PSQL Docker](https://www.docker.com/blog/how-to-use-the-postgres-docker-official-image/)

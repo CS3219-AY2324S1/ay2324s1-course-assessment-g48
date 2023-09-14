@@ -1,8 +1,20 @@
 version: '3'
 
 services:
+  postgres:
+    image: postgres
+    container_name: peerprep-postgres
+    restart: always
+    env_file:
+      - ./apps/backend/.env
+    ports:
+      - "5432:5432"                    # Map postgres container's port 5432 to host's port 5432
+    # volumes:
+    #   - /path/to/local/data:/var/lib/postgresql/data
+
   peerprep-frontend:
     container_name: peerprep-frontend     # Name of the container
+    restart: always
     build:
       context: ./apps/frontend            # Build context is the path to the frontend directory
       dockerfile: Dockerfile.frontend     # Path to the Dockerfile for the frontend
@@ -15,6 +27,7 @@ services:
 
   peerprep-backend:
     container_name: peerprep-backend      # Name of the container
+    restart: always
     build:
       context: ./apps/backend             # Build context is the path to the backend directory
       dockerfile: Dockerfile.backend      # Path to the Dockerfile for the backend
@@ -22,3 +35,5 @@ services:
       - "8000:8000"                       # Map backend container's port 8000 to host's port 8000
     volumes:
       - ./apps/backend:/app               # Mount the backend directory as a volume
+    environment:
+      - ./apps/backend/.env
