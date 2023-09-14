@@ -4,14 +4,21 @@ import router from "next/router";
 import React, { useState } from "react";
 import { UserManagement } from "../../utils/enums/UserManagement";
 import FormInput from "./FormInput";
-import { User } from "@/database/user/entities/user.entity";
+import { UpdateUserDto, User } from "@/database/user/entities/user.entity";
 import { mockUsers } from "@/database/user/mockUsers";
+import {
+  createNewUser,
+  deleteUserById,
+  updateUserById,
+} from "@/database/user/userService";
+import { AxiosResponse } from "axios";
 
 interface UserFormProps {
   formType: string;
   username?: string;
   email?: string;
   password?: string;
+  id?: number;
 }
 
 const UserForm: React.FC<UserFormProps> = ({
@@ -19,11 +26,13 @@ const UserForm: React.FC<UserFormProps> = ({
   username,
   email,
   password,
+  id,
 }) => {
   const [newUsername, setUsername] = useState(username ?? "");
   const [newEmail, setEmail] = useState(email ?? "");
   const [newPassword, setPassword] = useState(password ?? "");
   const [errorMessage, setErrorMessage] = useState("");
+  const [newId, setNewId] = useState(id ?? -1);
 
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") ?? "/";
@@ -64,16 +73,17 @@ const UserForm: React.FC<UserFormProps> = ({
   const handleSignUp = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     try {
-      const newId =
-        Math.max(...mockUsers.map((question: User) => question.id), -1) + 1;
-      const newUser = {
-        id: newId,
+      const newUser: Omit<User, "id"> = {
         username: newUsername,
         email: newEmail,
         password: newPassword,
       };
 
-      mockUsers.push(newUser); // not sure how to persist mockUsers
+      const response = await createNewUser(newUser);
+      if (response.error) {
+        setErrorMessage(response.error);
+        return;
+      }
 
       // nextauth uses default mockUsers without new user, thats why this fails
       const result = await signIn("credentials", {
@@ -84,7 +94,7 @@ const UserForm: React.FC<UserFormProps> = ({
       });
 
       if (result?.error) {
-        setErrorMessage(result.error);
+        setErrorMessage("That email or username has already been taken.");
       } else {
         router.push("/");
       }
@@ -97,6 +107,19 @@ const UserForm: React.FC<UserFormProps> = ({
   const handleProfileUpdate = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     try {
+      const newUser: UpdateUserDto = {
+        id: newId,
+        username: newUsername,
+        email: newEmail,
+        password: newPassword,
+      };
+
+      const response = await updateUserById(id, newUser);
+      if (response.error) {
+        setErrorMessage(response.error);
+        return;
+      }
+
       const result = await signIn("credentials", {
         redirect: false,
         email: newEmail,
@@ -104,8 +127,7 @@ const UserForm: React.FC<UserFormProps> = ({
         callbackUrl,
       });
       if (result?.error) {
-        console.log(result.error);
-        setErrorMessage("Invalid email or password.");
+        setErrorMessage("Invalid email or username.");
       } else {
         router.push("/");
       }
@@ -116,6 +138,11 @@ const UserForm: React.FC<UserFormProps> = ({
 
   const handleProfileDelete = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
+    const response = await deleteUserById(Number(id));
+    if (response.error) {
+      setErrorMessage(response.error);
+      return;
+    }
     signOut();
   };
 
