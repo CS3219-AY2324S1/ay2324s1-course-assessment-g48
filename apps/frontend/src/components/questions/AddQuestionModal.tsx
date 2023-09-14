@@ -1,6 +1,6 @@
-import React from "react";
-import { Complexity } from "../enums/Complexity";
-import { Category } from "../enums/Category";
+import React, { useState } from "react";
+import { Complexity } from "../../utils/enums/Complexity";
+import { Category } from "../../utils/enums/Category";
 import useInput from "../../hook/useInput";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -9,10 +9,14 @@ import { Question } from "../../database/question/entities/question.entity";
 import styles from "/styles/modal.module.css";
 
 type AddQuestionModalProps = {
-  onSave: (newQuestion: Question) => void;
+  onSave: (newQuestion: Question) => Promise<boolean>;
+  errorMessage: string | undefined;
 };
 
-const AddQuestionModal: React.FC<AddQuestionModalProps> = ({ onSave }) => {
+const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
+  onSave,
+  errorMessage,
+}) => {
   const [newQuestion, setNewQuestion] = React.useState<Question>({
     _id: "",
     title: "",
@@ -20,6 +24,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({ onSave }) => {
     categories: [],
     complexity: "",
   });
+
   const { questions } = useQuestion();
   const {
     value,
@@ -33,17 +38,22 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({ onSave }) => {
       s.trim().length > 0 &&
       questions.filter((question: Question) => question.title == s).length != 1
   );
-  const handleAddQuestion = () => {
-    onSave(newQuestion);
-    setNewQuestion({
-      _id: "",
-      title: "",
-      description: "",
-      categories: [],
-      complexity: "",
-    });
-    reset();
+  const handleAddQuestion = async () => {
+    if (await onSave(newQuestion)) {
+      console.log("HIII");
+      setNewQuestion({
+        _id: "",
+        title: "",
+        description: "",
+        categories: [],
+        complexity: "",
+      });
+      reset();
+    }
   };
+
+  const [isShowModal, setIsShowModal] = useState<boolean>(false);
+
   return (
     <>
       <div className="text-center">
@@ -55,9 +65,8 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({ onSave }) => {
           Add Question
         </button>
       </div>
-
       <div
-        className="modal modal-xl fade"
+        className={`modal modal-xl fad`}
         id="addQuestionModal"
         tabIndex={-1}
         aria-labelledby="addQuestionLabel"
@@ -206,13 +215,19 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({ onSave }) => {
                   </select>
                 </div>
               </form>
+              {errorMessage ? (
+                <label className="error-message" style={{ color: "red" }}>
+                  {errorMessage}
+                </label>
+              ) : (
+                <></>
+              )}
             </div>
             <div className="modal-footer">
               <button
                 type="button"
                 disabled={!valueIsValid}
                 className="btn btn-warning"
-                data-bs-dismiss="modal"
                 onClick={handleAddQuestion}
               >
                 Add

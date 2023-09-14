@@ -1,5 +1,5 @@
 import UserForm from "../components/forms/UserForm";
-import { UserManagement } from "../components/enums/UserManagement";
+import { UserManagement } from "../utils/enums/UserManagement";
 import { useSession } from "next-auth/react";
 
 export default function Signup() {

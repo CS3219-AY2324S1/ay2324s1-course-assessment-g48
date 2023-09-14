@@ -2,10 +2,10 @@ import { signIn, signOut } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import router from "next/router";
 import React, { useState } from "react";
-import { UserManagement } from "../enums/UserManagement";
+import { UserManagement } from "../../utils/enums/UserManagement";
 import FormInput from "./FormInput";
-import { mockUsers } from "../MockUsers";
-import { User } from "../User";
+import { User } from "@/database/user/entities/user.entity";
+import { mockUsers } from "@/database/user/mockUsers";
 
 interface UserFormProps {
   formType: string;
@@ -155,7 +155,10 @@ const UserForm: React.FC<UserFormProps> = ({
           {formType === UserManagement.Profile ? "Save Changes" : formType}
         </button>
         {formType === UserManagement.Profile && (
-          <button className="btn btn-danger py-1 px-2 cursor-pointer rounded mt-3" onClick={handleProfileDelete}>
+          <button
+            className="btn btn-danger py-1 px-2 cursor-pointer rounded mt-3"
+            onClick={handleProfileDelete}
+          >
             Delete Profile
           </button>
         )}

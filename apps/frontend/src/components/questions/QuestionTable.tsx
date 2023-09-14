@@ -21,12 +21,20 @@ const QuestionTable: FC<QuestionTableProps> = () => {
     complexity: "",
   });
 
+  const [error, setError] = useState<string>("");
+
   const handleSaveQuestion = async (newQuestion: Question) => {
     const questionToAdd = { ...newQuestion };
-
-    const question = await postNewQuestion(questionToAdd);
-    questionToAdd._id = question._id;
-    setQuestions((questions) => [...questions, questionToAdd]);
+    try {
+      const question = await postNewQuestion(questionToAdd);
+      questionToAdd._id = question._id;
+      setQuestions((questions) => [...questions, questionToAdd]);
+      return true;
+    } catch (e) {
+      setError(error);
+    } finally {
+      return false;
+    }
   };
 
   const handleDeleteQuestion = (id: string) => {
@@ -112,7 +120,7 @@ const QuestionTable: FC<QuestionTableProps> = () => {
           </table>
         )}
       </div>
-      <AddQuestionModal onSave={handleSaveQuestion} />
+      <AddQuestionModal onSave={handleSaveQuestion} errorMessage={error} />
 
       <ViewQuestionModal onViewQuestion={viewQuestion} />
     </>
