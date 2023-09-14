@@ -3,6 +3,7 @@ import { UserManagement } from "../utils/enums/UserManagement";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import { signIn } from "next-auth/react";
+import OAuthButton from "@/components/forms/OAuthButton";
 
 export default function Signin() {
   const router = useRouter();
@@ -33,17 +34,8 @@ export default function Signin() {
                   {UserManagement.SignUp}
                 </button>
               </div>
-              <div className="d-flex flex-column mt-3">
-                <button className="btn btn-light flex align-items-center" onClick={handleGoogleSignIn}>
-                  <Image
-                    src="/google.svg"
-                    alt="google"
-                    height={25}
-                    width={35}
-                  />
-                  Sign in with Google
-                </button>
-              </div>
+              <OAuthButton provider="google"></OAuthButton>
+              <OAuthButton provider="github"></OAuthButton>
             </div>
           </div>
         </div>
