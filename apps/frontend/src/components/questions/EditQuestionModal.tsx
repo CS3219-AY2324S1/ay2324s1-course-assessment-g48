@@ -4,19 +4,33 @@ import remarkGfm from "remark-gfm";
 import { Question } from "../../../type/Question";
 import { Complexity } from "@/utils/enums/Complexity";
 import { Category } from "@/utils/enums/Category";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type EditQuestionModalProps = {
     onEditQuestion: {_id: string, title: string, description: string, categories: string[], complexity: string}
-    onUpdate: (newQuestion: Question) => void;
+    onUpdate: (newQuestion: Question) => Promise<void>
 };
 
 const EditQuestionModal: React.FC<EditQuestionModalProps>  = ({
   onEditQuestion, onUpdate
 }) => {
   const [newQuestion, setNewQuestion] = useState<Question>(onEditQuestion);
-  const handleEditQuestion = () => {
-    onUpdate(newQuestion)
+  const [error, setError] = useState<string>("");
+  const closeModalRef = useRef<HTMLButtonElement | null>(null);
+  const closeModal = () => {
+    if (closeModalRef.current) {
+      closeModalRef.current.click();
+    }
+  };
+  const handleEditQuestion = async () => {
+    await onUpdate(newQuestion)
+    .then(() => {
+      setError("")
+      closeModal()
+    })
+    .catch(e => {
+      setError(e)
+    })
   };
 
   useEffect(() => {
@@ -42,6 +56,7 @@ const EditQuestionModal: React.FC<EditQuestionModalProps>  = ({
                 type="button"
                 className="btn-close"
                 data-bs-dismiss="modal"
+                ref={closeModalRef}
                 aria-label="Close"
               ></button>
             </div>
@@ -93,7 +108,7 @@ const EditQuestionModal: React.FC<EditQuestionModalProps>  = ({
                         name="complexity"
                         id={`complexity${complexityOption}`}
                         value={complexityOption}
-                        defaultChecked = {newQuestion.complexity === complexityOption}
+                        checked = {newQuestion.complexity == complexityOption}
                         onChange={() =>
                           setNewQuestion({
                             ...newQuestion,
@@ -118,7 +133,7 @@ const EditQuestionModal: React.FC<EditQuestionModalProps>  = ({
                     className="form-select"
                     multiple
                     id="categories"
-                    value={onEditQuestion.categories}
+                    value={newQuestion.categories}
                     onChange={(e) =>
                       setNewQuestion({
                         ...newQuestion,
@@ -137,12 +152,18 @@ const EditQuestionModal: React.FC<EditQuestionModalProps>  = ({
                   </select>
                 </div>
               </form>
+              {error ? (
+                <label className="error-message" style={{ color: "red" }}>
+                  {error}
+                </label>
+              ) : (
+                <></>
+              )}
             </div>
             <div className="modal-footer">
               <button
                 type="button"
                 className="btn btn-warning"
-                data-bs-dismiss="modal"
                 onClick={handleEditQuestion}
               >
                 Add

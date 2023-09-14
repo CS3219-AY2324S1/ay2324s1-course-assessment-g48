@@ -14,7 +14,7 @@ import EditQuestionModal from "./EditQuestionModal";
 type QuestionTableProps = {};
 
 const QuestionTable: FC<QuestionTableProps> = () => {
-  const { questions, setQuestions, isLoading } = useQuestion();
+  const { questions, setQuestions, isLoading, handleTrigger } = useQuestion();
   const [viewQuestion, setViewQuestion] = useState<Question>({
     _id: "",
     title: "",
@@ -32,38 +32,32 @@ const QuestionTable: FC<QuestionTableProps> = () => {
 
   const handleSaveQuestion = async (newQuestion: Question) => {
     const questionToAdd = { ...newQuestion };
-    let result: boolean = false;
     await postNewQuestion(questionToAdd).then((response) => {
         questionToAdd._id = response._id;
         setQuestions((questions) => [...questions, questionToAdd]);
-        result = true
       })
       .catch(e => {
         throw new String(e)
       });
-      return result
   };
 
-  const handleDeleteQuestion = (id: string) => {
-    deleteQuestionById(id).then(() => {
-      const updatedQuestions = questions.filter(
-        (question: Question) => question._id !== id
-      );
-      setQuestions(updatedQuestions);
+  const handleDeleteQuestion = async (id: string) => {
+    await deleteQuestionById(id)
+    .then(() => {
+      handleTrigger()
+    })
+    .catch(e => {
+      console.log(e)
     });
   };
 
-  const handleEditQuestion = (editQuestion: Question) => {
-    setQuestionToEdit(editQuestion)
-    let index = questions.findIndex((question) => question._id == editQuestion._id )
-    console.log(index)
-    updateQuestionById(editQuestion._id, questions[index]).then(()=> {
-      questions[index].title = editQuestion.title
-      questions[index].description = editQuestion.description
-      questions[index].categories = editQuestion.categories
-      questions[index].complexity = editQuestion.complexity
+  const handleEditQuestion = async (editQuestion: Question) => {
+    await updateQuestionById(editQuestion._id, editQuestion).then(()=> {
+      handleTrigger()
     }
-    )
+    ).catch(e => {
+      throw new String(e)
+    })
   }
 
   const handleViewQuestion = (question: Question) => {
@@ -130,7 +124,7 @@ const QuestionTable: FC<QuestionTableProps> = () => {
                     </button>
                   </td>
                   <td className="py-2"><button className="btn btn-warning" data-bs-toggle="modal"
-                    data-bs-target="#editQuestionModal" onClick={() => handleEditQuestion(question)}>Edit</button></td>
+                    data-bs-target="#editQuestionModal" onClick={() =>setQuestionToEdit(question)}>Edit</button></td>
                   <td className="py-2">
                     <button
                       className="btn btn-danger"

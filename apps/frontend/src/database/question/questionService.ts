@@ -37,8 +37,16 @@ export const getQuestionById = async (id: string) => {
     return response.data;
   })
   .catch((error) => {
-    console.error(error);
-    throw new String(error.response.data.error)
+    if (error.response) {
+      // The request was made, but the server responded with a status code
+      throw new String(error.response.data.error);
+    } else if (error.request) {
+      // The request was made, but no response was received
+      throw new String('No response received, please try again later');
+    } else {
+      // Something happened in setting up the request that triggered an error
+      throw new String(error.message);
+    }
   });
 };
 
@@ -48,8 +56,16 @@ export const deleteQuestionById = async (id: string) => {
     return response.data;
   })
   .catch((error) => {
-    console.error(error);
-    throw new String(error.response.data.error)
+    if (error.response) {
+      // The request was made, but the server responded with a status code
+      throw new String(error.response.data.error);
+    } else if (error.request) {
+      // The request was made, but no response was received
+      throw new String('No response received, please try again later');
+    } else {
+      // Something happened in setting up the request that triggered an error
+      throw new String(error.message);
+    }
   });
 };
 
@@ -67,7 +83,15 @@ export const updateQuestionById = async (
     return response.data;
   })
   .catch((error) => {
-    console.error(error);
-    throw new String(error.response.data.error)
+    if (error.response) {
+      // The request was made, but the server responded with a status code
+      throw new String(error.response.data.error);
+    } else if (error.request) {
+      // The request was made, but no response was received
+      throw new String('No response received, please try again later');
+    } else {
+      // Something happened in setting up the request that triggered an error
+      throw new String(error.message);
+    }
   });
 };

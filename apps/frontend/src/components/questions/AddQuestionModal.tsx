@@ -9,7 +9,7 @@ import { Question } from "../../database/question/entities/question.entity";
 import styles from "/styles/modal.module.css";
 
 type AddQuestionModalProps = {
-  onSave: (newQuestion: Question) => Promise<boolean>;
+  onSave: (newQuestion: Question) => Promise<void>;
 };
 
 const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
