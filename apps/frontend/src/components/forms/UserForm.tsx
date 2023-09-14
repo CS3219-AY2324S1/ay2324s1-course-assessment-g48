@@ -5,13 +5,11 @@ import React, { useState } from "react";
 import { UserManagement } from "../../utils/enums/UserManagement";
 import FormInput from "./FormInput";
 import { UpdateUserDto, User } from "@/database/user/entities/user.entity";
-import { mockUsers } from "@/database/user/mockUsers";
 import {
   createNewUser,
   deleteUserById,
   updateUserById,
 } from "@/database/user/userService";
-import { AxiosResponse } from "axios";
 
 interface UserFormProps {
   formType: string;

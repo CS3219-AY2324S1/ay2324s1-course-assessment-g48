@@ -1,6 +1,5 @@
 import axios from "axios";
 import { CreateUserDto, UpdateUserDto, User } from "./entities/user.entity";
-import { error } from "console";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL + "/api/users";
 

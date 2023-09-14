@@ -1,12 +1,17 @@
 import UserForm from "../components/forms/UserForm";
 import { UserManagement } from "../utils/enums/UserManagement";
 import { useRouter } from "next/router";
+import Image from "next/image";
+import { signIn } from "next-auth/react";
 
 export default function Signin() {
   const router = useRouter();
   const handleSignUpRedirect = () => {
     router.push("/signup");
   };
+  const handleGoogleSignIn = async () => {
+    signIn("google", { callbackUrl: "/" });
+  }
   return (
     <div className="container mt-5">
       <div className="row justify-content-center">
@@ -26,6 +31,17 @@ export default function Signin() {
                   onClick={handleSignUpRedirect}
                 >
                   {UserManagement.SignUp}
+                </button>
+              </div>
+              <div className="d-flex flex-column mt-3">
+                <button className="btn btn-light flex align-items-center" onClick={handleGoogleSignIn}>
+                  <Image
+                    src="/google.svg"
+                    alt="google"
+                    height={25}
+                    width={35}
+                  />
+                  Sign in with Google
                 </button>
               </div>
             </div>
