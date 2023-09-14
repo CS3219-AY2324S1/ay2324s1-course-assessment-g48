@@ -1,32 +1,32 @@
-import { Question } from "./Question";
-import { Categories } from "./enums/Categories";
-import { Complexity } from "./enums/Complexity";
+import { Category } from "../../components/enums/Category";
+import { Complexity } from "../../components/enums/Complexity";
+import { Question } from "../../database/question/entities/question.entity";
 
 export const mockQuestions: Question[] = [
   {
-    id: "",
+    _id: "",
     title: "Reverse a String",
     description: `
-Write a function that reverses a string. The input string is given as an array of characters \`s\`.
+Write a function that reverses a string. The input string is given as an array of characters \`s\`.  
 You must do this by modifying the input array in-place with \`O(1)\` extra memory.
 
-Example 1:
-Input: \`s = ["h","e","l","l","o"]\`
-Output: \`["o","l","l","e","h"]\`
+Example 1:  
+Input: \`s = ["h","e","l","l","o"]\`  
+Output: \`["o","l","l","e","h"]\`  
 
-Example 2:
-Input: \`s = ["H","a","n","n","a","h"]\`
-Output: \`["h","a","n","n","a","H"]\`
+Example 2:  
+Input: \`s = ["H","a","n","n","a","h"]\`  
+Output: \`["h","a","n","n","a","H"]\`  
 
 Constraints:
 - \`1 <= s.length <= 105\`
 - \`s[i]\` is a printable ASCII character.
       `,
-    categories: [Categories.Strings, Categories.Algorithms],
+    categories: [Category.Strings, Category.Algorithms],
     complexity: Complexity.Easy,
   },
   {
-    id: "",
+    _id: "",
     title: "Linked List Cycle Detection",
     description: `
 Given \`head\`, the head of a linked list, determine if the linked list has a cycle in it.  
@@ -59,7 +59,7 @@ Constraints:
 - \`pos\` is -1 or a valid index in the linked-list.
 
 Follow up: Can you solve it using \`O(1)\` (i.e. constant) memory?`,
-    categories: [Categories.DataStructures, Categories.Algorithms],
+    categories: [Category.DataStructures, Category.Algorithms],
     complexity: Complexity.Easy,
   },
 ];

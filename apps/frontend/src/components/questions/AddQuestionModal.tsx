@@ -1,33 +1,48 @@
 import React from "react";
-import { Question } from "./Question";
-import { Complexity } from "./enums/Complexity";
-import { Categories } from "./enums/Categories";
+import { Complexity } from "../enums/Complexity";
+import { Category } from "../enums/Category";
+import useInput from "../../hook/useInput";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import useQuestion from "../../hook/useQuestion";
+import { Question } from "../../database/question/entities/question.entity";
+import styles from "/styles/modal.module.css";
 
 type AddQuestionModalProps = {
   onSave: (newQuestion: Question) => void;
 };
 
-const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
-  onSave,
-}) => {
-  
+const AddQuestionModal: React.FC<AddQuestionModalProps> = ({ onSave }) => {
   const [newQuestion, setNewQuestion] = React.useState<Question>({
-    id: "",
+    _id: "",
     title: "",
     description: "",
     categories: [],
-    complexity: ""
+    complexity: "",
   });
-
+  const { questions } = useQuestion();
+  const {
+    value,
+    valueIsValid,
+    hasError,
+    valueChangeHandler,
+    inputBlurHandler,
+    reset,
+  } = useInput(
+    (s: string) =>
+      s.trim().length > 0 &&
+      questions.filter((question: Question) => question.title == s).length != 1
+  );
   const handleAddQuestion = () => {
     onSave(newQuestion);
     setNewQuestion({
-      id: "",
+      _id: "",
       title: "",
       description: "",
       categories: [],
-      complexity: ""
+      complexity: "",
     });
+    reset();
   };
   return (
     <>
@@ -42,7 +57,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
       </div>
 
       <div
-        className="modal fade"
+        className="modal modal-xl fade"
         id="addQuestionModal"
         tabIndex={-1}
         aria-labelledby="addQuestionLabel"
@@ -60,6 +75,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                 className="btn-close"
                 data-bs-dismiss="modal"
                 aria-label="Close"
+                onClick={reset}
               ></button>
             </div>
 
@@ -71,13 +87,37 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                   </label>
                   <input
                     type="text"
-                    className="form-control"
+                    className={`form-control ${hasError ? "invalid" : ""}`}
                     id="title"
-                    value={newQuestion.title}
-                    onChange={(e) =>
-                      setNewQuestion({ ...newQuestion, title: e.target.value })
-                    }
+                    onKeyDown={(
+                      event: React.KeyboardEvent<HTMLInputElement>
+                    ) => {
+                      if (event.keyCode === 13) {
+                        event.preventDefault(); // Prevent form submission on Enter key press
+                      }
+                    }}
+                    value={value}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      valueChangeHandler(event);
+                      setNewQuestion({
+                        ...newQuestion,
+                        title: event.target.value,
+                      });
+                    }}
+                    onBlur={inputBlurHandler}
                   />
+                  {hasError && value.trim().length <= 0 ? (
+                    <label className="error-message" style={{ color: "red" }}>
+                      Input cannot be empty.
+                    </label>
+                  ) : hasError &&
+                    questions.filter(
+                      (question: Question) => question.title == value
+                    ).length == 1 ? (
+                    <label className="error-message" style={{ color: "red" }}>
+                      Question already exists.
+                    </label>
+                  ) : null}
                 </div>
                 <div className="mb-3">
                   <label
@@ -88,7 +128,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                   </label>
                   {/* change to markdown later*/}
                   <textarea
-                    className="form-control"
+                    className={`form-control ${styles["custom-description"]}`}
                     id="description"
                     value={newQuestion.description}
                     onChange={(e) =>
@@ -98,6 +138,15 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                       })
                     }
                   ></textarea>
+                </div>
+                <div className="mb-3">
+                  <label className="form-label text-white">Preview:</label>
+                  <ReactMarkdown
+                    className="form-text text-white markdown-content"
+                    remarkPlugins={[remarkGfm]}
+                  >
+                    {newQuestion.description}
+                  </ReactMarkdown>
                 </div>
                 <div className="mb-3">
                   <label className="form-label text-white">Complexity:</label>
@@ -149,7 +198,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                       })
                     }
                   >
-                    {Object.values(Categories).map((category) => (
+                    {Object.values(Category).map((category) => (
                       <option key={category} value={category}>
                         {category}
                       </option>
@@ -161,6 +210,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
             <div className="modal-footer">
               <button
                 type="button"
+                disabled={!valueIsValid}
                 className="btn btn-warning"
                 data-bs-dismiss="modal"
                 onClick={handleAddQuestion}
@@ -171,6 +221,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                 type="button"
                 className="btn btn-danger"
                 data-bs-dismiss="modal"
+                onClick={reset}
               >
                 Cancel
               </button>
