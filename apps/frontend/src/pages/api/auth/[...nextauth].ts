@@ -55,22 +55,22 @@ export default NextAuth({
       },
     }),
   ],
-  // callbacks: {
-  //   async jwt({ token, user }) {
-  //     if (user) {
-  //       token.id = user.id;
-  //       token.user = user;
-  //     }
-  //     return token;
-  //   },
-  //   async session({ session, token }) {
-  //     if (token) {
-  //       session.id = token.id as number;
-  //       session.user = token.user as User;
-  //     }
-  //     return session;
-  //   },
-  // },
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+        token.user = user;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (token) {
+        session.id = token.id as number;
+        session.user = token.user as User;
+      }
+      return session;
+    },
+  },
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
     signIn: "/signin",
