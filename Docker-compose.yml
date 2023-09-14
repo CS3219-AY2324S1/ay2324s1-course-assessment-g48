@@ -8,9 +8,9 @@ services:
     env_file:
       - ./apps/backend/.env
     ports:
-      - "5432:5432"                    # Map postgres container's port 5432 to host's port 5432
+      - "5432:5432"                       # Map postgres container's port 5432 to host's port 5432
     # volumes:
-    #   - /path/to/local/data:/var/lib/postgresql/data
+    #   - postgres:/var/lib/postgresql/data
 
   peerprep-frontend:
     container_name: peerprep-frontend     # Name of the container
@@ -37,3 +37,5 @@ services:
       - ./apps/backend:/app               # Mount the backend directory as a volume
     environment:
       - ./apps/backend/.env
+    depends_on:
+      - postgres                 
