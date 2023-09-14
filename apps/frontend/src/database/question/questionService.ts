@@ -21,30 +21,53 @@ export const postNewQuestion = async (newQuestion: Question) => {
 };
 
 export const getAllQuestions = async () => {
-  const response = await axios.get(BASE_URL);
-  return response.data;
+  return await axios.get(BASE_URL)
+  .then((response) => {
+    return response.data;
+  })
+  .catch((error) => {
+    console.error(error);
+    throw new String(error.response.data.error)
+  });
 };
 
 export const getQuestionById = async (id: string) => {
-  const response = await axios.get(BASE_URL + "/" + id);
-  return response.data;
+  return await axios.get(BASE_URL + "/" + id)
+  .then((response) => {
+    return response.data;
+  })
+  .catch((error) => {
+    console.error(error);
+    throw new String(error.response.data.error)
+  });
 };
 
 export const deleteQuestionById = async (id: string) => {
-  const response = await axios.delete(BASE_URL + "/" + id);
-  console.log(response);
-  return response.data;
+  return await axios.delete(BASE_URL + "/" + id)
+  .then((response) => {
+    return response.data;
+  })
+  .catch((error) => {
+    console.error(error);
+    throw new String(error.response.data.error)
+  });
 };
 
 export const updateQuestionById = async (
   id: string,
   updatedQuestion: Partial<Question>
 ) => {
-  const response = await axios.put(BASE_URL + "/" + id, {
+  return await axios.put(BASE_URL + "/" + id, {
     title: updatedQuestion.title,
     description: updatedQuestion.description,
     categories: updatedQuestion.categories,
     complexity: updatedQuestion.complexity,
+  })
+  .then((response) => {
+    return response.data;
+  })
+  .catch((error) => {
+    console.error(error);
+    throw new String(error.response.data.error)
   });
-  return response.data;
 };

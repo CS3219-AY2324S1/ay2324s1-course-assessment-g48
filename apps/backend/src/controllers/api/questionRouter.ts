@@ -1,5 +1,5 @@
 import { Router, NextFunction, Request, Response } from "express";
-import Question from "../../models/question";
+import Question from "../../models/Question";
 import logger from "../../utils/logger";
 
 export const questionRouter = Router();

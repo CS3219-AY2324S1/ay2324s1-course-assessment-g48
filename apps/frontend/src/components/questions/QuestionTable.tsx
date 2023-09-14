@@ -4,10 +4,12 @@ import ViewQuestionModal from "./ViewQuestionModal";
 import {
   deleteQuestionById,
   postNewQuestion,
+  updateQuestionById,
 } from "@/database/question/questionService";
 import { Question } from "../../database/question/entities/question.entity";
 import useQuestion from "@/hook/useQuestion";
 import AddQuestionModal from "./AddQuestionModal";
+import EditQuestionModal from "./EditQuestionModal";
 
 type QuestionTableProps = {};
 
@@ -20,6 +22,13 @@ const QuestionTable: FC<QuestionTableProps> = () => {
     categories: [],
     complexity: "",
   });
+  const [questionToEdit, setQuestionToEdit] = useState<Question>({
+    _id: "",
+    title: "",
+    description: "",
+    categories: [],
+    complexity: "",
+  })
 
   const handleSaveQuestion = async (newQuestion: Question) => {
     const questionToAdd = { ...newQuestion };
@@ -43,6 +52,19 @@ const QuestionTable: FC<QuestionTableProps> = () => {
       setQuestions(updatedQuestions);
     });
   };
+
+  const handleEditQuestion = (editQuestion: Question) => {
+    setQuestionToEdit(editQuestion)
+    let index = questions.findIndex((question) => question._id == editQuestion._id )
+    console.log(index)
+    updateQuestionById(editQuestion._id, questions[index]).then(()=> {
+      questions[index].title = editQuestion.title
+      questions[index].description = editQuestion.description
+      questions[index].categories = editQuestion.categories
+      questions[index].complexity = editQuestion.complexity
+    }
+    )
+  }
 
   const handleViewQuestion = (question: Question) => {
     setViewQuestion(question);
@@ -75,6 +97,9 @@ const QuestionTable: FC<QuestionTableProps> = () => {
                   View
                 </th>
                 <th scope="col" className="py-3 col-1">
+                Edit
+              </th>
+                <th scope="col" className="py-3 col-1">
                   Delete
                 </th>
               </tr>
@@ -104,6 +129,8 @@ const QuestionTable: FC<QuestionTableProps> = () => {
                       View
                     </button>
                   </td>
+                  <td className="py-2"><button className="btn btn-warning" data-bs-toggle="modal"
+                    data-bs-target="#editQuestionModal" onClick={() => handleEditQuestion(question)}>Edit</button></td>
                   <td className="py-2">
                     <button
                       className="btn btn-danger"
@@ -119,7 +146,7 @@ const QuestionTable: FC<QuestionTableProps> = () => {
         )}
       </div>
       <AddQuestionModal onSave={handleSaveQuestion} />
-
+      <EditQuestionModal onEditQuestion={questionToEdit} onUpdate={handleEditQuestion} />
       <ViewQuestionModal onViewQuestion={viewQuestion} />
     </>
   );
