@@ -40,7 +40,6 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
   );
   const handleAddQuestion = async () => {
     if (await onSave(newQuestion)) {
-      console.log("HIII");
       setNewQuestion({
         _id: "",
         title: "",
