@@ -28,37 +28,39 @@ const QuestionTable: FC<QuestionTableProps> = () => {
     description: "",
     categories: [],
     complexity: "",
-  })
+  });
 
   const handleSaveQuestion = async (newQuestion: Question) => {
     const questionToAdd = { ...newQuestion };
-    await postNewQuestion(questionToAdd).then((response) => {
+    await postNewQuestion(questionToAdd)
+      .then((response) => {
         questionToAdd._id = response._id;
         setQuestions((questions) => [...questions, questionToAdd]);
       })
-      .catch(e => {
-        throw new String(e)
+      .catch((e) => {
+        throw new String(e);
       });
   };
 
   const handleDeleteQuestion = async (id: string) => {
     await deleteQuestionById(id)
-    .then(() => {
-      handleTrigger()
-    })
-    .catch(e => {
-      console.log(e)
-    });
+      .then(() => {
+        handleTrigger();
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   };
 
   const handleEditQuestion = async (editQuestion: Question) => {
-    await updateQuestionById(editQuestion._id, editQuestion).then(()=> {
-      handleTrigger()
-    }
-    ).catch(e => {
-      throw new String(e)
-    })
-  }
+    await updateQuestionById(editQuestion._id, editQuestion)
+      .then(() => {
+        handleTrigger();
+      })
+      .catch((e) => {
+        throw new String(e);
+      });
+  };
 
   const handleViewQuestion = (question: Question) => {
     setViewQuestion(question);
@@ -66,34 +68,34 @@ const QuestionTable: FC<QuestionTableProps> = () => {
 
   return (
     <>
-      <div className={styles["custom-margin"]}>
+      <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
         {isLoading ? (
           <div className="center">
             <span className="loader center"></span>
           </div>
         ) : (
-          <table className="table table-dark table-hover table-striped-columns table-bordered mx-auto text-center align-middle border-warning-subtle">
-            <thead className="">
+          <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
               <tr>
-                <th scope="col" className="py-3 col-1">
+                <th scope="col" className="px-6 py-3">
                   S/N
                 </th>
-                <th scope="col" className="py-3">
+                <th scope="col" className="px-6 py-3">
                   Title
                 </th>
-                <th scope="col" className="py-3 col-2">
+                <th scope="col" className="px-6 py-3">
                   Categories
                 </th>
-                <th scope="col" className="px-4 py-3 col-1">
+                <th scope="col" className="px-6 py-3">
                   Complexity
                 </th>
-                <th scope="col" className="py-3 col-1">
+                <th scope="col" className="px-6 py-3">
                   View
                 </th>
-                <th scope="col" className="py-3 col-1">
-                Edit
-              </th>
-                <th scope="col" className="py-3 col-1">
+                <th scope="col" className="px-6 py-3">
+                  Edit
+                </th>
+                <th scope="col" className="px-6 py-3">
                   Delete
                 </th>
               </tr>
@@ -101,19 +103,24 @@ const QuestionTable: FC<QuestionTableProps> = () => {
 
             <tbody>
               {questions.map((question, index) => (
-                <tr key={index}>
-                  <th scope="row" className="py-2">
+                <tr
+                  key={index}
+                  className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                >
+                  <th scope="row" className="py-2 center">
                     {index + 1}
                   </th>
                   <td
-                    className="py-2"
+                    className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                     onClick={() => handleViewQuestion(question)}
                   >
                     {question.title}
                   </td>
-                  <td className="py-2">{question.categories.join(", ")}</td>
-                  <td className="py-2">{question.complexity}</td>
-                  <td className="py-2">
+                  <td className="px-6 py-4">
+                    {question.categories.join(", ")}
+                  </td>
+                  <td className="px-6 py-4">{question.complexity}</td>
+                  <td className="px-6 py-4">
                     <button
                       className="btn btn-success"
                       data-bs-toggle="modal"
@@ -123,9 +130,17 @@ const QuestionTable: FC<QuestionTableProps> = () => {
                       View
                     </button>
                   </td>
-                  <td className="py-2"><button className="btn btn-warning" data-bs-toggle="modal"
-                    data-bs-target="#editQuestionModal" onClick={() =>setQuestionToEdit(question)}>Edit</button></td>
-                  <td className="py-2">
+                  <td className="px-6 py-4">
+                    <button
+                      className="  bg-orange-600 hover:bg-orange-800 text-white font-bold py-2 px-4 rounded-full"
+                      data-bs-toggle="modal"
+                      data-bs-target="#editQuestionModal"
+                      onClick={() => setQuestionToEdit(question)}
+                    >
+                      Edit
+                    </button>
+                  </td>
+                  <td className="px-6 py-4">
                     <button
                       className="btn btn-danger"
                       onClick={() => handleDeleteQuestion(question._id)}
@@ -140,7 +155,10 @@ const QuestionTable: FC<QuestionTableProps> = () => {
         )}
       </div>
       <AddQuestionModal onSave={handleSaveQuestion} />
-      <EditQuestionModal onEditQuestion={questionToEdit} onUpdate={handleEditQuestion} />
+      <EditQuestionModal
+        onEditQuestion={questionToEdit}
+        onUpdate={handleEditQuestion}
+      />
       <ViewQuestionModal onViewQuestion={viewQuestion} />
     </>
   );

@@ -6,7 +6,7 @@ import { signOut } from "next-auth/react";
 import { Session } from "next-auth";
 
 const navigation = [
-  { name: "Question", href: "#", current: true },
+  { name: "Question", href: "/", current: true },
   { name: "Matching", href: "/matching", current: false },
   { name: "History", href: "/history", current: false },
   { name: "Chat", href: "/chat", current: false },
@@ -23,7 +23,7 @@ type NavbarProps = {
 const Navbar: React.FC<NavbarProps> = ({ session }) => {
 
   return (
-    <Disclosure as="nav" className="bg-gray-800">
+    <Disclosure as="nav" className="bg-gray-900 ">
       {({ open }) => (
         <>
           <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
@@ -44,7 +44,7 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
                 <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                 <div className="flex flex-shrink-0 items-center">
                   <a href="/">
-                    <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
+                    <span className="self-center text-2xl font-semibold whitespace-nowrap text-white">
                       PeerPrep
                     </span>
                   </a>

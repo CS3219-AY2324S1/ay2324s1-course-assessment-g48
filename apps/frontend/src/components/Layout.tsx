@@ -8,7 +8,8 @@ const Layout = ({ children }: PropsWithChildren) => {
   const { data: session, status } = useSession();
   const router = useRouter();
 
-  const redirectToSignIn = !session && router.pathname !== "/signin" && router.pathname !== "/signup";
+  const redirectToSignIn =
+    !session && router.pathname !== "/signin" && router.pathname !== "/signup";
   const isLoading = status === "loading";
 
   if (isLoading) {
@@ -24,12 +25,12 @@ const Layout = ({ children }: PropsWithChildren) => {
   }
 
   return (
-    <div className="min-vh-100 bg-dark d-flex flex-column">
+    <div className=" dark:bg-gray-900 h-screen shadow-md">
       {!redirectToSignIn && (
-        <>
-          <Navbar session={session} />
+          <div className="divide-y divide-neutral-500 mx-auto">
+            <Navbar session={session} />
           {children}
-        </>
+          </div>
       )}
     </div>
   );

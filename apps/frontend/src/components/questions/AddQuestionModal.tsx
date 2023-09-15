@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import { useRef, useState, Fragment } from "react";
 import { Complexity } from "../../utils/enums/Complexity";
 import { Category } from "../../utils/enums/Category";
 import useInput from "../../hook/useInput";
@@ -23,6 +23,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
     complexity: "",
   });
   const [error, setError] = useState<string>("");
+  const [open, setOpen] = useState(true)
   const closeModalRef = useRef<HTMLButtonElement | null>(null);
   const closeModal = () => {
     if (closeModalRef.current) {

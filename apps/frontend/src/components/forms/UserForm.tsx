@@ -1,7 +1,7 @@
 import { signIn, signOut } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import router from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { UserManagement } from "../../utils/enums/UserManagement";
 import FormInput from "./FormInput";
 import { UpdateUserDto, User } from "@/database/user/entities/user.entity";
@@ -11,6 +11,7 @@ import {
   deleteUserById,
   updateUserById,
 } from "@/database/user/userService";
+import useProfile from "@/hook/useProfile";
 
 interface UserFormProps {
   formType: string;
@@ -27,11 +28,12 @@ const UserForm: React.FC<UserFormProps> = ({
   password,
   id,
 }) => {
-  const [newUsername, setUsername] = useState(username ?? "");
-  const [newEmail, setEmail] = useState(email ?? "");
+  const {profile} = useProfile();
+  const [newUsername, setUsername] = useState(profile.username);
+  const [newEmail, setEmail] = useState(profile.email ?? "");
   const [newPassword, setPassword] = useState(password ?? "");
   const [errorMessage, setErrorMessage] = useState("");
-  const [newId, setNewId] = useState(id ?? -1);
+  const [newId, setNewId] = useState(profile.id ?? -1);
 
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") ?? "/";
@@ -145,8 +147,13 @@ const UserForm: React.FC<UserFormProps> = ({
     signOut();
   };
 
+  useEffect(() => {
+    setUsername(profile.username ?? "");
+    setEmail(profile.email ?? "");
+  },[profile])
+
   return (
-    <form className="space-y-6" method="POST"  onSubmit={handleSubmit}>
+    <form className="space-y-6" method="POST" onSubmit={handleSubmit}>
       {formType !== UserManagement.SignIn && (
         <div>
         <FormInput
