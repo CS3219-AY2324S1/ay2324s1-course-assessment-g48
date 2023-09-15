@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@headlessui/react": "^1.7.17",
+    "@heroicons/react": "^2.0.18",
     "@types/bootstrap": "^5.2.6",
     "@types/node": "20.5.9",
     "@types/react": "^18.2.21",
@@ -18,6 +20,8 @@
     "dotenv": "^16.3.1",
     "eslint": "8.48.0",
     "eslint-config-next": "^13.4.19",
+    "flowbite": "^1.8.1",
+    "flowbite-react": "^0.6.0",
     "fs": "^0.0.1-security",
     "next": "^13.4.19",
     "next-auth": "^4.23.1",
@@ -32,6 +36,10 @@
     "typescript": "^5.2.2"
   },
   "devDependencies": {
-    "prettier": "^3.0.3"
+    "@tailwindcss/forms": "^0.5.6",
+    "autoprefixer": "^10.4.15",
+    "postcss": "^8.4.29",
+    "prettier": "^3.0.3",
+    "tailwindcss": "^3.3.3"
   }
 }
