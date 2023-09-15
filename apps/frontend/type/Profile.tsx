@@ -1,6 +1,5 @@
 export type Profile = {
-    id: string;
+    id: number;
     username: string;
     email: string;
-    profilePicture: string;
   };

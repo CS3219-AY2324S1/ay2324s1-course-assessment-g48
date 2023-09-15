@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment } from "react";
 import Image from "next/image";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
@@ -7,9 +7,9 @@ import { Session } from "next-auth";
 
 const navigation = [
   { name: "Question", href: "#", current: true },
-  { name: "Matching", href: "#", current: false },
-  { name: "History", href: "#", current: false },
-  { name: "Chat", href: "#", current: false },
+  { name: "Matching", href: "/matching", current: false },
+  { name: "History", href: "/history", current: false },
+  { name: "Chat", href: "/chat", current: false },
 ];
 
 function classNames(...classes: any[]) {
@@ -21,7 +21,6 @@ type NavbarProps = {
 };
 
 const Navbar: React.FC<NavbarProps> = ({ session }) => {
-  const [show, setShow] = useState(false);
 
   return (
     <Disclosure as="nav" className="bg-gray-800">

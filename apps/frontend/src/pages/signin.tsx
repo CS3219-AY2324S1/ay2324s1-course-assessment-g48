@@ -1,57 +1,20 @@
-import { signIn } from "next-auth/react";
-import UserForm from "../components/forms/UserForm";
 import { UserManagement } from "../utils/enums/UserManagement";
-import { useRouter } from "next/router";
-import { useState } from "react";
-import { useSearchParams } from "next/navigation";
+import UserForm from "@/components/forms/UserForm";
 
 export default function Signin() {
-  const router = useRouter();
-  const [newUsername, setUsername] = useState("");
-  const [newEmail, setEmail] = useState("");
-  const [newPassword, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-  const [newId, setNewId] = useState(-1);
-
-  const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") ?? "/";
-
-  const handleSignUpRedirect = () => {
-    router.push("/signup");
-  };
-
-  const handleSignIn = async (e: { preventDefault: () => void }) => {
-    e.preventDefault();
-    try {
-      const result = await signIn("credentials", {
-        redirect: false,
-        email: newEmail,
-        password: newPassword,
-        callbackUrl,
-      });
-      if (result?.error) {
-        console.log(result.error);
-        setErrorMessage("Invalid email or password.");
-      } else {
-        router.push("/");
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   return (
     <>
-    <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+      <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-  
           <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
             Sign in to your account
           </h2>
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="space-y-6" action="#" method="POST" onSubmit={handleSignIn}>
+          <UserForm formType={UserManagement.SignIn} />
+          {/* <form className="space-y-6" method="POST" onSubmit={handleSignIn}>
+            
             <div>
               <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
                 Email address
@@ -86,7 +49,7 @@ export default function Signin() {
                   id="password"
                   name="password"
                   type="password"
-                  autoComplete="current-password"
+                  autoComplete="password"
                   value={newPassword}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -100,15 +63,18 @@ export default function Signin() {
                 type="submit"
                 className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
-                Sign in
+                {UserManagement.SignIn}
               </button>
             </div>
-          </form>
+          </form> */}
 
           <p className="mt-10 text-center text-sm text-gray-500">
-            Not a member?{' '}
-            <a href="#" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
-              Sign up now
+            Not a member?{" "}
+            <a
+              href="/signup"
+              className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
+            >
+              {UserManagement.SignUp} now
             </a>
           </p>
         </div>

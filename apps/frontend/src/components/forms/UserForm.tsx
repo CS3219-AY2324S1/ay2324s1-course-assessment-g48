@@ -11,7 +11,6 @@ import {
   deleteUserById,
   updateUserById,
 } from "@/database/user/userService";
-import { AxiosResponse } from "axios";
 
 interface UserFormProps {
   formType: string;
@@ -147,47 +146,49 @@ const UserForm: React.FC<UserFormProps> = ({
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      {errorMessage && (
-        <div className="alert alert-danger mt-2">{errorMessage}</div>
-      )}
+    <form className="space-y-6" method="POST"  onSubmit={handleSubmit}>
       {formType !== UserManagement.SignIn && (
+        <div>
         <FormInput
           type="text"
           label="Username"
-          placeholder="Enter your username"
           value={newUsername}
           onChange={setUsername}
-        ></FormInput>
+        />
+        </div>
       )}
+      <div>
       <FormInput
         type="email"
-        label="Email"
-        placeholder="Enter your email address"
+        label="Email address"
         value={newEmail}
+        autoComplete="email"
         onChange={setEmail}
-      ></FormInput>
+      />
+      </div>
+      <div>
       <FormInput
         type="password"
         label="Password"
-        placeholder="Enter your password"
         value={newPassword}
+        autoComplete="current-password"
         onChange={setPassword}
-      ></FormInput>
-      <div className="text-center d-flex flex-column">
-        <button
-          type="submit"
-          className="btn btn-warning py-1 px-2 cursor-pointer rounded mt-3"
-        >
-          {formType === UserManagement.Profile ? "Save Changes" : formType}
+      />
+      </div>
+      <div className="text-center d-flex flex-column space-y-6">
+         <button
+                type="submit"
+                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              >
+          {formType == UserManagement.Profile ? "Update" : formType}
         </button>
-        {formType === UserManagement.Profile && (
+        {formType == UserManagement.Profile && (
           <button
-            className="btn btn-danger py-1 px-2 cursor-pointer rounded mt-3"
-            onClick={handleProfileDelete}
-          >
-            Delete Profile
-          </button>
+                onClick={handleProfileDelete}
+                className="flex w-full justify-center rounded-md bg-red-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              >
+          Delete Profile
+        </button>
         )}
       </div>
     </form>
