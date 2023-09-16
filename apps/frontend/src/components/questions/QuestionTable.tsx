@@ -30,12 +30,17 @@ const QuestionTable: FC<QuestionTableProps> = () => {
     complexity: "",
   });
 
+  const [openAdd, setOpenAdd] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
+  const [openView, setOpenView] = useState(false);
+
   const handleSaveQuestion = async (newQuestion: Question) => {
     const questionToAdd = { ...newQuestion };
     await postNewQuestion(questionToAdd)
       .then((response) => {
         questionToAdd._id = response._id;
         setQuestions((questions) => [...questions, questionToAdd]);
+        setOpenAdd(false);
       })
       .catch((e) => {
         throw new String(e);
@@ -56,6 +61,7 @@ const QuestionTable: FC<QuestionTableProps> = () => {
     await updateQuestionById(editQuestion._id, editQuestion)
       .then(() => {
         handleTrigger();
+        setOpenEdit(false);
       })
       .catch((e) => {
         throw new String(e);
@@ -64,6 +70,7 @@ const QuestionTable: FC<QuestionTableProps> = () => {
 
   const handleViewQuestion = (question: Question) => {
     setViewQuestion(question);
+    setOpenView(false);
   };
 
   return (
@@ -125,7 +132,9 @@ const QuestionTable: FC<QuestionTableProps> = () => {
                       className="btn btn-success"
                       data-bs-toggle="modal"
                       data-bs-target="#viewQuestionModal"
-                      onClick={() => handleViewQuestion(question)}
+                      onClick={() => {
+                        handleViewQuestion(question);
+                      }}
                     >
                       View
                     </button>
@@ -135,7 +144,10 @@ const QuestionTable: FC<QuestionTableProps> = () => {
                       className="  bg-orange-600 hover:bg-orange-800 text-white font-bold py-2 px-4 rounded-full"
                       data-bs-toggle="modal"
                       data-bs-target="#editQuestionModal"
-                      onClick={() => setQuestionToEdit(question)}
+                      onClick={() => {
+                        setQuestionToEdit(question);
+                        setOpenEdit(true);
+                      }}
                     >
                       Edit
                     </button>
@@ -154,10 +166,16 @@ const QuestionTable: FC<QuestionTableProps> = () => {
           </table>
         )}
       </div>
-      <AddQuestionModal onSave={handleSaveQuestion} />
+      <AddQuestionModal
+        onSave={handleSaveQuestion}
+        setOpen={setOpenAdd}
+        open={openAdd}
+      />
       <EditQuestionModal
         onEditQuestion={questionToEdit}
         onUpdate={handleEditQuestion}
+        setOpen={setOpenEdit}
+        open={openEdit}
       />
       <ViewQuestionModal onViewQuestion={viewQuestion} />
     </>

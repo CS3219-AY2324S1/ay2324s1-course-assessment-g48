@@ -55,7 +55,7 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
                   <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                     <div className="flex flex-shrink-0 items-center">
                       <a href="/">
-                        <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
+                        <span className="self-center text-2xl font-semibold whitespace-nowrap text-white">
                           PeerPrep
                         </span>
                       </a>
