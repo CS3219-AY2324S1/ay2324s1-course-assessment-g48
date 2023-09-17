@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import Image from "next/image";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon, MoonIcon, SunIcon } from "@heroicons/react/24/outline";
@@ -20,9 +20,11 @@ function classNames(...classes: any[]) {
 
 type NavbarProps = {
   session: Session | null;
+  openSlideOver: boolean;
+  setSlideOver: (value: boolean) => void;
 };
 
-const Navbar: React.FC<NavbarProps> = ({ session }) => {
+const Navbar: React.FC<NavbarProps> = ({ session, openSlideOver, setSlideOver }) => {
   const router = useRouter();
   const currentPath = router.pathname;
   return (
@@ -95,6 +97,7 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
                     <button
                       type="button"
                       className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                      onClick={() => setSlideOver(true)}
                     >
                       <span className="absolute -inset-1.5" />
                       <span className="sr-only">View notifications</span>
