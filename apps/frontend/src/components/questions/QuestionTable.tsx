@@ -70,7 +70,7 @@ const QuestionTable: FC<QuestionTableProps> = () => {
 
   const handleViewQuestion = (question: Question) => {
     setViewQuestion(question);
-    setOpenView(false);
+    setOpenView(true);
   };
 
   return (
@@ -99,10 +99,10 @@ const QuestionTable: FC<QuestionTableProps> = () => {
                 <th scope="col" className="px-6 py-3">
                   View
                 </th>
-                <th scope="col" className="px-6 py-3">
+                <th scope="col" className="px-6 py-3 center">
                   Edit
                 </th>
-                <th scope="col" className="px-6 py-3">
+                <th scope="col" className="px-6 py-3 center">
                   Delete
                 </th>
               </tr>
@@ -130,8 +130,6 @@ const QuestionTable: FC<QuestionTableProps> = () => {
                   <td className="px-6 py-4">
                     <button
                       className="btn btn-success"
-                      data-bs-toggle="modal"
-                      data-bs-target="#viewQuestionModal"
                       onClick={() => {
                         handleViewQuestion(question);
                       }}
@@ -142,8 +140,6 @@ const QuestionTable: FC<QuestionTableProps> = () => {
                   <td className="px-6 py-4">
                     <button
                       className="  bg-orange-600 hover:bg-orange-800 text-white font-bold py-2 px-4 rounded-full"
-                      data-bs-toggle="modal"
-                      data-bs-target="#editQuestionModal"
                       onClick={() => {
                         setQuestionToEdit(question);
                         setOpenEdit(true);
@@ -154,7 +150,7 @@ const QuestionTable: FC<QuestionTableProps> = () => {
                   </td>
                   <td className="px-6 py-4">
                     <button
-                      className="btn btn-danger"
+                      className="  bg-red-600 hover:bg-red-800 text-white font-bold py-2 px-4 rounded-full"
                       onClick={() => handleDeleteQuestion(question._id)}
                     >
                       Delete
@@ -177,7 +173,7 @@ const QuestionTable: FC<QuestionTableProps> = () => {
         setOpen={setOpenEdit}
         open={openEdit}
       />
-      <ViewQuestionModal onViewQuestion={viewQuestion} />
+      <ViewQuestionModal onViewQuestion={viewQuestion} setOpen={setOpenView} open={openView} />
     </>
   );
 };
