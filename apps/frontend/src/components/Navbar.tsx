@@ -1,10 +1,11 @@
 import { Fragment } from "react";
 import Image from "next/image";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
-import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { Bars3Icon, BellIcon, XMarkIcon, MoonIcon, SunIcon } from "@heroicons/react/24/outline";
 import { signOut } from "next-auth/react";
 import { Session } from "next-auth";
 import { useRouter } from "next/router";
+import ModeToggleButton from "./ModeToggleButton";
 
 const navigation = [
   { name: "Question", href: "/questions", current: false },
@@ -43,6 +44,7 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
                 </Disclosure.Button>
               </div>
               {!session ? (
+                <>
                 <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                 <div className="flex flex-shrink-0 items-center">
                   <a onClick={() => router.push("/")}>
@@ -52,6 +54,10 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
                   </a>
                 </div>
                 </div>
+                <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+                <ModeToggleButton />
+                  </div>
+                  </>
               ) : (
                 <>
                   <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
@@ -83,7 +89,9 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
                       </div>
                     </div>
                   </div>
-                  <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+                  
+                  <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 space-x-2">
+                  <ModeToggleButton />
                     <button
                       type="button"
                       className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
