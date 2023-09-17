@@ -49,9 +49,17 @@ const ViewQuestionModal: React.FC<ViewQuestionModalProps> = ({
                 Complexity
               </legend>
               <div className="mt-3">
-              <span className={`inline-flex items-center rounded-md ${onViewQuestion.complexity === Complexity.Medium ? "bg-yellow-50 text-yellow-800 ring-yellow-600/20" : onViewQuestion.complexity === Complexity.Easy ? "bg-green-50 text-green-700 ring-green-600/20" : "bg-red-50 text-red-700 ring-red-600/10"} px-2 py-1 text-sm font-medium ring-1 ring-inset `}>
-                {onViewQuestion.complexity}
-              </span>
+                <span
+                  className={`inline-flex items-center rounded-md ${
+                    onViewQuestion.complexity === Complexity.Medium
+                      ? "bg-yellow-50 text-yellow-800 ring-yellow-600/20"
+                      : onViewQuestion.complexity === Complexity.Easy
+                      ? "bg-green-50 text-green-700 ring-green-600/20"
+                      : "bg-red-50 text-red-700 ring-red-600/10"
+                  } px-2 py-1 text-sm font-medium ring-1 ring-inset `}
+                >
+                  {onViewQuestion.complexity}
+                </span>
               </div>
             </fieldset>
           </div>

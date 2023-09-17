@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import Head from "next/head";
 import { AppProps } from "next/app";
 // import "bootstrap/dist/css/bootstrap.min.css";

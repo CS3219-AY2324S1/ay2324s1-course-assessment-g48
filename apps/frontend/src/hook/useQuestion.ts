@@ -14,7 +14,10 @@ function useQuestion() {
     setIsLoading(true);
     getAllQuestions().then((questions) => {
       setQuestions(questions);
-      setIsLoading(false);
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 50)
+      
     }).catch((error) => {
     console.error(error);
     });

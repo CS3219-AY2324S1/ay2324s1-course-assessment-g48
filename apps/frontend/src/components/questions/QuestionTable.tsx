@@ -9,17 +9,16 @@ import { Question } from "../../database/question/entities/question.entity";
 import useQuestion from "@/hook/useQuestion";
 import AddQuestionModal from "./AddQuestionModal";
 import EditQuestionModal from "./EditQuestionModal";
-
+import { Complexity } from "@/utils/enums/Complexity";
 
 type QuestionTableProps = {
   setOpenAdd: (open: boolean) => void;
   openAdd: boolean;
+  hidden?: boolean;
 };
 
-const QuestionTable: FC<QuestionTableProps> = (
-  {setOpenAdd, openAdd}
-) => {
-  const { questions, setQuestions, isLoading, handleTrigger } = useQuestion();
+const QuestionTable: FC<QuestionTableProps> = ({ setOpenAdd, openAdd, hidden }) => {
+  const { questions, setQuestions, handleTrigger } = useQuestion();
   const [viewQuestion, setViewQuestion] = useState<Question>({
     _id: "",
     title: "",
@@ -41,9 +40,9 @@ const QuestionTable: FC<QuestionTableProps> = (
   const handleSaveQuestion = async (newQuestion: Question) => {
     const questionToAdd = { ...newQuestion };
     await postNewQuestion(questionToAdd)
-      .then((response) => {
-        questionToAdd._id = response._id;
-        setQuestions((questions) => [...questions, questionToAdd]);
+      .then(() => {
+        handleTrigger()
+        
         setOpenAdd(false);
       })
       .catch((e) => {
@@ -79,14 +78,9 @@ const QuestionTable: FC<QuestionTableProps> = (
 
   return (
     <>
-      
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-        {isLoading ? (
-          <div className="center">
-            <span className="loader center"></span>
-          </div>
-        ) : (
-          <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+      
+          <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400" hidden={hidden}>
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
               <tr>
                 <th scope="col" className="px-6 py-3">
@@ -95,7 +89,7 @@ const QuestionTable: FC<QuestionTableProps> = (
                 <th scope="col" className="px-6 py-3">
                   Title
                 </th>
-                <th scope="col" className="px-6 py-3">
+                <th scope="col" className="px-6 py-3 w-1/3">
                   Categories
                 </th>
                 <th scope="col" className="px-6 py-3">
@@ -131,7 +125,17 @@ const QuestionTable: FC<QuestionTableProps> = (
                   <td className="px-6 py-4">
                     {question.categories.join(", ")}
                   </td>
-                  <td className="px-6 py-4">{question.complexity}</td>
+                  <td
+                    className={`px-6 py-4 ${
+                      question.complexity === Complexity.Easy
+                        ? "text-green-600"
+                        : question.complexity === Complexity.Medium
+                        ? " text-yellow-600"
+                        : "text-red-600"
+                    }`}
+                  >
+                    {question.complexity}
+                  </td>
                   <td className="px-6 py-4">
                     <button
                       className="btn btn-success"
@@ -142,7 +146,7 @@ const QuestionTable: FC<QuestionTableProps> = (
                       View
                     </button>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-4 center">
                     <button
                       className="  bg-orange-600 hover:bg-orange-800 text-white font-bold py-2 px-4 rounded-full"
                       onClick={() => {
@@ -153,7 +157,7 @@ const QuestionTable: FC<QuestionTableProps> = (
                       Edit
                     </button>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-4 center">
                     <button
                       className="  bg-red-600 hover:bg-red-800 text-white font-bold py-2 px-4 rounded-full"
                       onClick={() => handleDeleteQuestion(question._id)}
@@ -165,7 +169,7 @@ const QuestionTable: FC<QuestionTableProps> = (
               ))}
             </tbody>
           </table>
-        )}
+        
       </div>
       <AddQuestionModal
         onSave={handleSaveQuestion}
