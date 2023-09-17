@@ -64,7 +64,7 @@ const UserForm: React.FC<UserFormProps> = ({
         console.log(result.error);
         setErrorMessage("Invalid email or password.");
       } else {
-        router.push("/");
+        router.push("/questions");
       }
     } catch (err) {
       console.error(err);

@@ -4,9 +4,10 @@ import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { signOut } from "next-auth/react";
 import { Session } from "next-auth";
+import { useRouter } from "next/router";
 
 const navigation = [
-  { name: "Question", href: "/", current: true },
+  { name: "Question", href: "/questions", current: false },
   { name: "Matching", href: "/matching", current: false },
   { name: "History", href: "/history", current: false },
   { name: "Chat", href: "/chat", current: false },
@@ -21,7 +22,8 @@ type NavbarProps = {
 };
 
 const Navbar: React.FC<NavbarProps> = ({ session }) => {
-
+  const router = useRouter();
+  const currentPath = router.pathname;
   return (
     <Disclosure as="nav" className="bg-gray-900 ">
       {({ open }) => (
@@ -43,7 +45,7 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
               {!session ? (
                 <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                 <div className="flex flex-shrink-0 items-center">
-                  <a href="/">
+                  <a onClick={() => router.push("/")}>
                     <span className="self-center text-2xl font-semibold whitespace-nowrap text-white">
                       PeerPrep
                     </span>
@@ -54,7 +56,7 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
                 <>
                   <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                     <div className="flex flex-shrink-0 items-center">
-                      <a href="/">
+                      <a className="cursor-pointer" onClick={() => router.push("/")}>
                         <span className="self-center text-2xl font-semibold whitespace-nowrap text-white">
                           PeerPrep
                         </span>
@@ -65,14 +67,15 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
                         {navigation.map((item) => (
                           <a
                             key={item.name}
-                            href={item.href}
+                            // href={item.href}
+                            onClick={() => router.push(item.href)}
                             className={classNames(
-                              item.current
+                              currentPath === item.href
                                 ? "bg-gray-900 text-white"
                                 : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                              "rounded-md px-3 py-2 text-sm font-medium"
+                              "rounded-md px-3 py-2 text-sm font-medium cursor-pointer"
                             )}
-                            aria-current={item.current ? "page" : undefined}
+                            aria-current={currentPath === item.href ? "page" : undefined}
                           >
                             {item.name}
                           </a>
@@ -118,10 +121,11 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
                           <Menu.Item>
                             {({ active }) => (
                               <a
-                                href="/profile"
+                                // href="/profile"
+                                onClick={() => router.push("/profile")}
                                 className={classNames(
                                   active ? "bg-gray-100" : "",
-                                  "block px-4 py-2 text-sm text-gray-700"
+                                  "block px-4 py-2 text-sm text-gray-700 cursor-pointer"
                                 )}
                               >
                                 Your Profile
@@ -131,7 +135,7 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
                           <Menu.Item>
                             {({ active }) => (
                               <a
-                                href="/settings"
+                              onClick={() => router.push("/settings")}
                                 className={classNames(
                                   active ? "bg-gray-100" : "",
                                   "block px-4 py-2 text-sm text-gray-700"
@@ -144,11 +148,10 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
                           <Menu.Item>
                             {({ active }) => (
                               <a
-                                href=""
                                 onClick={() => signOut()}
                                 className={classNames(
                                   active ? "bg-gray-100" : "",
-                                  "block px-4 py-2 text-sm text-white bg-red-600 rounded-md "
+                                  "block px-4 py-2 text-sm text-white bg-red-600 rounded-md cursor-pointer"
                                 )}
                               >
                                 Sign out
@@ -170,12 +173,12 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
                 <Disclosure.Button
                   key={item.name}
                   as="a"
-                  href={item.href}
+                  onClick={() => router.push(item.href)}
                   className={classNames(
                     item.current
                       ? "bg-gray-900 text-white"
                       : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                    "block rounded-md px-3 py-2 text-base font-medium"
+                    "block rounded-md px-3 py-2 text-base font-medium cursor-pointer"
                   )}
                   aria-current={item.current ? "page" : undefined}
                 >

@@ -1,5 +1,4 @@
 import { FC, useState } from "react";
-import styles from "../../../styles/table.module.css";
 import ViewQuestionModal from "./ViewQuestionModal";
 import {
   deleteQuestionById,
@@ -11,9 +10,15 @@ import useQuestion from "@/hook/useQuestion";
 import AddQuestionModal from "./AddQuestionModal";
 import EditQuestionModal from "./EditQuestionModal";
 
-type QuestionTableProps = {};
 
-const QuestionTable: FC<QuestionTableProps> = () => {
+type QuestionTableProps = {
+  setOpenAdd: (open: boolean) => void;
+  openAdd: boolean;
+};
+
+const QuestionTable: FC<QuestionTableProps> = (
+  {setOpenAdd, openAdd}
+) => {
   const { questions, setQuestions, isLoading, handleTrigger } = useQuestion();
   const [viewQuestion, setViewQuestion] = useState<Question>({
     _id: "",
@@ -30,7 +35,6 @@ const QuestionTable: FC<QuestionTableProps> = () => {
     complexity: "",
   });
 
-  const [openAdd, setOpenAdd] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [openView, setOpenView] = useState(false);
 
@@ -75,6 +79,7 @@ const QuestionTable: FC<QuestionTableProps> = () => {
 
   return (
     <>
+      
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
         {isLoading ? (
           <div className="center">
@@ -173,7 +178,11 @@ const QuestionTable: FC<QuestionTableProps> = () => {
         setOpen={setOpenEdit}
         open={openEdit}
       />
-      <ViewQuestionModal onViewQuestion={viewQuestion} setOpen={setOpenView} open={openView} />
+      <ViewQuestionModal
+        onViewQuestion={viewQuestion}
+        setOpen={setOpenView}
+        open={openView}
+      />
     </>
   );
 };

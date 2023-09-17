@@ -56,7 +56,6 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
 
   return (
     <>
-      <button onClick={() => setOpen(true)}>Add question</button>
       <Modal title="Add Question" setOpen={setOpen} open={open}>
         <form onSubmit={handleAddQuestion}>
           <div className="space-y-12">
