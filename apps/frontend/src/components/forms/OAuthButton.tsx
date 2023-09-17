@@ -7,7 +7,7 @@ type OAuthButtonProps = {
 };
 
 const OAuthButton: React.FC<OAuthButtonProps> = ({provider}) => {
-  const handleGoogleSignIn = async () => {
+  const handleOAuthSignIn = async () => {
     signIn(provider, { callbackUrl: "/" });
   }
 
@@ -16,7 +16,7 @@ const OAuthButton: React.FC<OAuthButtonProps> = ({provider}) => {
       <div className="d-flex flex-column mt-3">
         <button
           className="btn btn-light border border-primary rounded-lg d-flex align-items-center justify-content-center py-2"
-          onClick={handleGoogleSignIn}
+          onClick={handleOAuthSignIn}
         > 
           <div className="px-1">
             <Image src={`/${provider}.svg`} alt={provider} height={25} width={25} />

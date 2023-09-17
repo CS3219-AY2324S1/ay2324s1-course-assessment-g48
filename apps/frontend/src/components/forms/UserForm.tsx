@@ -1,4 +1,4 @@
-import { signIn, signOut } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import router from "next/router";
 import React, { useState } from "react";
@@ -10,22 +10,26 @@ import {
   deleteUserById,
   updateUserById,
 } from "@/database/user/userService";
+import { OAuthType } from "@/utils/enums/OAuthType";
 
 interface UserFormProps {
   formType: string;
-  username?: string;
-  email?: string;
-  password?: string;
   id?: number;
+  email?: string;
+  username?: string;
+  password?: string;
+  oauth?: OAuthType[]
 }
 
 const UserForm: React.FC<UserFormProps> = ({
   formType,
-  username,
-  email,
-  password,
   id,
+  email,
+  username,
+  password,
+  oauth
 }) => {
+  const { data: session, status, update } = useSession()
   const [newUsername, setUsername] = useState(username ?? "");
   const [newEmail, setEmail] = useState(email ?? "");
   const [newPassword, setPassword] = useState(password ?? "");
@@ -75,6 +79,7 @@ const UserForm: React.FC<UserFormProps> = ({
         username: newUsername,
         email: newEmail,
         password: newPassword,
+        oauth: oauth
       };
 
       const response = await createNewUser(newUser);
@@ -83,7 +88,6 @@ const UserForm: React.FC<UserFormProps> = ({
         return;
       }
 
-      // nextauth uses default mockUsers without new user, thats why this fails
       const result = await signIn("credentials", {
         redirect: false,
         email: newEmail,
@@ -92,6 +96,7 @@ const UserForm: React.FC<UserFormProps> = ({
       });
 
       if (result?.error) {
+        console.log(result?.error);
         setErrorMessage("That email or username has already been taken.");
       } else {
         router.push("/");
@@ -104,12 +109,14 @@ const UserForm: React.FC<UserFormProps> = ({
 
   const handleProfileUpdate = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
+
     try {
       const newUser: UpdateUserDto = {
         id: newId,
         username: newUsername,
         email: newEmail,
         password: newPassword,
+        oauth: oauth
       };
 
       const response = await updateUserById(id, newUser);
@@ -118,17 +125,15 @@ const UserForm: React.FC<UserFormProps> = ({
         return;
       }
 
-      const result = await signIn("credentials", {
-        redirect: false,
-        email: newEmail,
-        password: newPassword,
-        callbackUrl,
-      });
-      if (result?.error) {
-        setErrorMessage("Invalid email or username.");
-      } else {
-        router.push("/");
+      if (session?.user) {
+        session.user.email = newEmail;
+        session.user.username = newUsername;
+        session.user.password = newPassword;
       }
+
+      update({ user: session?.user });
+      console.log(session);
+      router.push("/");
     } catch (err) {
       console.error(err);
     }
@@ -144,6 +149,10 @@ const UserForm: React.FC<UserFormProps> = ({
     signOut();
   };
 
+  console.log(status === "authenticated");
+  console.log(oauth?.length);
+  console.log(oauth);
+
   return (
     <form onSubmit={handleSubmit}>
       {errorMessage && (
@@ -158,10 +167,12 @@ const UserForm: React.FC<UserFormProps> = ({
           onChange={setUsername}
         ></FormInput>
       )}
+      {/* TODO: add tooltip when email is disabled due to Oauth */}
       <FormInput
         type="email"
         label="Email"
         placeholder="Enter your email address"
+        disabled={status === "authenticated" && oauth !== undefined}
         value={newEmail}
         onChange={setEmail}
       ></FormInput>
@@ -186,6 +197,7 @@ const UserForm: React.FC<UserFormProps> = ({
           >
             Delete Profile
           </button>
+          // TODO: Create link Oauth accounts buttons. If no OAuth left, user must set password
         )}
       </div>
     </form>

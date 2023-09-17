@@ -1,8 +1,11 @@
+import { OAuthType } from "@/utils/enums/OAuthType";
+
 export type User = {
   id: number;
   username: string;
   email: string;
-  password: string;
+  password?: string;
+  oauth?: OAuthType[];
 };
 
 export type CreateUserDto = Omit<User, "id">;
