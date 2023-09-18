@@ -13,6 +13,7 @@ import {
 import useSessionUser from "@/hook/useSessionUser";
 import OAuthButton from "./OAuthButton";
 import { Role } from "@/utils/enums/Role";
+import Image from "next/image";
 
 interface UserFormProps {
   formType: string;
@@ -71,7 +72,7 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
         email: newEmail,
         password: newPassword,
         oauth: sessionUser.oauth,
-        role: Role.Normal
+        role: Role.Normal,
       };
 
       const response = await createNewUser(newUser);
@@ -151,6 +152,7 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
 
   return (
     <>
+      {/* TODO: add OAuth accounts linked icons */}
       <form className="space-y-6" method="POST" onSubmit={handleSubmit}>
         {formType !== UserManagement.SignIn && (
           <div>
@@ -184,7 +186,27 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
             onChange={setPassword}
           />
         </div>
-        <div className="text-center d-flex flex-column space-y-6">
+        <div className="flex flex-col text-center justify-center items-center d-flex flex-column space-y-6">
+          {formType === UserManagement.Profile &&
+            sessionUser?.oauth?.length !== 0 && (
+              <>
+                <p className="block text-sm font-medium leading-6 text-gray-900 dark:text-white">
+                  Linked accounts:
+                </p>
+                <div className="flex w-1/2 justify-center bg-white rounded py-2 space-x-3">
+                  {sessionUser?.oauth?.map((oauth) => (
+                    <Image
+                      key={oauth}
+                      src={`/${oauth}.svg`}
+                      alt={oauth}
+                      height={25}
+                      width={25}
+                      className="bg-white"
+                    />
+                  ))}
+                </div>
+              </>
+            )}
           <button
             type="submit"
             className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
@@ -198,7 +220,6 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
             >
               Delete Profile
             </button>
-            // TODO: Create link Oauth accounts buttons. If no OAuth left, user must set password
           )}
         </div>
       </form>
