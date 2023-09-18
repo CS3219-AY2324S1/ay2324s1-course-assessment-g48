@@ -152,7 +152,6 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
 
   return (
     <>
-      {/* TODO: add OAuth accounts linked icons */}
       <form className="space-y-6" method="POST" onSubmit={handleSubmit}>
         {formType !== UserManagement.SignIn && (
           <div>
