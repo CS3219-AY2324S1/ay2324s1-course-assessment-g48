@@ -1,10 +1,23 @@
-import React, { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
+import { User } from "@/database/user/entities/user.entity";
 
-function useProfile() {
-  const [user, setUser] = useState<[]>([]);
+function useSessionUser() {
+  const { data: session } = useSession();
+  const [sessionUser, setSessionUser] = useState<User>({
+    id: -1,
+    username: "",
+    email: "",
+  });
 
-  useEffect(() => {}, []);
-  return { user, setUser };
+  useEffect(() => {
+    setSessionUser((prevUser) => ({
+      ...prevUser,
+      ...session?.user,
+    }));
+    console.log("session", session);
+  }, [session]);
+  return { sessionUser, setSessionUser };
 }
 
-export default useProfile;
+export default useSessionUser;

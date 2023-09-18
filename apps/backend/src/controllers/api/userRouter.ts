@@ -59,7 +59,7 @@ userRouter.post(
           cleanedOauth.push(auth as OAuthType);
         }
       }
-      
+
       if (invalidOauth.length !== 0) {
         console.warn(`The following OAuths are invalid and are ignored: ${invalidOauth}`);
       } 
@@ -197,7 +197,6 @@ userRouter.put(
         }
       }
 
-      console.log(oauth === undefined && cleanedPassword !== undefined && !cleanedPassword.length)
       if (oauth === undefined && cleanedPassword !== undefined && !cleanedPassword.length) {
         res.status(400).send({ error: "Your password cannot be blank." });
         return;

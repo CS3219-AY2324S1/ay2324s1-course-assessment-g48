@@ -1,12 +1,14 @@
-import React, { PropsWithChildren } from "react";
+import { PropsWithChildren, useState } from "react";
 import Navbar from "./Navbar";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { SyncLoader } from "react-spinners";
+import LoadingModal from "./LoadingModal";
+import SlideOver from "./SlideOver";
 
 const Layout = ({ children }: PropsWithChildren) => {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const [openSlideOver, setOpenSlideOver] = useState(false);
 
   const redirectToSignIn =
     !session &&
@@ -16,11 +18,7 @@ const Layout = ({ children }: PropsWithChildren) => {
   const isLoading = status === "loading";
 
   if (isLoading) {
-    return (
-      <div className="min-vh-100 d-flex bg-dark justify-content-center align-items-center">
-        <SyncLoader color="#ffffff" size={25} />
-      </div>
-    );
+    return <LoadingModal isLoading={isLoading} />;
   }
 
   if (redirectToSignIn) {
@@ -28,14 +26,17 @@ const Layout = ({ children }: PropsWithChildren) => {
   }
 
   return (
-    <div className="min-vh-100 bg-dark d-flex flex-column">
+    <>
+    <div className="dark:bg-gray-900 min-h-screen shadow-md">
       {!redirectToSignIn && (
-        <>
-          <Navbar session={session} />
+        <div className="divide-y divide-neutral-500 mx-auto">
+          <Navbar session={session} setSlideOver={setOpenSlideOver} openSlideOver={openSlideOver} />
           {children}
-        </>
+        </div>
       )}
     </div>
+    <SlideOver open={openSlideOver} setOpen={setOpenSlideOver} />
+    </>
   );
 };
 

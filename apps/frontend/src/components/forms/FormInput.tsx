@@ -3,8 +3,8 @@ import React from "react";
 interface InputProps {
   type: string;
   label: string;
-  placeholder: string;
   value: string;
+  autoComplete?: string;
   disabled?: boolean;
   onChange: (value: string) => void;
 }
@@ -12,26 +12,32 @@ interface InputProps {
 const FormInput: React.FC<InputProps> = ({
   type,
   label,
-  placeholder,
   value,
+  autoComplete,
   disabled,
   onChange,
 }) => {
   return (
-    <div className="form-group mb-3">
-      <label htmlFor={label} className="text-light">
+    <>
+      <label
+        htmlFor={type}
+        className="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
+      >
         {label}
       </label>
-      <input
-        type={type}
-        className="form-control"
-        id={label}
-        placeholder={placeholder}
-        value={value}
-        disabled={disabled}
-        onChange={(e) => onChange(e.target.value)}
-      />
-    </div>
+      <div className="mt-2">
+        <input
+          id={type}
+          name={type}
+          type={type}
+          autoComplete={autoComplete}
+          disabled={disabled}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 dark:focus:ring-purple-500"
+        />
+      </div>
+    </>
   );
 };
 

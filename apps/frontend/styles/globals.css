@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 html,
 body {
   width: 100%;
@@ -7,10 +11,6 @@ body {
 .markdown-content img {
   max-width: 100%; /* Limit the maximum width of images to 100% of their container */
   height: auto; /* Automatically adjust the height to maintain aspect ratio */
-}
-
-.invalid {
-  border: 1px solid #ff0000;
 }
 
 .loader {
@@ -23,6 +23,35 @@ body {
   box-sizing: border-box;
   animation: rotation 1s linear infinite;
 }
+
+/* styles.css */
+.loading-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.loading-spinner {
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top: 4px solid #3498db;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 
 @keyframes rotation {
   0% {

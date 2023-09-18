@@ -15,7 +15,7 @@ const OAuthButton: React.FC<OAuthButtonProps> = ({provider}) => {
     <>
       <div className="d-flex flex-column mt-3">
         <button
-          className="btn btn-light border border-primary rounded-lg d-flex align-items-center justify-content-center py-2"
+          className="flex w-full justify-center rounded-md bg-gray-200 px-3 py-1.5 text-sm font-semibold leading-6 shadow-sm hover:bg-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           onClick={handleOAuthSignIn}
         > 
           <div className="px-1">

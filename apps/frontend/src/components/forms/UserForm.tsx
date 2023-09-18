@@ -1,7 +1,7 @@
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import router from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { UserManagement } from "../../utils/enums/UserManagement";
 import FormInput from "./FormInput";
 import { UpdateUserDto, User } from "@/database/user/entities/user.entity";
@@ -11,30 +11,21 @@ import {
   updateUserById,
 } from "@/database/user/userService";
 import { OAuthType } from "@/utils/enums/OAuthType";
+import useSessionUser from "@/hook/useProfile";
+import OAuthButton from "./OAuthButton";
 
 interface UserFormProps {
   formType: string;
-  id?: number;
-  email?: string;
-  username?: string;
-  password?: string;
-  oauth?: OAuthType[]
 }
 
-const UserForm: React.FC<UserFormProps> = ({
-  formType,
-  id,
-  email,
-  username,
-  password,
-  oauth
-}) => {
-  const { data: session, status, update } = useSession()
-  const [newUsername, setUsername] = useState(username ?? "");
-  const [newEmail, setEmail] = useState(email ?? "");
-  const [newPassword, setPassword] = useState(password ?? "");
+const UserForm: React.FC<UserFormProps> = ({ formType }) => {
+  const { data: session, status, update } = useSession();
+  const { sessionUser } = useSessionUser();
+  const [newId, setNewId] = useState(sessionUser.id ?? -1);
+  const [newUsername, setUsername] = useState(sessionUser.username);
+  const [newEmail, setEmail] = useState(sessionUser.email ?? "");
+  const [newPassword, setPassword] = useState(sessionUser.password ?? "");
   const [errorMessage, setErrorMessage] = useState("");
-  const [newId, setNewId] = useState(id ?? -1);
 
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") ?? "/";
@@ -65,7 +56,7 @@ const UserForm: React.FC<UserFormProps> = ({
         console.log(result.error);
         setErrorMessage("Invalid email or password.");
       } else {
-        router.push("/");
+        router.push("/questions");
       }
     } catch (err) {
       console.error(err);
@@ -79,7 +70,7 @@ const UserForm: React.FC<UserFormProps> = ({
         username: newUsername,
         email: newEmail,
         password: newPassword,
-        oauth: oauth
+        oauth: sessionUser.oauth,
       };
 
       const response = await createNewUser(newUser);
@@ -116,22 +107,22 @@ const UserForm: React.FC<UserFormProps> = ({
         username: newUsername,
         email: newEmail,
         password: newPassword,
-        oauth: oauth
+        oauth: sessionUser.oauth,
       };
 
-      const response = await updateUserById(id, newUser);
+      const response = await updateUserById(newId, newUser);
       if (response.error) {
         setErrorMessage(response.error);
         return;
       }
 
-      if (session?.user) {
-        session.user.email = newEmail;
-        session.user.username = newUsername;
-        session.user.password = newPassword;
+      if (sessionUser) {
+        sessionUser.email = newEmail;
+        sessionUser.username = newUsername;
+        sessionUser.password = newPassword;
       }
 
-      update({ user: session?.user });
+      update({ user: sessionUser });
       console.log(session);
       router.push("/");
     } catch (err) {
@@ -141,7 +132,7 @@ const UserForm: React.FC<UserFormProps> = ({
 
   const handleProfileDelete = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    const response = await deleteUserById(Number(id));
+    const response = await deleteUserById(Number(newId));
     if (response.error) {
       setErrorMessage(response.error);
       return;
@@ -149,58 +140,73 @@ const UserForm: React.FC<UserFormProps> = ({
     signOut();
   };
 
-  console.log(status === "authenticated");
-  console.log(oauth?.length);
-  console.log(oauth);
+  useEffect(() => {
+    setNewId(sessionUser.id ?? -1);
+    setUsername(sessionUser.username ?? "");
+    setEmail(sessionUser.email ?? "");
+    setPassword(sessionUser.password ?? "");
+  }, [sessionUser]);
 
   return (
-    <form onSubmit={handleSubmit}>
-      {errorMessage && (
-        <div className="alert alert-danger mt-2">{errorMessage}</div>
-      )}
-      {formType !== UserManagement.SignIn && (
-        <FormInput
-          type="text"
-          label="Username"
-          placeholder="Enter your username"
-          value={newUsername}
-          onChange={setUsername}
-        ></FormInput>
-      )}
-      {/* TODO: add tooltip when email is disabled due to Oauth */}
-      <FormInput
-        type="email"
-        label="Email"
-        placeholder="Enter your email address"
-        disabled={status === "authenticated" && oauth !== undefined}
-        value={newEmail}
-        onChange={setEmail}
-      ></FormInput>
-      <FormInput
-        type="password"
-        label="Password"
-        placeholder="Enter your password"
-        value={newPassword}
-        onChange={setPassword}
-      ></FormInput>
-      <div className="text-center d-flex flex-column">
-        <button
-          type="submit"
-          className="btn btn-warning py-1 px-2 cursor-pointer rounded mt-3"
-        >
-          {formType === UserManagement.Profile ? "Save Changes" : formType}
-        </button>
-        {formType === UserManagement.Profile && (
-          <button
-            className="btn btn-danger py-1 px-2 cursor-pointer rounded mt-3"
-            onClick={handleProfileDelete}
-          >
-            Delete Profile
-          </button>
-          // TODO: Create link Oauth accounts buttons. If no OAuth left, user must set password
+    <>
+      <form className="space-y-6" method="POST" onSubmit={handleSubmit}>
+        {formType !== UserManagement.SignIn && (
+          <div>
+            <FormInput
+              type="text"
+              label="Username"
+              value={newUsername}
+              onChange={setUsername}
+            />
+          </div>
         )}
-      </div>
-    </form>
+        {/* TODO: add tooltip when email is disabled due to Oauth for signup*/}
+        <div>
+          <FormInput
+            type="email"
+            label="Email address"
+            value={newEmail}
+            autoComplete="email"
+            disabled={
+              status === "authenticated" && sessionUser.oauth !== undefined
+            }
+            onChange={setEmail}
+          />
+        </div>
+        <div>
+          <FormInput
+            type="password"
+            label="Password"
+            value={newPassword}
+            autoComplete="current-password"
+            onChange={setPassword}
+          />
+        </div>
+        <div className="text-center d-flex flex-column space-y-6">
+          <button
+            type="submit"
+            className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          >
+            {formType == UserManagement.Profile ? "Update" : formType}
+          </button>
+          {formType == UserManagement.Profile && (
+            <button
+              onClick={handleProfileDelete}
+              className="flex w-full justify-center rounded-md bg-red-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            >
+              Delete Profile
+            </button>
+            // TODO: Create link Oauth accounts buttons. If no OAuth left, user must set password
+          )}
+        </div>
+      </form>
+      {formType == UserManagement.SignIn && (
+        <>
+          <OAuthButton provider="google"></OAuthButton>
+          <OAuthButton provider="github"></OAuthButton>
+        </>
+      )}
+    </>
   );
 };
 

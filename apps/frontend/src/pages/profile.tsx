@@ -1,30 +1,26 @@
-import UserForm from "../components/forms/UserForm";
-import { UserManagement } from "../utils/enums/UserManagement";
-import { useSession } from "next-auth/react";
+import UserForm from "@/components/forms/UserForm";
+import { UserManagement } from "@/utils/enums/UserManagement";
+import React from "react";
 
-export default function Signup() {
-  const { data: session } = useSession();
+type profileProps = {};
+
+const profile: React.FC<profileProps> = () => {
   return (
-    <div className="container mt-5">
-      <div className="row justify-content-center">
-        <div className="col-md-6">
-          <div className="card bg-dark text-light border-light">
-            <div className="card-header text-center border-light">
-              <h1 className="mb-2">Edit Profile</h1>
-            </div>
-            <div className="card-body">
-              <UserForm
-                formType={UserManagement.Profile}
-                id={session?.user?.id}
-                username={session?.user?.username}
-                email={session?.user?.email}
-                password={session?.user?.password}
-                oauth={session?.user?.oauth}
-              />
-            </div>
-          </div>
+    <>
+      <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+        <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+          <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900 dark:text-white">
+            My Profile
+          </h2>
+        </div>
+
+        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+          <UserForm
+            formType={UserManagement.Profile}
+          />
         </div>
       </div>
-    </div>
+    </>
   );
-}
+};
+export default profile;
