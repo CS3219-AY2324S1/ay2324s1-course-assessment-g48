@@ -97,7 +97,7 @@ const UserForm: React.FC<UserFormProps> = ({
       if (result?.error) {
         setErrorMessage("That email or username has already been taken.");
       } else {
-        router.push("/");
+        router.push("/questions");
       }
     } catch (err) {
       console.log(err);
@@ -130,7 +130,7 @@ const UserForm: React.FC<UserFormProps> = ({
       if (result?.error) {
         setErrorMessage("Invalid email or username.");
       } else {
-        router.push("/");
+        router.push("/questions");
       }
     } catch (err) {
       console.error(err);
