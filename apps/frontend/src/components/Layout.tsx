@@ -29,7 +29,7 @@ const Layout = ({ children }: PropsWithChildren) => {
     <>
     <div className="dark:bg-gray-900 min-h-screen shadow-md">
       {!redirectToSignIn && (
-        <div className="divide-y divide-neutral-500 mx-auto">
+        <div className="flex flex-col h-screen divide-y divide-neutral-500 mx-auto">
           <Navbar session={session} setSlideOver={setOpenSlideOver} openSlideOver={openSlideOver} />
           {children}
         </div>
