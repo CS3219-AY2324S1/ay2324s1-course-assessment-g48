@@ -1,6 +1,7 @@
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { User } from "@/database/user/entities/user.entity";
+import { Role } from "@/utils/enums/Role";
 
 function useSessionUser() {
   const { data: session } = useSession();
@@ -8,6 +9,7 @@ function useSessionUser() {
     id: -1,
     username: "",
     email: "",
+    role: Role.Normal,
   });
 
   useEffect(() => {

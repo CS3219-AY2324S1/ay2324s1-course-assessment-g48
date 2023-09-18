@@ -8,6 +8,7 @@ import {
 } from "../../../database/user/entities/user.entity";
 import { createNewUser, login } from "@/database/user/userService";
 import { OAuthType } from "@/utils/enums/OAuthType";
+import { Role } from "@/utils/enums/Role";
 
 declare module "next-auth" {
   interface User {
@@ -16,6 +17,7 @@ declare module "next-auth" {
     email: string;
     password?: string;
     oauth?: OAuthType[];
+    role: Role;
   }
 }
 
@@ -53,6 +55,7 @@ export default NextAuth({
             username: user.username,
             email: user.email,
             password: user.password,
+            role: Role.Normal
           };
         } else {
           return null;
@@ -89,6 +92,7 @@ export default NextAuth({
           username: user.name as string,
           email: user.email,
           oauth: [account.provider as OAuthType],
+          role: Role.Normal
         };
         const response = await createNewUser(newUser);
         if (response.error) {
@@ -114,6 +118,7 @@ export default NextAuth({
             user.password = findOAuthUser.password;
           }
           user.oauth = findOAuthUser.oauth;
+          user.role = findOAuthUser.role;
         }
       }
       if (user) {

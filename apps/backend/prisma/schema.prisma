@@ -16,6 +16,7 @@ model User {
   username    String @unique
   password String?
   oauth OAuth[]
+  role Role
   //   posts   Post[]
   //   profile Profile?
 }
@@ -43,4 +44,9 @@ enum Complexity {
 enum OAuth {
   google
   github
+}
+
+enum Role {
+  admin
+  normal
 }

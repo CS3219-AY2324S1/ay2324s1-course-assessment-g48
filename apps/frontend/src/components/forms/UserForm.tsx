@@ -10,9 +10,9 @@ import {
   deleteUserById,
   updateUserById,
 } from "@/database/user/userService";
-import { OAuthType } from "@/utils/enums/OAuthType";
-import useSessionUser from "@/hook/useProfile";
+import useSessionUser from "@/hook/useSessionUser";
 import OAuthButton from "./OAuthButton";
+import { Role } from "@/utils/enums/Role";
 
 interface UserFormProps {
   formType: string;
@@ -71,6 +71,7 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
         email: newEmail,
         password: newPassword,
         oauth: sessionUser.oauth,
+        role: Role.Normal
       };
 
       const response = await createNewUser(newUser);
@@ -108,6 +109,7 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
         email: newEmail,
         password: newPassword,
         oauth: sessionUser.oauth,
+        role: sessionUser.role,
       };
 
       const response = await updateUserById(newId, newUser);

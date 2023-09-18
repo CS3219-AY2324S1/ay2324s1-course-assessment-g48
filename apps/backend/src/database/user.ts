@@ -6,6 +6,11 @@ export enum OAuthType {
   Github = "github",
 }
 
+export enum Role {
+  Admin = "admin",
+  Normal = "normal",
+}
+
 export async function createUser(data: User) {
   console.log(data);
   return prisma.user.create({
@@ -14,6 +19,7 @@ export async function createUser(data: User) {
       username: data.username,
       password: data.password ?? undefined,
       oauth: data.oauth,
+      role: data.role,
     },
   });
 }

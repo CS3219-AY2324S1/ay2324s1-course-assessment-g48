@@ -7,7 +7,7 @@ import {
   getAllUsers,
   updateUser,
 } from "../../database/user";
-import { OAuth } from "@prisma/client";
+import { OAuth, Role } from "@prisma/client";
 
 export const userRouter = Router();
 
@@ -16,23 +16,36 @@ userRouter.post(
   "/",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { email, username, password, oauth } = req.body;
-      const cleanedEmail = email?.trim() as string;
-      const cleanedUsername = username?.trim() as string;
-      const cleanedPassword = password?.trim() as string; 
+      const { email, username, password, oauth, role } = req.body;
+      const cleanedEmail = email?.trim();
+      const cleanedUsername = username?.trim();
+      const cleanedPassword = password?.trim(); 
+      const cleanedRole = role?.trim();
 
-      if (!cleanedEmail.length) {
+      if (!cleanedEmail?.length) {
         res.status(400).send({ error: "Your email cannot be blank." });
         return;
       }
 
-      if (!cleanedUsername.length) {
+      if (!cleanedUsername?.length) {
         res.status(400).send({ error: "Your username cannot be blank." });
         return;
       }
 
-      if (oauth === undefined && !cleanedPassword.length) {
+      if (oauth === undefined && !cleanedPassword?.length) {
         res.status(400).send({ error: "Your password cannot be blank." });
+        return;
+      }
+
+      if (!cleanedRole?.length) {
+        console.log(cleanedRole);
+        res.status(400).send({ error: "Your role cannot be blank." });
+        return;
+      }
+
+      if (!Object.values(Role).includes(cleanedRole as Role)) {
+        console.log(cleanedRole as Role);
+        res.status(400).send({ error: `Invalid role: ${cleanedRole}` });
         return;
       }
 
@@ -69,7 +82,8 @@ userRouter.post(
         email: cleanedEmail,
         username: cleanedUsername,
         password: cleanedPassword,
-        oauth: cleanedOauth
+        oauth: cleanedOauth,
+        role: cleanedRole as Role,
       }
 
       const newUser = await createUser(cleanedUserData);
@@ -158,10 +172,12 @@ userRouter.put(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
-      const { email, username, password, oauth } = req.body;
+      const { email, username, password, oauth, role } = req.body;
       const cleanedEmail = email?.trim();
       const cleanedUsername = username?.trim();
       const cleanedPassword = password?.trim();
+      const cleanedRole = role?.trim();
+      let cleanedOauth: OAuth[] | undefined = undefined;
 
       if (cleanedEmail !== undefined) {
         const hasSameEmailUser = await findOneUser({
@@ -197,16 +213,45 @@ userRouter.put(
         }
       }
 
-      if (oauth === undefined && cleanedPassword !== undefined && !cleanedPassword.length) {
-        res.status(400).send({ error: "Your password cannot be blank." });
+      if (cleanedPassword !== undefined && !cleanedPassword.length) {
+        const user = await findOneUser({ id: Number(id) });
+        if (user?.oauth.length === 0) { 
+          res.status(400).send({ error: "Your password cannot be blank." });
+          return;
+        }
+      }
+
+      if (cleanedRole !== undefined && !cleanedRole.length) {
+        res.status(400).send({ error: "Your role cannot be blank." });
         return;
+      }
+
+      if (!Object.values(Role).includes(cleanedRole as Role)) {
+        res.status(400).send({ error: `Invalid role: ${cleanedRole}` });
+        return;
+      }
+
+      if (oauth !== undefined) {
+        cleanedOauth = [];
+        const invalidOauth: string[] = [];
+        for (const auth of oauth) {
+          if (!Object.values(OAuthType).includes(auth as OAuthType)) {
+            invalidOauth.push(auth);
+            continue;
+          }
+          cleanedOauth.push(auth as OAuthType);
+        }
+        if (invalidOauth.length !== 0) {
+          console.warn(`The following OAuths are invalid and are ignored: ${invalidOauth}`);
+        }  
       }
 
       const updatedUser = await updateUser(parseInt(id), {
         email: cleanedEmail,
         username: cleanedUsername,
         password: cleanedPassword,
-        oauth: oauth
+        oauth: cleanedOauth,
+        role: cleanedRole as Role,
       });
 
       res.json(updatedUser);
