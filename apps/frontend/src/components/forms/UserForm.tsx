@@ -1,7 +1,7 @@
 import { signIn, signOut } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import router from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { UserManagement } from "../../utils/enums/UserManagement";
 import FormInput from "./FormInput";
 import { UpdateUserDto, User } from "@/database/user/entities/user.entity";
@@ -11,7 +11,7 @@ import {
   deleteUserById,
   updateUserById,
 } from "@/database/user/userService";
-import { AxiosResponse } from "axios";
+import useProfile from "@/hook/useProfile";
 
 interface UserFormProps {
   formType: string;
@@ -28,11 +28,12 @@ const UserForm: React.FC<UserFormProps> = ({
   password,
   id,
 }) => {
-  const [newUsername, setUsername] = useState(username ?? "");
-  const [newEmail, setEmail] = useState(email ?? "");
+  const {profile} = useProfile();
+  const [newUsername, setUsername] = useState(profile.username);
+  const [newEmail, setEmail] = useState(profile.email ?? "");
   const [newPassword, setPassword] = useState(password ?? "");
   const [errorMessage, setErrorMessage] = useState("");
-  const [newId, setNewId] = useState(id ?? -1);
+  const [newId, setNewId] = useState(profile.id ?? -1);
 
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") ?? "/";
@@ -63,7 +64,7 @@ const UserForm: React.FC<UserFormProps> = ({
         console.log(result.error);
         setErrorMessage("Invalid email or password.");
       } else {
-        router.push("/");
+        router.push("/questions");
       }
     } catch (err) {
       console.error(err);
@@ -146,48 +147,55 @@ const UserForm: React.FC<UserFormProps> = ({
     signOut();
   };
 
+  useEffect(() => {
+    setUsername(profile.username ?? "");
+    setEmail(profile.email ?? "");
+  },[profile])
+
   return (
-    <form onSubmit={handleSubmit}>
-      {errorMessage && (
-        <div className="alert alert-danger mt-2">{errorMessage}</div>
-      )}
+    <form className="space-y-6" method="POST" onSubmit={handleSubmit}>
       {formType !== UserManagement.SignIn && (
+        <div>
         <FormInput
           type="text"
           label="Username"
-          placeholder="Enter your username"
           value={newUsername}
           onChange={setUsername}
-        ></FormInput>
+        />
+        </div>
       )}
+      <div>
       <FormInput
         type="email"
-        label="Email"
-        placeholder="Enter your email address"
+        label="Email address"
         value={newEmail}
+        autoComplete="email"
         onChange={setEmail}
-      ></FormInput>
+      />
+      </div>
+      <div>
       <FormInput
         type="password"
         label="Password"
-        placeholder="Enter your password"
         value={newPassword}
+        autoComplete="current-password"
         onChange={setPassword}
-      ></FormInput>
-      <div className="text-center d-flex flex-column">
-        <button
-          type="submit"
-          className="btn btn-warning py-1 px-2 cursor-pointer rounded mt-3"
-        >
-          {formType === UserManagement.Profile ? "Save Changes" : formType}
+      />
+      </div>
+      <div className="text-center d-flex flex-column space-y-6">
+         <button
+                type="submit"
+                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              >
+          {formType == UserManagement.Profile ? "Update" : formType}
         </button>
-        {formType === UserManagement.Profile && (
+        {formType == UserManagement.Profile && (
           <button
-            className="btn btn-danger py-1 px-2 cursor-pointer rounded mt-3"
-            onClick={handleProfileDelete}
-          >
-            Delete Profile
-          </button>
+                onClick={handleProfileDelete}
+                className="flex w-full justify-center rounded-md bg-red-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              >
+          Delete Profile
+        </button>
         )}
       </div>
     </form>

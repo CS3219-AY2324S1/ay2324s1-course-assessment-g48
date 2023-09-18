@@ -5,15 +5,24 @@ import { Question } from "../../type/Question";
 function useQuestion() {
   const [isLoading, setIsLoading] = useState(true);
   const [questions, setQuestions] = useState<Question[]>([]);
+  const [trigger, setTrigger] = useState(false);
+  const handleTrigger = () => {
+    setTrigger(!trigger); // Toggles the trigger state
+  };
 
   useEffect(() => {
     setIsLoading(true);
     getAllQuestions().then((questions) => {
       setQuestions(questions);
-      setIsLoading(false);
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 50)
+      
+    }).catch((error) => {
+    console.error(error);
     });
-  }, []);
-  return { questions, setQuestions, isLoading };
+  }, [trigger]);
+  return { questions, setQuestions, isLoading, handleTrigger };
 }
 
 export default useQuestion;
