@@ -242,7 +242,7 @@ userRouter.put(
           cleanedOauth.push(auth as OAuthType);
         }
         if (invalidOauth.length !== 0) {
-          console.warn(`The following OAuths are invalid and are ignored: ${invalidOauth}`);
+          logger.info(`The following OAuths are invalid and are ignored: ${invalidOauth}`);
         }  
       }
 
