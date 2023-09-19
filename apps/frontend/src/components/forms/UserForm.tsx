@@ -187,7 +187,7 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
         </div>
         <div className="flex flex-col text-center justify-center items-center d-flex flex-column space-y-6">
           {formType === UserManagement.Profile &&
-            sessionUser?.oauth?.length !== 0 && (
+            sessionUser?.oauth !== undefined && (
               <>
                 <p className="block text-sm font-medium leading-6 text-gray-900 dark:text-white">
                   Linked accounts:

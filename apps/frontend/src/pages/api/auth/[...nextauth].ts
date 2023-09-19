@@ -55,7 +55,7 @@ export default NextAuth({
             username: user.username,
             email: user.email,
             password: user.password,
-            role: Role.Normal
+            role: user.role
           };
         } else {
           return null;
