@@ -1,6 +1,15 @@
 import { Prisma, User } from "@prisma/client";
 import { prisma } from "./prisma";
-import { Response } from "express";
+
+export enum OAuthType {
+  Google = "google",
+  Github = "github",
+}
+
+export enum Role {
+  Admin = "admin",
+  Normal = "normal",
+}
 
 export async function createUser(data: User) {
   console.log(data);
@@ -8,7 +17,9 @@ export async function createUser(data: User) {
     data: {
       email: data.email,
       username: data.username,
-      password: data.password,
+      password: data.password ?? undefined,
+      oauth: data.oauth,
+      role: data.role,
     },
   });
 }

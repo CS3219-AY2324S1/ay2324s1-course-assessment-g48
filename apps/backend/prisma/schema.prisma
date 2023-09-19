@@ -14,7 +14,9 @@ model User {
   id      Int      @id @default(autoincrement())
   email   String   @unique
   username    String @unique
-  password String
+  password String?
+  oauth OAuth[]
+  role Role
   //   posts   Post[]
   //   profile Profile?
 }
@@ -37,4 +39,14 @@ enum Complexity {
   Easy
   Medium
   Hard
+}
+
+enum OAuth {
+  google
+  github
+}
+
+enum Role {
+  admin
+  normal
 }
