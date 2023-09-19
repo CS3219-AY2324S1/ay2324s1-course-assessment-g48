@@ -8,6 +8,7 @@ import {
   updateUser,
 } from "../../database/user";
 import { OAuth, Role } from "@prisma/client";
+import logger from "../../utils/logger";
 
 export const userRouter = Router();
 
@@ -38,13 +39,12 @@ userRouter.post(
       }
 
       if (!cleanedRole?.length) {
-        console.log(cleanedRole);
         res.status(400).send({ error: "Your role cannot be blank." });
         return;
       }
 
       if (!Object.values(Role).includes(cleanedRole as Role)) {
-        console.log(cleanedRole as Role);
+        console.log(`Invalid role: ${cleanedRole}`);
         res.status(400).send({ error: `Invalid role: ${cleanedRole}` });
         return;
       }
@@ -74,7 +74,7 @@ userRouter.post(
       }
 
       if (invalidOauth.length !== 0) {
-        console.warn(`The following OAuths are invalid and are ignored: ${invalidOauth}`);
+        logger.info(`The following OAuths are invalid and are ignored: ${invalidOauth}`);
       } 
 
       const cleanedUserData = {
