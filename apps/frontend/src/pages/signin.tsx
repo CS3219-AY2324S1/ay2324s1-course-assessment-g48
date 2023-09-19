@@ -1,5 +1,7 @@
+import OAuthButton from "@/components/forms/OAuthButton";
 import { UserManagement } from "../utils/enums/UserManagement";
 import UserForm from "@/components/forms/UserForm";
+import Link from "next/link";
 
 export default function Signin() {
   return (
@@ -71,12 +73,12 @@ export default function Signin() {
 
           <p className="mt-10 text-center text-sm text-gray-500">
             Not a member?{" "}
-            <a
+            <Link
               href="/signup"
               className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
             >
               {UserManagement.SignUp} now
-            </a>
+            </Link>
           </p>
         </div>
       </div>

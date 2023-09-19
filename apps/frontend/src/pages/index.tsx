@@ -18,7 +18,7 @@ export default function HomePage() {
         </div>
         <div className="text-center">
           <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl dark:text-slate-200">
-            Code collaboration to enrich your techinical interview
+            A platform for code collaboration to enrich your technical interview skills
           </h1>
           {/* Subtitle */}
           <p className="mt-6 text-lg leading-8 text-gray-600">
