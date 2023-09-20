@@ -14,6 +14,7 @@ import useSessionUser from "@/hook/useSessionUser";
 import OAuthButton from "./OAuthButton";
 import { Role } from "@/utils/enums/Role";
 import Image from "next/image";
+import Alert from "../Alert";
 
 interface UserFormProps {
   formType: string;
@@ -27,6 +28,7 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
   const [newEmail, setEmail] = useState(sessionUser.email ?? "");
   const [newPassword, setPassword] = useState(sessionUser.password ?? "");
   const [errorMessage, setErrorMessage] = useState("");
+  const [openAlert, setOpenAlert] = useState<boolean>(false);
 
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") ?? "/";
@@ -56,11 +58,20 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
       if (result?.error) {
         console.log(result.error);
         setErrorMessage("Invalid email or password.");
+        setOpenAlert(true);
+        setTimeout(() => {
+          setOpenAlert(false);
+        }, 3000);
       } else {
         router.push("/questions");
       }
     } catch (err) {
+      setErrorMessage(err as string);
       console.error(err);
+      setOpenAlert(true);
+        setTimeout(() => {
+          setOpenAlert(false);
+        }, 3000);
     }
   };
 
@@ -78,6 +89,10 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
       const response = await createNewUser(newUser);
       if (response.error) {
         setErrorMessage(response.error);
+        setOpenAlert(true);
+        setTimeout(() => {
+          setOpenAlert(false);
+        }, 3000);
         return;
       }
 
@@ -97,6 +112,10 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
     } catch (err) {
       console.log(err);
       setErrorMessage(err as string);
+      setOpenAlert(true);
+        setTimeout(() => {
+          setOpenAlert(false);
+        }, 3000);
     }
   };
 
@@ -116,6 +135,10 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
       const response = await updateUserById(newId, newUser);
       if (response.error) {
         setErrorMessage(response.error);
+        setOpenAlert(true);
+        setTimeout(() => {
+          setOpenAlert(false);
+        }, 3000);
         return;
       }
 
@@ -129,7 +152,12 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
       console.log(session);
       router.push("/");
     } catch (err) {
+      setErrorMessage(err as string);
       console.error(err);
+      setOpenAlert(true);
+        setTimeout(() => {
+          setOpenAlert(false);
+        }, 3000);
     }
   };
 
@@ -138,6 +166,10 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
     const response = await deleteUserById(Number(newId));
     if (response.error) {
       setErrorMessage(response.error);
+      setOpenAlert(true);
+        setTimeout(() => {
+          setOpenAlert(false);
+        }, 3000);
       return;
     }
     signOut();
@@ -228,6 +260,7 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
           <OAuthButton provider="github"></OAuthButton>
         </>
       )}
+      <Alert error={errorMessage} hidden={openAlert} setHide={setOpenAlert} />
     </>
   );
 };
