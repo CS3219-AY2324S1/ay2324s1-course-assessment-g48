@@ -6,7 +6,7 @@ export async function produceMessage(queue: string, message: string) {
 
   channel.sendToQueue(queue, Buffer.from(message));
 
-  console.log(`Producer: Message sent to ${queue}: ${message}`);
+  //   console.log(`Producer: Message sent to ${queue}: ${message}`);
 
   await channel.close();
   await connection.close();

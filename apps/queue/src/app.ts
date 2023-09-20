@@ -12,7 +12,7 @@ enum Difficulty {
 io.on("connect", (socket) => {
   //   socket.disconnect();
   socket.on("matching", (data, callback) => {
-    console.log(`______________________________`);
+    console.log(`\n`);
     // console.log(`Socket data: ${JSON.stringify(data)}`);
     const difficulty = data.difficulty;
     let queue: DifficultyQueue;

@@ -94,11 +94,11 @@ export class DifficultyQueue {
 
     channel.consume(this.nameSpace, (message) => {
       if (message != null) {
-        console.log(
-          `Consumer: Received message from ${
-            this.nameSpace
-          }: ${message.content.toString()}`
-        );
+        // console.log(
+        //   `Consumer: Received message from ${
+        //     this.nameSpace
+        //   }: ${message.content.toString()}`
+        // );
         //   console.log(difficultyQueue);
         this.matchUsers(Number(message.content.toString()));
         channel.ack(message);
