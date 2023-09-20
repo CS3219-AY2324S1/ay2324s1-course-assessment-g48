@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Question } from "../../../type/Question";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL + "/api/question";
+const BASE_URL = process.env.NEXT_PUBLIC_QUESTION_SERVICE + "/api/question";
 
 export const postNewQuestion = async (newQuestion: Question) => {
   return await axios

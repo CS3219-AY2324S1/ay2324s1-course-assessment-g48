@@ -1,7 +1,8 @@
 import { Server } from "socket.io";
 import { DifficultyQueue } from "./queue/difficultyQueue";
+import { PORT } from "./utils/config";
 
-const io = new Server(8001, {});
+const io = new Server(PORT, {});
 
 enum Difficulty {
   EASY = "easy",
