@@ -1,5 +1,15 @@
-import { User } from "@prisma/client";
+import { Prisma, User } from "@prisma/client";
 import { prisma } from "./prisma";
+
+export enum OAuthType {
+  Google = "google",
+  Github = "github",
+}
+
+export enum Role {
+  Admin = "admin",
+  Normal = "normal",
+}
 
 export async function createUser(data: User) {
   console.log(data);
@@ -7,7 +17,9 @@ export async function createUser(data: User) {
     data: {
       email: data.email,
       username: data.username,
-      password: data.password,
+      password: data.password ?? undefined,
+      oauth: data.oauth,
+      role: data.role,
     },
   });
 }
@@ -26,4 +38,10 @@ export async function updateUser(id: number, data: Partial<User>) {
 
 export async function deleteUser(id: number) {
   return await prisma.user.delete({ where: { id } });
+}
+
+export async function findOneUser(where: Prisma.UserWhereInput) {
+  return await prisma.user.findFirst({
+    where,
+  });
 }
