@@ -1,11 +1,8 @@
-import { BASE_URL } from "@/database/user/userService";
 import { matchingSocket } from "@/utils/socket/socket";
 import { useSession } from "next-auth/react";
 import React, { MouseEventHandler, useEffect, useState } from "react";
-import { io } from "socket.io-client";
 type matchingProps = {};
 
-const ws_url = process.env.NEXT_WS_URL;
 
 enum MatchedState {
   NOT_MATCHING = 0,
