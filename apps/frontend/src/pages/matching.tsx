@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { Switch } from "@headlessui/react";
+import { Complexity } from "@/utils/enums/Complexity";
+import { Language } from "@/utils/enums/Language";
 
 function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(" ");
@@ -22,26 +24,36 @@ const MatchingPage: React.FC<matchingProps> = () => {
             Language
           </label>
           <div className="relative mt-2.5">
-            <input
-              type="tel"
-              name="phone-number"
-              id="phone-number"
-              autoComplete="tel"
-              className="block w-full rounded-md border-0 px-3.5 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-            />
+          <select
+                id="language"
+                name="language"
+                className="block w-full rounded-md border-0 px-3.5 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              >
+                {Object.values(Language).map((languageOption) => (
+                    <option key={languageOption}>{languageOption}</option>
+                    ))}
+              </select>
           </div>
+        </div>
+        <div className="sm:col-span-2">
+        <label
+            htmlFor="difficulty"
+            className="block text-sm font-semibold leading-6 text-gray-900"
+          >
+            Difficulty
+          </label>
           <div className="relative mt-2.5">
           <select
                 id="difficulty"
                 name="difficulty"
-                className="h-full rounded-md border-0 bg-transparent bg-none py-0 pl-4 pr-9 text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
+                className="block w-full rounded-md border-0 px-3.5 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               >
-                <option>US</option>
-                <option>CA</option>
-                <option>EU</option>
+                {Object.values(Complexity).map((complexityOption) => (
+                    <option key={complexityOption}>{complexityOption}</option>
+                    ))}
               </select>
               </div>
-        </div>
+              </div>
         <div className="sm:col-span-2">
           <label
             htmlFor="message"
