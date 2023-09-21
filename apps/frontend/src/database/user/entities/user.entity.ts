@@ -3,11 +3,11 @@ import { Role } from "@/utils/enums/Role";
 
 export type User = {
   id: number;
-  username: string;
-  email: string;
+  username?: string;
+  email?: string;
   password?: string;
   oauth?: OAuthType[];
-  role: Role;
+  role?: Role;
 };
 
 export type CreateUserDto = Omit<User, "id">;

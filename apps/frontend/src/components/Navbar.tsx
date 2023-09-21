@@ -13,7 +13,8 @@ import { Session } from "next-auth";
 import { useRouter } from "next/router";
 import ModeToggleButton from "./ModeToggleButton";
 import Link from "next/link";
-import AuthErrorModal from "./AuthErrorModal";
+import AuthInfoModal from "./AuthInfoModal";
+import { AuthInfo } from "@/utils/enums/AuthInfo";
 
 const navigation = [
   { name: "Question", href: "/questions", current: false },
@@ -39,11 +40,10 @@ const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const router = useRouter();
   const currentPath = router.pathname;
-  const [openAuthError, setOpenAuthError] = useState(false);
+  const [openAuthInfo, setOpenAuthInfo] = useState(false);
   function handlePeerPrepClick() {
     if (!session) {
-      // window.alert("Please login to access to Peerprep features!");
-      setOpenAuthError(true);
+      setOpenAuthInfo(true);
     }
   }
 
@@ -233,10 +233,10 @@ const Navbar: React.FC<NavbarProps> = ({
             </div>
           </Disclosure.Panel>
 
-          <AuthErrorModal
-            title="Unauthorized Access"
-            setOpen={setOpenAuthError}
-            open={openAuthError}
+          <AuthInfoModal
+            title={AuthInfo.Unauthorised}
+            setOpen={setOpenAuthInfo}
+            open={openAuthInfo}
           />
         </>
       )}
