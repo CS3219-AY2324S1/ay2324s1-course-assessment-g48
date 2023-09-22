@@ -35,7 +35,6 @@ io.on("connect", (socket) => {
       queue.checkAndReleaseOtherConnection(data.uid);
     }
 
-    queue.attemptToMatchUsers(data.uid, socket);
     // console.log(`SocketMap: [${JSON.stringify(queue.socketMap)}]`)
     socket.on("disconnect", () => {
       console.log(`\n`);
@@ -47,6 +46,7 @@ io.on("connect", (socket) => {
       socket.removeAllListeners();
       console.log(`Cleanup for ${data.uid} complete`);
     });
+    queue.attemptToMatchUsers(data.uid, socket);
     setTimeout(() => {
       if (!socket.disconnected) {
         console.log(`\n`);
