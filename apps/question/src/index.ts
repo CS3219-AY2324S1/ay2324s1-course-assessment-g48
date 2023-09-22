@@ -1,5 +1,5 @@
-const app = require("./app");
-const http = require("http");
+import { app } from "./app";
+import http from "http";
 import * as logger from "./utils/logger";
 import * as config from "./utils/config";
 

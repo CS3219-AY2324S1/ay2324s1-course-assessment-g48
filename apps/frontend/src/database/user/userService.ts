@@ -2,7 +2,7 @@ import axios from "axios";
 import { CreateUserDto, UpdateUserDto, User } from "./entities/user.entity";
 import { OAuthType } from "@/utils/enums/OAuthType";
 
-export const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL + "/api/users";
+export const BASE_URL = process.env.NEXT_PUBLIC_USER_SERVICE + "/api/users";
 
 export const createNewUser = async (newUser: CreateUserDto) => {
   try {
