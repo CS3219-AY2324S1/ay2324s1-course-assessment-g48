@@ -102,6 +102,7 @@ const MatchingPage: React.FC<matchingProps> = () => {
                 setDifficulty(complexityOption);
                 setErr("");
               }}
+              disabled={isMatching !== MatchedState.NOT_MATCHING}
             />
             <label
               htmlFor={`complexity${complexityOption}`}
