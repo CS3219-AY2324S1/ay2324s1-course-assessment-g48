@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import ViewQuestionModal from "./ViewQuestionModal";
 import {
   deleteQuestionById,
@@ -10,6 +10,8 @@ import useQuestion from "@/hook/useQuestion";
 import AddQuestionModal from "./AddQuestionModal";
 import EditQuestionModal from "./EditQuestionModal";
 import { Complexity } from "@/utils/enums/Complexity";
+import useSessionUser from "@/hook/useSessionUser";
+import { Role } from "@/utils/enums/Role";
 
 type QuestionTableProps = {
   setOpenAdd: (open: boolean) => void;
@@ -17,8 +19,14 @@ type QuestionTableProps = {
   hidden?: boolean;
 };
 
-const QuestionTable: FC<QuestionTableProps> = ({ setOpenAdd, openAdd, hidden }) => {
+const QuestionTable: FC<QuestionTableProps> = ({
+  setOpenAdd,
+  openAdd,
+  hidden,
+}) => {
   const { questions, setQuestions, handleTrigger } = useQuestion();
+  const { sessionUser } = useSessionUser();
+  const [userRole, setUserRole] = useState(sessionUser.role ?? Role.Normal);
   const [viewQuestion, setViewQuestion] = useState<Question>({
     _id: "",
     title: "",
@@ -37,12 +45,16 @@ const QuestionTable: FC<QuestionTableProps> = ({ setOpenAdd, openAdd, hidden }) 
   const [openEdit, setOpenEdit] = useState(false);
   const [openView, setOpenView] = useState(false);
 
+  useEffect(() => {
+    setUserRole(sessionUser.role ?? Role.Normal);
+  }, [sessionUser]);
+
   const handleSaveQuestion = async (newQuestion: Question) => {
     const questionToAdd = { ...newQuestion };
     await postNewQuestion(questionToAdd)
       .then(() => {
-        handleTrigger()
-        
+        handleTrigger();
+
         setOpenAdd(false);
       })
       .catch((e) => {
@@ -79,97 +91,104 @@ const QuestionTable: FC<QuestionTableProps> = ({ setOpenAdd, openAdd, hidden }) 
   return (
     <>
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-      
-          <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400" hidden={hidden}>
-            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-              <tr>
-                <th scope="col" className="px-6 py-3">
-                  S/N
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Title
-                </th>
-                <th scope="col" className="px-6 py-3 w-1/3">
-                  Categories
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Complexity
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  View
-                </th>
-                <th scope="col" className="px-6 py-3 center">
-                  Edit
-                </th>
-                <th scope="col" className="px-6 py-3 center">
-                  Delete
-                </th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {questions.map((question, index) => (
-                <tr
-                  key={index}
-                  className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-                >
-                  <th scope="row" className="py-2 center">
-                    {index + 1}
+        <table
+          className="w-full text-sm text-left text-gray-500 dark:text-gray-400"
+          hidden={hidden}
+        >
+          <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <tr>
+              <th scope="col" className="px-6 py-3">
+                S/N
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Title
+              </th>
+              <th scope="col" className="px-6 py-3 w-1/3">
+                Categories
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Complexity
+              </th>
+              <th scope="col" className="px-6 py-3">
+                View
+              </th>
+              {userRole === Role.Admin && (
+                <>
+                  <th scope="col" className="px-6 py-3 center">
+                    Edit
                   </th>
-                  <td
-                    className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                    onClick={() => handleViewQuestion(question)}
+                  <th scope="col" className="px-6 py-3 center">
+                    Delete
+                  </th>
+                </>
+              )}
+            </tr>
+          </thead>
+
+          <tbody>
+            {questions.map((question, index) => (
+              <tr
+                key={index}
+                className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+              >
+                <th scope="row" className="py-2 center">
+                  {index + 1}
+                </th>
+                <td
+                  className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                  onClick={() => handleViewQuestion(question)}
+                >
+                  {question.title}
+                </td>
+                <td className="px-6 py-4">{question.categories.join(", ")}</td>
+                <td
+                  className={`px-6 py-4 ${
+                    question.complexity === Complexity.Easy
+                      ? "text-green-600"
+                      : question.complexity === Complexity.Medium
+                      ? " text-yellow-600"
+                      : "text-red-600"
+                  }`}
+                >
+                  {question.complexity}
+                </td>
+                <td className="px-6 py-4">
+                  <button
+                    className="btn btn-success"
+                    onClick={() => {
+                      handleViewQuestion(question);
+                    }}
                   >
-                    {question.title}
-                  </td>
-                  <td className="px-6 py-4">
-                    {question.categories.join(", ")}
-                  </td>
-                  <td
-                    className={`px-6 py-4 ${
-                      question.complexity === Complexity.Easy
-                        ? "text-green-600"
-                        : question.complexity === Complexity.Medium
-                        ? " text-yellow-600"
-                        : "text-red-600"
-                    }`}
-                  >
-                    {question.complexity}
-                  </td>
-                  <td className="px-6 py-4">
-                    <button
-                      className="btn btn-success"
-                      onClick={() => {
-                        handleViewQuestion(question);
-                      }}
-                    >
-                      View
-                    </button>
-                  </td>
-                  <td className="px-6 py-4 center">
-                    <button
-                      className="  bg-orange-600 hover:bg-orange-800 text-white font-bold py-2 px-4 rounded-full"
-                      onClick={() => {
-                        setQuestionToEdit(question);
-                        setOpenEdit(true);
-                      }}
-                    >
-                      Edit
-                    </button>
-                  </td>
-                  <td className="px-6 py-4 center">
-                    <button
-                      className="  bg-red-600 hover:bg-red-800 text-white font-bold py-2 px-4 rounded-full"
-                      onClick={() => handleDeleteQuestion(question._id)}
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        
+                    View
+                  </button>
+                </td>
+                {userRole === Role.Admin && (
+                  <>
+                    <td className="px-6 py-4 center">
+                      <button
+                        className="bg-orange-600 hover:bg-orange-800 text-white font-bold py-2 px-4 rounded-full"
+                        onClick={() => {
+                          setQuestionToEdit(question);
+                          setOpenEdit(true);
+                        }}
+                      >
+                        Edit
+                      </button>
+                    </td>
+                    <td className="px-6 py-4 center">
+                      <button
+                        className="bg-red-600 hover:bg-red-800 text-white font-bold py-2 px-4 rounded-full"
+                        onClick={() => handleDeleteQuestion(question._id)}
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </>
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
       <AddQuestionModal
         onSave={handleSaveQuestion}

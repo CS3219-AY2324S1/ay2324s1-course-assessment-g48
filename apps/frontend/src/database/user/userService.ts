@@ -1,6 +1,6 @@
 import axios from "axios";
 import { CreateUserDto, UpdateUserDto, User } from "./entities/user.entity";
-import { error } from "console";
+import { OAuthType } from "@/utils/enums/OAuthType";
 
 export const BASE_URL = process.env.NEXT_PUBLIC_USER_SERVICE + "/api/users";
 
@@ -11,6 +11,8 @@ export const createNewUser = async (newUser: CreateUserDto) => {
         email: newUser.email,
         username: newUser.username,
         password: newUser.password,
+        oauth: newUser.oauth,
+        role: newUser.role
       })
       .then((response) => {
         return response.data;
@@ -31,21 +33,27 @@ export const getUserById = async (id: number) => {
 };
 
 // TODO: Hash the password
-export const login = async (
-  email?: string,
-  password?: string
-): Promise<User | undefined> => {
-  if (!email || !password) {
+export const login = async ({
+  email,
+  password,
+  oauth,
+}: {
+  email?: string;
+  password?: string;
+  oauth?: OAuthType;
+}): Promise<User | undefined> => {
+  if (!email || (!password && !oauth)) {
     return undefined;
   }
-  return await axios
-    .get(BASE_URL + "/login", {
-      data: { email, password },
-    })
-    .then((res) => {
-      return res.data;
-    })
-    .catch((e) => console.error(e));
+  try {
+    const res = await axios.get(BASE_URL + "/login", {
+      data: { email, password, oauth },
+    });
+    return res.data;
+  } catch (e: any) {
+    console.error(e.response.data);
+    return undefined;
+  }
 };
 
 export const deleteUserById = async (id: number) => {
@@ -66,6 +74,8 @@ export const updateUserById = async (
       email: updatedUser.email,
       username: updatedUser.username,
       password: updatedUser.password,
+      oauth: updatedUser.oauth,
+      role: updatedUser.role
     });
     return response.data;
   } catch (e: any) {
