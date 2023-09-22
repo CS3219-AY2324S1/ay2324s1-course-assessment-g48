@@ -6,11 +6,13 @@ services:
     container_name: peerprep-postgres
     restart: always
     env_file:
-      - ./apps/backend/.env
+      - ./apps/backend/user/.env
     ports:
       - "5432:5432"                       # Map postgres container's port 5432 to host's port 5432
     # volumes:
     #   - postgres:/var/lib/postgresql/data
+    networks:
+      - peerprep-network
 
   peerprep-frontend:
     container_name: peerprep-frontend     # Name of the container
@@ -22,20 +24,59 @@ services:
       - "3000:3000"                       # Map frontend container's port 3000 to host's port 3000
     volumes:
       - ./apps/frontend:/app              # Mount the frontend directory as a volume
-    depends_on:
-      - peerprep-backend                  # Ensure that the backend service is started first
+    # depends_on:
+    #   - peerprep-backend                # Ensure that the backend service is started first
 
-  peerprep-backend:
-    container_name: peerprep-backend      # Name of the container
+  peerprep-question:
+    container_name: peerprep-question     # Name of the container
     restart: always
     build:
-      context: ./apps/backend             # Build context is the path to the backend directory
-      dockerfile: Dockerfile.backend      # Path to the Dockerfile for the backend
+      context: ./apps/backend/question    # Build context is the path to the backend directory
+      dockerfile: Dockerfile.question     # Path to the Dockerfile for the backend
     ports:
       - "8000:8000"                       # Map backend container's port 8000 to host's port 8000
     volumes:
-      - ./apps/backend:/app               # Mount the backend directory as a volume
+      - ./apps/backend/question:/app      # Mount the backend directory as a volume
     environment:
-      - ./apps/backend/.env
+      - ./apps/backend/question/.env
+    networks:
+      - peerprep-network
+
+  peerprep-user:
+    container_name: peerprep-user         # Name of the container
+    restart: always
+    build:
+      context: ./apps/backend/user        # Build context is the path to the backend directory
+      dockerfile: Dockerfile.user         # Path to the Dockerfile for the backend
+    ports:
+      - "8001:8001"                       # Map backend container's port 8000 to host's port 8000
+    volumes:
+      - ./apps/backend/user:/app          # Mount the backend directory as a volume
+    environment:
+      - ./apps/backend/user/.env.prod
     depends_on:
-      - postgres                 
+      postgres:                           # Ensure that the backend service is started first
+        condition: service_started
+    networks:
+      - peerprep-network
+
+
+  # peerprep-backend:
+  #   container_name: peerprep-backend      # Name of the container
+  #   restart: always
+  #   build:
+  #     context: ./apps/backend             # Build context is the path to the backend directory
+  #     dockerfile: Dockerfile.backend      # Path to the Dockerfile for the backend
+  #   ports:
+  #     - "8000:8000"                       # Map backend container's port 8000 to host's port 8000
+  #   volumes:
+  #     - ./apps/backend:/app               # Mount the backend directory as a volume
+  #   environment:
+  #     - ./apps/backend/.env
+  #   depends_on:
+  #     - postgres                 
+
+
+# Define a custom network for your services
+networks:
+  peerprep-network:

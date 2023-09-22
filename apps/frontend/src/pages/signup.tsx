@@ -1,5 +1,6 @@
 import { UserManagement } from "@/utils/enums/UserManagement";
 import UserForm from "@/components/forms/UserForm";
+import Link from "next/link";
 
 type signupProps = {};
 
@@ -18,12 +19,12 @@ const signup: React.FC<signupProps> = () => {
 
           <p className="mt-10 text-center text-sm text-gray-500">
             Already have an account?{" "}
-            <a
+            <Link
               href="/signin"
               className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
             >
               {UserManagement.SignIn} now
-            </a>
+            </Link>
           </p>
         </div>
       </div>

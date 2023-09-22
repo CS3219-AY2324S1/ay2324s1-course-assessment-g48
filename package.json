@@ -9,5 +9,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-  }
+  }, "workspaces": [
+    "apps/frontend",
+    "apps/backend/user",
+    "apps/backend/question"
+  ],
+  "private": true
 }

@@ -20,15 +20,23 @@ docker run -p 3000:3000 peerprep-frontend
 ```
 
 ### Backend Only
-To build the docker image from given dockerfile
+To build the docker image for specific microservices from given dockerfile
 ```
-# In backend directory
-docker build --file=./Dockerfile.backend -t peerprep-backend .
+# In microservice directory
+# Template
+docker build --file=./Dockerfile.<microservice> -t peerprep-<microservice> .
+
+# Example
+docker build --file=./Dockerfile.question -t peerprep-question .
 ```
 
-To run the backend container
+To run the microservice container
 ```
-docker run -p 8000:8000 peerprep-backend
+# Template
+docker run -p 8000:8000 peerprep-<microservice>
+
+# Example 
+docker run -p 8000:8000 peerprep-question
 ```
 
 PSQL

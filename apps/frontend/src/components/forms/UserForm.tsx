@@ -46,6 +46,7 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
 
   const handleSignIn = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
+    console.log("signing in");
     try {
       const result = await signIn("credentials", {
         redirect: false,
