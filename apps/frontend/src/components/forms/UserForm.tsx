@@ -38,6 +38,13 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") ?? "/";
 
+  useEffect(() => {
+    setNewId(sessionUser.id ?? -1);
+    setUsername(sessionUser.username ?? "");
+    setEmail(sessionUser.email ?? "");
+    setPassword(sessionUser.password ?? "");
+  }, [sessionUser]);
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (formType === UserManagement.SignIn) {
@@ -170,13 +177,6 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
     setUpdateAuthUser(newUser);
   }
 
-  useEffect(() => {
-    setNewId(sessionUser.id ?? -1);
-    setUsername(sessionUser.username ?? "");
-    setEmail(sessionUser.email ?? "");
-    setPassword(sessionUser.password ?? "");
-  }, [sessionUser]);
-
   return (
     <>
       <form className="space-y-6" method="POST" onSubmit={handleSubmit}>
@@ -214,7 +214,7 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
         </div>
         <div className="flex flex-col text-center justify-center items-center d-flex flex-column space-y-6">
           {formType === UserManagement.Profile &&
-            sessionUser?.oauth?.length !== 0 && (
+            sessionUser?.oauth !== undefined && sessionUser.oauth.length !== 0 && (
               <>
                 <p className="block text-sm font-medium leading-6 text-gray-900 dark:text-white">
                   Linked accounts:

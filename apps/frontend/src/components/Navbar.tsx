@@ -15,6 +15,7 @@ import ModeToggleButton from "./ModeToggleButton";
 import Link from "next/link";
 import AuthInfoModal from "./AuthInfoModal";
 import { AuthInfo } from "@/utils/enums/AuthInfo";
+import Stopwatch from "./Stopwatch";
 
 const navigation = [
   { name: "Question", href: "/questions", current: false },
@@ -40,6 +41,8 @@ const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const router = useRouter();
   const currentPath = router.pathname;
+  const isQuestionPage = currentPath === '/questions/[id]'
+
   const [openAuthInfo, setOpenAuthInfo] = useState(false);
   function handlePeerPrepClick() {
     if (!session) {
@@ -127,6 +130,7 @@ const Navbar: React.FC<NavbarProps> = ({
                   </div>
 
                   <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 space-x-2">
+                    {isQuestionPage && (<Stopwatch />)}
                     <ModeToggleButton />
                     <button
                       type="button"
@@ -148,7 +152,7 @@ const Navbar: React.FC<NavbarProps> = ({
                             className="rounded-full transition duration-300 ease-in-out"
                             width="30"
                             height="30"
-                            src={session?.user?.image || "/avatar.svg"}
+                            src={session?.user?.image ?? "/avatar.svg"}
                             alt="/avatar.svg"
                           />
                         </Menu.Button>

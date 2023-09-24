@@ -3,8 +3,7 @@ import CredentialProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import GithubProvider from "next-auth/providers/github";
 import {
-  CreateUserDto,
-  User,
+  CreateUserDto, User,
 } from "../../../database/user/entities/user.entity";
 import { createNewUser, login } from "@/database/user/userService";
 import { OAuthType } from "@/utils/enums/OAuthType";
@@ -13,11 +12,11 @@ import { Role } from "@/utils/enums/Role";
 declare module "next-auth" {
   interface User {
     id: number;
-    username: string;
-    email: string;
+    username?: string;
+    email?: string;
     password?: string;
     oauth?: OAuthType[];
-    role: Role;
+    role?: Role;
   }
 }
 
@@ -65,10 +64,25 @@ export default NextAuth({
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+      // always ask for permission (can remove if prefer to just sign in immediately if signed in before)
+      authorization: {
+        params: {
+          prompt: "consent",
+          access_type: "offline",
+          response_type: "code"
+        }
+      }
     }),
     GithubProvider({
       clientId: process.env.GITHUB_CLIENT_ID as string,
       clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
+      authorization: {
+        params: {
+          prompt: "consent",
+          access_type: "offline",
+          response_type: "code"
+        }
+      }
     }),
   ],
   callbacks: {

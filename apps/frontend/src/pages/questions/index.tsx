@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import QuestionTable from "@/components/questions/QuestionTable";
-import useQuestion from "@/hook/useQuestion";
+import useQuestion from "@/hook/useQuestions";
 import LoadingModal from "@/components/LoadingModal";
 import useSessionUser from "@/hook/useSessionUser";
 import { Role } from "@/utils/enums/Role";
