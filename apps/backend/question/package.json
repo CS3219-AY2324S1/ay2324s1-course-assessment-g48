@@ -1,5 +1,5 @@
 {
-  "name": "backend",
+  "name": "question",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -26,11 +26,9 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
-    "@prisma/client": "^5.2.0",
     "cors": "^2.8.5",
     "http": "^0.0.1-security",
     "mongodb": "^6.0.0",
-    "mongoose": "^7.5.0",
-    "prisma": "^5.2.0"
+    "mongoose": "^7.5.0"
   }
 }
