@@ -22,6 +22,7 @@ userRouter.post(
       const cleanedUsername = username?.trim();
       const cleanedPassword = password?.trim(); 
       const cleanedRole = role?.trim();
+      console.log("Post Body: ", req.body)
 
       if (!cleanedEmail?.length) {
         res.status(400).send({ error: "Your email cannot be blank." });
@@ -77,6 +78,8 @@ userRouter.post(
         logger.info(`The following OAuths are invalid and are ignored: ${invalidOauth}`);
       } 
 
+      console.log("Still going")
+
       const cleanedUserData = {
         id: -1, // not used, placeholder id
         email: cleanedEmail,
@@ -86,7 +89,9 @@ userRouter.post(
         role: cleanedRole as Role,
       }
 
+      console.log("Creating new user at userRouter", cleanedUserData);
       const newUser = await createUser(cleanedUserData);
+      console.log("Created New user: ", newUser);
       res.status(201).json(newUser);
     } catch (error) {
       console.error(error);
@@ -114,6 +119,7 @@ userRouter.get(
       const body = req.body;
       // TODO: hash the password
       const { email, password, oauth } = body;
+      console.log("Login Body: ", body)
       const cleanedEmail = email?.trim();
       const cleanedPassword = password?.trim();
       const user = await findOneUser({
@@ -158,9 +164,10 @@ userRouter.get(
         return;
       }
 
+      console.log("User found!!!!!!!!!!!!!!!!!!!!!!!!1");
       res.status(200).json(user);
     } catch (error) {
-      console.error(error);
+      console.error("UserRouter login error:", error);
       next(error);
     }
   }

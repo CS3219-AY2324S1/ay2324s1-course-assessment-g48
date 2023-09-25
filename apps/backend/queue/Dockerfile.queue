@@ -4,17 +4,16 @@ FROM node:16
 # Set the working directory in the container to /app
 WORKDIR /app
 
-# Copy all files from your host to your image filesystem at /app
-COPY . .
+COPY package*.json ./
 
 # Install all dependencies in the package.json
 RUN yarn install
 
-RUN npx prisma generate
+# Copy all files from your host to your image filesystem at /app
+COPY . .
 
 # Informs Docker that the container listens on the specified network ports at runtime.
 EXPOSE 8000
-EXPOSE 5432
 
 # Provides defaults for an executing container
 CMD ["yarn", "start"]

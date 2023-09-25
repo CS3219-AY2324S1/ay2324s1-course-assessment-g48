@@ -27,7 +27,9 @@ To build the docker image for specific microservices from given dockerfile
 docker build --file=./Dockerfile.<microservice> -t peerprep-<microservice> .
 
 # Example
+docker build --file=./Dockerfile.frontend -t peerprep-frontend .
 docker build --file=./Dockerfile.question -t peerprep-question .
+docker build --file=./Dockerfile.user -t peerprep-user .
 ```
 
 To run the microservice container
@@ -36,7 +38,10 @@ To run the microservice container
 docker run -p 8000:8000 peerprep-<microservice>
 
 # Example 
+docker run -p 3000:3000 peerprep-frontend
 docker run -p 8000:8000 peerprep-question
+docker run -p 8001:8001 peerprep-user
+
 ```
 
 PSQL
@@ -69,6 +74,15 @@ docker images
 
 # Remove an image
 docker rmi <IMAGE ID>
+```
+
+### Cool Tricks
+```
+Find the IP address of your container
+docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' your-container-name
+
+Test connection between containers
+docker exec -it your_frontend_container_name ping your_backend_container_name
 ```
 
 ### Useful References

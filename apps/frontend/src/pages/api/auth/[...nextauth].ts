@@ -50,6 +50,7 @@ export default NextAuth({
           password: credentials?.password,
         });
         if (user) {
+          console.log("User found", user);
           return {
             id: user.id,
             username: user.username,
@@ -58,6 +59,7 @@ export default NextAuth({
             role: Role.Normal
           };
         } else {
+          console.log("User not found nextauth");
           return null;
         }
       },
@@ -74,33 +76,40 @@ export default NextAuth({
   callbacks: {
     async signIn({ user, account }) {
       const OAuthErrorKey = "OAuthSigninError";
-
-      if (
-        !account?.provider ||
-        !Object.values(OAuthType).includes(account.provider as OAuthType)
-      ) {
+      
+      try {
+        if (
+          !account?.provider ||
+          !Object.values(OAuthType).includes(account.provider as OAuthType)
+        ) {
+          return true;
+        }
+  
+        const findOAuthUser = await login({
+          email: user.email,
+          oauth: account.provider as OAuthType,
+        });
+  
+        if (!findOAuthUser) {
+          const newUser: CreateUserDto = {
+            username: user.name as string,
+            email: user.email,
+            oauth: [account.provider as OAuthType],
+            role: Role.Normal
+          };
+          const response = await createNewUser(newUser);
+          console.log("Response: ", response)
+          if (response.error) {
+            return `/error?message=${response.error}&errorKey=${OAuthErrorKey}`;
+          }
+        }
+        return true;
+      } catch (error) {
+        console.error(error);
         return true;
       }
+      
 
-      const findOAuthUser = await login({
-        email: user.email,
-        oauth: account.provider as OAuthType,
-      });
-
-      if (!findOAuthUser) {
-        const newUser: CreateUserDto = {
-          username: user.name as string,
-          email: user.email,
-          oauth: [account.provider as OAuthType],
-          role: Role.Normal
-        };
-        const response = await createNewUser(newUser);
-        if (response.error) {
-          return `/error?message=${response.error}&errorKey=${OAuthErrorKey}`;
-        }
-      }
-
-      return true;
     },
     async jwt({ token, trigger, session, user, account }) {
       if (
