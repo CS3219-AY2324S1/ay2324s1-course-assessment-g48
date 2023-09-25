@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { Complexity } from "../../utils/enums/Complexity";
-import { Category } from "../../utils/enums/Category";
-import useInput from "../../hook/useInput";
+import { Complexity } from "../../../utils/enums/Complexity";
+import { Category } from "../../../utils/enums/Category";
+import useInput from "../../../hook/useInput";
 import ReactMarkdown from "react-markdown";
-import { Question } from "../../database/question/entities/question.entity";
-import Modal from "../Modal";
+import { Question } from "../../../database/question/entities/question.entity";
+import Modal from "../../Modal";
 
 type AddQuestionModalProps = {
   onSave: (newQuestion: Question) => Promise<void>;

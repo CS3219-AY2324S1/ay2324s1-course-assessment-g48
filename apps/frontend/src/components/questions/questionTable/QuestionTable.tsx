@@ -5,7 +5,6 @@ import {
   postNewQuestion,
   updateQuestionById,
 } from "@/database/question/questionService";
-import { Question } from "../../database/question/entities/question.entity";
 import useQuestion from "@/hook/useQuestions";
 import AddQuestionModal from "./AddQuestionModal";
 import EditQuestionModal from "./EditQuestionModal";
@@ -13,6 +12,7 @@ import { Complexity } from "@/utils/enums/Complexity";
 import useSessionUser from "@/hook/useSessionUser";
 import { Role } from "@/utils/enums/Role";
 import { useRouter } from "next/router";
+import { Question } from "@/database/question/entities/question.entity";
 
 type QuestionTableProps = {
   setOpenAdd: (open: boolean) => void;

@@ -1,6 +1,6 @@
 import React from 'react';
-import QuestionWorkspace from '@/components/questions/QuestionWorkspace';
 import useQuestionById from '@/hook/useQuestionById';
+import QuestionWorkspace from '@/components/questions/questionPage/QuestionWorkspace';
 
 type QuestionPageProps = {
   
