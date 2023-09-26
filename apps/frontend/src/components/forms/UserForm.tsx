@@ -68,6 +68,7 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
 
   const handleSignUp = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
+    console.log("signing up", newUsername, newEmail, newPassword, Role.Normal);
     try {
       const newUser: Omit<User, "id"> = {
         username: newUsername,

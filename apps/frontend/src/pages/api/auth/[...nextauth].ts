@@ -56,7 +56,7 @@ export default NextAuth({
             username: user.username,
             email: user.email,
             password: user.password,
-            role: Role.Normal
+            role: user.role
           };
         } else {
           console.log("User not found nextauth");
@@ -95,7 +95,7 @@ export default NextAuth({
             username: user.name as string,
             email: user.email,
             oauth: [account.provider as OAuthType],
-            role: Role.Normal
+            role: Role.Admin
           };
           const response = await createNewUser(newUser);
           console.log("Response: ", response)

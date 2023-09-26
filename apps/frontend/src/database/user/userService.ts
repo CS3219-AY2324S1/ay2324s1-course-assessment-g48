@@ -4,8 +4,18 @@ import { OAuthType } from "@/utils/enums/OAuthType";
 
 export const BASE_URL = process.env.NEXT_PUBLIC_USER_SERVICE + "/api/users";
 
+const axiosConfig = {
+  headers: {
+    'Access-Control-Allow-Origin': '*', // Allow requests from any origin
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE', // Allow specified HTTP methods
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization', // Allow specified headers
+  },
+  withCredentials: false, // Send cookies and credentials if needed
+};
+
 export const createNewUser = async (newUser: CreateUserDto) => {
   console.log("Creating new user", BASE_URL)
+  
   try {
     return await axios
       .post(BASE_URL, {
@@ -14,7 +24,7 @@ export const createNewUser = async (newUser: CreateUserDto) => {
         password: newUser.password,
         oauth: newUser.oauth,
         role: newUser.role
-      })
+      }, axiosConfig)
       .then((response) => {
         console.log("Create user success", response.data)
         return response.data;
@@ -54,7 +64,7 @@ export const login = async ({
     console.log("Sending request")
     console.log(BASE_URL + "/login")
     const res = await axios.get(BASE_URL + "/login", {
-      data: { email, password, oauth },
+      data:  { email:email, password:password, oauth:oauth } ,
     });
     console.log("Got response", res.data)
     return res.data;
