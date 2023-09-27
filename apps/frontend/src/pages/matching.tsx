@@ -13,7 +13,7 @@ type matchingProps = {};
 const ws_url = process.env.NEXT_WS_URL;
 
 const MatchingPage: React.FC<matchingProps> = () => {
-  const {toggleTimer, isRunning, reset} = useTimer()
+  const {toggleTimer,  seconds, reset} = useTimer();
   const [isMatching, setIsMatching] = useState<number>(
     MatchedState.NOT_MATCHING
   );
@@ -26,6 +26,7 @@ const MatchingPage: React.FC<matchingProps> = () => {
   const handleMatchConnection: FormEventHandler = (e) => {
     e.preventDefault();
     console.log(difficulty);
+    toggleTimer(new Date().getTime() + 30000)
     if (isMatching == MatchedState.MATCHING) {
       setToNotMatchingState();
       return;
@@ -36,7 +37,7 @@ const MatchingPage: React.FC<matchingProps> = () => {
   const setToNotMatchingState = () => {
     // Set the state of the page to not looking for match.
     disconnectSocket();
-    reset()
+    reset();
     setIsMatching(MatchedState.NOT_MATCHING);
   };
 
@@ -132,7 +133,6 @@ const MatchingPage: React.FC<matchingProps> = () => {
         <button
           type="submit"
           className="block w-full rounded-md bg-indigo-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-          onClick={toggleTimer}
         >
           {isMatching === MatchedState.NOT_MATCHING
             ? "Match"
@@ -152,7 +152,7 @@ const MatchingPage: React.FC<matchingProps> = () => {
         </div>
       )}
     </form>
-    <Countdown />
+    <Countdown counter={seconds} />
   </>
   );
 
