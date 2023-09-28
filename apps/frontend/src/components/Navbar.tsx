@@ -5,8 +5,6 @@ import {
   Bars3Icon,
   BellIcon,
   XMarkIcon,
-  MoonIcon,
-  SunIcon,
 } from "@heroicons/react/24/outline";
 import { signOut } from "next-auth/react";
 import { Session } from "next-auth";

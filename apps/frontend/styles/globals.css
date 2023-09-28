@@ -8,6 +8,20 @@ body {
   overflow-x: hidden;
 }
 
+@layer components {
+
+  .languageBtn {
+    @apply flex cursor-pointer items-center rounded focus:outline-none dark:bg-gray-600 dark:hover:bg-gray-700 px-2 py-1.5 font-medium;
+  }
+  .preferenceBtn {
+    @apply relative rounded px-3 font-medium items-center transition-all focus:outline-none inline-flex ml-auto p-1 mr-2 hover:bg-gray-800;
+  }
+
+  .preferenceBtnTooltip {
+    @apply absolute w-auto p-2 text-sm m-2 min-w-max translate-x-3 right-0 top-5 z-10 rounded-md shadow-md dark:text-gray-800 dark:bg-gray-200 origin-center scale-0 transition-all duration-100 ease-linear group-hover:scale-100;
+  }
+}
+
 .markdown-content img {
   max-width: 100%; /* Limit the maximum width of images to 100% of their container */
   height: auto; /* Automatically adjust the height to maintain aspect ratio */
@@ -66,13 +80,13 @@ body {
   text-align: center;
 }
 
+/* Question Page */
 .split {
   display: flex;
-  flex-direction: row;
 }
 
 .gutter {
-  background-color: #252525;
+  background-color: #202020;
   background-repeat: no-repeat;
   background-position: 50%;
 }
@@ -84,6 +98,20 @@ body {
 .gutter.gutter-horizontal {
   background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==');
   cursor: col-resize;
+}
+
+.gutter.gutter-vertical {
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAFAQMAAABo7865AAAABlBMVEVHcEzMzMzyAv2sAAAAAXRSTlMAQObYZgAAABBJREFUeF5jOAMEEAIEEFwAn3kMwcB6I2AAAAAASUVORK5CYII=');
+  cursor: row-resize;
+}
+
+.cm-scroller,
+.cm-gutters {
+  background-color: #282828 !important;
+}
+
+.cm-focused {
+  outline: none !important;
 }
 
 ::-webkit-scrollbar {
