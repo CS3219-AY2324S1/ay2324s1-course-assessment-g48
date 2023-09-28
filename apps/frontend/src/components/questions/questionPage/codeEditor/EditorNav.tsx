@@ -6,9 +6,9 @@ import {
 
 const EditorNav = () => {
   return (
-    <div className="flex items-center justify-between h-11 w-full dark:bg-gray-950">
+    <div className="flex items-center justify-between h-11 w-full dark:bg-gray-950 transition-all">
       <div className="flex items-center dark:text-white">
-        <button className="languageBtn">
+        <button className="languageBtn ml-2">
           <div className="flex items-center px-1">
             <div className="text-xs text-label-2 dark:text-white">
               JavaScript

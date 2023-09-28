@@ -503,10 +503,10 @@
     "@codemirror/state" "^6.0.0"
     "@codemirror/view" "^6.0.0"
 
-"@uiw/codemirror-theme-vscode@^4.21.18":
+"@uiw/codemirror-theme-material@^4.21.18":
   version "4.21.18"
-  resolved "https://registry.yarnpkg.com/@uiw/codemirror-theme-vscode/-/codemirror-theme-vscode-4.21.18.tgz#07de13de20e1fbb4f8483e94f8a106b82b1ed006"
-  integrity sha512-ZyDBjYwD0kxS3NPBBHVjgq2AMntlUED4TkO6b4QaHAbcCY4G5seHwURxlpziptuVVLVBViuPpqNgL7OCJAMFZA==
+  resolved "https://registry.yarnpkg.com/@uiw/codemirror-theme-material/-/codemirror-theme-material-4.21.18.tgz#af75af7b4802893d13eaf8c3a9556632233e42c6"
+  integrity sha512-a/EZ3ysKaeY9pmcr45eemnqLTcxC5ca67GiM4S+ZSIA4kG+AwwqdrHwtoajCfj4/RQ562b7GrxuXaJgtqPrz0g==
   dependencies:
     "@uiw/codemirror-themes" "4.21.18"
 

@@ -11,14 +11,14 @@ body {
 @layer components {
 
   .languageBtn {
-    @apply flex cursor-pointer items-center rounded focus:outline-none dark:bg-gray-600 dark:hover:bg-gray-700 px-2 py-1.5 font-medium;
+    @apply flex cursor-pointer items-center rounded focus:outline-none bg-slate-100 hover:bg-slate-200 dark:bg-gray-600 dark:hover:bg-gray-700 px-2 py-1.5 font-medium;
   }
   .preferenceBtn {
-    @apply relative rounded px-3 font-medium items-center transition-all focus:outline-none inline-flex ml-auto p-1 mr-2 hover:bg-gray-800;
+    @apply relative rounded px-3 font-medium items-center transition-all focus:outline-none inline-flex ml-auto p-1 mr-2 hover:bg-slate-300 dark:hover:bg-gray-800;
   }
 
   .preferenceBtnTooltip {
-    @apply absolute w-auto p-2 text-sm m-2 min-w-max translate-x-3 right-0 top-5 z-10 rounded-md shadow-md dark:text-gray-800 dark:bg-gray-200 origin-center scale-0 transition-all duration-100 ease-linear group-hover:scale-100;
+    @apply absolute w-auto p-2 text-sm m-2 min-w-max translate-x-3 right-0 top-5 z-10 rounded-md shadow-md bg-slate-100 dark:text-gray-800 dark:bg-gray-200 origin-center scale-0 transition-all duration-100 ease-linear group-hover:scale-100;
   }
 }
 
@@ -105,11 +105,17 @@ body {
   cursor: row-resize;
 }
 
-.cm-scroller,
-.cm-gutters {
-  background-color: #282828 !important;
+/* Light mode styles */
+.light-mode>.cm-editor>.cm-scroller,
+.light-mode>.cm-editor>.cm-gutters {
+  background-color: #ffffff !important;
 }
 
+/* Dark mode styles */
+.dark-mode>.cm-editor>.cm-scroller,
+.dark-mode>.cm-editor>.cm-gutters {
+  background-color: rgb(38 38 38) !important;
+}
 .cm-focused {
   outline: none !important;
 }

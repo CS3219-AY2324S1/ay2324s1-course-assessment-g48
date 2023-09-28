@@ -28,16 +28,17 @@ const QuestionDescriptionPanel: React.FC<QuestionDescriptionPanelProps> = ({
   return (
     <div className="flex flex-col">
       {/* Top tab */}
-      <div className="flex h-11 w-full items-center pt-2 dark:text-white overflow-x-hidden overflow-y-hidden dark:bg-gray-950">
-        <div className="rounded-t-[5px] dark:bg-gray-800 px-5 py-[10px] text-xs cursor-pointer">
+      <div className="flex h-11 w-full items-center pt-2 dark:text-white overflow-x-hidden overflow-y-hidden dark:bg-gray-950 ml-2">
+        <div className="flex flex-col h-full justify-center rounded-t-[5px] py-[10px] px-3 dark:bg-gray-800 bg-slate-100 text-xs cursor-pointer relative transition-all">
           Description
+          <hr className="bg-gray-700 dark:bg-dark-gray-700 absolute -bottom-[1px] right-0 h-[2px] w-full" />
         </div>
-        <div className="rounded-t-[5px] dark:bg-gray-800 px-5 py-[10px] text-xs cursor-pointer">
+        <div className="flex flex-col h-full justify-center rounded-t-[5px] py-[10px] px-3 dark:bg-gray-800 bg-slate-100 text-xs cursor-pointer relative transition-all">
           Submission
         </div>
       </div>
 
-      <div className="flex px-0 py-4 overflow-y-auto dark:bg-gray-800 h-screen">
+      <div className="flex px-0 py-4 overflow-y-auto bg-slate-50 dark:bg-gray-800 h-screen transition-all">
         <div className="px-5">
           <div className="w-full">
             {/* Title */}

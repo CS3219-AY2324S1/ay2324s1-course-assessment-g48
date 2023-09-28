@@ -2,12 +2,13 @@ import React from "react";
 import EditorNav from "./EditorNav";
 import Split from "react-split";
 import CodeMirror from "@uiw/react-codemirror";
-import { vscodeDark } from "@uiw/codemirror-theme-vscode";
+import { materialDark, materialLight } from "@uiw/codemirror-theme-material";
 import { javascript } from "@codemirror/lang-javascript";
 import TestCasesHeader from "./TestCasesHeader";
 import TestCaseChip from "./TestCaseChip";
 import InputOutput from "./InputOutput";
 import EditorFooter from "./EditorFooter";
+import { useTheme } from "@/hook/ThemeContext";
 
 type CodeEditorProps = {};
 
@@ -29,6 +30,8 @@ public class Solution {
   }
 };`;
 
+  const { isDarkMode, toggleTheme } = useTheme();
+
   return (
     <div className="flex flex-col dark:bg-gray-800 relative overflow-x-hidden">
       <EditorNav />
@@ -38,10 +41,10 @@ public class Solution {
         sizes={[60, 40]}
       >
         <div className="w-full overflow-auto dark:bg-neutral-800">
-          <CodeMirror
+          <CodeMirror className={isDarkMode ? "dark-mode": "light-mode"}
             value={starterCode}
             height="100%"
-            theme={vscodeDark}
+            theme={isDarkMode ? materialDark : materialLight}
             extensions={[javascript()]}
             style={{ fontSize: 14 }}
           />
