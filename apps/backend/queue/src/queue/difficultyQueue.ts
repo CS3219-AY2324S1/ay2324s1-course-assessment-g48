@@ -2,6 +2,7 @@ import { Socket } from "socket.io";
 import { produceMessage } from "../producer";
 import amqp from "amqplib";
 import e from "cors";
+import crypto from 'crypto';
 
 export class DifficultyQueue {
   waitList: number[];
@@ -12,6 +13,10 @@ export class DifficultyQueue {
     this.waitList = [];
     this.socketMap = new Map();
     this.connectToAmqp();
+  }
+
+  public generateSessionId() {
+    return crypto.randomBytes(16).toString('base64');
   }
 
   public isThereWaitingUser() {
@@ -47,21 +52,24 @@ export class DifficultyQueue {
       //   console.log(`First user uid: ${firstUserUid}, second user uid: ${uid}`)
       const firstUserSocket = this.socketMap.get(firstUserUid);
       const secondUserSocket = this.socketMap.get(uid);
+      const randomSessionId = this.generateSessionId()
       if (!firstUserSocket || !secondUserSocket) {
         throw new Error(
           "There was no socket associated with the firstUserSocket"
         );
       }
       firstUserSocket.emit("matched", {
+        matchSocket: uid,
         err: "",
-        session: String(uid) + String(firstUserUid),
+        sessionId: randomSessionId
       });
       secondUserSocket.emit("matched", {
+        matchSocket: firstUserUid,
         err: "",
-        session: String(uid) + String(firstUserUid),
+        sessionId: randomSessionId
       });
       console.log(
-        `There was a waiting user ${firstUserUid} for the ${this.nameSpace} queue. Pairing ${firstUserUid} with ${uid}`
+        `There was a waiting user ${firstUserUid} for the ${this.nameSpace} queue. Pairing ${firstUserUid} with ${uid}, with sessionId ${randomSessionId}`
       );
       console.log(`Waitlist: [${JSON.stringify(this.waitList.join(", "))}]`);
       this.removeFromSocketMap(firstUserUid, uid);

@@ -42,7 +42,6 @@ function useTimer() {
         reset();
       }
       const interval = setInterval(() => {
-        console.log(seconds)
         setCountDown(countDownDate - new Date().getTime());
       }, 1000);
       return () => clearInterval(interval) 
