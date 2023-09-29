@@ -1,9 +1,9 @@
 import ReactMarkdown from "react-markdown";
-import { Question } from "../../../type/Question";
 import { Complexity } from "@/utils/enums/Complexity";
 import { Category } from "@/utils/enums/Category";
 import { useEffect, useState } from "react";
-import Modal from "../Modal";
+import { Question } from "@/database/question/entities/question.entity";
+import Modal from "@/components/Modal";
 
 type EditQuestionModalProps = {
   onEditQuestion: {

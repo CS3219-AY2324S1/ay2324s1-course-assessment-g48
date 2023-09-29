@@ -1,7 +1,7 @@
 import React from "react";
 import ReactMarkdown from "react-markdown";
-import Modal from "../Modal";
 import { Complexity } from "@/utils/enums/Complexity";
+import Modal from "@/components/Modal";
 
 type ViewQuestionModalProps = {
   onViewQuestion: {
