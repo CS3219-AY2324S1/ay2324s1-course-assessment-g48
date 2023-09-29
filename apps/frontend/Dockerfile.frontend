@@ -1,11 +1,11 @@
 # Use the official Node.js 16 image as a parent image
-FROM node:16
+FROM node:18
 
 # Set the working directory in the container to /app
 WORKDIR /app
 
-# # Copy the .next directory from your host to your image filesystem at /app
-# COPY .next ./.next
+# Copy the .next directory from your host to your image filesystem at /app
+COPY .next ./.next
 
 # Copy all files from your host to your image filesystem at /app
 COPY . .

@@ -84,6 +84,8 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
         return;
       }
 
+      console.log("Sign up successful, now trying to sign in")
+
       const result = await signIn("credentials", {
         redirect: false,
         email: newEmail,
@@ -98,7 +100,7 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
         router.push("/");
       }
     } catch (err) {
-      console.log(err);
+      console.log(err || "Error undefined???");
       setErrorMessage(err as string);
     }
   };

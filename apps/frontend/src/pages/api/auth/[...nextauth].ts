@@ -45,10 +45,12 @@ export default NextAuth({
         },
       },
       authorize: async (credentials) => {
+        console.log("fker trying to log in with credentials", credentials)
         const user = await login({
           email: credentials?.email,
           password: credentials?.password,
         });
+        console.log("fker managed to by thru", user)
         if (user) {
           console.log("User found", user);
           return {
@@ -56,6 +58,7 @@ export default NextAuth({
             username: user.username,
             email: user.email,
             password: user.password,
+            oauth: [],
             role: user.role
           };
         } else {
@@ -89,6 +92,7 @@ export default NextAuth({
           email: user.email,
           oauth: account.provider as OAuthType,
         });
+        console.log("findOAuthUser:" , findOAuthUser)
   
         if (!findOAuthUser) {
           const newUser: CreateUserDto = {
