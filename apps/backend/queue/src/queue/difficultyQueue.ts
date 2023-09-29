@@ -59,12 +59,12 @@ export class DifficultyQueue {
         );
       }
       firstUserSocket.emit("matched", {
-        matchSocket: uid,
+        peerId: uid,
         err: "",
         sessionId: randomSessionId
       });
       secondUserSocket.emit("matched", {
-        matchSocket: firstUserUid,
+        peerId: firstUserUid,
         err: "",
         sessionId: randomSessionId
       });

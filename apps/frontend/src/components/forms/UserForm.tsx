@@ -260,7 +260,7 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
           <OAuthButton provider="github"></OAuthButton>
         </>
       )}
-      <Alert error={errorMessage} hidden={openAlert} setHide={setOpenAlert} />
+      <Alert message={errorMessage} hidden={openAlert} setHide={setOpenAlert} />
     </>
   );
 };

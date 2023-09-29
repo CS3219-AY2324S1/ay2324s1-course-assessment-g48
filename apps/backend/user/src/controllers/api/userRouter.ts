@@ -20,7 +20,7 @@ userRouter.post(
       const { email, username, password, oauth, role } = req.body;
       const cleanedEmail = email?.trim();
       const cleanedUsername = username?.trim();
-      const cleanedPassword = password?.trim(); 
+      const cleanedPassword = password?.trim();
       const cleanedRole = role?.trim();
 
       if (!cleanedEmail?.length) {
@@ -55,7 +55,9 @@ userRouter.post(
         return;
       }
 
-      const hasSameUsernameUser = await findOneUser({ username: cleanedUsername });
+      const hasSameUsernameUser = await findOneUser({
+        username: cleanedUsername,
+      });
       if (hasSameUsernameUser) {
         res.status(400).send({ error: "That username is already in use." });
         return;
@@ -74,8 +76,10 @@ userRouter.post(
       }
 
       if (invalidOauth.length !== 0) {
-        logger.info(`The following OAuths are invalid and are ignored: ${invalidOauth}`);
-      } 
+        logger.info(
+          `The following OAuths are invalid and are ignored: ${invalidOauth}`
+        );
+      }
 
       const cleanedUserData = {
         id: -1, // not used, placeholder id
@@ -84,7 +88,7 @@ userRouter.post(
         password: cleanedPassword,
         oauth: cleanedOauth,
         role: cleanedRole as Role,
-      }
+      };
 
       const newUser = await createUser(cleanedUserData);
       res.status(201).json(newUser);
@@ -134,22 +138,22 @@ userRouter.get(
           if (!user.oauth.includes(oauth)) {
             user.oauth.push(oauth as OAuthType);
             await updateUser(user.id, {
-              oauth: user.oauth
+              oauth: user.oauth,
             });
           }
-          
+
           // return user
           res.status(200).json(user);
           return;
         }
-  
+
         // oauth provided but not in enum
         console.log(`Invalid OAuth request: ${oauth}`);
         res.status(401).json({
           error: `401: ${oauth} is not supported by PeerPrep.`,
         });
         return;
-      } 
+      }
 
       if (user?.password !== cleanedPassword) {
         res.status(401).json({
@@ -215,7 +219,7 @@ userRouter.put(
 
       if (cleanedPassword !== undefined && !cleanedPassword.length) {
         const user = await findOneUser({ id: Number(id) });
-        if (user?.oauth.length === 0) { 
+        if (user?.oauth.length === 0) {
           res.status(400).send({ error: "Your password cannot be blank." });
           return;
         }
@@ -226,10 +230,10 @@ userRouter.put(
         return;
       }
 
-      if (!Object.values(Role).includes(cleanedRole as Role)) {
-        res.status(400).send({ error: `Invalid role: ${cleanedRole}` });
-        return;
-      }
+      // if (!Object.values(Role).includes(cleanedRole as Role)) {
+      //   res.status(400).send({ error: `Invalid role: ${cleanedRole}` });
+      //   return;
+      // }
 
       if (oauth !== undefined) {
         cleanedOauth = [];
@@ -242,8 +246,10 @@ userRouter.put(
           cleanedOauth.push(auth as OAuthType);
         }
         if (invalidOauth.length !== 0) {
-          logger.info(`The following OAuths are invalid and are ignored: ${invalidOauth}`);
-        }  
+          logger.info(
+            `The following OAuths are invalid and are ignored: ${invalidOauth}`
+          );
+        }
       }
 
       const updatedUser = await updateUser(parseInt(id), {
@@ -277,6 +283,30 @@ userRouter.delete(
         });
       } else {
         res.status(204).send();
+      }
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+  }
+);
+
+// Get a User
+userRouter.get(
+  "/:id",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      const user = await findOneUser(
+        { id: Number(id) },
+        { email: true, username: true }
+      );
+      if (!user) {
+        res.status(404).json({
+          error: `A user with id ${id} does not exist.`,
+        });
+      } else {
+        res.status(200).json(user);
       }
     } catch (error) {
       console.error(error);

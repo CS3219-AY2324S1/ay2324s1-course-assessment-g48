@@ -1,4 +1,4 @@
-import { BASE_URL } from "@/database/user/userService";
+import { BASE_URL, getUserById } from "@/database/user/userService";
 import { matchingSocket } from "@/utils/socket/socket";
 import { useSession } from "next-auth/react";
 import React, { FormEventHandler, useEffect, useState } from "react";
@@ -9,6 +9,8 @@ import { MatchedState } from "@/utils/enums/MatchingState";
 import Countdown from "@/components/Countdown";
 import useTimer from "@/hook/useTimer";
 import useSessionUser from "@/hook/useSessionUser";
+import Alert from "@/components/Alert";
+import { User } from "@/database/user/entities/user.entity";
 type matchingProps = {};
 
 const ws_url = process.env.NEXT_WS_URL;
@@ -19,10 +21,11 @@ const MatchingPage: React.FC<matchingProps> = () => {
     MatchedState.NOT_MATCHING
   );
   const [difficulty, setDifficulty] = useState<string>(Complexity.Easy);
-
   const { sessionUser } = useSessionUser();
   const user = sessionUser;
   const [err, setErr] = useState<string>("");
+  const [openAlert, setOpenAlert] = useState<boolean>(false);
+  const [peer, setPeer] = useState<User | null>(null);
 
   const handleMatchConnection: FormEventHandler = (e) => {
     e.preventDefault();
@@ -57,6 +60,10 @@ const MatchingPage: React.FC<matchingProps> = () => {
     matchingSocket.on("timeout", () => {
       setToNotMatchingState();
       setErr("Timed out, try again.");
+      setOpenAlert(true);
+      setTimeout(() => {
+        setOpenAlert(false);
+      }, 3000);
       disconnectSocket();
     });
     setIsMatching(MatchedState.MATCHING);
@@ -64,9 +71,20 @@ const MatchingPage: React.FC<matchingProps> = () => {
 
   const setToMatchedState = (data: any) => {
     // Do something like route to the new session.
-    // disconnectSocket();
+    disconnectSocket();
     console.log(data.sessionId);
+    console.log(data.peerId);
+    getUserById(data.peerId).then((peer) => {
+      setPeer(peer);
+    }).catch((err) => {
+      console.log(err);
+    })
     setIsMatching(MatchedState.MATCHED);
+    setErr("Matched with a peer!");
+    setOpenAlert(true);
+      setTimeout(() => {
+        setOpenAlert(false);
+      }, 3000);
   };
 
   const disconnectSocket = () => {
@@ -156,14 +174,18 @@ const MatchingPage: React.FC<matchingProps> = () => {
           </div>
         )}
         {isMatching === MatchedState.MATCHED && (
+          <>
           <button
             className="block w-full rounded-m px-3.5 py-2.5 text-center text-sm font-semibold text-gray-900 dark:text-white shadow-s"
             onClick={setToNotMatchingState}
           >
             Close Session
           </button>
+          <label>{peer?.username}</label>
+          </>
         )}
       </form>
+      <Alert message={err} hidden={openAlert} setHide={setOpenAlert} green={isMatching === MatchedState.MATCHED} />
     </>
   );
 
