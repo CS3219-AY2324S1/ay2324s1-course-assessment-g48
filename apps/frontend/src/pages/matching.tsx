@@ -13,7 +13,6 @@ import Alert from "@/components/Alert";
 import { User } from "@/database/user/entities/user.entity";
 type matchingProps = {};
 
-const ws_url = process.env.NEXT_WS_URL;
 
 const MatchingPage: React.FC<matchingProps> = () => {
   const { toggleTimer, seconds, reset } = useTimer();

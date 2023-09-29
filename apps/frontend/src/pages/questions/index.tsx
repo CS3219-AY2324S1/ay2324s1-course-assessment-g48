@@ -6,7 +6,7 @@ import LoadingModal from "@/components/LoadingModal";
 import useSessionUser from "@/hook/useSessionUser";
 import { Role } from "@/utils/enums/Role";
 
-export default function QuestionsPage() {
+export default function QuestionsRepo() {
   const [openAdd, setOpenAdd] = useState(false);
   const { isLoading } = useQuestion();
   const { sessionUser } = useSessionUser();

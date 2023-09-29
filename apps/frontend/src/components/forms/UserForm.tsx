@@ -15,20 +15,27 @@ import OAuthButton from "./OAuthButton";
 import { Role } from "@/utils/enums/Role";
 import Image from "next/image";
 import Alert from "../Alert";
+import { OAuthType } from "@/utils/enums/OAuthType";
+import AuthInfoModal from "../AuthInfoModal";
+import { AuthInfo } from "@/utils/enums/AuthInfo";
 
 interface UserFormProps {
   formType: string;
 }
 
 const UserForm: React.FC<UserFormProps> = ({ formType }) => {
-  const { data: session, status, update } = useSession();
+  const { status, update } = useSession();
   const { sessionUser } = useSessionUser();
   const [newId, setNewId] = useState(sessionUser.id ?? -1);
-  const [newUsername, setUsername] = useState(sessionUser.username);
+  const [newUsername, setUsername] = useState(sessionUser.username ?? "");
   const [newEmail, setEmail] = useState(sessionUser.email ?? "");
   const [newPassword, setPassword] = useState(sessionUser.password ?? "");
   const [errorMessage, setErrorMessage] = useState("");
   const [openAlert, setOpenAlert] = useState<boolean>(false);
+
+  const [openAuthInfo, setOpenAuthInfo] = useState(false);
+  const [authProvider, setAuthProvider] = useState(undefined as OAuthType | undefined);
+  const [updateAuthUser, setUpdateAuthUser] = useState(undefined as UpdateUserDto | undefined);
 
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") ?? "/";
@@ -149,8 +156,7 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
       }
 
       update({ user: sessionUser });
-      console.log(session);
-      router.push("/");
+      router.push("/profile");
     } catch (err) {
       setErrorMessage(err as string);
       console.error(err);
@@ -174,6 +180,27 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
     }
     signOut();
   };
+
+  const handleUnlinkOAuth = async (e: { preventDefault: () => void}, provider: OAuthType) => {
+    e.preventDefault();
+    const newOAuth = sessionUser.oauth?.filter((oauth) => oauth !== provider);
+    if (newOAuth == undefined || newOAuth.length == 0) {
+      if (newPassword == undefined || newPassword.trim().length == 0) {
+        setErrorMessage("You must enter your password to unlink your last linked account.");
+        return;
+      }
+    }
+
+    const newUser: UpdateUserDto = {
+      id: newId,
+      password: newPassword,
+      oauth: newOAuth,
+    }
+    
+    setOpenAuthInfo(true);
+    setAuthProvider(provider);
+    setUpdateAuthUser(newUser);
+  }
 
   useEffect(() => {
     setNewId(sessionUser.id ?? -1);
@@ -203,7 +230,7 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
             value={newEmail}
             autoComplete="email"
             disabled={
-              status === "authenticated" && sessionUser.oauth !== undefined
+              status === "authenticated" && (sessionUser.oauth !== undefined && sessionUser.oauth.length !== 0)
             }
             onChange={setEmail}
           />
@@ -232,7 +259,8 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
                       alt={oauth}
                       height={25}
                       width={25}
-                      className="bg-white"
+                      className="bg-white cursor-pointer"
+                      onClick={(e) => handleUnlinkOAuth(e, oauth)}
                     />
                   ))}
                 </div>
@@ -260,7 +288,16 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
           <OAuthButton provider="github"></OAuthButton>
         </>
       )}
-      <Alert message={errorMessage} hidden={openAlert} setHide={setOpenAlert} />
+    
+      <AuthInfoModal
+        title={AuthInfo.UnlinkOauth}
+        setOpen={setOpenAuthInfo}
+        open={openAuthInfo}
+        provider={authProvider}
+        setErrorMessage={setErrorMessage}
+        newUser={updateAuthUser}
+        />
+        <Alert message={errorMessage} hidden={openAlert} setHide={setOpenAlert} />
     </>
   );
 };

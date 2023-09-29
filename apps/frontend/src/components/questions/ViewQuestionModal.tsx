@@ -1,6 +1,5 @@
 import React from "react";
 import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import Modal from "../Modal";
 import { Complexity } from "@/utils/enums/Complexity";
 
@@ -34,7 +33,7 @@ const ViewQuestionModal: React.FC<ViewQuestionModalProps> = ({
             </label>
             <div className="mt-3">
               <article className="prose max-w-none">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                <ReactMarkdown>
                   {onViewQuestion.description}
                 </ReactMarkdown>
               </article>
