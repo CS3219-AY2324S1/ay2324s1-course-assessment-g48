@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { getAllQuestions } from "../database/question/questionService";
-import { Question } from "../../type/Question";
+import { Question } from "@/database/question/entities/question.entity";
 
 function useQuestion() {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [trigger, setTrigger] = useState(false);
   const handleTrigger = () => {

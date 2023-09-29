@@ -1,11 +1,10 @@
-import { useEffect, useState } from "react";
-import { Complexity } from "../../utils/enums/Complexity";
-import { Category } from "../../utils/enums/Category";
-import useInput from "../../hook/useInput";
+import { useState } from "react";
+import { Complexity } from "../../../utils/enums/Complexity";
+import { Category } from "../../../utils/enums/Category";
+import useInput from "../../../hook/useInput";
 import ReactMarkdown from "react-markdown";
-import { Question } from "../../database/question/entities/question.entity";
-import Modal from "../Modal";
-import Alert from "../Alert";
+import { Question } from "../../../database/question/entities/question.entity";
+import Modal from "../../Modal";
 
 type AddQuestionModalProps = {
   onSave: (newQuestion: Question) => Promise<void>;
@@ -26,7 +25,6 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
     complexity: "",
   });
   const [error, setError] = useState<string>("");
-  const [openAlert, setOpenAlert] = useState<boolean>(false);
   const {
     value,
     valueIsValid,
@@ -52,10 +50,6 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
       })
       .catch((e) => {
         setError(e);
-        setOpenAlert(true);
-        setTimeout(() => {
-          setOpenAlert(false);
-        }, 3000);
       });
   };
 
@@ -252,16 +246,12 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
             </button>
             <button
               type="submit"
+              disabled={!valueIsValid}
               className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
               Add
             </button>
           </div>
-          <Alert
-            error={!valueIsValid ? "Input cannot be empty" : error}
-            hidden={openAlert}
-            setHide={setOpenAlert}
-          />
         </form>
       </Modal>
     </>

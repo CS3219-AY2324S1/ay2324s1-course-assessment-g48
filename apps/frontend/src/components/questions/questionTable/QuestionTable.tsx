@@ -5,14 +5,14 @@ import {
   postNewQuestion,
   updateQuestionById,
 } from "@/database/question/questionService";
-import { Question } from "../../database/question/entities/question.entity";
-import useQuestion from "@/hook/useQuestion";
+import useQuestion from "@/hook/useQuestions";
 import AddQuestionModal from "./AddQuestionModal";
 import EditQuestionModal from "./EditQuestionModal";
 import { Complexity } from "@/utils/enums/Complexity";
 import useSessionUser from "@/hook/useSessionUser";
 import { Role } from "@/utils/enums/Role";
-import Alert from "../Alert";
+import { useRouter } from "next/router";
+import { Question } from "@/database/question/entities/question.entity";
 
 type QuestionTableProps = {
   setOpenAdd: (open: boolean) => void;
@@ -45,8 +45,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
 
   const [openEdit, setOpenEdit] = useState(false);
   const [openView, setOpenView] = useState(false);
-  const [error, setError] = useState<string>("");
-  const [openAlert, setOpenAlert] = useState<boolean>(false);
+  const router = useRouter();
 
   useEffect(() => {
     setUserRole(sessionUser.role ?? Role.Normal);
@@ -71,12 +70,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
         handleTrigger();
       })
       .catch((e) => {
-        setError(e);
         console.log(e);
-        setOpenAlert(true);
-        setTimeout(() => {
-          setOpenAlert(false);
-        }, 3000);
       });
   };
 
@@ -87,7 +81,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
         setOpenEdit(false);
       })
       .catch((e) => {
-        throw new String(e);
+        throw String(e);
       });
   };
 
@@ -96,6 +90,10 @@ const QuestionTable: FC<QuestionTableProps> = ({
     setOpenView(true);
   };
 
+  function handleQuestionClick(question: Question): void {
+    router.push(`/questions/${question._id}`);
+  }
+
   return (
     <>
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -103,7 +101,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
           className="w-full text-sm text-left text-gray-500 dark:text-gray-400"
           hidden={hidden}
         >
-          <thead className="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
+          <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
               <th scope="col" className="px-6 py-3">
                 S/N
@@ -117,7 +115,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
               <th scope="col" className="px-6 py-3">
                 Complexity
               </th>
-              <th scope="col" className="px-6 py-3 center">
+              <th scope="col" className="px-6 py-3">
                 View
               </th>
               {userRole === Role.Admin && (
@@ -143,8 +141,8 @@ const QuestionTable: FC<QuestionTableProps> = ({
                   {index + 1}
                 </th>
                 <td
-                  className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                  onClick={() => handleViewQuestion(question)}
+                  className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white cursor-pointer"
+                  onClick={() => handleQuestionClick(question)}
                 >
                   {question.title}
                 </td>
@@ -160,9 +158,9 @@ const QuestionTable: FC<QuestionTableProps> = ({
                 >
                   {question.complexity}
                 </td>
-                <td className="px-6 py-4 center">
+                <td className="px-6 py-4">
                   <button
-                    className=" bg-indigo-600 px-4 py-2 font-bold text-white hover:bg-indigo-500 rounded-full"
+                    className="btn btn-success"
                     onClick={() => {
                       handleViewQuestion(question);
                     }}
@@ -198,7 +196,6 @@ const QuestionTable: FC<QuestionTableProps> = ({
           </tbody>
         </table>
       </div>
-      <Alert error={error} hidden={openAlert} setHide={setOpenAlert} />
       <AddQuestionModal
         onSave={handleSaveQuestion}
         setOpen={setOpenAdd}
