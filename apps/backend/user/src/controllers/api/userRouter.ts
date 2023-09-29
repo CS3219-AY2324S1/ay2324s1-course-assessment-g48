@@ -18,6 +18,7 @@ userRouter.post(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { email, username, password, oauth, role } = req.body;
+      console.log("body:" ,req.body);
       const cleanedEmail = email?.trim();
       const cleanedUsername = username?.trim();
       const cleanedPassword = password?.trim();
@@ -116,6 +117,7 @@ userRouter.get(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const body = req.body;
+      console.log("body:" , body);
       // TODO: hash the password
       const { email, password, oauth } = body;
       const cleanedEmail = email?.trim();
@@ -176,6 +178,7 @@ userRouter.put(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
+      
       const { email, username, password, oauth, role } = req.body;
       const cleanedEmail = email?.trim();
       const cleanedUsername = username?.trim();
