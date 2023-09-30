@@ -10,8 +10,9 @@
   "license": "ISC",
   "dependencies": {
     "dotenv": "^16.3.1"
-  }, "workspaces": ["./apps/*"],
+  },
+  "workspaces": [
+    "./apps/*"
+  ],
   "private": true
-
-
 }
