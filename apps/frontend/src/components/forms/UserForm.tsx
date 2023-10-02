@@ -60,7 +60,9 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
 
   const handleSignIn = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
+    console.log("signing in");
     try {
+      console.log("Details", newEmail, newPassword, callbackUrl);
       const result = await signIn("credentials", {
         redirect: false,
         email: newEmail,
@@ -68,7 +70,7 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
         callbackUrl,
       });
       if (result?.error) {
-        console.log(result.error);
+        console.log("Something wrong" , result.error);
         setErrorMessage("Invalid email or password.");
       } else {
         router.push("/questions");
@@ -80,6 +82,7 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
 
   const handleSignUp = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
+    console.log("signing up", newUsername, newEmail, newPassword, Role.Normal);
     try {
       const newUser: Omit<User, "id"> = {
         username: newUsername,
@@ -95,6 +98,8 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
         return;
       }
 
+      console.log("Sign up successful, now trying to sign in")
+
       const result = await signIn("credentials", {
         redirect: false,
         email: newEmail,
@@ -109,7 +114,7 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
         router.push("/");
       }
     } catch (err) {
-      console.log(err);
+      console.log(err || "Error undefined???");
       setErrorMessage(err as string);
     }
   };

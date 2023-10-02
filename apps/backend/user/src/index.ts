@@ -5,6 +5,6 @@ import * as config from "./utils/config";
 
 const server = http.createServer(app);
 
-server.listen(config.PORT, () => {
+server.listen(Number(config.PORT), '::', () => {
   logger.info(`Server running on port ${config.PORT}`);
 });

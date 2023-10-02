@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon ./src/index.ts",
     "lint": "eslint . --fix",
-    "dev": "npx nodemon"
+    "dev": "npx nodemon",
+    "start:prod": "prisma migrate deploy && yarn start"
   },
   "keywords": [],
   "author": "",
@@ -28,6 +29,7 @@
   "dependencies": {
     "@prisma/client": "^5.3.1",
     "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
     "http": "^0.0.1-security",
     "prisma": "^5.2.0"
   }
