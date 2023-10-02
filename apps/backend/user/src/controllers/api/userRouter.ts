@@ -92,11 +92,6 @@ userRouter.post(
           `The following OAuths are invalid and are ignored: ${invalidOauth}`
         );
       }
-<<<<<<< HEAD
-=======
-
-      console.log("Still going 3");
->>>>>>> dev
 
       const cleanedUserData = {
         id: -1, // not used, placeholder id
