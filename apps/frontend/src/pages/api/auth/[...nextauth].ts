@@ -57,10 +57,7 @@ export default NextAuth({
             username: user.username,
             email: user.email,
             password: user.password,
-<<<<<<< HEAD
-=======
             oauth: [],
->>>>>>> dev
             role: user.role
           };
         } else {
