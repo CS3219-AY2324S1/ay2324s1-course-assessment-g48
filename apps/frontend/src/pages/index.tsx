@@ -1,4 +1,3 @@
-import QuestionTable from "@/components/questions/QuestionTable";
 import { useRouter } from "next/router";
 
 export default function HomePage() {
