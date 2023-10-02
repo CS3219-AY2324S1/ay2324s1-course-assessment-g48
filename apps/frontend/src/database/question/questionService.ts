@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Question } from "../../../type/Question";
+import { Question } from "./entities/question.entity";
 
 const BASE_URL = process.env.NEXT_PUBLIC_QUESTION_SERVICE + "/api/question";
 
@@ -16,7 +16,7 @@ export const postNewQuestion = async (newQuestion: Question) => {
     })
     .catch((error) => {
       console.error(error);
-      throw new String(error.response.data.error)
+      throw String(error.response.data.error)
     });
 };
 
@@ -27,7 +27,7 @@ export const getAllQuestions = async () => {
   })
   .catch((error) => {
     console.error(error);
-    throw new String(error.response.data.error)
+    throw String(error.response.data.error)
   });
 };
 
@@ -39,13 +39,13 @@ export const getQuestionById = async (id: string) => {
   .catch((error) => {
     if (error.response) {
       // The request was made, but the server responded with a status code
-      throw new String(error.response.data.error);
+      throw String(error.response.data.error);
     } else if (error.request) {
       // The request was made, but no response was received
-      throw new String('No response received, please try again later');
+      throw String('No response received, please try again later');
     } else {
       // Something happened in setting up the request that triggered an error
-      throw new String(error.message);
+      throw String(error.message);
     }
   });
 };

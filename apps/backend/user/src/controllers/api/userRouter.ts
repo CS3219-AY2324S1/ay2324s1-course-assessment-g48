@@ -275,14 +275,16 @@ userRouter.put(
         }
       }
 
-      if (cleanedRole !== undefined && !cleanedRole.length) {
-        res.status(400).send({ error: "Your role cannot be blank." });
-        return;
-      }
-
-      if (!Object.values(Role).includes(cleanedRole as Role)) {
-        res.status(400).send({ error: `Invalid role: ${cleanedRole}` });
-        return;
+      if (cleanedRole !== undefined) {
+        if (!cleanedRole.length) {
+          res.status(400).send({ error: "Your role cannot be blank." });
+          return;
+        }
+  
+        if (!Object.values(Role).includes(cleanedRole as Role)) {
+          res.status(400).send({ error: `Invalid role: ${cleanedRole}` });
+          return;
+        }
       }
 
       if (oauth !== undefined) {

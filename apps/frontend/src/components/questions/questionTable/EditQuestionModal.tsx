@@ -1,10 +1,9 @@
 import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import { Question } from "../../../type/Question";
 import { Complexity } from "@/utils/enums/Complexity";
 import { Category } from "@/utils/enums/Category";
 import { useEffect, useState } from "react";
-import Modal from "../Modal";
+import { Question } from "@/database/question/entities/question.entity";
+import Modal from "@/components/Modal";
 
 type EditQuestionModalProps = {
   onEditQuestion: {
@@ -75,7 +74,7 @@ const EditQuestionModal: React.FC<EditQuestionModalProps> = ({
               </div>
               <div className="mt-3">
                 <article className="prose max-w-none">
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  <ReactMarkdown>
                     {newQuestion.description}
                   </ReactMarkdown>
                 </article>

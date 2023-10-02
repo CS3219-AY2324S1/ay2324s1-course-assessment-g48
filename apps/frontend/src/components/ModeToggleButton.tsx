@@ -1,6 +1,5 @@
 import { useTheme } from "@/hook/ThemeContext";
 import { MoonIcon, SunIcon } from "@heroicons/react/24/outline";
-import { useEffect, useState } from "react";
 
 type ModeToggleButtonProps = {};
 
