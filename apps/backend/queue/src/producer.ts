@@ -1,7 +1,7 @@
 import amqp from "amqplib";
 
 export async function produceMessage(queue: string, message: string) {
-  const connection = await amqp.connect("amqp://localhost:5672");
+  const connection = await amqp.connect(process.env.RABBITMQ_URL || "");
   const channel = await connection.createChannel();
 
   channel.sendToQueue(queue, Buffer.from(message));

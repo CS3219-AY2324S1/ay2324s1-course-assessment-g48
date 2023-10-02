@@ -26,6 +26,9 @@ To build the docker image for specific microservices from given dockerfile
 # Template
 docker build --file=./Dockerfile.<microservice> -t peerprep-<microservice> .
 
+#Alternative
+docker build -t ay2324s1-course-assessment-g48-peerprep-frontend:v1.0.0 -f Dockerfile.frontend .
+
 # Example
 docker build --file=./Dockerfile.frontend -t peerprep-frontend .
 docker build --file=./Dockerfile.question -t peerprep-question .
@@ -50,7 +53,7 @@ PSQL
 docker pull postgres
 
 # Create a Docker Container
-docker run --name peerprep-postgres -e POSTGRES_PASSWORD=AxFteAdXM2a4Aa -d postgres
+docker run --name peerprep-postgres -e POSTGRES_PASSWORD=qShhYgujF3MbMP -d postgres
 
 # Accessing PostgreSQL
 docker exec -it peerprep-postgres psql -U postgres
@@ -74,6 +77,15 @@ docker images
 
 # Remove an image
 docker rmi <IMAGE ID>
+
+# Goes into the container and exec bash
+docker exec -it peerprep-frontend bash
+
+docker logs peerprep-frontend -f
+
+docker rm --force peerprep-frontend
+
+docker cp peerprep-frontend:/app/build .
 ```
 
 ### Cool Tricks

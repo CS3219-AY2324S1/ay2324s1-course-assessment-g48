@@ -1,5 +1,5 @@
 # Use the official Node.js 16 image as a parent image
-FROM node:16
+FROM node:18
 
 # Using echo to print a message during image build
 RUN echo "Building User Service Image..."

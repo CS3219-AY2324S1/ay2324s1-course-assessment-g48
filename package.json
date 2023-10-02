@@ -9,7 +9,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-  }, "workspaces": [
+    "telnet": "^0.0.1"
+  },
+  "workspaces": [
     "apps/frontend",
     "apps/backend/user",
     "apps/backend/question"
