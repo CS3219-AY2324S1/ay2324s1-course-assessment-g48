@@ -62,7 +62,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
               <div className="col-span-full">
                 <label
                   htmlFor="title"
-                  className="block text-sm font-medium leading-6 text-gray-900"
+                  className="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
                 >
                   Title
                 </label>

@@ -13,6 +13,7 @@ import useSessionUser from "@/hook/useSessionUser";
 import { Role } from "@/utils/enums/Role";
 import { useRouter } from "next/router";
 import { Question } from "@/database/question/entities/question.entity";
+import QuestionPagination from "./QuestionPagination";
 
 type QuestionTableProps = {
   setOpenAdd: (open: boolean) => void;
@@ -195,7 +196,9 @@ const QuestionTable: FC<QuestionTableProps> = ({
             ))}
           </tbody>
         </table>
+
       </div>
+      <QuestionPagination hidden={hidden} />
       <AddQuestionModal
         onSave={handleSaveQuestion}
         setOpen={setOpenAdd}

@@ -1,6 +1,7 @@
 import { Fragment, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
+import useNotification from '@/hook/useNotfication';
 
 type SlideOverProps = {
     open: boolean;
@@ -10,6 +11,7 @@ type SlideOverProps = {
 const SlideOver:React.FC<SlideOverProps> = (
     {open, setOpen}
 ) => {
+  const {notifications} = useNotification()
     return (
         <Transition.Root show={open} as={Fragment}>
           <Dialog as="div" className="relative z-10" onClose={setOpen}>
@@ -65,7 +67,20 @@ const SlideOver:React.FC<SlideOverProps> = (
                             Notification
                           </Dialog.Title>
                         </div>
-                        <div className="relative mt-6 flex-1 px-4 sm:px-6">{/* Your content */}</div>
+                        <div className="relative mt-6 flex-1 px-4 sm:px-6">{
+                          <ul role="list" className="divide-y divide-gray-100">
+                          {notifications.map((notification) => (
+                            <li key={notification.id} className="flex justify-between gap-x-6 py-5 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
+                              <div className="flex min-w-0 gap-x-4">
+                                <div className="min-w-0 flex-auto">
+                                  <p className="text-sm font-semibold leading-6 text-gray-900">{notification.title}</p>
+                                  <p className="mt-1 truncate text-xs leading-5 text-gray-500">{notification.description}</p>
+                                </div>
+                              </div>
+                            </li>
+                          ))}
+                        </ul>
+                        }</div>
                       </div>
                     </Dialog.Panel>
                   </Transition.Child>
