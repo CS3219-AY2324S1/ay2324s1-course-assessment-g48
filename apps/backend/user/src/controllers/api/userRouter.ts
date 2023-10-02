@@ -18,6 +18,7 @@ userRouter.post(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { email, username, password, oauth, role } = req.body;
+      console.log("body:" ,req.body);
       const cleanedEmail = email?.trim();
       const cleanedUsername = username?.trim();
       const cleanedPassword = password?.trim();
@@ -92,8 +93,6 @@ userRouter.post(
         );
       }
 
-      console.log("Still going 3");
-
       const cleanedUserData = {
         id: -1, // not used, placeholder id
         email: cleanedEmail,
@@ -156,6 +155,7 @@ userRouter.get(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const body = req.body;
+      console.log("body:" , body);
       // TODO: hash the password
       const { email, password, oauth } = body;
       console.log("Login Body: ", body)
@@ -226,6 +226,7 @@ userRouter.put(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
+      
       const { email, username, password, oauth, role } = req.body;
       const cleanedEmail = email?.trim();
       const cleanedUsername = username?.trim();
@@ -335,6 +336,30 @@ userRouter.delete(
         });
       } else {
         res.status(204).send();
+      }
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+  }
+);
+
+// Get a User
+userRouter.get(
+  "/:id",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      const user = await findOneUser(
+        { id: Number(id) },
+        { email: true, username: true }
+      );
+      if (!user) {
+        res.status(404).json({
+          error: `A user with id ${id} does not exist.`,
+        });
+      } else {
+        res.status(200).json(user);
       }
     } catch (error) {
       console.error(error);
