@@ -316,11 +316,6 @@
     lodash.merge "^4.6.2"
     postcss-selector-parser "6.0.10"
 
-"@tsconfig/node-lts@^18.12.5":
-  version "18.12.5"
-  resolved "https://registry.npmjs.org/@tsconfig/node-lts/-/node-lts-18.12.5.tgz"
-  integrity sha512-KJZX0kQ5FBv77WDVzmQ9y1dUjaJCNXAAz3LSsg5cMwH0AUijVdDQtII+IVprEXdb13U9GjVOBxBzyRvr/ozPxw==
-
 "@types/cookie@^0.4.1":
   version "0.4.1"
   resolved "https://registry.npmjs.org/@types/cookie/-/cookie-0.4.1.tgz"
@@ -669,7 +664,7 @@ axe-core@^4.6.2:
   resolved "https://registry.npmjs.org/axe-core/-/axe-core-4.8.1.tgz"
   integrity sha512-9l850jDDPnKq48nbad8SiEelCv4OrUWrKab/cPj0GScVg6cb6NbCCt/Ulk26QEq5jP9NnGr04Bit1BHyV6r5CQ==
 
-axios@^1.5.0, axios@^1.5.1:
+axios@^1.5.0:
   version "1.5.1"
   resolved "https://registry.npmjs.org/axios/-/axios-1.5.1.tgz"
   integrity sha512-Q28iYCWzNHjAm+yEAot5QaAMxhMghWLFVf7rRdwhUI+c2jix2DUXjAHXVi+s1ibs3mjPO/cCgbA++3BjD0vP/A==
