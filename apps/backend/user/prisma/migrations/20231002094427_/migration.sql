@@ -1,6 +1,24 @@
 -- CreateEnum
 CREATE TYPE "Complexity" AS ENUM ('Easy', 'Medium', 'Hard');
 
+-- CreateEnum
+CREATE TYPE "OAuth" AS ENUM ('google', 'github');
+
+-- CreateEnum
+CREATE TYPE "Role" AS ENUM ('admin', 'normal');
+
+-- CreateTable
+CREATE TABLE "User" (
+    "id" SERIAL NOT NULL,
+    "email" TEXT NOT NULL,
+    "username" TEXT NOT NULL,
+    "password" TEXT,
+    "oauth" "OAuth"[],
+    "role" "Role" NOT NULL,
+
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateTable
 CREATE TABLE "Question" (
     "id" SERIAL NOT NULL,
@@ -24,6 +42,12 @@ CREATE TABLE "_CategoryToQuestion" (
     "A" INTEGER NOT NULL,
     "B" INTEGER NOT NULL
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_CategoryToQuestion_AB_unique" ON "_CategoryToQuestion"("A", "B");

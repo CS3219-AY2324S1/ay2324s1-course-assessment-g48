@@ -78,7 +78,7 @@ services:
 
   peerprep-queue:
     container_name: peerprep-queue     # Name of the container
-    # restart: always
+    restart: always
     image: peerprep-queue:v1.0.0     
     # build:
     #   context: ./apps/backend/queue    # Build context is the path to the backend directory

@@ -40,8 +40,8 @@ export async function deleteUser(id: number) {
   return await prisma.user.delete({ where: { id } });
 }
 
-export async function findOneUser(where: Prisma.UserWhereInput) {
+export async function findOneUser(where: Prisma.UserWhereInput, select?: Prisma.UserSelect) {
   return await prisma.user.findFirst({
-    where,
+    where, select
   });
 }
