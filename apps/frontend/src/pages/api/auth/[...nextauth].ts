@@ -113,7 +113,7 @@ export default NextAuth({
             username: user.name as string,
             email: user.email,
             oauth: [account.provider as OAuthType],
-            role: Role.Admin
+            role: Role.Normal
           };
           const response = await createNewUser(newUser);
           console.log("Response: ", response)
