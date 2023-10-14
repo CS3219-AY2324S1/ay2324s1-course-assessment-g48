@@ -6,29 +6,25 @@ import Layout from "../components/Layout";
 import { SessionProvider } from "next-auth/react";
 import ThemeProvider from "@/hook/ThemeContext";
 import { RepoContext } from "@automerge/automerge-repo-react-hooks";
-import { Doc } from "@/utils/repo";
 import { useEffect, useState } from "react";
-import {
-  Repo,
-  DocHandle,
-  isValidAutomergeUrl,
-  AutomergeUrl,
-} from "@automerge/automerge-repo";
+import { Repo, AutomergeUrl } from "@automerge/automerge-repo";
 import { BroadcastChannelNetworkAdapter } from "@automerge/automerge-repo-network-broadcastchannel";
 import { IndexedDBStorageAdapter } from "@automerge/automerge-repo-storage-indexeddb";
-import { next as A } from "@automerge/automerge";
-
+import { BrowserWebSocketClientAdapter } from "@automerge/automerge-repo-network-websocket";
 export default function App({ Component, pageProps }: AppProps) {
   const [repo, setRepo] = useState<Repo>();
-  //   console.log(`Initial repo: ${repo}`);
-
-  const [docUrl, setDocUrl] = useState<AutomergeUrl>();
+  //   console.log(repo);
 
   useEffect(() => {
     if (typeof window !== "undefined" && "indexedDB" in window) {
       console.log("Creating repo");
       const brandNewRepo = new Repo({
-        network: [new BroadcastChannelNetworkAdapter()],
+        network: [
+          new BrowserWebSocketClientAdapter(
+            String(process.env.NEXT_PUBLIC_WS_SESSION_URL)
+          ),
+          new BroadcastChannelNetworkAdapter(),
+        ],
         storage: new IndexedDBStorageAdapter(),
       });
       setRepo(brandNewRepo);
@@ -51,7 +47,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <ThemeProvider>
           <RepoContext.Provider value={repo as Repo}>
             <Layout>
-              <Component {...pageProps} docUrl={docUrl} />
+              <Component {...pageProps} />
             </Layout>
           </RepoContext.Provider>
         </ThemeProvider>

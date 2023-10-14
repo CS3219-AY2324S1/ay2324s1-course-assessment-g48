@@ -23,7 +23,6 @@ export class DifficultyQueue {
       })
       .catch((error) => {
         console.error(error);
-        throw String(error.response.data.error);
       });
     return sessionID;
   }
