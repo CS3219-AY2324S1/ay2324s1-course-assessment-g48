@@ -1,7 +1,8 @@
 import React from "react";
 import ReactMarkdown from "react-markdown";
 import { Complexity } from "@/utils/enums/Complexity";
-import Modal from "@/components/Modal"
+import Modal from "@/components/Modal";
+import { Question } from "@/database/question/entities/question.entity";
 
 type ViewQuestionModalProps = {
   onViewQuestion: {
@@ -13,12 +14,14 @@ type ViewQuestionModalProps = {
   };
   setOpen: (open: boolean) => void;
   open: boolean;
+  handleQuestionClick: (question: Question) => void;
 };
 
 const ViewQuestionModal: React.FC<ViewQuestionModalProps> = ({
   onViewQuestion,
   setOpen,
   open,
+  handleQuestionClick,
 }) => {
   return (
     <Modal title={onViewQuestion.title} setOpen={setOpen} open={open}>
@@ -33,9 +36,7 @@ const ViewQuestionModal: React.FC<ViewQuestionModalProps> = ({
             </label>
             <div className="mt-3">
               <article className="prose max-w-none">
-                <ReactMarkdown>
-                  {onViewQuestion.description}
-                </ReactMarkdown>
+                <ReactMarkdown>{onViewQuestion.description}</ReactMarkdown>
               </article>
             </div>
           </div>
@@ -82,7 +83,7 @@ const ViewQuestionModal: React.FC<ViewQuestionModalProps> = ({
           </div>
         </div>
       </div>
-      <div className="mt-6 flex items-center justify-end gap-x-6">
+      <div className="mt-6 flex items-center justify-end gap-x-4">
         <button
           type="button"
           className="rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
@@ -91,6 +92,12 @@ const ViewQuestionModal: React.FC<ViewQuestionModalProps> = ({
           }}
         >
           Close
+        </button>
+        <button
+          className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+          onClick={() => handleQuestionClick(onViewQuestion)}
+        >
+          Attempt
         </button>
       </div>
     </Modal>

@@ -26,7 +26,8 @@ const QuestionTable: FC<QuestionTableProps> = ({
   openAdd,
   hidden,
 }) => {
-  const { questions, setQuestions, handleTrigger } = useQuestion();
+  const { questions, totalQuestions, handleTrigger } = useQuestion();
+  const [questionsPerPage, setQuestionsPerPage] = useState(10);
   const { sessionUser } = useSessionUser();
   const [userRole, setUserRole] = useState(sessionUser.role ?? Role.Normal);
   const [viewQuestion, setViewQuestion] = useState<Question>({
@@ -46,7 +47,15 @@ const QuestionTable: FC<QuestionTableProps> = ({
 
   const [openEdit, setOpenEdit] = useState(false);
   const [openView, setOpenView] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   const router = useRouter();
+  const numberOfPages = Math.ceil(totalQuestions / questionsPerPage);
+  const indexOfLastRecord = currentPage * questionsPerPage;
+  const indexOfFirstRecord = indexOfLastRecord - questionsPerPage;
+  const currentQuestions = questions.slice(
+    indexOfFirstRecord,
+    indexOfLastRecord
+  );
 
   useEffect(() => {
     setUserRole(sessionUser.role ?? Role.Normal);
@@ -99,7 +108,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
     <>
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
         <table
-          className="w-full text-sm text-left text-gray-500 dark:text-gray-400"
+          className="relative text-sm text-left text-gray-500 dark:text-gray-400"
           hidden={hidden}
         >
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -133,7 +142,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
           </thead>
 
           <tbody>
-            {questions.map((question, index) => (
+            {currentQuestions.map((question, index) => (
               <tr
                 key={index}
                 className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
@@ -196,9 +205,16 @@ const QuestionTable: FC<QuestionTableProps> = ({
             ))}
           </tbody>
         </table>
-
+        <QuestionPagination
+          hidden={hidden}
+          totalQuestionsNum={totalQuestions}
+          questionsPerPage={questionsPerPage}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          numberOfPages={numberOfPages}
+        />
       </div>
-      <QuestionPagination hidden={hidden} />
+
       <AddQuestionModal
         onSave={handleSaveQuestion}
         setOpen={setOpenAdd}
@@ -214,6 +230,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
         onViewQuestion={viewQuestion}
         setOpen={setOpenView}
         open={openView}
+        handleQuestionClick={handleQuestionClick}
       />
     </>
   );
