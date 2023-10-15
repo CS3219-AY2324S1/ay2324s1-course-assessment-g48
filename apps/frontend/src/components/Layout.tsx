@@ -12,8 +12,9 @@ const Layout = ({ children }: PropsWithChildren) => {
 
   const redirectToSignIn =
     !session &&
-    router.pathname !== "/signin" &&
-    router.pathname !== "/signup" &&
+    !router.pathname.includes("signin") &&
+    !router.pathname.includes("signup") &&
+    router.pathname !== "/404" &&
     !router.pathname.includes("error");
   const isLoading = status === "loading";
 

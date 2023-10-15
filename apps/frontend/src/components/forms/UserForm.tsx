@@ -210,7 +210,7 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
     if (newOAuth == undefined || newOAuth.length == 0) {
       if (newPassword == undefined || newPassword.trim().length == 0) {
         setErrorMessage(
-          "You must enter your password to unlink your last linked account."
+          "You must enter a password in order to unlink your last linked account."
         );
         setOpenAlert(true);
         setTimeout(() => {
