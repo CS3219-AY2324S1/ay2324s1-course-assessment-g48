@@ -41,7 +41,8 @@ public class Solution {
         sizes={[60, 40]}
       >
         <div className="w-full overflow-auto dark:bg-neutral-800">
-          <CodeMirror className={isDarkMode ? "dark-mode": "light-mode"}
+          <CodeMirror
+            className={isDarkMode ? "dark-mode" : "light-mode"}
             value={starterCode}
             height="100%"
             theme={isDarkMode ? materialDark : materialLight}
