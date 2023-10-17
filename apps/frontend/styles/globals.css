@@ -108,7 +108,7 @@ body {
 
 /* Dark mode styles */
 .vs-dark>.overflow-guard>.margin,
-.monaco-editor, .monaco-editor-background {
+.vs-dark>.monaco-editor-background {
   background-color: rgb(38 38 38) !important;
 }
 
