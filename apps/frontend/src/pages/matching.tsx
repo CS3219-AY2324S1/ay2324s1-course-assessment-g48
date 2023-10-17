@@ -11,8 +11,8 @@ import useTimer from "@/hook/useTimer";
 import useSessionUser from "@/hook/useSessionUser";
 import Alert from "@/components/Alert";
 import { User } from "@/database/user/entities/user.entity";
+import { useRouter } from "next/router";
 type matchingProps = {};
-
 
 const MatchingPage: React.FC<matchingProps> = () => {
   const { toggleTimer, seconds, reset } = useTimer();
@@ -25,6 +25,7 @@ const MatchingPage: React.FC<matchingProps> = () => {
   const [err, setErr] = useState<string>("");
   const [openAlert, setOpenAlert] = useState<boolean>(false);
   const [peer, setPeer] = useState<User | null>(null);
+  const router = useRouter();
 
   const handleMatchConnection: FormEventHandler = (e) => {
     e.preventDefault();
@@ -73,17 +74,20 @@ const MatchingPage: React.FC<matchingProps> = () => {
     disconnectSocket();
     console.log(data.sessionId);
     console.log(data.peerId);
-    getUserById(data.peerId).then((peer) => {
-      setPeer(peer);
-    }).catch((err) => {
-      console.log(err);
-    })
+    getUserById(data.peerId)
+      .then((peer) => {
+        setPeer(peer);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
     setIsMatching(MatchedState.MATCHED);
     setErr("Matched with a peer!");
     setOpenAlert(true);
-      setTimeout(() => {
-        setOpenAlert(false);
-      }, 3000);
+    setTimeout(() => {
+      setOpenAlert(false);
+    }, 3000);
+    router.push(`/session/${data.sessionId}`);
   };
 
   const disconnectSocket = () => {
@@ -174,17 +178,22 @@ const MatchingPage: React.FC<matchingProps> = () => {
         )}
         {isMatching === MatchedState.MATCHED && (
           <>
-          <button
-            className="block w-full rounded-m px-3.5 py-2.5 text-center text-sm font-semibold text-gray-900 dark:text-white shadow-s"
-            onClick={setToNotMatchingState}
-          >
-            Close Session
-          </button>
-          <label>{peer?.username}</label>
+            <button
+              className="block w-full rounded-m px-3.5 py-2.5 text-center text-sm font-semibold text-gray-900 dark:text-white shadow-s"
+              onClick={setToNotMatchingState}
+            >
+              Close Session
+            </button>
+            <label>{peer?.username}</label>
           </>
         )}
       </form>
-      <Alert message={err} hidden={openAlert} setHide={setOpenAlert} green={isMatching === MatchedState.MATCHED} />
+      <Alert
+        message={err}
+        hidden={openAlert}
+        setHide={setOpenAlert}
+        green={isMatching === MatchedState.MATCHED}
+      />
     </>
   );
 
