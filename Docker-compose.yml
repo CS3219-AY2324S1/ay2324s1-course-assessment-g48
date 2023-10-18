@@ -15,7 +15,7 @@ services:
   postgres:
     image: postgres
     container_name: peerprep-postgres
-    # restart: always
+    restart: always
     env_file:
       - ./apps/backend/user/.env
     ports:
@@ -25,26 +25,27 @@ services:
 
   peerprep-frontend:
     container_name: peerprep-frontend
-    image: peerprep-frontend:v1.0.0     # Name of the container
-    # restart: always
-#    build:
-#      context: ./apps/frontend            # Build context is the path to the frontend directory
-#      dockerfile: Dockerfile.frontend     # Path to the Dockerfile for the frontend
+    image: peerprep-frontend              # Name of the container
+    restart: always
+    build:
+      context: ./apps/frontend            # Build context is the path to the frontend directory
+      dockerfile: Dockerfile.frontend     # Path to the Dockerfile for the frontend
     ports:
       - "3000:3000"                       # Map frontend container's port 3000 to host's port 3000
-    volumes:
-      - ./apps/frontend/.env.local:/app/.env.local              # Mount the frontend directory as a volume
-#    env_file:
-#      - ./apps/frontend/.env.local
-
+    # volumes:
+    #   - ./apps/frontend/.env.local:/app/.env.local              # Mount the frontend directory as a volume
+    environment:
+      - ./apps/frontend/.env.local
     # depends_on:
-    #   - peerprep-backend                # Ensure that the backend service is started first
+    #   - peerprep-user                     # Ensure that the backend service is started first
+    #   - peerprep-question                 # Ensure that the backend service is started first
     networks:
       - peerprep-network
 
   peerprep-question:
     container_name: peerprep-question     # Name of the container
-    # restart: always
+    image: peerprep-question              # Name of the image
+    restart: always
     build:
       context: ./apps/backend/question    # Build context is the path to the backend directory
       dockerfile: Dockerfile.question     # Path to the Dockerfile for the backend
@@ -59,11 +60,11 @@ services:
 
   peerprep-user:
     container_name: peerprep-user         # Name of the container
-    image: peerprep-user     # Name of the container
-    # restart: always
-    # build:
-    #   context: ./apps/backend/user        # Build context is the path to the backend directory
-    #   dockerfile: Dockerfile.user         # Path to the Dockerfile for the backend
+    image: peerprep-user                  # Name of the image
+    restart: always
+    build:
+      context: ./apps/backend/user        # Build context is the path to the backend directory
+      dockerfile: Dockerfile.user         # Path to the Dockerfile for the backend
     ports:
       - "8001:8001"                       # Map backend container's port 8000 to host's port 8000
     # volumes:
@@ -78,17 +79,20 @@ services:
 
   peerprep-queue:
     container_name: peerprep-queue     # Name of the container
+    image: peerprep-queue  
     restart: always
-    image: peerprep-queue:v1.0.0     
-    # build:
-    #   context: ./apps/backend/queue    # Build context is the path to the backend directory
-    #   dockerfile: Dockerfile.queue     # Path to the Dockerfile for the backend
+    build:
+      context: ./apps/backend/queue    # Build context is the path to the backend directory
+      dockerfile: Dockerfile.queue     # Path to the Dockerfile for the backend
     ports:
       - "8002:8002"                       # Map backend container's port 8000 to host's port 8000
     environment:
       - ./apps/backend/queue/.env
     networks:
       - peerprep-network
+    depends_on:
+      rabbitmq3:
+        condition: service_started
 
 
 # Define a custom network for your services

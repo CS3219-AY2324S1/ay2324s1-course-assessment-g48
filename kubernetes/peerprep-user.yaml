@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: peerprep-user
+spec:
+  selector:
+    app: peerprep-user
+  ports:
+  - protocol: TCP
+    port: 8001
+  type: LoadBalancer
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service
+spec:
+  selector:
+    matchLabels:
+      app: peerprep-user
+  template:
+    metadata:
+      labels:
+        app: peerprep-user
+    spec:
+      containers:
+      - name: peerprep-user
+        image: deployment87/dply87:peerprep-user
+        env:
+        - name: PSQL_DATABASE_URL
+          value: postgresql://postgres:qShhYgujF3MbMP@peerprep-postgres:5432/peerprep
+        - name: PSQL_DATABASE
+          value: peerprep
+        - name: PSQL_USER
+          value: postgres
+        - name: PSQL_PASSWORD
+          value: qShhYgujF3MbMP
+        - name: PSQL_HOST
+          value: peerprep-postgres
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 8001
+
