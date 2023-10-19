@@ -212,6 +212,8 @@ const QuestionTable: FC<QuestionTableProps> = ({
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
           numberOfPages={numberOfPages}
+          indexOfFirstRecord={indexOfFirstRecord}
+          indexOfLastRecord={indexOfLastRecord}
         />
       </div>
 

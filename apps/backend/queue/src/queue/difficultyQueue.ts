@@ -104,7 +104,7 @@ export class DifficultyQueue {
 
   private async connectToAmqp() {
     console.log("Connecting to RabbitMQ", process.env.RABBITMQ_URL);
-    const connection = await amqp.connect(process.env.RABBITMQ_URL || "amqp://192.168.50.185:5672");
+    const connection = await amqp.connect(process.env.RABBITMQ_URL || "amqp://localhost:5672");
     const channel = await connection.createChannel();
 
     await channel.assertQueue(this.nameSpace, { durable: true });
