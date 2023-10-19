@@ -70,6 +70,7 @@ const MatchingPage: React.FC<matchingProps> = () => {
   const setToMatchedState = (data: any) => {
     // Do something like route to the new session.
     disconnectSocket();
+    reset();
     console.log(data.sessionId);
     console.log(data.peerId);
     getUserById(data.peerId)
@@ -90,11 +91,13 @@ const MatchingPage: React.FC<matchingProps> = () => {
   };
 
   useEffect(() => {
-    matchingSocket.on("timeout", () => {
-      setToNotMatchingState();
-      setError("Timed out, try again.");
-      disconnectSocket();
-    });
+    return () => {
+      matchingSocket.on("timeout", () => {
+        setToNotMatchingState();
+        setError("Timed out, try again.");
+        disconnectSocket();
+      });
+    }
   }, [isRunning]);
 
   return (
@@ -161,7 +164,7 @@ const MatchingPage: React.FC<matchingProps> = () => {
               : "Matched"}
           </button>
         </div>
-        {(isMatching === MatchedState.MATCHING || isRunning) && (
+        {isMatching === MatchedState.MATCHING && (
           <div className="mt-3">
             <button
               className="block w-full rounded-m px-3.5 py-2.5 text-center text-sm font-semibold text-gray-900 dark:text-white shadow-s"
