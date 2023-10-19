@@ -31,6 +31,7 @@ const Layout = ({ children }: PropsWithChildren) => {
       setTimeout(() => {
         setOpenAlert(false);
       }, 3000);
+      clearError();
     }
   }, [error]);
 

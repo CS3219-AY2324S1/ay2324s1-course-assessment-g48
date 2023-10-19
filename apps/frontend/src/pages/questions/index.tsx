@@ -19,7 +19,7 @@ export default function QuestionsRepo() {
   return (
     <div className="grid place-content-center dark:bg-gray-900">
       <LoadingModal isLoading={isLoading} />
-      <div className="p-4 rounded-lg shadow-lg w-screen xl:px-60 lg:px-40">
+      <div className="p-4 rounded-lg w-screen xl:px-60 lg:px-40">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl dark:text-white my-4" hidden={isLoading}>
             It&apos;s grinding time!
