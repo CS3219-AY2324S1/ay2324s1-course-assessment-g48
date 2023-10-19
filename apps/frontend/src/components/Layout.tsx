@@ -1,13 +1,17 @@
-import { PropsWithChildren, useState } from "react";
+import { PropsWithChildren, use, useEffect, useState } from "react";
 import Navbar from "./Navbar";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import LoadingModal from "./LoadingModal";
 import SlideOver from "./SlideOver";
+import { useError } from "@/hook/ErrorContext";
+import Alert from "./Alert";
 
 const Layout = ({ children }: PropsWithChildren) => {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const { error, setError, clearError } = useError();
+  const [openAlert, setOpenAlert] = useState(false);
   const [openSlideOver, setOpenSlideOver] = useState(false);
 
   const redirectToSignIn =
@@ -17,13 +21,22 @@ const Layout = ({ children }: PropsWithChildren) => {
     !router.pathname.includes("error");
   const isLoading = status === "loading";
 
+  if (redirectToSignIn) {
+    signIn();
+  }
+
+  useEffect(() => {
+    if (error) {
+      setTimeout(() => {
+        setOpenAlert(false);
+      }, 3000);
+    }
+  }, [error]);
+
   if (isLoading) {
     return <LoadingModal isLoading={isLoading} />;
   }
 
-  if (redirectToSignIn) {
-    signIn();
-  }
 
   return (
     <>
@@ -41,6 +54,13 @@ const Layout = ({ children }: PropsWithChildren) => {
       )}
     </div>
     <SlideOver open={openSlideOver} setOpen={setOpenSlideOver} />
+    {error && (
+      <Alert
+      message={error}
+      hidden={openAlert}
+      setHide={setOpenAlert}
+    />
+    )}
     </>
   );
 };

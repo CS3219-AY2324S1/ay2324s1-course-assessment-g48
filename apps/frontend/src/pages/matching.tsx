@@ -12,18 +12,18 @@ import useSessionUser from "@/hook/useSessionUser";
 import Alert from "@/components/Alert";
 import { User } from "@/database/user/entities/user.entity";
 import { useRouter } from "next/router";
+import { useError } from "@/hook/ErrorContext";
 type matchingProps = {};
 
 const MatchingPage: React.FC<matchingProps> = () => {
-  const { toggleTimer, seconds, reset } = useTimer();
+  const { toggleTimer, seconds, reset, isRunning } = useTimer();
   const [isMatching, setIsMatching] = useState<number>(
-    MatchedState.NOT_MATCHING
+    isRunning ? MatchedState.MATCHING : MatchedState.NOT_MATCHING
   );
   const [difficulty, setDifficulty] = useState<string>(Complexity.Easy);
   const { sessionUser } = useSessionUser();
   const user = sessionUser;
-  const [err, setErr] = useState<string>("");
-  const [openAlert, setOpenAlert] = useState<boolean>(false);
+  const { error, setError, clearError } = useError();
   const [peer, setPeer] = useState<User | null>(null);
   const router = useRouter();
 
@@ -47,23 +47,19 @@ const MatchingPage: React.FC<matchingProps> = () => {
 
   const setToMatchingState = () => {
     // Set the state of the page to looking for match.
-    setErr("");
+    clearError();
     matchingSocket.connect();
     matchingSocket.on("matched", setToMatchedState);
     matchingSocket.on("other-connection", () => {
       setToNotMatchingState();
-      setErr("This account has attempted to match from another location.");
+      setError("This account has attempted to match from another location.");
       disconnectSocket();
     });
 
     matchingSocket.emit("matching", { difficulty, user });
     matchingSocket.on("timeout", () => {
       setToNotMatchingState();
-      setErr("Timed out, try again.");
-      setOpenAlert(true);
-      setTimeout(() => {
-        setOpenAlert(false);
-      }, 3000);
+      setError("Timed out, try again.");
       disconnectSocket();
     });
     setIsMatching(MatchedState.MATCHING);
@@ -82,11 +78,7 @@ const MatchingPage: React.FC<matchingProps> = () => {
         console.log(err);
       });
     setIsMatching(MatchedState.MATCHED);
-    setErr("Matched with a peer!");
-    setOpenAlert(true);
-    setTimeout(() => {
-      setOpenAlert(false);
-    }, 3000);
+    setError("Matched with a peer!");
     router.push(`/session/${data.sessionId}`);
   };
 
@@ -96,10 +88,12 @@ const MatchingPage: React.FC<matchingProps> = () => {
   };
 
   useEffect(() => {
-    return () => {
+    matchingSocket.on("timeout", () => {
+      setToNotMatchingState();
+      setError("Timed out, try again.");
       disconnectSocket();
-    };
-  }, []);
+    });
+  }, [isRunning]);
 
   return (
     <>
@@ -142,7 +136,7 @@ const MatchingPage: React.FC<matchingProps> = () => {
                 value={difficulty}
                 onChange={(e) => {
                   setDifficulty(e.target.value);
-                  setErr("");
+                  clearError();
                 }}
               >
                 {Object.values(Complexity).map((complexityOption) => (
@@ -165,7 +159,7 @@ const MatchingPage: React.FC<matchingProps> = () => {
               : "Matched"}
           </button>
         </div>
-        {isMatching === MatchedState.MATCHING && (
+        {(isMatching === MatchedState.MATCHING || isRunning) && (
           <div className="mt-3">
             <button
               className="block w-full rounded-m px-3.5 py-2.5 text-center text-sm font-semibold text-gray-900 dark:text-white shadow-s"
@@ -188,12 +182,6 @@ const MatchingPage: React.FC<matchingProps> = () => {
           </>
         )}
       </form>
-      <Alert
-        message={err}
-        hidden={openAlert}
-        setHide={setOpenAlert}
-        green={isMatching === MatchedState.MATCHED}
-      />
     </>
   );
 
