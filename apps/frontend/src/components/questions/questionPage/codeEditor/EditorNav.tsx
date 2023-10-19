@@ -28,7 +28,7 @@ const EditorNav = () => {
             </div>
           </div>
           {isDropdownOpen && (
-            <ul className="dropdown-list absolute top-8 left-2 mt-2 py-2 px-4 border border-gray-300 rounded-md bg-white dark:bg-gray-950 z-20">
+            <ul className="dropdown-list absolute top-8 left-2 mt-2 py-2 px-4 border border-gray-300 rounded-md bg-white dark:bg-gray-950 z-10 h-1/3 overflow-y-auto">
               {Object.values(Language).map((language) => (
                 <li
                   key={language}
