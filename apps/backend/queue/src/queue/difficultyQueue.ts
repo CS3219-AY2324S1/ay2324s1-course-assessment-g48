@@ -1,8 +1,8 @@
 import { Socket } from "socket.io";
 import { produceMessage } from "../producer";
 import amqp from "amqplib";
-import e from "cors";
-import crypto from 'crypto';
+import axios from "axios";
+import { SESSION_URL } from "../utils/config";
 
 export class DifficultyQueue {
   waitList: number[];
@@ -15,8 +15,16 @@ export class DifficultyQueue {
     this.connectToAmqp();
   }
 
-  public generateSessionId() {
-    return crypto.randomBytes(16).toString('base64');
+  public async generateSession(user1: number, user2: number) {
+    const sessionID = await axios
+      .post(SESSION_URL, { users: [user1, user2] })
+      .then((response) => {
+        return response.data.sessionId;
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    return sessionID;
   }
 
   public isThereWaitingUser() {
@@ -43,7 +51,7 @@ export class DifficultyQueue {
     }
   }
 
-  public matchUsers(uid: number) {
+  public async matchUsers(uid: number) {
     if (this.isThereWaitingUser()) {
       const firstUserUid = this.waitList.shift();
       if (firstUserUid === undefined) {
@@ -52,7 +60,7 @@ export class DifficultyQueue {
       //   console.log(`First user uid: ${firstUserUid}, second user uid: ${uid}`)
       const firstUserSocket = this.socketMap.get(firstUserUid);
       const secondUserSocket = this.socketMap.get(uid);
-      const randomSessionId = this.generateSessionId()
+      const randomSessionId = await this.generateSession(firstUserUid, uid);
       if (!firstUserSocket || !secondUserSocket) {
         throw new Error(
           "There was no socket associated with the firstUserSocket"
@@ -61,12 +69,12 @@ export class DifficultyQueue {
       firstUserSocket.emit("matched", {
         peerId: uid,
         err: "",
-        sessionId: randomSessionId
+        sessionId: randomSessionId,
       });
       secondUserSocket.emit("matched", {
         peerId: firstUserUid,
         err: "",
-        sessionId: randomSessionId
+        sessionId: randomSessionId,
       });
       console.log(
         `There was a waiting user ${firstUserUid} for the ${this.nameSpace} queue. Pairing ${firstUserUid} with ${uid}, with sessionId ${randomSessionId}`
@@ -95,12 +103,13 @@ export class DifficultyQueue {
   }
 
   private async connectToAmqp() {
-    const connection = await amqp.connect("amqp://localhost:5672");
+    console.log("Connecting to RabbitMQ", process.env.RABBITMQ_URL);
+    const connection = await amqp.connect(process.env.RABBITMQ_URL || "amqp://192.168.50.185:5672");
     const channel = await connection.createChannel();
 
     await channel.assertQueue(this.nameSpace, { durable: true });
 
-    channel.consume(this.nameSpace, (message) => {
+    channel.consume(this.nameSpace, async (message) => {
       if (message != null) {
         // console.log(
         //   `Consumer: Received message from ${
@@ -108,7 +117,7 @@ export class DifficultyQueue {
         //   }: ${message.content.toString()}`
         // );
         //   console.log(difficultyQueue);
-        this.matchUsers(Number(message.content.toString()));
+        await this.matchUsers(Number(message.content.toString()));
         channel.ack(message);
         //   console.log(JSON.stringify(difficultyQueue));
         //   console.log(difficultyQueue.socketMap);

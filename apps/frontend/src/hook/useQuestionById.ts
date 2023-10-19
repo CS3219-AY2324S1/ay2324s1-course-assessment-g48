@@ -3,13 +3,12 @@ import { getQuestionById } from "@/database/question/questionService";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-function useQuestionById() {
+function useQuestionById(id?: string) {
   const [isLoading, setIsLoading] = useState(false);
   const [question, setQuestion] = useState<Question | null>(null);
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-  const {id: qid} = router.query;
-
+  const qid = id ?? router.query.id;
   useEffect(() => {
     async function fetchData() {
       if (qid) {

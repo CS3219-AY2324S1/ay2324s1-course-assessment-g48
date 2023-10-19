@@ -1,14 +1,16 @@
 version: '3'
 
 services:
-  rabbitmq:
-    image: rabbitmq:management
-    container_name: rabbitmq
+  rabbitmq3:
+    container_name: peerprep-rabbitmq
+    image: rabbitmq:3-management
     environment:
-      ./apps/backend/queue/.env
+      - ./apps/backend/queue/.env
     ports:
-      - "5672:5672"
-      - "15672:15672"
+      # AMQP protocol port
+      - '5672:5672'
+      # HTTP management UI
+      - '15672:15672'
 
   postgres:
     image: postgres
@@ -71,6 +73,20 @@ services:
     depends_on:
       postgres:                           # Ensure that the backend service is started first
         condition: service_started
+    networks:
+      - peerprep-network
+
+  peerprep-queue:
+    container_name: peerprep-queue     # Name of the container
+    restart: always
+    image: peerprep-queue:v1.0.0     
+    # build:
+    #   context: ./apps/backend/queue    # Build context is the path to the backend directory
+    #   dockerfile: Dockerfile.queue     # Path to the Dockerfile for the backend
+    ports:
+      - "8002:8002"                       # Map backend container's port 8000 to host's port 8000
+    environment:
+      - ./apps/backend/queue/.env
     networks:
       - peerprep-network
 
