@@ -27,14 +27,17 @@ const Layout = ({ children }: PropsWithChildren) => {
 
   return (
     <>
-    <div className="dark:bg-gray-900 min-h-screen pb-10 shadow-md">
+    <div className="dark:bg-gray-900 min-h-screen pb-10 shadow-md overflow-auto">
       {!redirectToSignIn && (
-        <div className="flex flex-col divide-y divide-neutral-500">
+        <>
+        <div className="fixed w-screen divide-y top-0 z-10">
           <Navbar session={session} setSlideOver={setOpenSlideOver} openSlideOver={openSlideOver} />
-          <div className="px-5">
-          {children}
-          </div>
+          <div className="border-t divider-neutral-500 over"></div>
         </div>
+        <div className="mt-16 px-5 place-content-center w-full">
+        {children}
+        </div>
+        </>
       )}
     </div>
     <SlideOver open={openSlideOver} setOpen={setOpenSlideOver} />

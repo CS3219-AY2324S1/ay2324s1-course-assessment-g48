@@ -106,17 +106,17 @@ const QuestionTable: FC<QuestionTableProps> = ({
 
   return (
     <>
-      <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+      <div className="overflow-auto shadow-md sm:rounded-lg">
         <table
-          className="relative text-sm text-left text-gray-500 dark:text-gray-400"
+          className="relative text-sm text-left text-gray-500 dark:text-gray-400 w-full"
           hidden={hidden}
         >
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
-              <th scope="col" className="px-6 py-3">
+              <th scope="col" className="px-6 py-3 ">
                 S/N
               </th>
-              <th scope="col" className="px-6 py-3">
+              <th scope="col" className="px-6 py-3 w-1/5">
                 Title
               </th>
               <th scope="col" className="px-6 py-3 w-1/3">

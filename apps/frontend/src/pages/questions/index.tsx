@@ -17,11 +17,11 @@ export default function QuestionsRepo() {
   }, [sessionUser]);
 
   return (
-      <div className=" grid place-content-center dark:bg-gray-900">
+      <div className="grid place-content-center dark:bg-gray-900">
         <LoadingModal isLoading={isLoading} />
-        <div className="flex flex-col space-y-3 overflow-auto">
+        <div className="p-4 rounded-lg shadow-lg w-screen px-40">
           <div className="flex items-center justify-between">
-            <h1 className="text-3xl dark:text-white my-4" hidden={isLoading}>
+            <h1 className="text-2xl dark:text-white my-4" hidden={isLoading}>
               It&apos;s grinding time!
             </h1>
             {userRole === Role.Admin && (
