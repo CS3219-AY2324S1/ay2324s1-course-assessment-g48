@@ -27,6 +27,7 @@ const Layout = ({ children }: PropsWithChildren) => {
 
   useEffect(() => {
     if (error) {
+      setOpenAlert(true);
       setTimeout(() => {
         setOpenAlert(false);
       }, 3000);
@@ -37,30 +38,29 @@ const Layout = ({ children }: PropsWithChildren) => {
     return <LoadingModal isLoading={isLoading} />;
   }
 
-
   return (
     <>
-    <div className="dark:bg-gray-900 min-h-screen pb-10 shadow-md overflow-auto">
-      {!redirectToSignIn && (
-        <>
-        <div className="fixed w-screen divide-y top-0 z-10">
-          <Navbar session={session} setSlideOver={setOpenSlideOver} openSlideOver={openSlideOver} />
-          <div className="border-t divider-neutral-500 over"></div>
-        </div>
-        <div className="mt-16 px-5 place-content-center w-full">
-        {children}
-        </div>
-        </>
+      <div className="dark:bg-gray-900 min-h-screen pb-10 shadow-md overflow-auto">
+        {!redirectToSignIn && (
+          <>
+            <div className="fixed w-screen divide-y top-0 z-10">
+              <Navbar
+                session={session}
+                setSlideOver={setOpenSlideOver}
+                openSlideOver={openSlideOver}
+              />
+              <div className="border-t divider-neutral-500 over"></div>
+            </div>
+            <div className="mt-16 px-5 place-content-center w-full">
+              {children}
+            </div>
+          </>
+        )}
+      </div>
+      <SlideOver open={openSlideOver} setOpen={setOpenSlideOver} />
+      {error && (
+        <Alert message={error} hidden={openAlert} setHide={setOpenAlert} />
       )}
-    </div>
-    <SlideOver open={openSlideOver} setOpen={setOpenSlideOver} />
-    {error && (
-      <Alert
-      message={error}
-      hidden={openAlert}
-      setHide={setOpenAlert}
-    />
-    )}
     </>
   );
 };

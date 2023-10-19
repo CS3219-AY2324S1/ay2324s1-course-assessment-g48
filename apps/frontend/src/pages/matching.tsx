@@ -16,7 +16,7 @@ import { useError } from "@/hook/ErrorContext";
 type matchingProps = {};
 
 const MatchingPage: React.FC<matchingProps> = () => {
-  const { toggleTimer, seconds, reset, isRunning } = useTimer();
+  const { toggleTimer, seconds, reset, isRunning, countDown } = useTimer();
   const [isMatching, setIsMatching] = useState<number>(
     isRunning ? MatchedState.MATCHING : MatchedState.NOT_MATCHING
   );
@@ -40,8 +40,8 @@ const MatchingPage: React.FC<matchingProps> = () => {
 
   const setToNotMatchingState = () => {
     // Set the state of the page to not looking for match.
-    disconnectSocket();
     reset();
+    disconnectSocket();
     setIsMatching(MatchedState.NOT_MATCHING);
   };
 
@@ -55,14 +55,15 @@ const MatchingPage: React.FC<matchingProps> = () => {
       setError("This account has attempted to match from another location.");
       disconnectSocket();
     });
-
-    matchingSocket.emit("matching", { difficulty, user });
-    matchingSocket.on("timeout", () => {
-      setToNotMatchingState();
-      setError("Timed out, try again.");
-      disconnectSocket();
-    });
-    setIsMatching(MatchedState.MATCHING);
+    setTimeout(() => {
+      matchingSocket.emit("matching", { difficulty, user });
+      matchingSocket.on("timeout", () => {
+        setToNotMatchingState();
+        setError("Timed out, try again.");
+        disconnectSocket();
+      });
+      setIsMatching(MatchedState.MATCHING);
+    }, 2000);
   };
 
   const setToMatchedState = (data: any) => {

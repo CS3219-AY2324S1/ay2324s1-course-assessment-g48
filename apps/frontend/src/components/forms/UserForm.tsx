@@ -18,6 +18,7 @@ import Alert from "../Alert";
 import { OAuthType } from "@/utils/enums/OAuthType";
 import AuthInfoModal from "../AuthInfoModal";
 import { AuthInfo } from "@/utils/enums/AuthInfo";
+import { useError } from "@/hook/ErrorContext";
 
 interface UserFormProps {
   formType: string;
@@ -26,12 +27,11 @@ interface UserFormProps {
 const UserForm: React.FC<UserFormProps> = ({ formType }) => {
   const { status, update } = useSession();
   const { sessionUser } = useSessionUser();
+  const { error, setError, clearError } = useError();
   const [newId, setNewId] = useState(sessionUser.id ?? -1);
   const [newUsername, setUsername] = useState(sessionUser.username ?? "");
   const [newEmail, setEmail] = useState(sessionUser.email ?? "");
   const [newPassword, setPassword] = useState(sessionUser.password ?? "");
-  const [errorMessage, setErrorMessage] = useState("");
-  const [openAlert, setOpenAlert] = useState<boolean>(false);
 
   const [openAuthInfo, setOpenAuthInfo] = useState(false);
   const [authProvider, setAuthProvider] = useState(undefined as OAuthType | undefined);
@@ -73,21 +73,13 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
       });
       if (result?.error) {
         console.log("Something wrong" , result.error);
-        setErrorMessage("Invalid email or password.");
-        setOpenAlert(true);
-        setTimeout(() => {
-          setOpenAlert(false);
-        }, 3000);
+        setError("Invalid email or password.");
       } else {
         router.push("/questions");
       }
     } catch (err) {
-      setErrorMessage(err as string);
+      setError(err as string);
       console.error(err);
-      setOpenAlert(true);
-        setTimeout(() => {
-          setOpenAlert(false);
-        }, 3000);
     }
   };
 
@@ -105,11 +97,7 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
 
       const response = await createNewUser(newUser);
       if (response.error) {
-        setErrorMessage(response.error);
-        setOpenAlert(true);
-        setTimeout(() => {
-          setOpenAlert(false);
-        }, 3000);
+        setError(response.error);
         return;
       }
 
@@ -124,17 +112,13 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
 
       if (result?.error) {
         console.log(result?.error);
-        setErrorMessage("That email or username has already been taken.");
+        setError("That email or username has already been taken.");
       } else {
         router.push("/questions");
       }
     } catch (err) {
       console.log(err || "Error undefined???");
-      setErrorMessage(err as string);
-      setOpenAlert(true);
-        setTimeout(() => {
-          setOpenAlert(false);
-        }, 3000);
+      setError(err as string);
     }
   };
 
@@ -153,11 +137,7 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
 
       const response = await updateUserById(newId, newUser);
       if (response.error) {
-        setErrorMessage(response.error);
-        setOpenAlert(true);
-        setTimeout(() => {
-          setOpenAlert(false);
-        }, 3000);
+        setError(response.error);
         return;
       }
 
@@ -170,12 +150,8 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
       update({ user: sessionUser });
       router.push("/profile");
     } catch (err) {
-      setErrorMessage(err as string);
+      setError(err as string);
       console.error(err);
-      setOpenAlert(true);
-        setTimeout(() => {
-          setOpenAlert(false);
-        }, 3000);
     }
   };
 
@@ -183,11 +159,7 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
     e.preventDefault();
     const response = await deleteUserById(Number(newId));
     if (response.error) {
-      setErrorMessage(response.error);
-      setOpenAlert(true);
-        setTimeout(() => {
-          setOpenAlert(false);
-        }, 3000);
+      setError(response.error);
       return;
     }
     signOut();
@@ -198,7 +170,7 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
     const newOAuth = sessionUser.oauth?.filter((oauth) => oauth !== provider);
     if (newOAuth == undefined || newOAuth.length == 0) {
       if (newPassword == undefined || newPassword.trim().length == 0) {
-        setErrorMessage("You must enter your password to unlink your last linked account.");
+        setError("You must enter your password to unlink your last linked account.");
         return;
       }
     }
@@ -299,10 +271,9 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
         setOpen={setOpenAuthInfo}
         open={openAuthInfo}
         provider={authProvider}
-        setErrorMessage={setErrorMessage}
+        setErrorMessage={setError}
         newUser={updateAuthUser}
         />
-        <Alert message={errorMessage} hidden={openAlert} setHide={setOpenAlert} />
     </>
   );
 };
