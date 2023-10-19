@@ -55,6 +55,7 @@ const MatchingPage: React.FC<matchingProps> = () => {
       setError("This account has attempted to match from another location.");
       disconnectSocket();
     });
+    setIsMatching(MatchedState.MATCHING);
     setTimeout(() => {
       matchingSocket.emit("matching", { difficulty, user });
       matchingSocket.on("timeout", () => {
@@ -62,7 +63,7 @@ const MatchingPage: React.FC<matchingProps> = () => {
         setError("Timed out, try again.");
         disconnectSocket();
       });
-      setIsMatching(MatchedState.MATCHING);
+      
     }, 2000);
   };
 
