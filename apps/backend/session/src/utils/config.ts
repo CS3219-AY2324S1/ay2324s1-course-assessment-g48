@@ -3,4 +3,5 @@ import dotEnv from "dotenv";
 dotEnv.config();
 
 export const PORT = Number(process.env.PORT);
-export const SESSION_URL = String(process.env.SESSION_URL);
+export const WEBSOCKET_PORT = Number(process.env.WEBSOCKET_PORT);
+export const HOST = process.env.HOST;

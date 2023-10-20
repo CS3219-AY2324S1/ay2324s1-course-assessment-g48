@@ -105,17 +105,13 @@ body {
   cursor: row-resize;
 }
 
-/* Light mode styles */
-.light-mode>.cm-editor>.cm-scroller,
-.light-mode>.cm-editor>.cm-gutters {
-  background-color: #ffffff !important;
-}
 
 /* Dark mode styles */
-.dark-mode>.cm-editor>.cm-scroller,
-.dark-mode>.cm-editor>.cm-gutters {
+.vs-dark>.overflow-guard>.margin,
+.vs-dark>.monaco-editor-background {
   background-color: rgb(38 38 38) !important;
 }
+
 .cm-focused {
   outline: none !important;
 }
