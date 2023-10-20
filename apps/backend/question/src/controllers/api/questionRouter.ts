@@ -55,12 +55,17 @@ questionRouter.post(
   async (req: Request, res: Response, next: NextFunction) => {
     const body = req.body;
 
+    if (body.role !== "admin") {
+      res.status(401).json({ error: "Only admins are allowed to add questions." });
+      return;
+    }
+
     const isExisting = await Question.findOne({ title: body.title });
 
     if (isExisting) {
       res
         .status(400)
-        .json({ error: "A question with this title already exists" });
+        .json({ error: "A question with this title already exists." });
       return;
     }
 
@@ -81,8 +86,13 @@ questionRouter.post(
 questionRouter.put(
   "/:id",
   async (req: Request, res: Response, next: NextFunction) => {
-    const { title, description, categories, complexity } = req.body;
+    const { role, title, description, categories, complexity } = req.body;
     const id = req.params.id;
+
+    if (role !== "admin") {
+      res.status(401).json({ error: "Only admins are allowed to add questions." });
+      return;
+    }
 
     await Question.findByIdAndUpdate(
       id,
@@ -93,7 +103,7 @@ questionRouter.put(
         if (!updatedQuestion) {
           res
             .status(404)
-            .json({ error: `A question with id ${id} does not exist` });
+            .json({ error: `A question with id ${id} does not exist.` });
           return;
         }
         res.json(updatedQuestion);

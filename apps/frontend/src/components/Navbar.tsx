@@ -6,7 +6,7 @@ import {
   BellIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { signOut } from "next-auth/react";
+import { signIn, signOut } from "next-auth/react";
 import { Session } from "next-auth";
 import { useRouter } from "next/router";
 import ModeToggleButton from "./ModeToggleButton";
@@ -46,6 +46,10 @@ const Navbar: React.FC<NavbarProps> = ({
     if (!session) {
       setOpenAuthInfo(true);
     }
+  }
+
+  function handleSignOutClick() {
+    signOut({callbackUrl: '/signin'});
   }
 
   return (
@@ -195,7 +199,7 @@ const Navbar: React.FC<NavbarProps> = ({
                           <Menu.Item>
                             {({ active }) => (
                               <a
-                                onClick={() => signOut()}
+                                onClick={() => handleSignOutClick()}
                                 className={classNames(
                                   active ? "bg-gray-100" : "",
                                   "block px-4 py-2 text-sm text-white bg-red-600 rounded-md cursor-pointer"

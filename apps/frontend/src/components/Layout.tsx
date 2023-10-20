@@ -10,26 +10,27 @@ const Layout = ({ children }: PropsWithChildren) => {
   const router = useRouter();
   const [openSlideOver, setOpenSlideOver] = useState(false);
 
-  const redirectToSignIn =
+  const redirectTo401 =
     !session &&
-    !router.pathname.includes("signin") &&
-    !router.pathname.includes("signup") &&
-    router.pathname !== "/404" &&
-    !router.pathname.includes("error");
+    !router.pathname.includes('signin') &&
+    !router.pathname.includes('signup') &&
+    router.pathname !== '/401' &&
+    router.pathname !== '/404' &&
+    !router.pathname.includes('error');
   const isLoading = status === "loading";
 
   if (isLoading) {
     return <LoadingModal isLoading={isLoading} />;
   }
 
-  if (redirectToSignIn) {
-    signIn();
+  if (redirectTo401) {
+    router.push("/401");
   }
 
   return (
     <>
     <div className="dark:bg-gray-900 min-h-screen shadow-md">
-      {!redirectToSignIn && (
+      {!redirectTo401 && (
         <div className="flex flex-col h-screen divide-y divide-neutral-500 mx-auto">
           <Navbar session={session} setSlideOver={setOpenSlideOver} openSlideOver={openSlideOver} />
           <div className="px-5">

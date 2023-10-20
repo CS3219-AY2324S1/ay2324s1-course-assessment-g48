@@ -1,11 +1,13 @@
 import axios from "axios";
 import { Question } from "./entities/question.entity";
+import { Role } from "@/utils/enums/Role";
 
 const BASE_URL = process.env.NEXT_PUBLIC_QUESTION_SERVICE + "/api/question";
 
-export const postNewQuestion = async (newQuestion: Question) => {
+export const postNewQuestion = async (newQuestion: Question, userRole: Role) => {
   return await axios
     .post(BASE_URL, {
+      role: userRole,
       title: newQuestion.title,
       description: newQuestion.description,
       categories: newQuestion.categories,
@@ -71,9 +73,11 @@ export const deleteQuestionById = async (id: string) => {
 
 export const updateQuestionById = async (
   id: string,
-  updatedQuestion: Partial<Question>
+  updatedQuestion: Partial<Question>,
+  userRole: Role
 ) => {
   return await axios.put(BASE_URL + "/" + id, {
+    role: userRole,
     title: updatedQuestion.title,
     description: updatedQuestion.description,
     categories: updatedQuestion.categories,

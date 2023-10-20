@@ -53,7 +53,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
 
   const handleSaveQuestion = async (newQuestion: Question) => {
     const questionToAdd = { ...newQuestion };
-    await postNewQuestion(questionToAdd)
+    await postNewQuestion(questionToAdd, userRole)
       .then(() => {
         handleTrigger();
 
@@ -75,7 +75,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
   };
 
   const handleEditQuestion = async (editQuestion: Question) => {
-    await updateQuestionById(editQuestion._id, editQuestion)
+    await updateQuestionById(editQuestion._id, editQuestion, userRole)
       .then(() => {
         handleTrigger();
         setOpenEdit(false);
