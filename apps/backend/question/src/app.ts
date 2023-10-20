@@ -13,12 +13,16 @@ const allowedOrigins = [
   'http://localhost:8000',
   'http://localhost:8080',
   'http://localhost:8001',
-  'http://localhost:8022',
-  'http://localhost:8500',
   'http://localhost:9000',
-  'http://peerprep-user:8001',
-  'http://peerprep-question:8000',
-  'http://peerprep-frontend:3000',
+  'http://leetpal.com',
+  'http://leetpal.com:3000',
+  'http://leetpal.com:8001',
+  'http://leetpal.com:8000',
+  'http://leetpal.com:3000',
+  'http://34.87.168.130',
+  'http://34.87.168.130:3000',
+  'http://34.87.168.130:8000',
+  'http://34.87.168.130:8001'
 ];
 
 app.use(

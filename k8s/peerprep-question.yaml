@@ -2,6 +2,8 @@ apiVersion: v1
 kind: Service
 metadata:
   name: peerprep-question
+  annotations:
+    cloud.google.com/network-tier: Standard
 spec:
   selector:
     app: peerprep-question
@@ -9,13 +11,14 @@ spec:
   - protocol: TCP
     port: 8000
   type: LoadBalancer
+  loadBalancerIP: 35.213.173.19
 
 ---
 
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: question-service
+  name: question-deployment
 spec:
   selector:
     matchLabels:

@@ -1,0 +1,46 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: peerprep-rabbitmq
+  annotations:
+    cloud.google.com/network-tier: Standard
+spec:
+  selector:
+    app: peerprep-rabbitmq
+  ports:
+    - name: rabbitmq
+      protocol: TCP
+      port: 5672
+      targetPort: 5672
+    - name: rabbitmq-mgmt
+      protocol: TCP
+      port: 15672
+      targetPort: 15672git s
+  type: LoadBalancer
+  loadBalancerIP: 35.213.173.19
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rabbitmq-deployment
+spec:
+  selector:
+    matchLabels:
+      app: peerprep-rabbitmq
+  template:
+    metadata:
+      labels:
+        app: peerprep-rabbitmq
+    spec:
+      containers:
+      - name: peerprep-rabbitmq
+        image: rabbitmq:3-management
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 5672

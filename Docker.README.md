@@ -86,6 +86,12 @@ docker logs peerprep-frontend -f
 docker rm --force peerprep-frontend
 
 docker cp peerprep-frontend:/app/build .
+
+# Push to registry
+docker push deployment87/dply87:peerprep-user
+
+# Tagging 
+docker tag deployment87/dply87:peerprep-user deployment87/dply87:peerprep-user1
 ```
 
 ### Cool Tricks
