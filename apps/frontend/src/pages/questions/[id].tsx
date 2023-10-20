@@ -8,7 +8,7 @@ type QuestionPageProps = {
 
 const QuestionPage: React.FC<QuestionPageProps> = () => {
   const { question, isLoading, error } = useQuestionById();
-  return <div className='flex h-screen overflow-y-auto'>
+  return <div className='flex h-[calc(100vh-65px)]'>
     {question && <QuestionWorkspace question={question} />}
   </div>
 }
