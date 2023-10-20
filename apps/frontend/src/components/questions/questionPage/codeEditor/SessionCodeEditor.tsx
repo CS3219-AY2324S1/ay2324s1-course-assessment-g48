@@ -13,9 +13,11 @@ import axios from "@/pages/api/axios/axios";
 import { useDocument } from "@automerge/automerge-repo-react-hooks";
 import { Doc } from "@/utils/doc";
 
-type CodeEditorProps = {};
+type SessionCodeEditorProps = {
+  sessionId: string;
+};
 
-const CodeEditor: React.FC<CodeEditorProps> = () => {
+const SessionCodeEditor: React.FC<SessionCodeEditorProps> = ({ sessionId }) => {
   const starterCode = `/**
 * Definition for singly-linked list.
 * class ListNode {
@@ -35,10 +37,28 @@ class Solution {
 
   const { isDarkMode } = useTheme();
 
-  const [code, changeCode] = useState("");
+  // TODO: Get sessionID here somehow? Not sure if this works
+  const sessionID = sessionId as string;
 
-  const handleChangeCode = (value: any, event: any) => {
-    changeCode(value);
+  const [docUrl, setDocUrl] = useState<AutomergeUrl>();
+
+  useEffect(() => {
+    if (sessionID) {
+      axios
+        .get(
+          `${process.env.NEXT_PUBLIC_SESSION_URL}/session/get-session/${sessionID}`
+        )
+        .then((res) => {
+          console.log(res.data.docId);
+          setDocUrl(res.data.docId);
+        });
+    }
+  }, [sessionID]);
+
+  const [doc, changeDoc] = useDocument<Doc>(docUrl);
+
+  const increment = (value: any, event: any) => {
+    changeDoc((d) => (d.text = value));
   };
 
   return (
@@ -52,9 +72,9 @@ class Solution {
         <div className="w-full overflow-auto dark:bg-neutral-800">
           <Editor
             height="100%"
-            onChange={handleChangeCode}
+            onChange={increment}
             defaultValue={starterCode}
-            value={code}
+            value={doc?.text}
             theme={isDarkMode ? "vs-dark" : "light"}
             defaultLanguage="javascript"
           />
@@ -76,4 +96,4 @@ class Solution {
     </div>
   );
 };
-export default CodeEditor;
+export default SessionCodeEditor;
