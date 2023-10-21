@@ -48,15 +48,12 @@ export default NextAuth({
         }
       },
       authorize: async (credentials) => {
-        console.log("fker trying to log in with credentials", credentials)
         const user = await login({
           email: credentials?.email,
           password: credentials?.password,
           oauth: credentials?.oauth as OAuthType,
         });
-        console.log("fker managed to by thru", user)
         if (user) {
-          console.log("User found", user);
           return {
             id: user.id,
             username: user.username,
@@ -66,7 +63,6 @@ export default NextAuth({
             role: user.role
           };
         } else {
-          console.log("User not found nextauth");
           return null;
         }
       },

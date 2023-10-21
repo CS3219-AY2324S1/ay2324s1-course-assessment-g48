@@ -49,7 +49,7 @@ const Navbar: React.FC<NavbarProps> = ({
   }
 
   function handleSignOutClick() {
-    signOut({callbackUrl: '/signin'});
+    signOut({callbackUrl: '/'});
   }
 
   return (

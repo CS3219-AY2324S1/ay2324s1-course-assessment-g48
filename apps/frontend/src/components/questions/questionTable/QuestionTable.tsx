@@ -25,9 +25,9 @@ const QuestionTable: FC<QuestionTableProps> = ({
   openAdd,
   hidden,
 }) => {
-  const { questions, setQuestions, handleTrigger } = useQuestion();
   const { sessionUser } = useSessionUser();
   const [userRole, setUserRole] = useState(sessionUser.role ?? Role.Normal);
+  const { questions, setQuestions, handleTrigger } = useQuestion(userRole);
   const [viewQuestion, setViewQuestion] = useState<Question>({
     _id: "",
     title: "",
@@ -65,7 +65,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
   };
 
   const handleDeleteQuestion = async (id: string) => {
-    await deleteQuestionById(id)
+    await deleteQuestionById(id, userRole)
       .then(() => {
         handleTrigger();
       })

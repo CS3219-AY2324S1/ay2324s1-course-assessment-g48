@@ -1,43 +1,28 @@
 import { PropsWithChildren, useState } from "react";
 import Navbar from "./Navbar";
-import { signIn, useSession } from "next-auth/react";
-import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
 import LoadingModal from "./LoadingModal";
 import SlideOver from "./SlideOver";
 
 const Layout = ({ children }: PropsWithChildren) => {
   const { data: session, status } = useSession();
-  const router = useRouter();
   const [openSlideOver, setOpenSlideOver] = useState(false);
 
-  const redirectTo401 =
-    !session &&
-    !router.pathname.includes('signin') &&
-    !router.pathname.includes('signup') &&
-    router.pathname !== '/401' &&
-    router.pathname !== '/404' &&
-    !router.pathname.includes('error');
   const isLoading = status === "loading";
 
   if (isLoading) {
     return <LoadingModal isLoading={isLoading} />;
   }
 
-  if (redirectTo401) {
-    router.push("/401");
-  }
-
   return (
     <>
     <div className="dark:bg-gray-900 min-h-screen shadow-md">
-      {!redirectTo401 && (
-        <div className="flex flex-col h-screen divide-y divide-neutral-500 mx-auto">
-          <Navbar session={session} setSlideOver={setOpenSlideOver} openSlideOver={openSlideOver} />
-          <div className="px-5">
-          {children}
-          </div>
+      <div className="flex flex-col h-screen divide-y divide-neutral-500 mx-auto">
+        <Navbar session={session} setSlideOver={setOpenSlideOver} openSlideOver={openSlideOver} />
+        <div className="px-5">
+        {children}
         </div>
-      )}
+      </div>
     </div>
     <SlideOver open={openSlideOver} setOpen={setOpenSlideOver} />
     </>

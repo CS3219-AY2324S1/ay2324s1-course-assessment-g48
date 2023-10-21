@@ -1,11 +1,17 @@
 import { Router, NextFunction, Request, Response } from "express";
 import Question from "../../models/Question";
 import logger from "../../utils/logger";
+import { Role } from "../../models/enum/Role";
 
 export const questionRouter = Router();
 
 // Gets question from mongodb
 questionRouter.get("/", async (req: Request, res: Response) => {
+  if (!Object.values(Role).includes(req.headers.role as Role)) {
+    res.status(401).json({ error: "Only registered users are allowed to view questions." });
+    return;
+  }
+
   Question.find({}).then((question) => {
     res.json(question);
   });
@@ -15,6 +21,11 @@ questionRouter.get("/", async (req: Request, res: Response) => {
 questionRouter.get(
   "/:id",
   (req: Request, res: Response, next: NextFunction) => {
+    if (!Object.values(Role).includes(req.headers.role as Role)) {
+      res.status(401).json({ error: "Only registered users are allowed to view questions." });
+      return;
+    }
+
     logger.info(`Finding question id ${req.params.id}`);
     Question.findById(req.params.id)
       .then((question) => {
@@ -36,11 +47,16 @@ questionRouter.get(
 questionRouter.delete(
   "/:id",
   async (req: Request, res: Response, next: NextFunction) => {
+    if (req.headers.role !== Role.Admin) {
+      res.status(401).json({ error: "Only admins are allowed to delete questions." });
+      return;
+    }
+
     await Question.findByIdAndRemove(req.params.id)
       .then((question) => {
         if (!question) {
           res.status(404).json({
-            error: `A question with id ${req.params.id} does not exist`,
+            error: `A question with id ${req.params.id} does not exist.`,
           });
         }
         res.status(204).json(question);
@@ -55,7 +71,7 @@ questionRouter.post(
   async (req: Request, res: Response, next: NextFunction) => {
     const body = req.body;
 
-    if (body.role !== "admin") {
+    if (req.headers.role !== Role.Admin) {
       res.status(401).json({ error: "Only admins are allowed to add questions." });
       return;
     }
@@ -86,10 +102,10 @@ questionRouter.post(
 questionRouter.put(
   "/:id",
   async (req: Request, res: Response, next: NextFunction) => {
-    const { role, title, description, categories, complexity } = req.body;
+    const { title, description, categories, complexity } = req.body;
     const id = req.params.id;
 
-    if (role !== "admin") {
+    if (req.headers.role !== Role.Admin) {
       res.status(401).json({ error: "Only admins are allowed to add questions." });
       return;
     }

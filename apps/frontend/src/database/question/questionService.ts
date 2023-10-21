@@ -1,45 +1,69 @@
 import axios from "axios";
 import { Question } from "./entities/question.entity";
 import { Role } from "@/utils/enums/Role";
+import Router from 'next/router'
 
 const BASE_URL = process.env.NEXT_PUBLIC_QUESTION_SERVICE + "/api/question";
 
 export const postNewQuestion = async (newQuestion: Question, userRole: Role) => {
+  const config = {
+    headers: {
+      role: userRole
+    }
+  };
   return await axios
     .post(BASE_URL, {
-      role: userRole,
       title: newQuestion.title,
       description: newQuestion.description,
       categories: newQuestion.categories,
       complexity: newQuestion.complexity,
-    })
+    }, config)
     .then((response) => {
       return response.data;
     })
     .catch((error) => {
+      if (error.response.status === 401) {
+        Router.push("/401");
+      }
       console.error(error);
       throw String(error.response.data.error)
     });
 };
 
-export const getAllQuestions = async () => {
-  return await axios.get(BASE_URL)
+export const getAllQuestions = async (userRole: Role) => {
+  const config = {
+    headers: {
+      role: userRole
+    }
+  };
+  return await axios.get(BASE_URL, config)
   .then((response) => {
     return response.data;
   })
   .catch((error) => {
+    if (error.response.status === 401) {
+      Router.push("/401");
+    }
     console.error(error);
     throw String(error.response.data.error)
   });
 };
 
-export const getQuestionById = async (id: string) => {
-  return await axios.get(BASE_URL + "/" + id)
+export const getQuestionById = async (id: string, userRole: Role) => {
+  const config = {
+    headers: {
+      role: userRole
+    }
+  };
+  return await axios.get(BASE_URL + "/" + id, config)
   .then((response) => {
     return response.data;
   })
   .catch((error) => {
     if (error.response) {
+      if (error.response.status === 401) {
+        Router.push("/401");
+      }
       // The request was made, but the server responded with a status code
       throw String(error.response.data.error);
     } else if (error.request) {
@@ -52,13 +76,21 @@ export const getQuestionById = async (id: string) => {
   });
 };
 
-export const deleteQuestionById = async (id: string) => {
-  return await axios.delete(BASE_URL + "/" + id)
+export const deleteQuestionById = async (id: string, userRole: Role) => {
+  const config = {
+    headers: {
+      role: userRole
+    }
+  };
+  return await axios.delete(BASE_URL + "/" + id, config)
   .then((response) => {
     return response.data;
   })
   .catch((error) => {
     if (error.response) {
+      if (error.response.status === 401) {
+        Router.push("/401");
+      }
       // The request was made, but the server responded with a status code
       throw new String(error.response.data.error);
     } else if (error.request) {
@@ -76,18 +108,25 @@ export const updateQuestionById = async (
   updatedQuestion: Partial<Question>,
   userRole: Role
 ) => {
+  const config = {
+    headers: {
+      role: userRole
+    }
+  };
   return await axios.put(BASE_URL + "/" + id, {
-    role: userRole,
     title: updatedQuestion.title,
     description: updatedQuestion.description,
     categories: updatedQuestion.categories,
     complexity: updatedQuestion.complexity,
-  })
+  }, config)
   .then((response) => {
     return response.data;
   })
   .catch((error) => {
     if (error.response) {
+      if (error.response.status === 401) {
+        Router.push("/401");
+      }
       // The request was made, but the server responded with a status code
       throw new String(error.response.data.error);
     } else if (error.request) {
