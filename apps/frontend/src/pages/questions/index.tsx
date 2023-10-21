@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { PlusIcon } from "@heroicons/react/20/solid";
-import useQuestion from "@/hook/useQuestions";
+import useQuestions from "@/hook/useQuestions";
 import LoadingModal from "@/components/LoadingModal";
 import useSessionUser from "@/hook/useSessionUser";
 import { Role } from "@/utils/enums/Role";
@@ -8,9 +8,9 @@ import QuestionTable from "@/components/questions/questionTable/QuestionTable";
 
 export default function QuestionsRepo() {
   const [openAdd, setOpenAdd] = useState(false);
-  const { isLoading } = useQuestion();
   const { sessionUser } = useSessionUser();
   const [userRole, setUserRole] = useState(sessionUser.role ?? Role.Normal);
+  const { isLoading } = useQuestions(userRole);
 
   useEffect(() => {
     setUserRole(sessionUser.role ?? Role.Normal);

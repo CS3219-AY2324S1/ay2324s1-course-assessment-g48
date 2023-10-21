@@ -6,7 +6,6 @@ import { OAuthType } from "@/utils/enums/OAuthType";
 export const BASE_URL = process.env.NEXT_PUBLIC_USER_SERVICE + "/api/users";
 
 export const createNewUser = async (newUser: CreateUserDto) => {
-  console.log("Creating new user", BASE_URL);
   try {
     return await axios
       .post(BASE_URL, {
@@ -44,7 +43,6 @@ export const login = async ({
   password?: string;
   oauth?: OAuthType;
 }): Promise<User | undefined> => {
-  console.log("All details: ", email, password, oauth);
   if (!email || (!password && !oauth)) {
     console.error("Email or password not provided");
     return undefined;
