@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment } from "react";
 import Image from "next/image";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import {
@@ -6,13 +6,11 @@ import {
   BellIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { signIn, signOut } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import { Session } from "next-auth";
 import { useRouter } from "next/router";
 import ModeToggleButton from "./ModeToggleButton";
 import Link from "next/link";
-import AuthInfoModal from "./AuthInfoModal";
-import { AuthInfo } from "@/utils/enums/AuthInfo";
 import Stopwatch from "./Stopwatch";
 
 const navigation = [
@@ -40,13 +38,6 @@ const Navbar: React.FC<NavbarProps> = ({
   const router = useRouter();
   const currentPath = router.pathname;
   const isQuestionPage = currentPath === '/questions/[id]'
-
-  const [openAuthInfo, setOpenAuthInfo] = useState(false);
-  function handlePeerPrepClick() {
-    if (!session) {
-      setOpenAuthInfo(true);
-    }
-  }
 
   function handleSignOutClick() {
     signOut({callbackUrl: '/'});
@@ -81,8 +72,7 @@ const Navbar: React.FC<NavbarProps> = ({
                   <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                     <div className="flex flex-shrink-0 items-center">
                       <Link
-                        href={session ? "/" : "#"}
-                        onClick={handlePeerPrepClick}
+                        href="/"
                       >
                         <span className="self-center text-2xl font-semibold whitespace-nowrap text-white">
                           PeerPrep
@@ -238,12 +228,6 @@ const Navbar: React.FC<NavbarProps> = ({
               ))}
             </div>
           </Disclosure.Panel>
-
-          <AuthInfoModal
-            title={AuthInfo.Unauthorised}
-            setOpen={setOpenAuthInfo}
-            open={openAuthInfo}
-          />
         </>
       )}
     </Disclosure>
