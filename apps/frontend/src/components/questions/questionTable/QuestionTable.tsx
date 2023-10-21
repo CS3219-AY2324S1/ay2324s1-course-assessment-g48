@@ -5,7 +5,7 @@ import {
   postNewQuestion,
   updateQuestionById,
 } from "@/database/question/questionService";
-import useQuestion from "@/hook/useQuestions";
+import useQuestions from "@/hook/useQuestions";
 import AddQuestionModal from "./AddQuestionModal";
 import EditQuestionModal from "./EditQuestionModal";
 import { Complexity } from "@/utils/enums/Complexity";
@@ -27,7 +27,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
 }) => {
   const { sessionUser } = useSessionUser();
   const [userRole, setUserRole] = useState(sessionUser.role ?? Role.Normal);
-  const { questions, setQuestions, handleTrigger } = useQuestion(userRole);
+  const { questions, setQuestions, handleTrigger } = useQuestions(userRole);
   const [viewQuestion, setViewQuestion] = useState<Question>({
     _id: "",
     title: "",

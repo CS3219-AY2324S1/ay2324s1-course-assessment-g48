@@ -3,7 +3,7 @@ import { getAllQuestions } from "../database/question/questionService";
 import { Question } from "@/database/question/entities/question.entity";
 import { Role } from "@/utils/enums/Role";
 
-function useQuestion(userRole: Role) {
+function useQuestions(userRole: Role) {
   const [isLoading, setIsLoading] = useState(false);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [trigger, setTrigger] = useState(false);
@@ -22,8 +22,8 @@ function useQuestion(userRole: Role) {
     }).catch((error) => {
     console.error(error);
     });
-  }, [trigger]);
+  }, [trigger, userRole]);
   return { questions, setQuestions, isLoading, handleTrigger };
 }
 
-export default useQuestion;
+export default useQuestions;
