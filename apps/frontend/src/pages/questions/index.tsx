@@ -9,11 +9,11 @@ import QuestionTable from "@/components/questions/questionTable/QuestionTable";
 export default function QuestionsRepo() {
   const [openAdd, setOpenAdd] = useState(false);
   const { sessionUser } = useSessionUser();
-  const [userRole, setUserRole] = useState(sessionUser.role ?? Role.Normal);
+  const [userRole, setUserRole] = useState(sessionUser == null ? null : sessionUser?.role);
   const { isLoading } = useQuestions(userRole);
 
   useEffect(() => {
-    setUserRole(sessionUser.role ?? Role.Normal);
+    setUserRole(sessionUser == null ? null : sessionUser?.role);
   }, [sessionUser]);
 
   return (

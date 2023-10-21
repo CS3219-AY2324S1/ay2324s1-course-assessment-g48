@@ -26,7 +26,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
   hidden,
 }) => {
   const { sessionUser } = useSessionUser();
-  const [userRole, setUserRole] = useState(sessionUser.role ?? Role.Normal);
+  const [userRole, setUserRole] = useState(sessionUser == null ? null : sessionUser?.role);
   const { questions, setQuestions, handleTrigger } = useQuestions(userRole);
   const [viewQuestion, setViewQuestion] = useState<Question>({
     _id: "",
@@ -48,12 +48,12 @@ const QuestionTable: FC<QuestionTableProps> = ({
   const router = useRouter();
 
   useEffect(() => {
-    setUserRole(sessionUser.role ?? Role.Normal);
+    setUserRole(sessionUser == null ? null : sessionUser?.role);
   }, [sessionUser]);
 
   const handleSaveQuestion = async (newQuestion: Question) => {
     const questionToAdd = { ...newQuestion };
-    await postNewQuestion(questionToAdd, userRole)
+    await postNewQuestion(questionToAdd, userRole!)
       .then(() => {
         handleTrigger();
 
@@ -65,7 +65,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
   };
 
   const handleDeleteQuestion = async (id: string) => {
-    await deleteQuestionById(id, userRole)
+    await deleteQuestionById(id, userRole!)
       .then(() => {
         handleTrigger();
       })
@@ -75,7 +75,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
   };
 
   const handleEditQuestion = async (editQuestion: Question) => {
-    await updateQuestionById(editQuestion._id, editQuestion, userRole)
+    await updateQuestionById(editQuestion._id, editQuestion, userRole!)
       .then(() => {
         handleTrigger();
         setOpenEdit(false);

@@ -30,7 +30,7 @@ export const postNewQuestion = async (newQuestion: Question, userRole: Role) => 
     });
 };
 
-export const getAllQuestions = async (userRole: Role) => {
+export const getAllQuestions = async (userRole?: Role) => {
   const config = {
     headers: {
       role: userRole
@@ -49,7 +49,7 @@ export const getAllQuestions = async (userRole: Role) => {
   });
 };
 
-export const getQuestionById = async (id: string, userRole: Role) => {
+export const getQuestionById = async (id: string, userRole?: Role) => {
   const config = {
     headers: {
       role: userRole

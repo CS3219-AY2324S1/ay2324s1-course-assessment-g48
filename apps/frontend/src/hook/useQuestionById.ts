@@ -3,7 +3,7 @@ import { getQuestionById } from "@/database/question/questionService";
 import { Role } from "@/utils/enums/Role";
 import { useEffect, useState } from "react";
 
-function useQuestionById(qid: string, userRole: Role) {
+function useQuestionById(qid: string, userRole?: Role|null) {
   const [isLoading, setIsLoading] = useState(false);
   const [question, setQuestion] = useState<Question | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -13,6 +13,7 @@ function useQuestionById(qid: string, userRole: Role) {
       if (qid) {
         setIsLoading(true);
         setError(null);
+        if (userRole === null) return;
 
         try {
           const data = await getQuestionById(qid, userRole);
@@ -26,7 +27,7 @@ function useQuestionById(qid: string, userRole: Role) {
     }
 
     fetchData();
-  }, [qid]);
+  }, [qid, userRole]);
 
   return { question, isLoading, error };
 }
