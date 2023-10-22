@@ -13,6 +13,7 @@ import useSessionUser from "@/hook/useSessionUser";
 import { Role } from "@/utils/enums/Role";
 import { useRouter } from "next/router";
 import { Question } from "@/database/question/entities/question.entity";
+import QuestionPagination from "./QuestionPagination";
 
 type QuestionTableProps = {
   setOpenAdd: (open: boolean) => void;
@@ -25,9 +26,10 @@ const QuestionTable: FC<QuestionTableProps> = ({
   openAdd,
   hidden,
 }) => {
+  const [questionsPerPage, setQuestionsPerPage] = useState(10);
   const { sessionUser } = useSessionUser();
   const [userRole, setUserRole] = useState(sessionUser == null ? null : sessionUser?.role);
-  const { questions, setQuestions, handleTrigger } = useQuestions(userRole);
+  const { questions, totalQuestions, handleTrigger } = useQuestions(userRole);
   const [viewQuestion, setViewQuestion] = useState<Question>({
     _id: "",
     title: "",
@@ -45,7 +47,15 @@ const QuestionTable: FC<QuestionTableProps> = ({
 
   const [openEdit, setOpenEdit] = useState(false);
   const [openView, setOpenView] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   const router = useRouter();
+  const numberOfPages = Math.ceil(totalQuestions / questionsPerPage);
+  const indexOfLastRecord = currentPage * questionsPerPage;
+  const indexOfFirstRecord = indexOfLastRecord - questionsPerPage;
+  const currentQuestions = questions.slice(
+    indexOfFirstRecord,
+    indexOfLastRecord
+  );
 
   useEffect(() => {
     setUserRole(sessionUser == null ? null : sessionUser?.role);
@@ -96,17 +106,17 @@ const QuestionTable: FC<QuestionTableProps> = ({
 
   return (
     <>
-      <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+      <div className="overflow-auto shadow-md sm:rounded-lg">
         <table
-          className="w-full text-sm text-left text-gray-500 dark:text-gray-400"
+          className="relative text-sm text-left text-gray-500 dark:text-gray-400 w-full"
           hidden={hidden}
         >
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
-              <th scope="col" className="px-6 py-3">
+              <th scope="col" className="px-6 py-3 ">
                 S/N
               </th>
-              <th scope="col" className="px-6 py-3">
+              <th scope="col" className="px-6 py-3 w-1/5">
                 Title
               </th>
               <th scope="col" className="px-6 py-3 w-1/3">
@@ -132,7 +142,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
           </thead>
 
           <tbody>
-            {questions.map((question, index) => (
+            {currentQuestions.map((question, index) => (
               <tr
                 key={index}
                 className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
@@ -195,7 +205,18 @@ const QuestionTable: FC<QuestionTableProps> = ({
             ))}
           </tbody>
         </table>
+        <QuestionPagination
+          hidden={hidden}
+          totalQuestionsNum={totalQuestions}
+          questionsPerPage={questionsPerPage}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          numberOfPages={numberOfPages}
+          indexOfFirstRecord={indexOfFirstRecord}
+          indexOfLastRecord={indexOfLastRecord}
+        />
       </div>
+
       <AddQuestionModal
         onSave={handleSaveQuestion}
         setOpen={setOpenAdd}
@@ -211,6 +232,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
         onViewQuestion={viewQuestion}
         setOpen={setOpenView}
         open={openView}
+        handleQuestionClick={handleQuestionClick}
       />
     </>
   );

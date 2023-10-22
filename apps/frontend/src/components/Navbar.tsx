@@ -12,6 +12,7 @@ import { useRouter } from "next/router";
 import ModeToggleButton from "./ModeToggleButton";
 import Link from "next/link";
 import Stopwatch from "./Stopwatch";
+import useNotification from "@/hook/useNotfication";
 
 const navigation = [
   { name: "Question", href: "/questions", current: false },
@@ -38,7 +39,7 @@ const Navbar: React.FC<NavbarProps> = ({
   const router = useRouter();
   const currentPath = router.pathname;
   const isQuestionPage = currentPath === '/questions/[id]'
-
+  const {numberOfUnreadNotifications} = useNotification()
   function handleSignOutClick() {
     signOut({callbackUrl: '/'});
   }
@@ -131,7 +132,13 @@ const Navbar: React.FC<NavbarProps> = ({
                     >
                       <span className="absolute -inset-1.5" />
                       <span className="sr-only">View notifications</span>
+                      <div className="flex">
                       <BellIcon className="h-6 w-6" aria-hidden="true" />
+                      {
+                        (numberOfUnreadNotifications() > 0) ?
+                          <span className="notification-counter">{numberOfUnreadNotifications()}</span>:<></>
+                      }
+                      </div>
                     </button>
 
                     {/* Profile dropdown */}

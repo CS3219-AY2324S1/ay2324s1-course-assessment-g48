@@ -10,8 +10,7 @@ type CountdownProps = {
 
 const Countdown: React.FC<CountdownProps> = (
     {counter}
-    ) => {
-
+) => {
   return (
     <div className="mx-auto mt-3 w-1/6 center">
       <CircularProgressbar

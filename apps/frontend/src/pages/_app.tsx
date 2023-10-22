@@ -11,6 +11,7 @@ import { Repo, AutomergeUrl } from "@automerge/automerge-repo";
 import { BroadcastChannelNetworkAdapter } from "@automerge/automerge-repo-network-broadcastchannel";
 import { IndexedDBStorageAdapter } from "@automerge/automerge-repo-storage-indexeddb";
 import { BrowserWebSocketClientAdapter } from "@automerge/automerge-repo-network-websocket";
+import { ErrorProvider } from "@/hook/ErrorContext";
 export default function App({ Component, pageProps }: AppProps) {
   const [repo, setRepo] = useState<Repo>();
   //   console.log(repo);
@@ -42,16 +43,17 @@ export default function App({ Component, pageProps }: AppProps) {
         <meta charSet="UTF-8" />
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
       </Head>
-
-      <SessionProvider>
-        <ThemeProvider>
-          <RepoContext.Provider value={repo as Repo}>
-            <Layout>
-              <Component {...pageProps} />
-            </Layout>
-          </RepoContext.Provider>
-        </ThemeProvider>
-      </SessionProvider>
+      <ErrorProvider>
+        <SessionProvider>
+          <ThemeProvider>
+            <RepoContext.Provider value={repo as Repo}>
+              <Layout>
+                <Component {...pageProps} />
+              </Layout>
+            </RepoContext.Provider>
+          </ThemeProvider>
+        </SessionProvider>
+      </ErrorProvider>
     </div>
   );
 }

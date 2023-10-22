@@ -7,6 +7,7 @@ function useQuestions(userRole?: Role|null) {
   const [isLoading, setIsLoading] = useState(false);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [trigger, setTrigger] = useState(false);
+  const [totalQuestions, setTotalQuestions] = useState(0);
   const handleTrigger = () => {
     setTrigger(!trigger); // Toggles the trigger state
   };
@@ -16,6 +17,7 @@ function useQuestions(userRole?: Role|null) {
     if (userRole === null) return;
     getAllQuestions(userRole).then((questions) => {
       setQuestions(questions);
+      setTotalQuestions(questions.length);
       setTimeout(() => {
         setIsLoading(false);
       }, 50)
@@ -24,7 +26,7 @@ function useQuestions(userRole?: Role|null) {
     console.error(error);
     });
   }, [trigger, userRole]);
-  return { questions, setQuestions, isLoading, handleTrigger };
+  return { questions, totalQuestions, setQuestions, isLoading, handleTrigger };
 }
 
 export default useQuestions;

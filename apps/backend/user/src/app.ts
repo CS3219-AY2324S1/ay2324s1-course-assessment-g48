@@ -1,6 +1,4 @@
 import express from "express";
-import * as logger from "./utils/logger";
-import * as config from "./utils/config";
 import { userRouter } from "./controllers/api/userRouter";
 import cors from "cors";
 
@@ -36,8 +34,5 @@ app.use(
 )
 
 app.use(express.json());
-
-import { Request, Response } from "express";
-
 app.use("/api/users", userRouter);
 

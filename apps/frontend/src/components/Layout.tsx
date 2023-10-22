@@ -1,14 +1,28 @@
-import { PropsWithChildren, useState } from "react";
+import { PropsWithChildren, useEffect, useState } from "react";
 import Navbar from "./Navbar";
 import { useSession } from "next-auth/react";
 import LoadingModal from "./LoadingModal";
 import SlideOver from "./SlideOver";
+import { useError } from "@/hook/ErrorContext";
+import Alert from "./Alert";
 
 const Layout = ({ children }: PropsWithChildren) => {
   const { data: session, status } = useSession();
+  const { error, setError, clearError } = useError();
+  const [openAlert, setOpenAlert] = useState(false);
   const [openSlideOver, setOpenSlideOver] = useState(false);
 
   const isLoading = status === "loading";
+
+  useEffect(() => {
+    if (error) {
+      setOpenAlert(true);
+      setTimeout(() => {
+        setOpenAlert(false);
+      }, 3000);
+      clearError();
+    }
+  }, [error, clearError]);
 
   if (isLoading) {
     return <LoadingModal isLoading={isLoading} />;
@@ -16,15 +30,25 @@ const Layout = ({ children }: PropsWithChildren) => {
 
   return (
     <>
-    <div className="dark:bg-gray-900 min-h-screen shadow-md">
-      <div className="flex flex-col h-screen divide-y divide-neutral-500 mx-auto">
-        <Navbar session={session} setSlideOver={setOpenSlideOver} openSlideOver={openSlideOver} />
-        <div className="px-5">
-        {children}
-        </div>
+      <div className="dark:bg-gray-900 min-h-screen pb-10 shadow-md overflow-auto">
+          <>
+            <div className="fixed w-screen divide-y top-0 z-20">
+              <Navbar
+                session={session}
+                setSlideOver={setOpenSlideOver}
+                openSlideOver={openSlideOver}
+              />
+              <div className="border-t divider-neutral-500 over"></div>
+            </div>
+            <div className="mt-16 px-5 place-content-center w-full">
+              {children}
+            </div>
+          </>
       </div>
-    </div>
-    <SlideOver open={openSlideOver} setOpen={setOpenSlideOver} />
+      <SlideOver open={openSlideOver} setOpen={setOpenSlideOver} />
+      {error && (
+        <Alert message={error} hidden={openAlert} setHide={setOpenAlert} />
+      )}
     </>
   );
 };
