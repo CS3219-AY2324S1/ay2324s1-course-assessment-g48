@@ -1,6 +1,7 @@
 import { Router, NextFunction, Request, Response } from "express";
 import Question from "../../models/Question";
 import logger from "../../utils/logger";
+import axios from "axios";
 import { Role } from "../../models/enum/Role";
 
 export const questionRouter = Router();
@@ -15,6 +16,22 @@ questionRouter.get("/", async (req: Request, res: Response) => {
   Question.find({}).then((question) => {
     res.json(question);
   });
+});
+
+questionRouter.get("/leetcode", async (req: Request, res: Response) => {
+  // Remember to login before invoking this function as you need permisssions (command: firebase login)
+  axios
+    .get(
+      "https://us-central1-cs3219-398215.cloudfunctions.net/leetcodeQuestionsFetch"
+    )
+    .then((response) => {
+      // Handle the data from the serverless function
+      console.log(response.data);
+    })
+    .catch((error) => {
+      // Handle errors
+      console.error("Error fetching data:", error);
+    });
 });
 
 // Fetches individual question by id
