@@ -1,4 +1,3 @@
-import QuestionTable from "@/components/questions/QuestionTable";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 

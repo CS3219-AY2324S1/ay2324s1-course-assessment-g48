@@ -12,4 +12,4 @@ export type User = {
 
 export type CreateUserDto = Omit<User, "id">;
 
-export type UpdateUserDto = Partial<Omit<User, "id">> & Pick<User, "id">;
+export type UpdateUserDto = Partial<User>;

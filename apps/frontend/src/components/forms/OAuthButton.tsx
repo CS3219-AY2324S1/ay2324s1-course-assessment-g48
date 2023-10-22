@@ -21,7 +21,7 @@ const OAuthButton: React.FC<OAuthButtonProps> = ({provider}) => {
           <div className="px-1">
             <Image src={`/${provider}.svg`} alt={provider} height={25} width={25} />
           </div>
-          <p className="px-1 mb-0">{`Sign in with ${provider.charAt(0).toUpperCase() + provider.slice(1)}`}</p>
+          <p className="px-1 mb-0">{`Continue with ${provider.charAt(0).toUpperCase() + provider.slice(1)}`}</p>
         </button>
       </div>
     </>
