@@ -18,10 +18,10 @@ export class DifficultyQueue {
   public async generateSession(user1: number, user2: number) {
     const sessionID = await axios
       .post(SESSION_URL, { users: [user1, user2] })
-      .then((response) => {
+      .then((response : any) => {
         return response.data.sessionId;
       })
-      .catch((error) => {
+      .catch((error : any) => {
         console.error(error);
       });
     return sessionID;

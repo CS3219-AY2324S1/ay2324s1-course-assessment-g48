@@ -33,7 +33,7 @@ spec:
         image: deployment87/dply87:peerprep-frontend
         resources:
           limits:
-            memory: "128Mi"
+            memory: "256Mi"
             cpu: "500m"
         ports:
         - containerPort: 3000

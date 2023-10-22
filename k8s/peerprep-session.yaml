@@ -1,18 +1,19 @@
----
 apiVersion: v1
 kind: Service
 metadata:
-  name: peerprep-rabbitmq
+  name: peerprep-session
   annotations:
     cloud.google.com/network-tier: Standard
 spec:
   selector:
-    app: peerprep-rabbitmq
+    app: peerprep-session
   ports:
-    - name: rabbitmq
-      protocol: TCP
-      port: 5672
-      targetPort: 5672
+  - protocol: TCP
+    name: port-8250
+    port: 8250
+  - protocol: TCP
+    name: port-8251
+    port: 8251
   type: LoadBalancer
   loadBalancerIP: 35.213.173.19
 
@@ -21,22 +22,23 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: rabbitmq-deployment
+  name: session-deployment
 spec:
   selector:
     matchLabels:
-      app: peerprep-rabbitmq
+      app: peerprep-session
   template:
     metadata:
       labels:
-        app: peerprep-rabbitmq
+        app: peerprep-session
     spec:
       containers:
-      - name: peerprep-rabbitmq
-        image: rabbitmq:3-management
+      - name: peerprep-session
+        image: deployment87/dply87:peerprep-session
         resources:
           limits:
-            memory: "512Mi"
+            memory: "256Mi"
             cpu: "500m"
         ports:
-        - containerPort: 5672
+        - containerPort: 8250
+        - containerPort: 8251

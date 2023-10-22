@@ -7,18 +7,18 @@ WORKDIR /app
 # Copy package.json and package-lock.json to the working directory
 COPY package*.json ./
 
-# Install all dependencies in the package.json
+# Install all dependencies defined in the package.json
 RUN yarn install
 
 # Copy all files from your host to your image filesystem at /app
 COPY . .
-COPY .env .env
+COPY .env.local ./.env.production.local
 
-# Install prisma
-RUN npx prisma generate
+# Build the application
+RUN yarn build
 
-# Informs Docker that the container listens on the specified network ports at runtime.
-EXPOSE 8001
+# Informs Docker that the container listens on the specified network port at runtime
+EXPOSE 3000
 
-# Provides defaults for an executing container
-CMD ["yarn" ,"start:prod"]
+# Provides the default command to execute when the container starts
+CMD ["yarn", "start"]

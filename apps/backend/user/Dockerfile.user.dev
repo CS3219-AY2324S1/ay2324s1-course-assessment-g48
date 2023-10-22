@@ -12,7 +12,7 @@ RUN yarn install
 
 # Copy all files from your host to your image filesystem at /app
 COPY . .
-COPY .env .env
+COPY .env.dev .env
 
 # Install prisma
 RUN npx prisma generate
