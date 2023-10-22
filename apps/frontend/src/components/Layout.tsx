@@ -1,7 +1,6 @@
 import { PropsWithChildren, useEffect, useState } from "react";
 import Navbar from "./Navbar";
-import { signIn, useSession } from "next-auth/react";
-import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
 import LoadingModal from "./LoadingModal";
 import SlideOver from "./SlideOver";
 import { useError } from "@/hook/ErrorContext";
@@ -9,7 +8,6 @@ import Alert from "./Alert";
 
 const Layout = ({ children }: PropsWithChildren) => {
   const { data: session, status } = useSession();
-  const router = useRouter();
   const { error, setError, clearError } = useError();
   const [openAlert, setOpenAlert] = useState(false);
   const [openSlideOver, setOpenSlideOver] = useState(false);

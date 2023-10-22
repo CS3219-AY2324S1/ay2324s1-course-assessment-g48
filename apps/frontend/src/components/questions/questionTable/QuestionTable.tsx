@@ -5,7 +5,7 @@ import {
   postNewQuestion,
   updateQuestionById,
 } from "@/database/question/questionService";
-import useQuestion from "@/hook/useQuestions";
+import useQuestions from "@/hook/useQuestions";
 import AddQuestionModal from "./AddQuestionModal";
 import EditQuestionModal from "./EditQuestionModal";
 import { Complexity } from "@/utils/enums/Complexity";
@@ -26,10 +26,10 @@ const QuestionTable: FC<QuestionTableProps> = ({
   openAdd,
   hidden,
 }) => {
-  const { questions, totalQuestions, handleTrigger } = useQuestion();
   const [questionsPerPage, setQuestionsPerPage] = useState(10);
   const { sessionUser } = useSessionUser();
-  const [userRole, setUserRole] = useState(sessionUser.role ?? Role.Normal);
+  const [userRole, setUserRole] = useState(sessionUser == null ? null : sessionUser?.role);
+  const { questions, totalQuestions, handleTrigger } = useQuestions(userRole);
   const [viewQuestion, setViewQuestion] = useState<Question>({
     _id: "",
     title: "",
@@ -58,12 +58,12 @@ const QuestionTable: FC<QuestionTableProps> = ({
   );
 
   useEffect(() => {
-    setUserRole(sessionUser.role ?? Role.Normal);
+    setUserRole(sessionUser == null ? null : sessionUser?.role);
   }, [sessionUser]);
 
   const handleSaveQuestion = async (newQuestion: Question) => {
     const questionToAdd = { ...newQuestion };
-    await postNewQuestion(questionToAdd)
+    await postNewQuestion(questionToAdd, userRole!)
       .then(() => {
         handleTrigger();
 
@@ -75,7 +75,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
   };
 
   const handleDeleteQuestion = async (id: string) => {
-    await deleteQuestionById(id)
+    await deleteQuestionById(id, userRole!)
       .then(() => {
         handleTrigger();
       })
@@ -85,7 +85,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
   };
 
   const handleEditQuestion = async (editQuestion: Question) => {
-    await updateQuestionById(editQuestion._id, editQuestion)
+    await updateQuestionById(editQuestion._id, editQuestion, userRole!)
       .then(() => {
         handleTrigger();
         setOpenEdit(false);
