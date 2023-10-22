@@ -17,8 +17,12 @@ body {
     @apply relative rounded px-3 font-medium items-center transition-all focus:outline-none inline-flex ml-auto p-1 mr-2 hover:bg-slate-300 dark:hover:bg-gray-800;
   }
 
-  .preferenceBtnTooltip {
+  .btnTooltip {
     @apply absolute w-auto p-2 text-sm m-2 min-w-max translate-x-3 right-0 top-5 z-10 rounded-md shadow-md bg-slate-100 dark:text-gray-800 dark:bg-gray-200 origin-center scale-0 transition-all duration-100 ease-linear group-hover:scale-100;
+  }
+
+  .chatWindow {
+    @apply fixed bottom-16 right-10 w-1/4 h-1/2 min-w-fit min-h-fit dark:bg-slate-800 bg-white rounded-lg border-2 border-blue-500 overflow-hidden shadow-xl transition-all duration-300;
   }
 }
 
@@ -145,4 +149,78 @@ body {
 
 ::-webkit-scrollbar-thumb {
   background: #4d4d4d;
+}
+
+/* Chat Window */
+.react-chatbot-kit-chat-container {
+  width: 100% !important;
+  height: 50vh;
+}
+
+.react-chatbot-kit-chat-inner-container {
+  height: 100% !important;
+}
+
+.react-chatbot-kit-chat-message-container {
+  height: calc(100% - 48.5px) !important;
+}
+
+.react-chatbot-kit-chat-bot-container {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #3d4e8d;
+  margin-right: 12.5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.react-chatbot-kit-chat-bot-message {
+  margin-left: 0 !important;
+  width: fit-content !important;
+}
+
+.react-chatbot-kit-chat-btn-send {
+  width: 13% !important;
+}
+
+.react-chatbot-kit-chat-btn-send:hover {
+  background-color: rgb(59 130 246) !important;
+}
+
+/* Dark Mode */
+.dark-chat .react-chatbot-kit-chat-header {
+  background-color: #020617 !important;
+  color: white;
+}
+
+.dark-chat .react-chatbot-kit-chat-message-container {
+  background-color: #383838 !important;
+}
+
+.dark-chat .react-chatbot-kit-chat-bot-message {
+  background-color: rgb(30 58 138) !important;
+}
+
+.dark-chat .react-chatbot-kit-chat-bot-message-arrow {
+  border-right: 8px solid rgb(30 58 138) !important;
+}
+
+.dark-chat .react-chatbot-kit-user-chat-message {
+  background-color: rgb(59 130 246) !important;
+  color:white;
+}
+
+.dark-chat .react-chatbot-kit-user-chat-message-arrow {
+  border-left: 8px solid rgb(59 130 246) !important;
+}
+
+.dark-chat .react-chatbot-kit-chat-input{
+  background-color: #383838 !important;
+  color: white;
+}
+
+.dark-chat .react-chatbot-kit-chat-input::placeholder{
+  color: rgb(175, 175, 175);
 }

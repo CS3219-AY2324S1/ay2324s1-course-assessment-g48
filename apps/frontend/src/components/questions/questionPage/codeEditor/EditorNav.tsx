@@ -49,7 +49,7 @@ const EditorNav = () => {
             <div className="h-6 w-6 dark:text-white">
               <Cog6ToothIcon />
             </div>
-            <div className="preferenceBtnTooltip group">Settings</div>
+            <div className="btnTooltip">Settings</div>
           </button>
         </div>
 
@@ -58,7 +58,7 @@ const EditorNav = () => {
             <div className="h-6 w-6 dark:text-white">
               <ArrowsPointingOutIcon />
             </div>
-            <div className="preferenceBtnTooltip group">Fullscreen</div>
+            <div className="btnTooltip">Fullscreen</div>
           </button>
         </div>
       </div>
