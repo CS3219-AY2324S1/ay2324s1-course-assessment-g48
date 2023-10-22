@@ -34,8 +34,5 @@ app.use(
 )
 
 app.use(express.json());
-
-import { Request, Response } from "express";
-
 app.use("/api/users", userRouter);
 
