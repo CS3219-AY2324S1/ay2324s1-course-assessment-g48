@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment } from "react";
 import Image from "next/image";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import {
@@ -11,9 +11,8 @@ import { Session } from "next-auth";
 import { useRouter } from "next/router";
 import ModeToggleButton from "./ModeToggleButton";
 import Link from "next/link";
-import AuthInfoModal from "./AuthInfoModal";
-import { AuthInfo } from "@/utils/enums/AuthInfo";
 import Stopwatch from "./Stopwatch";
+import useNotification from "@/hook/useNotfication";
 
 const navigation = [
   { name: "Question", href: "/questions", current: false },
@@ -40,12 +39,9 @@ const Navbar: React.FC<NavbarProps> = ({
   const router = useRouter();
   const currentPath = router.pathname;
   const isQuestionPage = currentPath === '/questions/[id]'
-
-  const [openAuthInfo, setOpenAuthInfo] = useState(false);
-  function handlePeerPrepClick() {
-    if (!session) {
-      setOpenAuthInfo(true);
-    }
+  const {numberOfUnreadNotifications} = useNotification()
+  function handleSignOutClick() {
+    signOut({callbackUrl: '/'});
   }
 
   return (
@@ -77,8 +73,7 @@ const Navbar: React.FC<NavbarProps> = ({
                   <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                     <div className="flex flex-shrink-0 items-center">
                       <Link
-                        href={session ? "/" : "#"}
-                        onClick={handlePeerPrepClick}
+                        href="/"
                       >
                         <span className="self-center text-2xl font-semibold whitespace-nowrap text-white">
                           PeerPrep
@@ -137,7 +132,13 @@ const Navbar: React.FC<NavbarProps> = ({
                     >
                       <span className="absolute -inset-1.5" />
                       <span className="sr-only">View notifications</span>
+                      <div className="flex">
                       <BellIcon className="h-6 w-6" aria-hidden="true" />
+                      {
+                        (numberOfUnreadNotifications() > 0) ?
+                          <span className="notification-counter">{numberOfUnreadNotifications()}</span>:<></>
+                      }
+                      </div>
                     </button>
 
                     {/* Profile dropdown */}
@@ -195,7 +196,7 @@ const Navbar: React.FC<NavbarProps> = ({
                           <Menu.Item>
                             {({ active }) => (
                               <a
-                                onClick={() => signOut()}
+                                onClick={() => handleSignOutClick()}
                                 className={classNames(
                                   active ? "bg-gray-100" : "",
                                   "block px-4 py-2 text-sm text-white bg-red-600 rounded-md cursor-pointer"
@@ -234,12 +235,6 @@ const Navbar: React.FC<NavbarProps> = ({
               ))}
             </div>
           </Disclosure.Panel>
-
-          <AuthInfoModal
-            title={AuthInfo.Unauthorised}
-            setOpen={setOpenAuthInfo}
-            open={openAuthInfo}
-          />
         </>
       )}
     </Disclosure>

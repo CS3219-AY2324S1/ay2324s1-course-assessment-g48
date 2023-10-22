@@ -3,6 +3,7 @@ import Split from "react-split";
 import DescriptionPanel from "./DescriptionPanel";
 import { Question } from "@/database/question/entities/question.entity";
 import CodeEditor from "./codeEditor/CodeEditor";
+import ChatWidget from "@/components/chat/ChatWidget";
 
 type QuestionWorkspaceProps = {
   question: Question;
@@ -10,10 +11,13 @@ type QuestionWorkspaceProps = {
 
 const QuestionWorkspace: React.FC<QuestionWorkspaceProps> = ({ question }) => {
   return (
-    <Split className="split flex-1">
-      <DescriptionPanel question={question} />
-      <CodeEditor />
-    </Split>
+    <>
+      <Split className="split flex-1">
+        <DescriptionPanel question={question} />
+        <CodeEditor />
+      </Split>
+      <ChatWidget />
+    </>
   );
 };
 export default QuestionWorkspace;

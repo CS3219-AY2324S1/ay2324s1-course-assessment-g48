@@ -12,18 +12,18 @@ import useSessionUser from "@/hook/useSessionUser";
 import Alert from "@/components/Alert";
 import { User } from "@/database/user/entities/user.entity";
 import { useRouter } from "next/router";
+import { useError } from "@/hook/ErrorContext";
 type matchingProps = {};
 
 const MatchingPage: React.FC<matchingProps> = () => {
-  const { toggleTimer, seconds, reset } = useTimer();
+  const { toggleTimer, seconds, reset, isRunning, countDown } = useTimer();
   const [isMatching, setIsMatching] = useState<number>(
-    MatchedState.NOT_MATCHING
+    isRunning ? MatchedState.MATCHING : MatchedState.NOT_MATCHING
   );
   const [difficulty, setDifficulty] = useState<string>(Complexity.Easy);
   const { sessionUser } = useSessionUser();
   const user = sessionUser;
-  const [err, setErr] = useState<string>("");
-  const [openAlert, setOpenAlert] = useState<boolean>(false);
+  const { error, setError, clearError } = useError();
   const [peer, setPeer] = useState<User | null>(null);
   const router = useRouter();
 
@@ -40,38 +40,37 @@ const MatchingPage: React.FC<matchingProps> = () => {
 
   const setToNotMatchingState = () => {
     // Set the state of the page to not looking for match.
-    disconnectSocket();
     reset();
+    disconnectSocket();
     setIsMatching(MatchedState.NOT_MATCHING);
   };
 
   const setToMatchingState = () => {
     // Set the state of the page to looking for match.
-    setErr("");
+    clearError();
     matchingSocket.connect();
     matchingSocket.on("matched", setToMatchedState);
     matchingSocket.on("other-connection", () => {
       setToNotMatchingState();
-      setErr("This account has attempted to match from another location.");
-      disconnectSocket();
-    });
-
-    matchingSocket.emit("matching", { difficulty, user });
-    matchingSocket.on("timeout", () => {
-      setToNotMatchingState();
-      setErr("Timed out, try again.");
-      setOpenAlert(true);
-      setTimeout(() => {
-        setOpenAlert(false);
-      }, 3000);
+      setError("This account has attempted to match from another location.");
       disconnectSocket();
     });
     setIsMatching(MatchedState.MATCHING);
+    setTimeout(() => {
+      matchingSocket.emit("matching", { difficulty, user });
+      matchingSocket.on("timeout", () => {
+        setToNotMatchingState();
+        setError("Timed out, try again.");
+        disconnectSocket();
+      });
+      
+    }, 2000);
   };
 
   const setToMatchedState = (data: any) => {
     // Do something like route to the new session.
     disconnectSocket();
+    reset();
     console.log(data.sessionId);
     console.log(data.peerId);
     getUserById(data.peerId)
@@ -82,11 +81,7 @@ const MatchingPage: React.FC<matchingProps> = () => {
         console.log(err);
       });
     setIsMatching(MatchedState.MATCHED);
-    setErr("Matched with a peer!");
-    setOpenAlert(true);
-    setTimeout(() => {
-      setOpenAlert(false);
-    }, 3000);
+    setError("Matched with a peer!");
     router.push(`/session/${data.sessionId}`);
   };
 
@@ -97,9 +92,13 @@ const MatchingPage: React.FC<matchingProps> = () => {
 
   useEffect(() => {
     return () => {
-      disconnectSocket();
-    };
-  }, []);
+      matchingSocket.on("timeout", () => {
+        setToNotMatchingState();
+        setError("Timed out, try again.");
+        disconnectSocket();
+      });
+    }
+  }, [isRunning]);
 
   return (
     <>
@@ -142,7 +141,7 @@ const MatchingPage: React.FC<matchingProps> = () => {
                 value={difficulty}
                 onChange={(e) => {
                   setDifficulty(e.target.value);
-                  setErr("");
+                  clearError();
                 }}
               >
                 {Object.values(Complexity).map((complexityOption) => (
@@ -188,12 +187,6 @@ const MatchingPage: React.FC<matchingProps> = () => {
           </>
         )}
       </form>
-      <Alert
-        message={err}
-        hidden={openAlert}
-        setHide={setOpenAlert}
-        green={isMatching === MatchedState.MATCHED}
-      />
     </>
   );
 

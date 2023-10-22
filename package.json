@@ -5,18 +5,17 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "concurrently \"yarn --cwd ./apps/backend/question run dev\" \"yarn --cwd ./apps/backend/queue run dev\" \"yarn --cwd ./apps/backend/session run dev\" \"yarn --cwd ./apps/backend/user run dev\" \"yarn --cwd ./apps/frontend run dev\""
+    "dev": "concurrently --prefix \"{time}-{pid}\" --timings --handle-input --kill-others-on-fail \"yarn --cwd ./apps/backend/question run dev\" \"yarn --cwd ./apps/backend/queue run dev\" \"yarn --cwd ./apps/backend/session run dev\" \"yarn --cwd ./apps/backend/user run dev\" \"yarn --cwd ./apps/frontend run dev\""
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^16.3.1",
     "concurrently": "^8.2.1",
     "telnet": "^0.0.1"
   },
   "workspaces": [
-    "apps/frontend",
-    "apps/backend/user",
-    "apps/backend/question"
+    "./apps/*"
   ],
   "private": true
 }

@@ -1,3 +1,4 @@
+import { ErrorKey } from "@/utils/enums/ErrorKey";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 
@@ -7,7 +8,7 @@ export default function Error() {
   const errorKey = router.query.errorKey as keyof typeof errorFunctions;
 
   const errorFunctions = {
-    OAuthSigninError: () => {
+    [ErrorKey.OAuthSigninError]: () => {
       signIn();
     }
   };

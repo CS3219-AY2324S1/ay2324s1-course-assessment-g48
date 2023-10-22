@@ -4,4 +4,3 @@ dotEnv.config();
 
 export const PORT = Number(process.env.PORT);
 export const WEBSOCKET_PORT = Number(process.env.WEBSOCKET_PORT);
-export const HOST = process.env.HOST;

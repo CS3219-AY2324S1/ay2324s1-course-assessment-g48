@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import EditorNav from "./EditorNav";
 import Split from "react-split";
 import TestCasesHeader from "./TestCasesHeader";
@@ -7,15 +7,13 @@ import InputOutput from "./InputOutput";
 import EditorFooter from "./EditorFooter";
 import { useTheme } from "@/hook/ThemeContext";
 import { Editor } from "@monaco-editor/react";
-import { useRouter } from "next/router";
-import { AutomergeUrl } from "@automerge/automerge-repo";
-import axios from "@/pages/api/axios/axios";
-import { useDocument } from "@automerge/automerge-repo-react-hooks";
-import { Doc } from "@/utils/doc";
 
-type CodeEditorProps = {};
+type CodeEditorProps = {
+  onChangeCode?: (value: any, event: any) => void;
+  currCode?: string;
+};
 
-const CodeEditor: React.FC<CodeEditorProps> = () => {
+const CodeEditor: React.FC<CodeEditorProps> = ({onChangeCode, currCode}) => {
   const starterCode = `/**
 * Definition for singly-linked list.
 * class ListNode {
@@ -35,24 +33,27 @@ class Solution {
 
   const { isDarkMode } = useTheme();
 
-  const [code, changeCode] = useState("");
+  const [code, changeCode] = useState(currCode ?? "");
 
-  const handleChangeCode = (value: any, event: any) => {
-    changeCode(value);
-  };
+  if (!onChangeCode) {
+    onChangeCode = (value: any, event: any) => {
+      changeCode(value);
+    };
+  }
+
 
   return (
-    <div className="flex flex-col dark:bg-gray-800 relative overflow-x-hidden">
+    <div className="flex flex-col h-full dark:bg-gray-800 relative overflow-hidden">
       <EditorNav />
       <Split
-        className="flex-col split h-screen"
+        className="flex-col split h-[calc(100vh-120px)]"
         direction="vertical"
         sizes={[60, 40]}
       >
         <div className="w-full overflow-auto dark:bg-neutral-800">
           <Editor
             height="100%"
-            onChange={handleChangeCode}
+            onChange={onChangeCode}
             defaultValue={starterCode}
             value={code}
             theme={isDarkMode ? "vs-dark" : "light"}
