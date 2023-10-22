@@ -9,10 +9,12 @@ spec:
   selector:
     app: peerprep-rabbitmq
   ports:
-    - name: rabbitmq
-      protocol: TCP
+    - protocol: TCP
+      name: port-5672
       port: 5672
-      targetPort: 5672
+    # - protocol: TCP
+    #   name: port-15672
+    #   port: 15672
   type: LoadBalancer
   loadBalancerIP: 35.213.173.19
 
