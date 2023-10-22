@@ -1,4 +1,4 @@
-import { PropsWithChildren, use, useEffect, useState } from "react";
+import { PropsWithChildren, useEffect, useState } from "react";
 import Navbar from "./Navbar";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
@@ -14,16 +14,7 @@ const Layout = ({ children }: PropsWithChildren) => {
   const [openAlert, setOpenAlert] = useState(false);
   const [openSlideOver, setOpenSlideOver] = useState(false);
 
-  const redirectToSignIn =
-    !session &&
-    router.pathname !== "/signin" &&
-    router.pathname !== "/signup" &&
-    !router.pathname.includes("error");
   const isLoading = status === "loading";
-
-  if (redirectToSignIn) {
-    signIn();
-  }
 
   useEffect(() => {
     if (error) {
@@ -33,7 +24,7 @@ const Layout = ({ children }: PropsWithChildren) => {
       }, 3000);
       clearError();
     }
-  }, [error]);
+  }, [error, clearError]);
 
   if (isLoading) {
     return <LoadingModal isLoading={isLoading} />;
@@ -42,7 +33,6 @@ const Layout = ({ children }: PropsWithChildren) => {
   return (
     <>
       <div className="dark:bg-gray-900 min-h-screen pb-10 shadow-md overflow-auto">
-        {!redirectToSignIn && (
           <>
             <div className="fixed w-screen divide-y top-0 z-20">
               <Navbar
@@ -56,7 +46,6 @@ const Layout = ({ children }: PropsWithChildren) => {
               {children}
             </div>
           </>
-        )}
       </div>
       <SlideOver open={openSlideOver} setOpen={setOpenSlideOver} />
       {error && (

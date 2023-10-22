@@ -43,17 +43,17 @@ export default function App({ Component, pageProps }: AppProps) {
         <meta charSet="UTF-8" />
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
       </Head>
-      <SessionProvider>
       <ErrorProvider>
-        <ThemeProvider>
-          <RepoContext.Provider value={repo as Repo}>
-            <Layout>
-              <Component {...pageProps} />
-            </Layout>
-          </RepoContext.Provider>
-        </ThemeProvider>
-        </ErrorProvider>
-      </SessionProvider>
+        <SessionProvider>
+          <ThemeProvider>
+            <RepoContext.Provider value={repo as Repo}>
+              <Layout>
+                <Component {...pageProps} />
+              </Layout>
+            </RepoContext.Provider>
+          </ThemeProvider>
+        </SessionProvider>
+      </ErrorProvider>
     </div>
   );
 }
