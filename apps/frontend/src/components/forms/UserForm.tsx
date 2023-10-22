@@ -27,20 +27,11 @@ interface UserFormProps {
 const UserForm: React.FC<UserFormProps> = ({ formType }) => {
   const { status, update } = useSession();
   const { sessionUser } = useSessionUser();
-<<<<<<< HEAD
-  const { error, setError, clearError } = useError();
-  const [newId, setNewId] = useState(sessionUser.id ?? -1);
-  const [newUsername, setUsername] = useState(sessionUser.username ?? "");
-  const [newEmail, setEmail] = useState(sessionUser.email ?? "");
-  const [newPassword, setPassword] = useState(sessionUser.password ?? "");
-=======
+  const { setError } = useError();
   const [newId, setNewId] = useState(sessionUser?.id ?? -1);
   const [newUsername, setUsername] = useState(sessionUser?.username ?? "");
   const [newEmail, setEmail] = useState(sessionUser?.email ?? "");
   const [newPassword, setPassword] = useState(sessionUser?.password ?? "");
-  const [errorMessage, setErrorMessage] = useState("");
-  const [openAlert, setOpenAlert] = useState<boolean>(false);
->>>>>>> dev
 
   const [openAuthInfo, setOpenAuthInfo] = useState(false);
   const [authProvider, setAuthProvider] = useState(
@@ -85,30 +76,14 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
         callbackUrl,
       });
       if (result?.error) {
-<<<<<<< HEAD
         console.log("Something wrong" , result.error);
         setError("Invalid email or password.");
-=======
-        console.log("Something wrong", result.error);
-        setErrorMessage("Invalid email or password.");
-        setOpenAlert(true);
-        setTimeout(() => {
-          setOpenAlert(false);
-        }, 3000);
->>>>>>> dev
       } else {
         router.push("/questions");
       }
     } catch (err) {
       setError(err as string);
       console.error(err);
-<<<<<<< HEAD
-=======
-      setOpenAlert(true);
-      setTimeout(() => {
-        setOpenAlert(false);
-      }, 3000);
->>>>>>> dev
     }
   };
 
@@ -141,29 +116,13 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
 
       if (result?.error) {
         console.log(result?.error);
-<<<<<<< HEAD
         setError("That email or username has already been taken.");
-=======
-        setErrorMessage("That email or username has already been taken.");
-        setOpenAlert(true);
-        setTimeout(() => {
-          setOpenAlert(false);
-        }, 3000);
->>>>>>> dev
       } else {
         router.push("/questions");
       }
     } catch (err) {
       console.log(err || "Error undefined???");
-<<<<<<< HEAD
       setError(err as string);
-=======
-      setErrorMessage(err as string);
-      setOpenAlert(true);
-      setTimeout(() => {
-        setOpenAlert(false);
-      }, 3000);
->>>>>>> dev
     }
   };
 
@@ -197,13 +156,6 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
     } catch (err) {
       setError(err as string);
       console.error(err);
-<<<<<<< HEAD
-=======
-      setOpenAlert(true);
-      setTimeout(() => {
-        setOpenAlert(false);
-      }, 3000);
->>>>>>> dev
     }
   };
 
@@ -211,25 +163,7 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
     e.preventDefault();
     const response = await deleteUserById(Number(newId));
     if (response.error) {
-<<<<<<< HEAD
       setError(response.error);
-      return;
-    }
-    signOut();
-  };
-
-  const handleUnlinkOAuth = async (e: { preventDefault: () => void}, provider: OAuthType) => {
-    e.preventDefault();
-    const newOAuth = sessionUser.oauth?.filter((oauth) => oauth !== provider);
-    if (newOAuth == undefined || newOAuth.length == 0) {
-      if (newPassword == undefined || newPassword.trim().length == 0) {
-        setError("You must enter your password to unlink your last linked account.");
-=======
-      setErrorMessage(response.error);
-      setOpenAlert(true);
-      setTimeout(() => {
-        setOpenAlert(false);
-      }, 3000);
       return;
     }
     signOut({callbackUrl: "/"});
@@ -243,14 +177,9 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
     const newOAuth = sessionUser?.oauth?.filter((oauth) => oauth !== provider);
     if (newOAuth == undefined || newOAuth.length == 0) {
       if (newPassword == undefined || newPassword.trim().length == 0) {
-        setErrorMessage(
+        setError(
           "You must enter a password in order to unlink your last linked account."
         );
-        setOpenAlert(true);
-        setTimeout(() => {
-          setOpenAlert(false);
-        }, 3000);
->>>>>>> dev
         return;
       }
     }
@@ -356,12 +285,7 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
         provider={authProvider}
         setErrorMessage={setError}
         newUser={updateAuthUser}
-<<<<<<< HEAD
         />
-=======
-      />
-      <Alert message={errorMessage} hidden={openAlert} setHide={setOpenAlert} />
->>>>>>> dev
     </>
   );
 };

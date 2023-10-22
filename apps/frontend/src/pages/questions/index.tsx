@@ -1,11 +1,6 @@
 import { useEffect, useState } from "react";
-<<<<<<< HEAD
 import { PlusIcon, ArrowPathIcon } from "@heroicons/react/20/solid";
-import useQuestion from "@/hook/useQuestions";
-=======
-import { PlusIcon } from "@heroicons/react/20/solid";
 import useQuestions from "@/hook/useQuestions";
->>>>>>> dev
 import LoadingModal from "@/components/LoadingModal";
 import useSessionUser from "@/hook/useSessionUser";
 import { Role } from "@/utils/enums/Role";
