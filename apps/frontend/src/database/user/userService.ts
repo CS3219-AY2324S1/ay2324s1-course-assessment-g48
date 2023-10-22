@@ -1,4 +1,5 @@
 import axios from "axios";
+axios.defaults.withCredentials = true;
 import { CreateUserDto, UpdateUserDto, User } from "./entities/user.entity";
 import { OAuthType } from "@/utils/enums/OAuthType";
 
@@ -43,11 +44,12 @@ export const login = async ({
   oauth?: OAuthType;
 }): Promise<User | undefined> => {
   if (!email || (!password && !oauth)) {
+    console.error("Email or password not provided");
     return undefined;
   }
   try {
     const res = await axios.get(BASE_URL + "/login", {
-      data: { email, password, oauth },
+      data:  { email, password, oauth } ,
     });
     return res.data;
   } catch (e: any) {
@@ -75,7 +77,7 @@ export const updateUserById = async (
       username: updatedUser.username,
       password: updatedUser.password,
       oauth: updatedUser.oauth,
-      role: updatedUser.role
+      role: updatedUser.role,
     });
     return response.data;
   } catch (e: any) {

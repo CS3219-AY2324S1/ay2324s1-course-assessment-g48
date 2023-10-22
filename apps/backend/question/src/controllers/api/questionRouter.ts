@@ -2,11 +2,17 @@ import { Router, NextFunction, Request, Response } from "express";
 import Question from "../../models/Question";
 import logger from "../../utils/logger";
 import axios from "axios";
+import { Role } from "../../models/enum/Role";
 
 export const questionRouter = Router();
 
 // Gets question from mongodb
 questionRouter.get("/", async (req: Request, res: Response) => {
+  if (!Object.values(Role).includes(req.headers.role as Role)) {
+    res.status(401).json({ error: "Only registered users are allowed to view questions." });
+    return;
+  }
+
   Question.find({}).then((question) => {
     res.json(question);
   });
@@ -32,6 +38,11 @@ questionRouter.get("/leetcode", async (req: Request, res: Response) => {
 questionRouter.get(
   "/:id",
   (req: Request, res: Response, next: NextFunction) => {
+    if (!Object.values(Role).includes(req.headers.role as Role)) {
+      res.status(401).json({ error: "Only registered users are allowed to view questions." });
+      return;
+    }
+
     logger.info(`Finding question id ${req.params.id}`);
     Question.findById(req.params.id)
       .then((question) => {
@@ -53,11 +64,16 @@ questionRouter.get(
 questionRouter.delete(
   "/:id",
   async (req: Request, res: Response, next: NextFunction) => {
+    if (req.headers.role !== Role.Admin) {
+      res.status(401).json({ error: "Only admins are allowed to delete questions." });
+      return;
+    }
+
     await Question.findByIdAndRemove(req.params.id)
       .then((question) => {
         if (!question) {
           res.status(404).json({
-            error: `A question with id ${req.params.id} does not exist`,
+            error: `A question with id ${req.params.id} does not exist.`,
           });
         }
         res.status(204).json(question);
@@ -72,12 +88,17 @@ questionRouter.post(
   async (req: Request, res: Response, next: NextFunction) => {
     const body = req.body;
 
+    if (req.headers.role !== Role.Admin) {
+      res.status(401).json({ error: "Only admins are allowed to add questions." });
+      return;
+    }
+
     const isExisting = await Question.findOne({ title: body.title });
 
     if (isExisting) {
       res
         .status(400)
-        .json({ error: "A question with this title already exists" });
+        .json({ error: "A question with this title already exists." });
       return;
     }
 
@@ -101,6 +122,11 @@ questionRouter.put(
     const { title, description, categories, complexity } = req.body;
     const id = req.params.id;
 
+    if (req.headers.role !== Role.Admin) {
+      res.status(401).json({ error: "Only admins are allowed to add questions." });
+      return;
+    }
+
     await Question.findByIdAndUpdate(
       id,
       { title, description, categories, complexity },
@@ -110,7 +136,7 @@ questionRouter.put(
         if (!updatedQuestion) {
           res
             .status(404)
-            .json({ error: `A question with id ${id} does not exist` });
+            .json({ error: `A question with id ${id} does not exist.` });
           return;
         }
         res.json(updatedQuestion);

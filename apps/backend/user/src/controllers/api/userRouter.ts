@@ -18,27 +18,33 @@ userRouter.post(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { email, username, password, oauth, role } = req.body;
+      console.log("body:" ,req.body);
       const cleanedEmail = email?.trim();
       const cleanedUsername = username?.trim();
-      const cleanedPassword = password?.trim(); 
+      const cleanedPassword = password?.trim();
       const cleanedRole = role?.trim();
+      console.log("Post Body: ", req.body);
 
       if (!cleanedEmail?.length) {
+        console.log("Email cannot be blank");
         res.status(400).send({ error: "Your email cannot be blank." });
         return;
       }
 
       if (!cleanedUsername?.length) {
+        console.log("Username cannot be blank");
         res.status(400).send({ error: "Your username cannot be blank." });
         return;
       }
 
       if (oauth === undefined && !cleanedPassword?.length) {
+        console.log("Password cannot be blank");
         res.status(400).send({ error: "Your password cannot be blank." });
         return;
       }
 
       if (!cleanedRole?.length) {
+        console.log("Role cannot be blank");
         res.status(400).send({ error: "Your role cannot be blank." });
         return;
       }
@@ -51,15 +57,21 @@ userRouter.post(
 
       const hasSameEmailUser = await findOneUser({ email: cleanedEmail });
       if (hasSameEmailUser) {
+        console.log("Email already in use");
         res.status(400).send({ error: "That email is already in use." });
         return;
       }
 
-      const hasSameUsernameUser = await findOneUser({ username: cleanedUsername });
+      const hasSameUsernameUser = await findOneUser({
+        username: cleanedUsername,
+      });
       if (hasSameUsernameUser) {
+        console.log("Username already in use");
         res.status(400).send({ error: "That username is already in use." });
         return;
       }
+
+      console.log("Still going 1");
 
       const cleanedOauth: OAuth[] = [];
       const invalidOauth: string[] = [];
@@ -73,9 +85,13 @@ userRouter.post(
         }
       }
 
+      console.log("Still going 2");
+
       if (invalidOauth.length !== 0) {
-        logger.info(`The following OAuths are invalid and are ignored: ${invalidOauth}`);
-      } 
+        logger.info(
+          `The following OAuths are invalid and are ignored: ${invalidOauth}`
+        );
+      }
 
       const cleanedUserData = {
         id: -1, // not used, placeholder id
@@ -84,9 +100,11 @@ userRouter.post(
         password: cleanedPassword,
         oauth: cleanedOauth,
         role: cleanedRole as Role,
-      }
+      };
 
+      console.log("Creating new user at userRouter", cleanedUserData);
       const newUser = await createUser(cleanedUserData);
+      console.log("Created New user: ", newUser);
       res.status(201).json(newUser);
     } catch (error) {
       console.error(error);
@@ -106,19 +124,49 @@ userRouter.get("/", async (req: Request, res: Response, next: NextFunction) => {
   }
 });
 
+// Dummy
+userRouter.get(
+  "/test",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      res.json({ user: "test" });
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+  }
+);
+
+userRouter.post(
+  "/test",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      res.json({ user: "test" });
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+  }
+);
+
 // Get user by username and password
 userRouter.get(
   "/login",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const body = req.body;
+      console.log("body:" , body);
       // TODO: hash the password
       const { email, password, oauth } = body;
+      console.log("Login Body: ", body)
       const cleanedEmail = email?.trim();
+      console.log("Uncleaned Password: ", password);
       const cleanedPassword = password?.trim();
+      console.log("Cleaned Password: ", cleanedPassword);
       const user = await findOneUser({
         email: cleanedEmail,
       });
+      console.log("User: ", user);
 
       if (!user) {
         console.log("User not found");
@@ -134,33 +182,39 @@ userRouter.get(
           if (!user.oauth.includes(oauth)) {
             user.oauth.push(oauth as OAuthType);
             await updateUser(user.id, {
-              oauth: user.oauth
+              oauth: user.oauth,
             });
           }
-          
+
           // return user
           res.status(200).json(user);
           return;
         }
-  
+
         // oauth provided but not in enum
         console.log(`Invalid OAuth request: ${oauth}`);
         res.status(401).json({
           error: `401: ${oauth} is not supported by PeerPrep.`,
         });
         return;
-      } 
+      }
 
       if (user?.password !== cleanedPassword) {
         res.status(401).json({
-          error: "401: Incorrect password, please try again.",
+          error:
+            "401: Incorrect password, please try again. Password should be " +
+            user?.password +
+            " but is " +
+            cleanedPassword +
+            ".",
         });
         return;
       }
 
+      console.log("User found!!!!!!!!!!!!!!!!!!!!!!!!1");
       res.status(200).json(user);
     } catch (error) {
-      console.error(error);
+      console.error("UserRouter login error:", error);
       next(error);
     }
   }
@@ -172,6 +226,7 @@ userRouter.put(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
+      
       const { email, username, password, oauth, role } = req.body;
       const cleanedEmail = email?.trim();
       const cleanedUsername = username?.trim();
@@ -215,7 +270,7 @@ userRouter.put(
 
       if (cleanedPassword !== undefined && !cleanedPassword.length) {
         const user = await findOneUser({ id: Number(id) });
-        if (user?.oauth.length === 0) { 
+        if (user?.oauth.length === 0) {
           res.status(400).send({ error: "Your password cannot be blank." });
           return;
         }
@@ -244,8 +299,10 @@ userRouter.put(
           cleanedOauth.push(auth as OAuthType);
         }
         if (invalidOauth.length !== 0) {
-          logger.info(`The following OAuths are invalid and are ignored: ${invalidOauth}`);
-        }  
+          logger.info(
+            `The following OAuths are invalid and are ignored: ${invalidOauth}`
+          );
+        }
       }
 
       const updatedUser = await updateUser(parseInt(id), {
@@ -279,6 +336,30 @@ userRouter.delete(
         });
       } else {
         res.status(204).send();
+      }
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+  }
+);
+
+// Get a User
+userRouter.get(
+  "/:id",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      const user = await findOneUser(
+        { id: Number(id) },
+        { email: true, username: true }
+      );
+      if (!user) {
+        res.status(404).json({
+          error: `A user with id ${id} does not exist.`,
+        });
+      } else {
+        res.status(200).json(user);
       }
     } catch (error) {
       console.error(error);

@@ -1,23 +1,22 @@
 import { Question } from "@/database/question/entities/question.entity";
 import { getQuestionById } from "@/database/question/questionService";
-import { useRouter } from "next/router";
+import { Role } from "@/utils/enums/Role";
 import { useEffect, useState } from "react";
 
-function useQuestionById() {
+function useQuestionById(qid: string, userRole?: Role|null) {
   const [isLoading, setIsLoading] = useState(false);
   const [question, setQuestion] = useState<Question | null>(null);
-  const [error, setError] = useState<string | null>(null)
-  const router = useRouter();
-  const {id: qid} = router.query;
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchData() {
       if (qid) {
         setIsLoading(true);
         setError(null);
+        if (userRole === null) return;
 
         try {
-          const data = await getQuestionById(qid as string);
+          const data = await getQuestionById(qid, userRole);
           setQuestion(data);
           setIsLoading(false);
         } catch (error) {
@@ -28,7 +27,7 @@ function useQuestionById() {
     }
 
     fetchData();
-  }, [qid]);
+  }, [qid, userRole]);
 
   return { question, isLoading, error };
 }

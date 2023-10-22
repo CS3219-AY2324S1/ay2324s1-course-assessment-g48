@@ -1,0 +1,19 @@
+# Use the official Node.js 16 image as a parent image
+FROM node:18
+
+# Set the working directory in the container to /app
+WORKDIR /app
+
+COPY package*.json ./
+
+# Install all dependencies in the package.json
+RUN yarn install
+
+# Copy all files from your host to your image filesystem at /app
+COPY . .
+
+# Informs Docker that the container listens on the specified network ports at runtime.
+EXPOSE 8002
+
+# Provides defaults for an executing container
+CMD ["yarn", "start"]

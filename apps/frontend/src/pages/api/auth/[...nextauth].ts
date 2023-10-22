@@ -2,12 +2,11 @@ import NextAuth from "next-auth";
 import CredentialProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import GithubProvider from "next-auth/providers/github";
-import {
-  CreateUserDto, User,
-} from "../../../database/user/entities/user.entity";
-import { createNewUser, login } from "@/database/user/userService";
+import { User } from "../../../database/user/entities/user.entity";
+import { login, updateUserById } from "@/database/user/userService";
 import { OAuthType } from "@/utils/enums/OAuthType";
 import { Role } from "@/utils/enums/Role";
+import { ErrorKey } from "@/utils/enums/ErrorKey";
 
 declare module "next-auth" {
   interface User {
@@ -42,11 +41,17 @@ export default NextAuth({
           type: "password",
           placeholder: "Enter your password",
         },
+        oauth: {
+          label: "OAuth",
+          type: "text",
+          placeholder: "OAuth determined by user choice",
+        }
       },
       authorize: async (credentials) => {
         const user = await login({
           email: credentials?.email,
           password: credentials?.password,
+          oauth: credentials?.oauth as OAuthType,
         });
         if (user) {
           return {
@@ -54,7 +59,8 @@ export default NextAuth({
             username: user.username,
             email: user.email,
             password: user.password,
-            role: Role.Normal
+            oauth: user.oauth,
+            role: user.role
           };
         } else {
           return null;
@@ -87,34 +93,42 @@ export default NextAuth({
   ],
   callbacks: {
     async signIn({ user, account }) {
-      const OAuthErrorKey = "OAuthSigninError";
+      
+      try {
+        if (
+          !account?.provider ||
+          !Object.values(OAuthType).includes(account.provider as OAuthType)
+        ) {
+          return true;
+        }
+  
+        const findOAuthUser = await login({
+          email: user.email,
+          oauth: account.provider as OAuthType,
+        });
+        console.log("findOAuthUser:" , findOAuthUser)
 
-      if (
-        !account?.provider ||
-        !Object.values(OAuthType).includes(account.provider as OAuthType)
-      ) {
+        if (findOAuthUser) {
+          // if existing user is signing in with a new oauth
+          if (!findOAuthUser.oauth?.includes(account.provider as OAuthType)) {
+            // initialise empty oauth if existing user has no oauth previously
+            findOAuthUser.oauth = findOAuthUser.oauth ?? [];
+            findOAuthUser.oauth.push(account.provider as OAuthType);
+            const response = await updateUserById(findOAuthUser.id, {
+              oauth: findOAuthUser.oauth,
+            });
+            if (response.error) {
+              return `/error?message=${response.error}&errorKey=${ErrorKey.OAuthSigninError}`;
+            }
+          }
+          return true;
+        }
+
+        return `/oauthsignup?email=${user.email}&oauth=${account.provider as OAuthType}`
+      } catch (error) {
+        console.error(error);
         return true;
       }
-
-      const findOAuthUser = await login({
-        email: user.email,
-        oauth: account.provider as OAuthType,
-      });
-
-      if (!findOAuthUser) {
-        const newUser: CreateUserDto = {
-          username: user.name as string,
-          email: user.email,
-          oauth: [account.provider as OAuthType],
-          role: Role.Normal
-        };
-        const response = await createNewUser(newUser);
-        if (response.error) {
-          return `/error?message=${response.error}&errorKey=${OAuthErrorKey}`;
-        }
-      }
-
-      return true;
     },
     async jwt({ token, trigger, session, user, account }) {
       if (

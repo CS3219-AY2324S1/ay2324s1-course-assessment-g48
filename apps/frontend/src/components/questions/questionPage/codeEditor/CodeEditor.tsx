@@ -1,14 +1,17 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import EditorNav from "./EditorNav";
 import Split from "react-split";
-import CodeMirror from "@uiw/react-codemirror";
-import { materialDark, materialLight } from "@uiw/codemirror-theme-material";
-import { javascript } from "@codemirror/lang-javascript";
 import TestCasesHeader from "./TestCasesHeader";
 import TestCaseChip from "./TestCaseChip";
 import InputOutput from "./InputOutput";
 import EditorFooter from "./EditorFooter";
 import { useTheme } from "@/hook/ThemeContext";
+import { Editor } from "@monaco-editor/react";
+import { useRouter } from "next/router";
+import { AutomergeUrl } from "@automerge/automerge-repo";
+import axios from "@/pages/api/axios/axios";
+import { useDocument } from "@automerge/automerge-repo-react-hooks";
+import { Doc } from "@/utils/doc";
 
 type CodeEditorProps = {};
 
@@ -24,13 +27,19 @@ const CodeEditor: React.FC<CodeEditorProps> = () => {
 *     }
 * }
 */
-public class Solution {
-  public boolean hasCycle(ListNode head) { 
+class Solution {
+  hasCycle(head) { 
     // Write your solution here
   }
 };`;
 
-  const { isDarkMode, toggleTheme } = useTheme();
+  const { isDarkMode } = useTheme();
+
+  const [code, changeCode] = useState("");
+
+  const handleChangeCode = (value: any, event: any) => {
+    changeCode(value);
+  };
 
   return (
     <div className="flex flex-col dark:bg-gray-800 relative overflow-x-hidden">
@@ -41,12 +50,13 @@ public class Solution {
         sizes={[60, 40]}
       >
         <div className="w-full overflow-auto dark:bg-neutral-800">
-          <CodeMirror className={isDarkMode ? "dark-mode": "light-mode"}
-            value={starterCode}
+          <Editor
             height="100%"
-            theme={isDarkMode ? materialDark : materialLight}
-            extensions={[javascript()]}
-            style={{ fontSize: 14 }}
+            onChange={handleChangeCode}
+            defaultValue={starterCode}
+            value={code}
+            theme={isDarkMode ? "vs-dark" : "light"}
+            defaultLanguage="javascript"
           />
         </div>
 

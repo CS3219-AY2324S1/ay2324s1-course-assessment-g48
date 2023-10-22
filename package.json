@@ -4,7 +4,8 @@
   "description": "[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/6BOvYMwN) # AssignmentTemplate",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "concurrently \"yarn --cwd ./apps/backend/question run dev\" \"yarn --cwd ./apps/backend/queue run dev\" \"yarn --cwd ./apps/backend/session run dev\" \"yarn --cwd ./apps/backend/user run dev\" \"yarn --cwd ./apps/frontend run dev\""
   },
   "author": "",
   "license": "ISC",
@@ -12,7 +13,14 @@
     "dotenv": "^16.3.1"
   },
   "workspaces": [
-    "./apps/*"
+    "./apps/*",
+    "concurrently": "^8.2.1",
+    "telnet": "^0.0.1"
+  },
+  "workspaces": [
+    "apps/frontend",
+    "apps/backend/user",
+    "apps/backend/question"
   ],
   "private": true
 }

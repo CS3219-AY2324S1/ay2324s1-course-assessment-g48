@@ -19,11 +19,15 @@ const questionSchema = new Schema({
     required: false,
   },
   categories: {
-    type: Array,
+    type: [{
+      type: String,
+      enum: ["Algorithms","Bit Manipulation","Brainteaser","Databases","Data Structures","Recursion","Strings"],    
+    }],
     required: false,
   },
   complexity: {
     type: String,
+    enum: ["Easy", "Medium", "Hard"],
     required: false,
   }
 });
