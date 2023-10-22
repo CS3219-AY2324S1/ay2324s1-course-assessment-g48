@@ -9,6 +9,11 @@ services:
     ports:
       - '5672:5672'
       - '15672:15672'
+    healthcheck:
+      test: rabbitmq-diagnostics check_port_connectivity
+      interval: 10s
+      timeout: 10s
+      retries: 5
 
   postgres:
     image: postgres
@@ -92,7 +97,7 @@ services:
       - peerprep-network
     depends_on:
       rabbitmq3:
-        condition: service_started
+        condition: service_healthy
 
   peerprep-session:
     container_name: peerprep-session       # Name of the container
