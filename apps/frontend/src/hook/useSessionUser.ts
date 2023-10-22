@@ -1,25 +1,38 @@
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { User } from "@/database/user/entities/user.entity";
-import { Role } from "@/utils/enums/Role";
 
 function useSessionUser() {
   const { data: session } = useSession();
   const [sessionUser, setSessionUser] = useState<User>({
     id: -1,
-    username: "",
-    email: "",
-    role: Role.Normal,
   });
+  const [isLoading, setIsLoading] = useState(true); // Add this line
 
   useEffect(() => {
-    setSessionUser((prevUser) => ({
-      ...prevUser,
-      ...session?.user,
-    }));
-    console.log("session", session);
+    const checkSession = setInterval(() => {
+      if (session) {
+        setSessionUser((prevUser) => ({
+          ...prevUser,
+          ...session?.user,
+        }));
+        console.log("session", session);
+        clearInterval(checkSession);
+        setIsLoading(false);
+      }
+    }, 100); // Check every 0.1s
+
+    const timeout = setTimeout(() => {
+      clearInterval(checkSession);
+      setIsLoading(false);
+    }, 2000); // Stop checking after 2s
+
+    return () => {
+      clearTimeout(timeout);
+      clearInterval(checkSession);
+    };
   }, [session]);
-  return { sessionUser, setSessionUser };
+  return !isLoading ? { sessionUser, setSessionUser } : {sessionUser: null, setSessionUser: setSessionUser};
 }
 
 export default useSessionUser;
