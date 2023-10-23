@@ -45,6 +45,7 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
   const callbackUrl = searchParams.get("callbackUrl") ?? "/";
 
   useEffect(() => {
+    console.log("sessionUser", sessionUser);
     setNewId(sessionUser?.id ?? -1);
     setUsername(sessionUser?.username ?? "");
     setEmail(sessionUser?.email ?? "");

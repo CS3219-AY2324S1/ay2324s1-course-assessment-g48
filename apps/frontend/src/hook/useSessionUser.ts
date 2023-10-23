@@ -4,15 +4,13 @@ import { User } from "@/database/user/entities/user.entity";
 
 function useSessionUser() {
   const { data: session } = useSession();
-  const [sessionUser, setSessionUser] = useState<User>({
-    id: -1,
-  });
+  const [sessionUser, setSessionUser] = useState<User|null>(null);
   const [isLoading, setIsLoading] = useState(true); // Add this line
 
   useEffect(() => {
     const checkSession = setInterval(() => {
       if (session) {
-        setSessionUser((prevUser) => ({
+        setSessionUser((prevUser:any) => ({
           ...prevUser,
           ...session?.user,
         }));
