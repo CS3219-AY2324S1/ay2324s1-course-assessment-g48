@@ -28,10 +28,10 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
   const { status, update } = useSession();
   const { sessionUser } = useSessionUser();
   const { setError } = useError();
-  const [newId, setNewId] = useState(sessionUser?.id ?? -1);
-  const [newUsername, setUsername] = useState(sessionUser?.username ?? "");
-  const [newEmail, setEmail] = useState(sessionUser?.email ?? "");
-  const [newPassword, setPassword] = useState(sessionUser?.password ?? "");
+  const [newId, setNewId] = useState(sessionUser.id);
+  const [newUsername, setUsername] = useState(sessionUser.username);
+  const [newEmail, setEmail] = useState(sessionUser.email);
+  const [newPassword, setPassword] = useState(sessionUser.password);
 
   const [openAuthInfo, setOpenAuthInfo] = useState(false);
   const [authProvider, setAuthProvider] = useState(
@@ -45,11 +45,10 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
   const callbackUrl = searchParams.get("callbackUrl") ?? "/";
 
   useEffect(() => {
-    console.log("sessionUser", sessionUser);
-    setNewId(sessionUser?.id ?? -1);
-    setUsername(sessionUser?.username ?? "");
-    setEmail(sessionUser?.email ?? "");
-    setPassword(sessionUser?.password ?? "");
+    setNewId(sessionUser.id);
+    setUsername(sessionUser.username);
+    setEmail(sessionUser.email);
+    setPassword(sessionUser.password);
   }, [sessionUser]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -96,7 +95,7 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
         username: newUsername,
         email: newEmail,
         password: newPassword,
-        oauth: sessionUser?.oauth,
+        oauth: sessionUser.oauth,
         role: Role.Normal,
       };
 
@@ -136,8 +135,8 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
         username: newUsername,
         email: newEmail,
         password: newPassword,
-        oauth: sessionUser?.oauth,
-        role: sessionUser?.role,
+        oauth: sessionUser.oauth,
+        role: sessionUser.role,
       };
 
       const response = await updateUserById(newId, newUser);
@@ -175,7 +174,7 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
     provider: OAuthType
   ) => {
     e.preventDefault();
-    const newOAuth = sessionUser?.oauth?.filter((oauth) => oauth !== provider);
+    const newOAuth = sessionUser.oauth?.filter((oauth) => oauth !== provider);
     if (newOAuth == undefined || newOAuth.length == 0) {
       if (newPassword == undefined || newPassword.trim().length == 0) {
         setError(
@@ -204,7 +203,7 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
             <FormInput
               type="text"
               label="Username"
-              value={newUsername}
+              value={newUsername!}
               onChange={setUsername}
             />
           </div>
@@ -214,11 +213,11 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
           <FormInput
             type="email"
             label="Email address"
-            value={newEmail}
+            value={newEmail!}
             autoComplete="email"
             disabled={
               status === "authenticated" &&
-              sessionUser?.oauth !== undefined &&
+              sessionUser.oauth !== undefined &&
               sessionUser.oauth.length !== 0
             }
             onChange={setEmail}
@@ -228,20 +227,20 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
           <FormInput
             type="password"
             label="Password"
-            value={newPassword}
+            value={newPassword!}
             autoComplete="current-password"
             onChange={setPassword}
           />
         </div>
         {formType === UserManagement.Profile &&
-          sessionUser?.oauth !== undefined &&
+          sessionUser.oauth !== undefined &&
           sessionUser.oauth.length !== 0 && (
             <div className="flex flex-col items-center space-y-4">
               <p className="block text-sm font-medium leading-6 text-gray-900 dark:text-white">
                 Linked accounts:
               </p>
               <div className="flex w-1/2 justify-center dark:bg-white bg-gray-200 rounded py-2 space-x-3">
-                {sessionUser?.oauth?.map((oauth) => (
+                {sessionUser.oauth?.map((oauth) => (
                   <Image
                     key={oauth}
                     src={`/${oauth}.svg`}
