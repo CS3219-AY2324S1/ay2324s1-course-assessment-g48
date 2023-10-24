@@ -28,7 +28,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
 }) => {
   const [questionsPerPage, setQuestionsPerPage] = useState(10);
   const { sessionUser } = useSessionUser();
-  const [userRole, setUserRole] = useState(sessionUser == null ? null : sessionUser?.role);
+  const [userRole, setUserRole] = useState(sessionUser.role);
   const { questions, totalQuestions, handleTrigger } = useQuestions(userRole);
   const [viewQuestion, setViewQuestion] = useState<Question>({
     _id: "",
@@ -58,7 +58,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
   );
 
   useEffect(() => {
-    setUserRole(sessionUser == null ? null : sessionUser?.role);
+    setUserRole(sessionUser.role);
   }, [sessionUser]);
 
   const handleSaveQuestion = async (newQuestion: Question) => {

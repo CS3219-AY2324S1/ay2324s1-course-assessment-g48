@@ -3,7 +3,7 @@ import { getAllQuestions } from "../database/question/questionService";
 import { Question } from "@/database/question/entities/question.entity";
 import { Role } from "@/utils/enums/Role";
 
-function useQuestions(userRole?: Role|null) {
+function useQuestions(userRole?: Role) {
   const [isLoading, setIsLoading] = useState(false);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [trigger, setTrigger] = useState(false);
@@ -14,7 +14,7 @@ function useQuestions(userRole?: Role|null) {
 
   useEffect(() => {
     setIsLoading(true);
-    if (userRole === null) return;
+    if (userRole === Role.Unknown) return;
     getAllQuestions(userRole).then((questions) => {
       setQuestions(questions);
       setTotalQuestions(questions.length);
