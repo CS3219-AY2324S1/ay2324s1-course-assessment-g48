@@ -12,11 +12,11 @@ const QuestionPage: React.FC<QuestionPageProps> = () => {
   const router = useRouter();
   const qid = router.query.id;
   const { sessionUser } = useSessionUser();
-  const [userRole, setUserRole] = useState(sessionUser?.role);
+  const [userRole, setUserRole] = useState(sessionUser.role);
   const { question } = useQuestionById(qid as string, userRole);
 
   useEffect(() => {
-    setUserRole(sessionUser?.role);
+    setUserRole(sessionUser.role);
   }, [sessionUser]);
 
   

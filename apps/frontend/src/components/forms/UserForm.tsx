@@ -95,7 +95,7 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
         username: newUsername,
         email: newEmail,
         password: newPassword,
-        oauth: sessionUser?.oauth,
+        oauth: sessionUser.oauth,
         role: Role.Normal,
       };
 
@@ -174,7 +174,7 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
     provider: OAuthType
   ) => {
     e.preventDefault();
-    const newOAuth = sessionUser?.oauth?.filter((oauth) => oauth !== provider);
+    const newOAuth = sessionUser.oauth?.filter((oauth) => oauth !== provider);
     if (newOAuth == undefined || newOAuth.length == 0) {
       if (newPassword == undefined || newPassword.trim().length == 0) {
         setError(
@@ -217,7 +217,7 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
             autoComplete="email"
             disabled={
               status === "authenticated" &&
-              sessionUser?.oauth !== undefined &&
+              sessionUser.oauth !== undefined &&
               sessionUser.oauth.length !== 0
             }
             onChange={setEmail}
@@ -233,14 +233,14 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
           />
         </div>
         {formType === UserManagement.Profile &&
-          sessionUser?.oauth !== undefined &&
+          sessionUser.oauth !== undefined &&
           sessionUser.oauth.length !== 0 && (
             <div className="flex flex-col items-center space-y-4">
               <p className="block text-sm font-medium leading-6 text-gray-900 dark:text-white">
                 Linked accounts:
               </p>
               <div className="flex w-1/2 justify-center dark:bg-white bg-gray-200 rounded py-2 space-x-3">
-                {sessionUser?.oauth?.map((oauth) => (
+                {sessionUser.oauth?.map((oauth) => (
                   <Image
                     key={oauth}
                     src={`/${oauth}.svg`}
