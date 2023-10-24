@@ -1,10 +1,30 @@
+import LoadingModal from "@/components/LoadingModal";
 import UserForm from "@/components/forms/UserForm";
+import useSessionUser from "@/hook/useSessionUser";
+import { Role } from "@/utils/enums/Role";
 import { UserManagement } from "@/utils/enums/UserManagement";
-import React from "react";
+import router from "next/router";
+import React, { useEffect, useState } from "react";
 
 type profileProps = {};
 
-const profile: React.FC<profileProps> = () => {
+const Profile: React.FC<profileProps> = () => {
+  const { sessionUser } = useSessionUser();
+  const [userRole, setUserRole] = useState(sessionUser.role);
+
+  useEffect(() => {
+    setUserRole(sessionUser.role);
+  }, [sessionUser]);
+
+  if (userRole == Role.Unknown) {
+    return <LoadingModal isLoading={true} />;
+  }
+
+  if (userRole == undefined) {
+    router.push("/401");
+    return;
+  }
+  
   return (
     <>
       <div className="flex flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -23,4 +43,4 @@ const profile: React.FC<profileProps> = () => {
     </>
   );
 };
-export default profile;
+export default Profile;
