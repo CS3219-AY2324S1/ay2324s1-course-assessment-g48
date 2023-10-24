@@ -22,7 +22,7 @@ questionRouter.get("/leetcode", async (req: Request, res: Response) => {
   // Remember to login before invoking this function as you need permisssions (command: firebase login)
   axios
     .get(
-      "https://us-central1-cs3219-398215.cloudfunctions.net/leetcodeQuestionsFetch"
+      "https://asia-southeast1-cs3219-398215.cloudfunctions.net/leetcodeQuestionsFetch"
     )
     .then((response) => {
       // Handle the data from the serverless function
