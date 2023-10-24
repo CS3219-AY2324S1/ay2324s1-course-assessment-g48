@@ -28,10 +28,10 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
   const { status, update } = useSession();
   const { sessionUser } = useSessionUser();
   const { setError } = useError();
-  const [newId, setNewId] = useState(sessionUser?.id ?? -1);
-  const [newUsername, setUsername] = useState(sessionUser?.username ?? "");
-  const [newEmail, setEmail] = useState(sessionUser?.email ?? "");
-  const [newPassword, setPassword] = useState(sessionUser?.password ?? "");
+  const [newId, setNewId] = useState(sessionUser.id);
+  const [newUsername, setUsername] = useState(sessionUser.username);
+  const [newEmail, setEmail] = useState(sessionUser.email);
+  const [newPassword, setPassword] = useState(sessionUser.password);
 
   const [openAuthInfo, setOpenAuthInfo] = useState(false);
   const [authProvider, setAuthProvider] = useState(
@@ -45,10 +45,10 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
   const callbackUrl = searchParams.get("callbackUrl") ?? "/";
 
   useEffect(() => {
-    setNewId(sessionUser?.id ?? -1);
-    setUsername(sessionUser?.username ?? "");
-    setEmail(sessionUser?.email ?? "");
-    setPassword(sessionUser?.password ?? "");
+    setNewId(sessionUser.id);
+    setUsername(sessionUser.username);
+    setEmail(sessionUser.email);
+    setPassword(sessionUser.password);
   }, [sessionUser]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -135,8 +135,8 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
         username: newUsername,
         email: newEmail,
         password: newPassword,
-        oauth: sessionUser?.oauth,
-        role: sessionUser?.role,
+        oauth: sessionUser.oauth,
+        role: sessionUser.role,
       };
 
       const response = await updateUserById(newId, newUser);
@@ -203,7 +203,7 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
             <FormInput
               type="text"
               label="Username"
-              value={newUsername}
+              value={newUsername!}
               onChange={setUsername}
             />
           </div>
@@ -213,7 +213,7 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
           <FormInput
             type="email"
             label="Email address"
-            value={newEmail}
+            value={newEmail!}
             autoComplete="email"
             disabled={
               status === "authenticated" &&
@@ -227,7 +227,7 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
           <FormInput
             type="password"
             label="Password"
-            value={newPassword}
+            value={newPassword!}
             autoComplete="current-password"
             onChange={setPassword}
           />

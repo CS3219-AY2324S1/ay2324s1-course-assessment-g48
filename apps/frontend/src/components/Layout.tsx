@@ -30,7 +30,7 @@ const Layout = ({ children }: PropsWithChildren) => {
 
   return (
     <>
-      <div className="dark:bg-gray-900 min-h-screen pb-10 shadow-md overflow-auto">
+      <div className="dark:bg-gray-900 min-h-screen shadow-md overflow-auto">
           <>
             <div className="fixed w-screen divide-y top-0 z-20">
               <Navbar
