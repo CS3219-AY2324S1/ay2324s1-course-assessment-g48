@@ -28,7 +28,9 @@ const QuestionTable: FC<QuestionTableProps> = ({
 }) => {
   const [questionsPerPage, setQuestionsPerPage] = useState(10);
   const { sessionUser } = useSessionUser();
-  const [userRole, setUserRole] = useState(sessionUser == null ? null : sessionUser?.role);
+  const [userRole, setUserRole] = useState(
+    sessionUser == null ? null : sessionUser?.role
+  );
   const { questions, totalQuestions, handleTrigger } = useQuestions(userRole);
   const [viewQuestion, setViewQuestion] = useState<Question>({
     _id: "",
@@ -36,6 +38,8 @@ const QuestionTable: FC<QuestionTableProps> = ({
     description: "",
     categories: [],
     complexity: "",
+    testcases: [{ number: 1, input: "", output: "" }],
+    dateCreated: new Date(),
   });
   const [questionToEdit, setQuestionToEdit] = useState<Question>({
     _id: "",
@@ -43,6 +47,8 @@ const QuestionTable: FC<QuestionTableProps> = ({
     description: "",
     categories: [],
     complexity: "",
+    testcases: [{ number: 1, input: "", output: "" }],
+    dateCreated: new Date(),
   });
 
   const [openEdit, setOpenEdit] = useState(false);

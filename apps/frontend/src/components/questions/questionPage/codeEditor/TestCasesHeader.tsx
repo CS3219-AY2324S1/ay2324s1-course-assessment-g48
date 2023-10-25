@@ -1,5 +1,3 @@
-import React from "react";
-
 const TestCasesHeader = () => {
   return (
     <div className="flex h-10 items-center space-x-6">

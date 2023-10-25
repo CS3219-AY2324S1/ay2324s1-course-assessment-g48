@@ -11,6 +11,7 @@ interface Question extends Document {
     input: string;
     output: string;
   }]
+  dateCreated: Date;
 }
 
 const questionSchema = new Schema({
@@ -50,7 +51,12 @@ const questionSchema = new Schema({
         required: false,
       },
     }
-  ]
+  ],
+  dateCreated: {
+    type: Date,
+    default: Date.now, // Set the default value to the current date and time
+    required: false,
+  },
 });
 
 // Removes the __v: 0 attribute 
@@ -58,6 +64,14 @@ questionSchema.set('toJSON', {
   transform: (document, returnedObject) => {
       returnedObject.id = returnedObject._id.toString()
       delete returnedObject.__v
+
+    // Remove _id from the testcases array
+    if (Array.isArray(returnedObject.testcases)) {
+      returnedObject.testcases = returnedObject.testcases.map((tc) => {
+        const { _id, ...rest } = tc;
+        return rest;
+      });
+    }
   }
 })
 

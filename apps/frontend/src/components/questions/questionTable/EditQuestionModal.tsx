@@ -12,6 +12,8 @@ type EditQuestionModalProps = {
     description: string;
     categories: string[];
     complexity: string;
+    testcases: [{ number: number; input: string; output: string }];
+    dateCreated: Date;
   };
   onUpdate: (newQuestion: Question) => Promise<void>;
   setOpen: (open: boolean) => void;
@@ -74,9 +76,7 @@ const EditQuestionModal: React.FC<EditQuestionModalProps> = ({
               </div>
               <div className="mt-3">
                 <article className="prose max-w-none">
-                  <ReactMarkdown>
-                    {newQuestion.description}
-                  </ReactMarkdown>
+                  <ReactMarkdown>{newQuestion.description}</ReactMarkdown>
                 </article>
               </div>
             </div>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import EditorNav from "./EditorNav";
 import Split from "react-split";
 import TestCasesHeader from "./TestCasesHeader";
@@ -7,13 +7,20 @@ import InputOutput from "./InputOutput";
 import EditorFooter from "./EditorFooter";
 import { useTheme } from "@/hook/ThemeContext";
 import { Editor } from "@monaco-editor/react";
+import { Question } from "@/database/question/entities/question.entity";
 
 type CodeEditorProps = {
   onChangeCode?: (value: any, event: any) => void;
   currCode?: string;
+  question: Question;
 };
 
-const CodeEditor: React.FC<CodeEditorProps> = ({ onChangeCode, currCode }) => {
+const CodeEditor: React.FC<CodeEditorProps> = ({
+  onChangeCode,
+  currCode,
+  question,
+}) => {
+  // TODO: make it dynamic
   const starterCode = `/**
 * Definition for singly-linked list.
 * class ListNode {
@@ -34,12 +41,21 @@ class Solution {
   const { isDarkMode } = useTheme();
 
   const [code, changeCode] = useState(currCode ?? "");
+  const [selectedTestCase, setSelectedTestCase] = useState<number | null>(1);
+
+  const handleTestCaseClick = (testNum: number) => {
+    setSelectedTestCase(testNum);
+  };
 
   if (!onChangeCode) {
     onChangeCode = (value: any, event: any) => {
       changeCode(value);
     };
   }
+
+  useEffect(() => {
+    changeCode(currCode ?? "");
+  }, [currCode]);
 
   return (
     <div className="flex flex-col h-full dark:bg-gray-800 relative overflow-hidden">
@@ -63,12 +79,21 @@ class Solution {
         <div className="w-full px-5 overflow-auto dark:bg-neutral-800">
           <TestCasesHeader />
           <div className="flex">
-            <TestCaseChip testNum={1} />
-            <TestCaseChip testNum={2} />
-            <TestCaseChip testNum={3} />
+            {question.testcases.map((testcase) => (
+              <TestCaseChip
+                key={testcase.number}
+                testNum={testcase.number}
+                onClick={() => handleTestCaseClick(testcase.number)}
+              />
+            ))}
           </div>
 
-          <InputOutput inputText="[3,2,0,-4]" outputText="1" />
+          {selectedTestCase !== null && (
+            <InputOutput
+              inputText={question.testcases[selectedTestCase - 1].input}
+              outputText={question.testcases[selectedTestCase - 1].output}
+            />
+          )}
         </div>
       </Split>
 
