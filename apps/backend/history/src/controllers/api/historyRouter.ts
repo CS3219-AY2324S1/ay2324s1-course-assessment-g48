@@ -43,3 +43,50 @@ historyRouter.post("/", async (req: Request, res: Response, next: NextFunction) 
     history.save().then((savedHistory) => res.status(201).json(savedHistory))
         .catch((e) => next(e));
 });
+
+// Gets history from mongodb
+historyRouter.get("/:id", async (req: Request, res: Response) => {
+    if (!Object.values(Role).includes(req.headers.role as Role)) {
+        res.status(401).json({ error: "Only registered users are allowed to view questions." });
+        return;
+    }
+    History.findById(req.params.id).then((history) => {
+        res.status(200).json(history);
+    });
+});
+
+// Updates history in mongodb
+historyRouter.put("/:id", async (req: Request, res: Response, next: NextFunction) => {
+    const { userIds, sessionId, completed, date } = req.body;
+
+    if (req.headers.role !== Role.Admin) {
+        res.status(401).json({ error: "Only admins are allowed to add history." });
+        return;
+    }
+
+    await History.findByIdAndUpdate(req.params.id, {
+        $push: { completed: completed },
+        date: Date.now(),
+    }, { new: true })
+        .then((history) => {
+            if (!history) {
+                res.status(404).json({
+                    error: `A history with id ${req.params.id} does not exist.`,
+                });
+            }
+            res.status(200).json(history);
+        })
+        .catch((e) => next(e));
+});
+
+// Gets history using UserId from mongodb
+historyRouter.get("/user/:userId", async (req: Request, res: Response) => {
+    if (req.headers.role !== Role.Admin) {
+        res.status(401).json({ error: "Only admins are allowed to view history." });
+        return;
+    }
+    History.find({ userIds: req.params.userId }).then((history) => {
+        res.status(200).json(history);
+    });
+});
+
