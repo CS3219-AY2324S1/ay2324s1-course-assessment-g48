@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import EditorNav from "./EditorNav";
 import Split from "react-split";
 import TestCaseHeader from "./TestCaseHeader";
-import TestCaseChip from "./TestCaseChip";
-import InputOutput from "./InputOutput";
 import EditorFooter from "./EditorFooter";
 import { useTheme } from "@/hook/ThemeContext";
 import { Editor } from "@monaco-editor/react";
 import { Question } from "@/database/question/entities/question.entity";
+import TestCaseContent from "./TestCaseContent";
+import ResultContent from "./ResultContent";
 
 type CodeEditorProps = {
   onChangeCode?: (value: any, event: any) => void;
@@ -46,11 +46,11 @@ class Solution {
     number | null
   >(1);
 
-  const handleResultClick = (resultNum: number) => {
+  const handleResultClick = () => {
     setIsResultActive(true);
   };
 
-  const handleTestCaseClick = (resultNum: number) => {
+  const handleTestCaseClick = () => {
     setIsResultActive(false);
   };
 
@@ -88,10 +88,20 @@ class Solution {
         </div>
         <div className="w-full px-5 overflow-auto dark:bg-neutral-800">
           <TestCaseHeader
-            question={question}
-            handleTestCaseChipClick={handleTestCaseChipClick}
-            selectedTestCaseChip={selectedTestCaseChip}
+            handleResultClick={handleResultClick}
+            handleTestCaseClick={handleTestCaseClick}
+            isResultActive={isResultActive}
           />
+
+          {!isResultActive ? (
+            <TestCaseContent
+              question={question}
+              handleTestCaseChipClick={handleTestCaseChipClick}
+              selectedTestCaseChip={selectedTestCaseChip}
+            />
+          ) : (
+            <ResultContent />
+          )}
         </div>
       </Split>
 
