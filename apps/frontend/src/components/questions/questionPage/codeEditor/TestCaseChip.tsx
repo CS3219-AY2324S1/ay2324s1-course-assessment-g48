@@ -1,5 +1,5 @@
 type TestCaseChipProps = {
-  testNum: number;
+  testNum: number | null;
   onClick: () => void;
 };
 

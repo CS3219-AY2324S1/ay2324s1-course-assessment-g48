@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import EditorNav from "./EditorNav";
 import Split from "react-split";
-import TestCasesHeader from "./TestCasesHeader";
+import TestCaseHeader from "./TestCaseHeader";
 import TestCaseChip from "./TestCaseChip";
 import InputOutput from "./InputOutput";
 import EditorFooter from "./EditorFooter";
@@ -41,10 +41,21 @@ class Solution {
   const { isDarkMode } = useTheme();
 
   const [code, changeCode] = useState(currCode ?? "");
-  const [selectedTestCase, setSelectedTestCase] = useState<number | null>(1);
+  const [isResultActive, setIsResultActive] = useState(false);
+  const [selectedTestCaseChip, setSelectedTestCaseChip] = useState<
+    number | null
+  >(1);
 
-  const handleTestCaseClick = (testNum: number) => {
-    setSelectedTestCase(testNum);
+  const handleResultClick = (resultNum: number) => {
+    setIsResultActive(true);
+  };
+
+  const handleTestCaseClick = (resultNum: number) => {
+    setIsResultActive(false);
+  };
+
+  const handleTestCaseChipClick = (testNum: number) => {
+    setSelectedTestCaseChip(testNum);
   };
 
   if (!onChangeCode) {
@@ -75,25 +86,12 @@ class Solution {
             defaultLanguage="javascript"
           />
         </div>
-
         <div className="w-full px-5 overflow-auto dark:bg-neutral-800">
-          <TestCasesHeader />
-          <div className="flex">
-            {question.testcases.map((testcase) => (
-              <TestCaseChip
-                key={testcase.number}
-                testNum={testcase.number}
-                onClick={() => handleTestCaseClick(testcase.number)}
-              />
-            ))}
-          </div>
-
-          {selectedTestCase !== null && (
-            <InputOutput
-              inputText={question.testcases[selectedTestCase - 1].input}
-              outputText={question.testcases[selectedTestCase - 1].output}
-            />
-          )}
+          <TestCaseHeader
+            question={question}
+            handleTestCaseChipClick={handleTestCaseChipClick}
+            selectedTestCaseChip={selectedTestCaseChip}
+          />
         </div>
       </Split>
 

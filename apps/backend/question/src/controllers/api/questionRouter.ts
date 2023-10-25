@@ -21,6 +21,7 @@ questionRouter.get("/", async (req: Request, res: Response) => {
 
 questionRouter.get("/leetcode", async (req: Request, res: Response) => {
   // Remember to login before invoking this function as you need permisssions (command: firebase login)
+  // SERVER IS DOWN
   axios
     .get(
       "https://asia-southeast1-cs3219-398215.cloudfunctions.net/leetcodeQuestionsFetch"
@@ -110,6 +111,7 @@ questionRouter.post(
       categories: body.categories,
       complexity: body.complexity,
       testcases: body.testcases,
+      // A date will be created by default!
     });
     question
       .save()
@@ -122,7 +124,7 @@ questionRouter.post(
 questionRouter.put(
   "/:id",
   async (req: Request, res: Response, next: NextFunction) => {
-    const { title, description, categories, complexity, testcases } = req.body;
+    const { title, description, categories, complexity, testcases, dateCreated } = req.body;
     const id = req.params.id;
 
     if (req.headers.role !== Role.Admin) {
@@ -132,7 +134,7 @@ questionRouter.put(
 
     await Question.findByIdAndUpdate(
       id,
-      { title, description, categories, complexity, testcases },
+      { title, description, categories, complexity, testcases, dateCreated },
       { new: true, runValidators: true, context: "query" }
     )
       .then((updatedQuestion) => {
