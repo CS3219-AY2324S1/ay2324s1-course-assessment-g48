@@ -37,6 +37,7 @@ class Solution {
   const monacoRef = useRef<any>(null);
 
   const [code, changeCode] = useState(currCode ?? "");
+  const [item, setItem] = useState<String>("test")
 
   if (!onChangeCode) {
     onChangeCode = (value: any, event: any) => {
