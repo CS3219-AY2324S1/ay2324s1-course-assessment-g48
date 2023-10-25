@@ -6,6 +6,11 @@ interface Question extends Document {
   description: string;
   categories: string[];
   complexity: string;
+  testcases: [{
+    number: number;
+    input: string;
+    output: string;
+  }]
 }
 
 const questionSchema = new Schema({
@@ -29,9 +34,32 @@ const questionSchema = new Schema({
     type: String,
     enum: ["Easy", "Medium", "Hard"],
     required: false,
-  }
+  },
+  testcases: [
+    {
+      number: {
+        type: Number,
+        required: false,
+      },
+      input: {
+        type: String,
+        required: false,
+      },
+      output: {
+        type: String,
+        required: false,
+      },
+    }
+  ]
 });
 
+// Removes the __v: 0 attribute 
+questionSchema.set('toJSON', {
+  transform: (document, returnedObject) => {
+      returnedObject.id = returnedObject._id.toString()
+      delete returnedObject.__v
+  }
+})
 
 const QuestionModel = mongoose.model("Question", questionSchema);
 

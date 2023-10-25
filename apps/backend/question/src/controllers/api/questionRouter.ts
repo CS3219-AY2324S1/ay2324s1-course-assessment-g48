@@ -8,6 +8,7 @@ export const questionRouter = Router();
 
 // Gets question from mongodb
 questionRouter.get("/", async (req: Request, res: Response) => {
+  // Todo: enhance security
   if (!Object.values(Role).includes(req.headers.role as Role)) {
     res.status(401).json({ error: "Only registered users are allowed to view questions." });
     return;
@@ -82,6 +83,7 @@ questionRouter.delete(
   }
 );
 
+
 // Adds question to mongodb
 questionRouter.post(
   "/",
@@ -107,6 +109,7 @@ questionRouter.post(
       description: body.description,
       categories: body.categories,
       complexity: body.complexity,
+      testcases: body.testcases,
     });
     question
       .save()
@@ -119,7 +122,7 @@ questionRouter.post(
 questionRouter.put(
   "/:id",
   async (req: Request, res: Response, next: NextFunction) => {
-    const { title, description, categories, complexity } = req.body;
+    const { title, description, categories, complexity, testcases } = req.body;
     const id = req.params.id;
 
     if (req.headers.role !== Role.Admin) {
@@ -129,7 +132,7 @@ questionRouter.put(
 
     await Question.findByIdAndUpdate(
       id,
-      { title, description, categories, complexity },
+      { title, description, categories, complexity, testcases },
       { new: true, runValidators: true, context: "query" }
     )
       .then((updatedQuestion) => {

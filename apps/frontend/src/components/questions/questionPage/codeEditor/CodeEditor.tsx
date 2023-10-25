@@ -13,7 +13,7 @@ type CodeEditorProps = {
   currCode?: string;
 };
 
-const CodeEditor: React.FC<CodeEditorProps> = ({onChangeCode, currCode}) => {
+const CodeEditor: React.FC<CodeEditorProps> = ({ onChangeCode, currCode }) => {
   const starterCode = `/**
 * Definition for singly-linked list.
 * class ListNode {
@@ -40,7 +40,6 @@ class Solution {
       changeCode(value);
     };
   }
-
 
   return (
     <div className="flex flex-col h-full dark:bg-gray-800 relative overflow-hidden">

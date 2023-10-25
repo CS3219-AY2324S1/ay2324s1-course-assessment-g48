@@ -15,6 +15,7 @@ export class SessionManagerService {
   public async createNewSession(user1: number, user2: number) {
     let sessionId = this.generateSessionId();
 
+    // check if sessionId is valid (no duplicates)
     while (this.sessionToUserMap.has(sessionId)) {
       sessionId = this.generateSessionId();
     }
@@ -24,6 +25,7 @@ export class SessionManagerService {
       : this.createDoc();
     console.info("handle", handle);
 
+    // blocks until doc is ready
     await handle.whenReady();
 
     this.sessionToUserMap.set(sessionId, {
