@@ -7,7 +7,6 @@ import InputOutput from "./InputOutput";
 import EditorFooter from "./EditorFooter";
 import { useTheme } from "@/hook/ThemeContext";
 import { Editor } from "@monaco-editor/react";
-import * as monaco from 'monaco-editor';
 
 
 type CodeEditorProps = {
@@ -37,8 +36,6 @@ class Solution {
   const monacoRef = useRef<any>(null);
 
   const [code, changeCode] = useState(currCode ?? "");
-  const [item, setItem] = useState<String>("test")
-
   if (!onChangeCode) {
     onChangeCode = (value: any, event: any) => {
       changeCode(value);

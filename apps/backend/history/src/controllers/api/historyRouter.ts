@@ -1,7 +1,6 @@
 import { Router, NextFunction, Request, Response } from "express";
 import History from "../../models/History";
 import { Role } from "../../models/enum/Role";
-import axios from "axios";
 
 export const historyRouter = Router();
 
@@ -89,4 +88,6 @@ historyRouter.get("/user/:userId", async (req: Request, res: Response) => {
         res.status(200).json(history);
     });
 });
+
+// Delete history from mongodb
 

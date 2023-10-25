@@ -22,7 +22,7 @@ const ChatWidget: React.FC<ChatWidgetProps> = () => {
 
   return (
     <>
-      <div ref={ref}>
+      <div ref={ref} >
         <ChatWindow visible={showChatWindow}/>
       </div>
       <div className="absolute bottom-16 right-10 z-10 group">
