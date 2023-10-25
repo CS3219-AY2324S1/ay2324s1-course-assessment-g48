@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import EditorNav from "./EditorNav";
 import Split from "react-split";
 import TestCasesHeader from "./TestCasesHeader";
@@ -7,13 +7,15 @@ import InputOutput from "./InputOutput";
 import EditorFooter from "./EditorFooter";
 import { useTheme } from "@/hook/ThemeContext";
 import { Editor } from "@monaco-editor/react";
+import * as monaco from 'monaco-editor';
+
 
 type CodeEditorProps = {
   onChangeCode?: (value: any, event: any) => void;
   currCode?: string;
 };
 
-const CodeEditor: React.FC<CodeEditorProps> = ({onChangeCode, currCode}) => {
+const CodeEditor: React.FC<CodeEditorProps> = ({ onChangeCode, currCode }) => {
   const starterCode = `/**
 * Definition for singly-linked list.
 * class ListNode {
@@ -32,6 +34,7 @@ class Solution {
 };`;
 
   const { isDarkMode } = useTheme();
+  const monacoRef = useRef<any>(null);
 
   const [code, changeCode] = useState(currCode ?? "");
 
@@ -41,6 +44,16 @@ class Solution {
     };
   }
 
+  function handleEditorDidMount(editor:any, monaco:any) {
+    // here is another way to get monaco instance
+    // you can also store it in `useRef` for further usage
+    monacoRef.current = editor;
+  }
+
+
+  useEffect(() => {
+    changeCode(currCode ?? "");
+  }, [currCode]);
 
   return (
     <div className="flex flex-col h-full dark:bg-gray-800 relative overflow-hidden">
@@ -58,6 +71,7 @@ class Solution {
             value={code}
             theme={isDarkMode ? "vs-dark" : "light"}
             defaultLanguage="javascript"
+            onMount={handleEditorDidMount}
           />
         </div>
 
