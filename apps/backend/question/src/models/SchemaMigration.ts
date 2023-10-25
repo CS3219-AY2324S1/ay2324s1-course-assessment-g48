@@ -7,8 +7,8 @@ async function addToExistingDoc() {
       {
         $set: {
           "testcases.$[].number": 1,
-          "testcases.$[].input": "",
-          "testcases.$[].output": "",
+          "testcases.$[].input": "This is a sample input",
+          "testcases.$[].output": "This is a sample output",
         },
       }
     );
