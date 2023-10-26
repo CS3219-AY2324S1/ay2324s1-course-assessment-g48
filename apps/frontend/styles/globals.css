@@ -234,7 +234,7 @@ body {
 
 .scrollbar-hidden {
   /* Hide scrollbar for webkit browsers */
-  scrollbar-width: thin;
+  scrollbar-width: none;
   scrollbar-color: transparent transparent;
 }
 
