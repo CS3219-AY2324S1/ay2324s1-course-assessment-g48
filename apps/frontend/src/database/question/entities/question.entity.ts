@@ -4,4 +4,10 @@ export type Question = {
   description: string;
   categories: string[];
   complexity: string;
+  testcases: TestCase[];
+};
+
+export type TestCase = {
+  input: string;
+  output: string;
 };

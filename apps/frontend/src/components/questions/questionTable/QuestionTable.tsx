@@ -37,6 +37,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
     description: "",
     categories: [],
     complexity: "",
+    testcases: [],
   });
   const [questionToEdit, setQuestionToEdit] = useState<Question>({
     _id: "",
@@ -44,6 +45,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
     description: "",
     categories: [],
     complexity: "",
+    testcases: [],
   });
   const [questionToDelete, setQuestionToDelete] = useState<Question>({
     _id: "",
@@ -51,6 +53,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
     description: "",
     categories: [],
     complexity: "",
+    testcases: [],
   });
 
   const [openEdit, setOpenEdit] = useState(false);

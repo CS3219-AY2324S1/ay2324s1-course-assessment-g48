@@ -2,7 +2,7 @@ import React from "react";
 import ReactMarkdown from "react-markdown";
 import { Complexity } from "@/utils/enums/Complexity";
 import Modal from "@/components/Modal";
-import { Question } from "@/database/question/entities/question.entity";
+import { Question, TestCase } from "@/database/question/entities/question.entity";
 
 type ViewQuestionModalProps = {
   onViewQuestion: {
@@ -11,6 +11,7 @@ type ViewQuestionModalProps = {
     description: string;
     categories: string[];
     complexity: string;
+    testcases: TestCase[];
   };
   setOpen: (open: boolean) => void;
   open: boolean;

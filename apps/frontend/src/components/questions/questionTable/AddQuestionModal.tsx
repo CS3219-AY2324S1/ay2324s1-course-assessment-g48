@@ -1,37 +1,19 @@
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { Complexity } from "../../../utils/enums/Complexity";
 import { Category } from "../../../utils/enums/Category";
 import useInput from "../../../hook/useInput";
 import ReactMarkdown from "react-markdown";
-import { Question } from "../../../database/question/entities/question.entity";
+import { Question, TestCase } from "../../../database/question/entities/question.entity";
 import Modal from "../../Modal";
-import { Dialog, Popover, Tab, Transition } from '@headlessui/react'
+import { Tab } from "@headlessui/react";
+import { PlusSmallIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import rehypeKatex from "rehype-katex";
+import remarkMath from "remark-math";
+import { useError } from "@/hook/ErrorContext";
 
-const navigation = {
-  categories: [
-    {
-      name: "Test Case 1"
-    },
-    {
-      name: "Test Case 2"
-    },
-    {
-      name: "Test Case 3"
-    },
-    {
-      name: "Test Case 4"
-    },
-    {
-      name: "Test Case 5"
-    }
-  ],
-  pages: [
-    { name: "Company", href: "#" },
-    { name: "Stores", href: "#" },
-  ],
-};
 
-function classNames(...classes:any[]) {
+
+function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(" ");
 }
 
@@ -52,8 +34,36 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
     description: "",
     categories: [],
     complexity: "",
+    testcases: [],
   });
-  const [error, setError] = useState<string>("");
+  const { setError } = useError();
+  const [testcases, setTestCases] = useState<TestCase[]>([
+    {
+      input: "",
+      output: "",
+    },
+  ]);
+  const handleAddTestCase = () => {
+    setTestCases([
+      ...testcases,
+      {
+        input: "",
+        output: "",
+      },
+    ]);
+  }
+  const handleInputChange = (index:number, inputValue:string) => {
+    const updatedTestCases = [...testcases];
+    updatedTestCases[index].input = inputValue;
+    setTestCases(updatedTestCases);
+  };
+
+  const handleOutputChange = (index:number, outputValue:string) => {
+    const updatedTestCases = [...testcases];
+    updatedTestCases[index].output = outputValue;
+    setTestCases(updatedTestCases);
+  };
+  
   const {
     value,
     valueIsValid,
@@ -72,9 +82,9 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
           description: "",
           categories: [],
           complexity: "",
+          testcases: [],
         });
         reset();
-        setError("");
         setOpen(false);
       })
       .catch((e) => {
@@ -150,7 +160,12 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                 </div>
                 <div className="mt-3">
                   <article className="prose max-w-none">
-                    <ReactMarkdown>{newQuestion.description}</ReactMarkdown>
+                    <ReactMarkdown
+                      remarkPlugins={[remarkMath]}
+                      rehypePlugins={[rehypeKatex]}
+                    >
+                      {newQuestion.description}
+                    </ReactMarkdown>
                   </article>
                 </div>
               </div>
@@ -252,18 +267,27 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
             </div>
 
             <div className="mt-10">
-              <legend className="text-sm font-semibold leading-6 text-gray-900">
-                Test Cases
-              </legend>
-              <p className="mt-1 text-sm leading-6 text-gray-600">
-                Add test cases for the question
-              </p>
+              <div className="flex items-center justify-between">
+                <div>
+                  <legend className="text-sm font-semibold leading-6 text-gray-900">
+                    Test Cases
+                  </legend>
+                  <p className="mt-1 text-sm leading-6 text-gray-600">
+                    Add test cases for the question
+                  </p>
+                </div>
+                <button className="relative rounded-full bg-indigo-600 p-1 text-white hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2"
+                  onClick={handleAddTestCase}
+                type="button">
+                  <PlusSmallIcon className="h-6 w-6" aria-hidden="true" />
+                </button>
+              </div>
               <Tab.Group as="div" className="mt-2">
                 <div className="border-b border-gray-200">
                   <Tab.List className="-mb-px flex space-x-8 px-2 overflow-x-auto scrollbar-hidden">
-                    {navigation.categories.map((category) => (
+                    {testcases.map((testcase, index) => (
                       <Tab
-                        key={category.name}
+                        key={index}
                         className={({ selected }) =>
                           classNames(
                             selected
@@ -273,11 +297,73 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                           )
                         }
                       >
-                        {category.name}
+                        Test Case {index+1}
                       </Tab>
                     ))}
                   </Tab.List>
                 </div>
+                <Tab.Panels as={Fragment}>
+                  {testcases.map((testcase, index) => (
+                    <Tab.Panel
+                      key={index}
+                      className="space-y-5 px-4 pb-8 pt-5"
+                    >
+                      <div>
+                        <div className="flex items-center justify-between">
+                        <div>
+                        <legend className="block text-sm font-semibold leading-6 text-gray-900">
+                          Input
+                        </legend>
+                        <p className="mt-1 text-sm leading-6 text-gray-600">
+                          i.e Array: [1,2,3]
+                          </p>
+                          </div>
+                          <button className="relative rounded-full bg-red-600 p-1 text-white hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2"
+                            type="button"
+                            disabled={testcases.length === 1}
+                            onClick={() => {
+                              setTestCases(testcases.filter((item) => item !== testcase));
+                            }}>
+                            <XMarkIcon className="h-4 w-4" aria-hidden="true" />
+                            </button>
+                          </div>
+                        <div
+                          className={`mt-1 flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset
+                            focus-within:ring-indigo-600 sm:max-w-full`}
+                        >
+                          <input
+                            className="ml-1 block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 focus:ring-0 sm:text-sm sm:leading-6"
+                            type="text"
+                            name="input"
+                            value={testcase.input}
+                            onChange={(e) => handleInputChange(index, e.target.value)}
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <legend className="block text-sm font-semibold leading-6 text-gray-900">
+                          Output
+                        </legend>
+                        <p className="mt-1 text-sm leading-6 text-gray-600">
+                          i.e Array: [1,2,3]
+                        </p>
+                        <div
+                          className={`mt-1 flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset
+                            focus-within:ring-indigo-600 sm:max-w-full`}
+                        >
+                          <input
+                            className="ml-1 block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 focus:ring-0 sm:text-sm sm:leading-6"
+                            type="text"
+                            name="output"
+                            value={testcase.output}
+                            onChange={(e) => handleOutputChange(index, e.target.value)}
+                          />
+                        </div>
+                      </div>
+                    </Tab.Panel>
+                  ))}
+                </Tab.Panels>
               </Tab.Group>
             </div>
           </div>
@@ -289,7 +375,6 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
               onClick={() => {
                 setOpen(false);
                 reset();
-                setError("");
               }}
             >
               Cancel
