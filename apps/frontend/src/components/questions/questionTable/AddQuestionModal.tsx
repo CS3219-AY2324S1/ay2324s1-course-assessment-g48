@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, useState, useEffect } from "react";
 import { Complexity } from "../../../utils/enums/Complexity";
 import { Category } from "../../../utils/enums/Category";
 import useInput from "../../../hook/useInput";
@@ -10,8 +10,6 @@ import { PlusSmallIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import rehypeKatex from "rehype-katex";
 import remarkMath from "remark-math";
 import { useError } from "@/hook/ErrorContext";
-
-
 
 function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(" ");
@@ -37,6 +35,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
     testcases: [],
   });
   const { setError } = useError();
+  const [blank, setBlank] = useState(true);
   const [testcases, setTestCases] = useState<TestCase[]>([
     {
       input: "",
@@ -74,6 +73,10 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
   } = useInput((s: string) => s.trim().length > 0);
   const handleAddQuestion = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setNewQuestion({
+      ...newQuestion,
+      testcases: testcases
+    });
     await onSave(newQuestion)
       .then(() => {
         setNewQuestion({
@@ -91,6 +94,10 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
         setError(e);
       });
   };
+
+  useEffect(() => {
+    testcases.filter((item) => item.input === "" || item.output === "").length > 0 ? setBlank(true) : setBlank(false);
+  }, [testcases]);
 
   return (
     <>
@@ -114,7 +121,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                       type="text"
                       name="title"
                       id="title"
-                      className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 focus:ring-0 sm:text-sm sm:leading-6"
+                      className="block ml-2 flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 focus:ring-0 sm:text-sm sm:leading-6"
                       value={value}
                       onChange={(
                         event: React.ChangeEvent<HTMLInputElement>
@@ -320,19 +327,27 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                           </div>
                           <button className="relative rounded-full bg-red-600 p-1 text-white hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2"
                             type="button"
-                            disabled={testcases.length === 1}
                             onClick={() => {
-                              setTestCases(testcases.filter((item) => item !== testcase));
+                              if (testcases.length === 1) {
+                                setTestCases([
+                                  {
+                                    input: "",
+                                    output: "",
+                                  },
+                                ]);
+                              } else {
+                                setTestCases(testcases.filter((item) => item !== testcase));
+                              }
                             }}>
                             <XMarkIcon className="h-4 w-4" aria-hidden="true" />
                             </button>
                           </div>
                         <div
-                          className={`mt-1 flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset
+                          className={`mt-2 flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset
                             focus-within:ring-indigo-600 sm:max-w-full`}
                         >
                           <input
-                            className="ml-1 block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 focus:ring-0 sm:text-sm sm:leading-6"
+                            className="ml-2 block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 focus:ring-0 sm:text-sm sm:leading-6"
                             type="text"
                             name="input"
                             value={testcase.input}
@@ -349,11 +364,11 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                           i.e Array: [1,2,3]
                         </p>
                         <div
-                          className={`mt-1 flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset
+                          className={`mt-2 flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset
                             focus-within:ring-indigo-600 sm:max-w-full`}
                         >
                           <input
-                            className="ml-1 block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 focus:ring-0 sm:text-sm sm:leading-6"
+                            className="ml-2 block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 focus:ring-0 sm:text-sm sm:leading-6"
                             type="text"
                             name="output"
                             value={testcase.output}
@@ -361,10 +376,16 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                           />
                         </div>
                       </div>
+                      
                     </Tab.Panel>
                   ))}
                 </Tab.Panels>
+                {blank ? (
+                  <label className="ml-5 mt-1 text-sm leading-6 text-red-600">
+                    Test case cannot be empty.
+                  </label>) : <></>}
               </Tab.Group>
+               
             </div>
           </div>
           <div className="border-b border-gray-900/10 pb-12" />
@@ -381,7 +402,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
             </button>
             <button
               type="submit"
-              disabled={!valueIsValid}
+              disabled={!valueIsValid || blank}
               className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
               Add
