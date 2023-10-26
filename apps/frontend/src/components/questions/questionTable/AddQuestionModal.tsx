@@ -310,7 +310,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
               </div>
               <Tab.Group as="div" className="mt-2">
                 <div className="border-b border-gray-200">
-                  <Tab.List className="-mb-px flex space-x-8 px-2 overflow-x-auto scrollbar-hidden">
+                  <Tab.List className="-mb-px flex space-x-8 px-3 overflow-x-auto scrollbar-hidden">
                     {testcases.map((testcase, index) => (
                       <Tab
                         key={index}
@@ -405,7 +405,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                     Test case cannot be empty.
                   </label>) : <></>}
               </Tab.Group>
-               
+
             </div>
           </div>
           <div className="border-b border-gray-900/10 pb-12" />
