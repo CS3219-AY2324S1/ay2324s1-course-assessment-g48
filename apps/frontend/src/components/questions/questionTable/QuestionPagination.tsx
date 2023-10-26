@@ -99,7 +99,7 @@ const QuestionPagination: React.FC<QuestionPaginationProps> = ({
             </button>
             {/* Current: "z-10 bg-indigo-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600", Default: "text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-offset-0" */}
             <input
-              className="border rounded py-1 px-2 text-center w-16 dark:bg-gray-700 dark:text-gray-400"
+              className="border rounded py-1 px-2 text-center w-16 dark:bg-gray-200 dark:text-gray-800"
               type="text"
               value={pageNumber}
               onChange={handleInputChange}

@@ -72,11 +72,9 @@ const Navbar: React.FC<NavbarProps> = ({
                 <>
                   <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                     <div className="flex flex-shrink-0 items-center">
-                      <Link
-                        href="/"
-                      >
+                      <Link href="/">
                         <span className="self-center text-2xl font-semibold whitespace-nowrap text-white">
-                          PeerPrep
+                          LeetPal
                         </span>
                       </Link>
                     </div>
@@ -94,7 +92,7 @@ const Navbar: React.FC<NavbarProps> = ({
                         onClick={() => router.push("/")}
                       >
                         <span className="self-center text-2xl font-semibold whitespace-nowrap text-white">
-                          PeerPrep
+                          LeetPal
                         </span>
                       </a>
                     </div>
@@ -123,7 +121,7 @@ const Navbar: React.FC<NavbarProps> = ({
                   </div>
 
                   <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 space-x-2">
-                    {isQuestionPage && (<Stopwatch />)}
+                    {isQuestionPage && <Stopwatch />}
                     <ModeToggleButton />
                     <button
                       type="button"
@@ -133,11 +131,14 @@ const Navbar: React.FC<NavbarProps> = ({
                       <span className="absolute -inset-1.5" />
                       <span className="sr-only">View notifications</span>
                       <div className="flex">
-                      <BellIcon className="h-6 w-6" aria-hidden="true" />
-                      {
-                        (numberOfUnreadNotifications() > 0) ?
-                          <span className="notification-counter">{numberOfUnreadNotifications()}</span>:<></>
-                      }
+                        <BellIcon className="h-6 w-6" aria-hidden="true" />
+                        {numberOfUnreadNotifications() > 0 ? (
+                          <span className="notification-counter">
+                            {numberOfUnreadNotifications()}
+                          </span>
+                        ) : (
+                          <></>
+                        )}
                       </div>
                     </button>
 
