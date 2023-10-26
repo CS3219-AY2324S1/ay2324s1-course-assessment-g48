@@ -79,12 +79,12 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
   } = useInput((s: string) => s.trim().length > 0);
   const handleAddQuestion = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const indexedTestCases = await Promise.all(testcases.map((testCase, index) => {
+    const indexedTestCases = testcases.map((testCase, index) => {
       return {
         ...testCase,
         number: index+1,
       };
-    }));
+    });
 
     const updatedQuestion = {
       ...newQuestion,
