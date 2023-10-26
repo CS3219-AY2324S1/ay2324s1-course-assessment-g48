@@ -42,7 +42,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
   const [blank, setBlank] = useState(true);
   const [testcases, setTestCases] = useState<TestCase[]>([
     {
-      number: -1,
+      number: 1,
       input: "",
       output: "",
     },
@@ -79,11 +79,20 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
   } = useInput((s: string) => s.trim().length > 0);
   const handleAddQuestion = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setNewQuestion({
+    const indexedTestCases = await Promise.all(testcases.map((testCase, index) => {
+      return {
+        ...testCase,
+        number: index+1,
+      };
+    }));
+
+    const updatedQuestion = {
       ...newQuestion,
-      testcases: testcases
-    });
-    await onSave(newQuestion)
+      testcases: indexedTestCases
+    };
+
+    setNewQuestion(updatedQuestion);
+    await onSave(updatedQuestion)
       .then(() => {
         setNewQuestion({
           _id: "",

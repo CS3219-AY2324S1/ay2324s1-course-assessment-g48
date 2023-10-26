@@ -87,6 +87,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
 
   const handleSaveQuestion = async (newQuestion: Question) => {
     const questionToAdd = { ...newQuestion };
+    console.log(questionToAdd);
     await postNewQuestion(questionToAdd, userRole!)
       .then(() => {
         handleTrigger();
