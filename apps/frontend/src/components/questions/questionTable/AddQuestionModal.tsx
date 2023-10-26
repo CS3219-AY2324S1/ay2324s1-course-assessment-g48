@@ -7,7 +7,6 @@ import { Question, TestCase } from "../../../database/question/entities/question
 import Modal from "../../Modal";
 import { Tab } from "@headlessui/react";
 import { PlusSmallIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import rehypeKatex from "rehype-katex";
 import remarkMath from "remark-math";
 import { useError } from "@/hook/ErrorContext";
 
@@ -169,7 +168,6 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                   <article className="prose max-w-none">
                     <ReactMarkdown
                       remarkPlugins={[remarkMath]}
-                      rehypePlugins={[rehypeKatex]}
                     >
                       {newQuestion.description}
                     </ReactMarkdown>
