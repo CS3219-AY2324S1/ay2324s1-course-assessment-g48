@@ -19,8 +19,10 @@ const Layout = ({ children }: PropsWithChildren) => {
       setOpenAlert(true);
       setTimeout(() => {
         setOpenAlert(false);
+        setTimeout(() => {
+          clearError();
+        }, 300);
       }, 3000);
-      clearError();
     }
   }, [error, clearError]);
 
@@ -30,20 +32,20 @@ const Layout = ({ children }: PropsWithChildren) => {
 
   return (
     <>
-      <div className="dark:bg-gray-900 min-h-screen shadow-md overflow-auto">
-          <>
-            <div className="fixed w-screen divide-y top-0 z-20">
-              <Navbar
-                session={session}
-                setSlideOver={setOpenSlideOver}
-                openSlideOver={openSlideOver}
-              />
-              <div className="border-t divider-neutral-500 over"></div>
-            </div>
-            <div className="mt-16 px-5 place-content-center w-full">
-              {children}
-            </div>
-          </>
+      <div className="dark:bg-gray-900 min-h-screen pb-10 shadow-md overflow-auto">
+        <>
+          <div className="fixed w-screen divide-y top-0 z-20">
+            <Navbar
+              session={session}
+              setSlideOver={setOpenSlideOver}
+              openSlideOver={openSlideOver}
+            />
+            <div className="border-t divider-neutral-500 over"></div>
+          </div>
+          <div className="mt-16 px-5 place-content-center w-full">
+            {children}
+          </div>
+        </>
       </div>
       <SlideOver open={openSlideOver} setOpen={setOpenSlideOver} />
       {error && (

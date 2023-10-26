@@ -6,6 +6,15 @@ interface Question extends Document {
   description: string;
   categories: string[];
   complexity: string;
+  constraints: string;
+  followUp: string;
+  starterCode: string;
+  testcases: [{
+    number: number;
+    input: string;
+    output: string;
+  }]
+  dateCreated: Date;
 }
 
 const questionSchema = new Schema({
@@ -29,9 +38,57 @@ const questionSchema = new Schema({
     type: String,
     enum: ["Easy", "Medium", "Hard"],
     required: false,
-  }
+  },
+  constraints: {
+    type: String,
+    required: false,
+  },
+  followUp: {
+    type: String,
+    required: false,
+  },
+  starterCode: {
+    type: String,
+    required: false,
+  },
+  testcases: [
+    {
+      number: {
+        type: Number,
+        required: false,
+      },
+      input: {
+        type: String,
+        required: false,
+      },
+      output: {
+        type: String,
+        required: false,
+      },
+    }
+  ],
+  dateCreated: {
+    type: Date,
+    default: Date.now, // Set the default value to the current date and time
+    required: false,
+  },
 });
 
+// Removes the __v: 0 attribute 
+questionSchema.set('toJSON', {
+  transform: (document, returnedObject) => {
+      returnedObject.id = returnedObject._id.toString()
+      delete returnedObject.__v
+
+    // Remove _id from the testcases array
+    if (Array.isArray(returnedObject.testcases)) {
+      returnedObject.testcases = returnedObject.testcases.map((tc) => {
+        const { _id, ...rest } = tc;
+        return rest;
+      });
+    }
+  }
+})
 
 const QuestionModel = mongoose.model("Question", questionSchema);
 

@@ -14,14 +14,14 @@ const QuestionDescriptionPanel: React.FC<QuestionDescriptionPanelProps> = ({
   function getComplexityColor(complexity: Complexity) {
     switch (complexity) {
       case Complexity.Easy:
-        return 'text-green-600 bg-green-700 dark:bg-green-800/50';
+        return "text-green-600 bg-green-700 dark:bg-green-800/50";
       case Complexity.Medium:
-        return 'text-yellow-600 bg-yellow-700 dark:bg-yellow-800/50';
+        return "text-yellow-600 bg-yellow-700 dark:bg-yellow-800/50";
       case Complexity.Hard:
-        return 'text-red-600 bg-red-700 dark:bg-red-800/50';
+        return "text-red-600 bg-red-700 dark:bg-red-800/50";
       default:
-        console.log(`Unknown Complexity: ${complexity}`)
-        return ''; // Default or unknown complexity
+        console.log(`Unknown Complexity: ${complexity}`);
+        return ""; // Default or unknown complexity
     }
   }
 
@@ -51,7 +51,9 @@ const QuestionDescriptionPanel: React.FC<QuestionDescriptionPanelProps> = ({
             {/* Tags */}
             <div className="flex items-center mt-3">
               <div
-                className={`${getComplexityColor(question.complexity as Complexity)} inline-block rounded-[21px] bg-opacity-[.15] px-2.5 py-1 text-xs font-medium`}
+                className={`${getComplexityColor(
+                  question.complexity as Complexity
+                )} inline-block rounded-[21px] bg-opacity-[.15] px-2.5 py-1 text-xs font-medium`}
               >
                 {question.complexity}
               </div>
@@ -59,9 +61,7 @@ const QuestionDescriptionPanel: React.FC<QuestionDescriptionPanelProps> = ({
 
             {/* Problem Statement(paragraphs) */}
             <div className="dark:text-white text-sm">
-              <ReactMarkdown>
-                {question.description}
-              </ReactMarkdown>
+              <ReactMarkdown>{question.description}</ReactMarkdown>
             </div>
           </div>
         </div>

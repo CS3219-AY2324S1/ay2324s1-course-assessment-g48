@@ -14,6 +14,7 @@ import { Role } from "@/utils/enums/Role";
 import { useRouter } from "next/router";
 import { Question } from "@/database/question/entities/question.entity";
 import QuestionPagination from "./QuestionPagination";
+import DeleteCfmModal from "./DeleteCfmModal";
 
 type QuestionTableProps = {
   setOpenAdd: (open: boolean) => void;
@@ -36,6 +37,11 @@ const QuestionTable: FC<QuestionTableProps> = ({
     description: "",
     categories: [],
     complexity: "",
+    testcases: [],
+    constraints: "",
+    followUp: "",
+    starterCode: "",
+    dateCreated: new Date(),
   });
   const [questionToEdit, setQuestionToEdit] = useState<Question>({
     _id: "",
@@ -43,11 +49,29 @@ const QuestionTable: FC<QuestionTableProps> = ({
     description: "",
     categories: [],
     complexity: "",
+    testcases: [],
+    constraints: "",
+    followUp: "",
+    starterCode: "",
+    dateCreated: new Date(),
+  });
+  const [questionToDelete, setQuestionToDelete] = useState<Question>({
+    _id: "",
+    title: "",
+    description: "",
+    categories: [],
+    complexity: "",
+    testcases: [],
+    constraints: "",
+    followUp: "",
+    starterCode: "",
+    dateCreated: new Date(),
   });
 
   const [openEdit, setOpenEdit] = useState(false);
   const [openView, setOpenView] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [openDelCfm, setOpenDelCfm] = useState(false);
   const router = useRouter();
   const numberOfPages = Math.ceil(totalQuestions / questionsPerPage);
   const indexOfLastRecord = currentPage * questionsPerPage;
@@ -78,9 +102,10 @@ const QuestionTable: FC<QuestionTableProps> = ({
     await deleteQuestionById(id, userRole!)
       .then(() => {
         handleTrigger();
+        setOpenDelCfm(false);
       })
       .catch((e) => {
-        console.log(e);
+        throw String(e);
       });
   };
 
@@ -194,7 +219,10 @@ const QuestionTable: FC<QuestionTableProps> = ({
                     <td className="px-6 py-4 center">
                       <button
                         className="bg-red-600 hover:bg-red-800 text-white font-bold py-2 px-4 rounded-full"
-                        onClick={() => handleDeleteQuestion(question._id)}
+                        onClick={() => {
+                          setOpenDelCfm(true)
+                          setQuestionToDelete(question);
+                        }}
                       >
                         Delete
                       </button>
@@ -216,7 +244,6 @@ const QuestionTable: FC<QuestionTableProps> = ({
           indexOfLastRecord={indexOfLastRecord}
         />
       </div>
-
       <AddQuestionModal
         onSave={handleSaveQuestion}
         setOpen={setOpenAdd}
@@ -233,6 +260,12 @@ const QuestionTable: FC<QuestionTableProps> = ({
         setOpen={setOpenView}
         open={openView}
         handleQuestionClick={handleQuestionClick}
+      />
+      <DeleteCfmModal
+        setOpen={setOpenDelCfm}
+        open={openDelCfm}
+        onDelete={handleDeleteQuestion}
+        onDeleteQuestion={questionToDelete}
       />
     </>
   );
