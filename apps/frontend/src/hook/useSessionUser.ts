@@ -16,7 +16,7 @@ function useSessionUser() {
   useEffect(() => {
     const checkSession = setInterval(() => {
       if (session) {
-        setSessionUser((prevUser: any) => ({
+        setSessionUser((prevUser) => ({
           ...prevUser,
           ...session?.user,
         }));
