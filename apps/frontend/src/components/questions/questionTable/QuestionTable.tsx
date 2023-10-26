@@ -36,6 +36,11 @@ const QuestionTable: FC<QuestionTableProps> = ({
     description: "",
     categories: [],
     complexity: "",
+    inputs: [],
+    outputs: [],
+    constraints: "",
+    followUp: "",
+    starterCode: "",
   });
   const [questionToEdit, setQuestionToEdit] = useState<Question>({
     _id: "",
@@ -43,6 +48,11 @@ const QuestionTable: FC<QuestionTableProps> = ({
     description: "",
     categories: [],
     complexity: "",
+    inputs: [],
+    outputs: [],
+    constraints: "",
+    followUp: "",
+    starterCode: "",
   });
 
   const [openEdit, setOpenEdit] = useState(false);

@@ -4,4 +4,9 @@ export type Question = {
   description: string;
   categories: string[];
   complexity: string;
+  inputs: string[];
+  outputs: string[];
+  constraints: string;
+  followUp: string;
+  starterCode: string;
 };

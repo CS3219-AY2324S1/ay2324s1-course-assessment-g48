@@ -6,6 +6,11 @@ interface Question extends Document {
   description: string;
   categories: string[];
   complexity: string;
+  inputs: string[];
+  outputs: string[];
+  constraints: string;
+  followUp: string;
+  starterCode: string;
 }
 
 const questionSchema = new Schema({
@@ -28,6 +33,26 @@ const questionSchema = new Schema({
   complexity: {
     type: String,
     enum: ["Easy", "Medium", "Hard"],
+    required: false,
+  },
+  inputs: {
+    type: [{type: String}],
+    required: false,
+  },
+  outputs: {
+    type: [{type: String}],
+    required: false,
+  },
+  constraints: {
+    type: String,
+    required: false,
+  },
+  followUp: {
+    type: String,
+    required: false,
+  },
+  starterCode: {
+    type: String,
     required: false,
   }
 });

@@ -23,6 +23,11 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
     description: "",
     categories: [],
     complexity: "",
+    inputs: [],
+    outputs: [],
+    constraints: "",
+    followUp: "",
+    starterCode: "",
   });
   const [error, setError] = useState<string>("");
   const {
@@ -43,6 +48,11 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
           description: "",
           categories: [],
           complexity: "",
+          inputs: [],
+          outputs: [],
+          constraints: "",
+          followUp: "",
+          starterCode: "",
         });
         reset();
         setError("");

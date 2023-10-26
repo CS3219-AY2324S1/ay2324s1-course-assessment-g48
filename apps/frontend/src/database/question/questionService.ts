@@ -17,6 +17,11 @@ export const postNewQuestion = async (newQuestion: Question, userRole: Role) => 
       description: newQuestion.description,
       categories: newQuestion.categories,
       complexity: newQuestion.complexity,
+      inputs: newQuestion.inputs,
+      outputs: newQuestion.outputs,
+      constraints: newQuestion.constraints,
+      followUp: newQuestion.followUp,
+      starterCode: newQuestion.starterCode,
     }, config)
     .then((response) => {
       return response.data;
@@ -118,6 +123,11 @@ export const updateQuestionById = async (
     description: updatedQuestion.description,
     categories: updatedQuestion.categories,
     complexity: updatedQuestion.complexity,
+    inputs: updatedQuestion.inputs,
+    outputs: updatedQuestion.outputs,
+    constraints: updatedQuestion.constraints,
+    followUp: updatedQuestion.followUp,
+    starterCode: updatedQuestion.starterCode,
   }, config)
   .then((response) => {
     return response.data;

@@ -107,6 +107,11 @@ questionRouter.post(
       description: body.description,
       categories: body.categories,
       complexity: body.complexity,
+      inputs: body.inputs,
+      outputs: body.outputs,
+      constraints: body.constraints,
+      followUp: body.followUp,
+      starterCode: body.starterCode,
     });
     question
       .save()
@@ -119,7 +124,7 @@ questionRouter.post(
 questionRouter.put(
   "/:id",
   async (req: Request, res: Response, next: NextFunction) => {
-    const { title, description, categories, complexity } = req.body;
+    const { title, description, categories, complexity, inputs, outputs, constraints, followUp, starterCode } = req.body;
     const id = req.params.id;
 
     if (req.headers.role !== Role.Admin) {
@@ -129,7 +134,7 @@ questionRouter.put(
 
     await Question.findByIdAndUpdate(
       id,
-      { title, description, categories, complexity },
+      { title, description, categories, complexity, inputs, outputs, constraints, followUp, starterCode },
       { new: true, runValidators: true, context: "query" }
     )
       .then((updatedQuestion) => {

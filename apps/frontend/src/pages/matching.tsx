@@ -56,7 +56,7 @@ const MatchingPage: React.FC<matchingProps> = () => {
     });
     setIsMatching(MatchedState.MATCHING);
     setTimeout(() => {
-      matchingSocket.emit("matching", { difficulty, sessionUser });
+      matchingSocket.emit("matching", { difficulty, user: sessionUser });
       matchingSocket.on("timeout", () => {
         setToNotMatchingState();
         setError("Timed out, try again.");

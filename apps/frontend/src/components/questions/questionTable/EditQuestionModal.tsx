@@ -6,13 +6,7 @@ import { Question } from "@/database/question/entities/question.entity";
 import Modal from "@/components/Modal";
 
 type EditQuestionModalProps = {
-  onEditQuestion: {
-    _id: string;
-    title: string;
-    description: string;
-    categories: string[];
-    complexity: string;
-  };
+  onEditQuestion: Question;
   onUpdate: (newQuestion: Question) => Promise<void>;
   setOpen: (open: boolean) => void;
   open: boolean;
