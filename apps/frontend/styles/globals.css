@@ -224,3 +224,25 @@ body {
 .dark-chat .react-chatbot-kit-chat-input::placeholder{
   color: rgb(175, 175, 175);
 }
+
+.category-container {
+   /* Align it to center */
+  column-count: 2; /* Set the number of columns you desire */
+  column-gap: 20px; /* Set the gap between columns */
+  max-height: 400px; /* Set the maximum height of the container */
+}
+
+.scrollbar-hidden {
+  /* Hide scrollbar for webkit browsers */
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+/* For Firefox */
+.scrollbar-hidden::-webkit-scrollbar {
+  width: 0.5em;
+}
+
+.scrollbar-hidden::-webkit-scrollbar-thumb {
+  background-color: transparent;
+}

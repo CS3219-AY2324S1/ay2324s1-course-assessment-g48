@@ -22,6 +22,7 @@ const MatchingPage: React.FC<matchingProps> = () => {
   const [difficulty, setDifficulty] = useState<string>(Complexity.Easy);
   const { sessionUser } = useSessionUser();
   const [userRole, setUserRole] = useState(sessionUser.role);
+  const [disableBtnCancel, setDisableBtnCancel] = useState(true);
   const { error, setError, clearError } = useError();
   const [peer, setPeer] = useState<User | null>(null);
   const router = useRouter();
@@ -90,6 +91,13 @@ const MatchingPage: React.FC<matchingProps> = () => {
   };
 
   useEffect(() => {
+    if (isMatching === MatchedState.MATCHING) {
+          setTimeout(() => {
+            setDisableBtnCancel(false);
+          }, 2000);
+    } else {
+      setDisableBtnCancel(true);
+    }
     return () => {
       matchingSocket.on("timeout", () => {
         setToNotMatchingState();
@@ -181,6 +189,7 @@ const MatchingPage: React.FC<matchingProps> = () => {
             <button
               className="block w-full rounded-m px-3.5 py-2.5 text-center text-sm font-semibold text-gray-900 dark:text-white shadow-s"
               onClick={setToNotMatchingState}
+              disabled={disableBtnCancel}
             >
               Cancel
             </button>

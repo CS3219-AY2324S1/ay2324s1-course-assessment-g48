@@ -1,5 +1,5 @@
 {
-  "name": "user",
+  "name": "question",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -7,8 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon ./src/index.ts",
     "lint": "eslint . --fix",
-    "dev": "npx nodemon",
-    "start:prod": "prisma migrate deploy && yarn start"
+    "dev": "npx nodemon"
   },
   "keywords": [],
   "author": "",
@@ -27,10 +26,10 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
-    "@prisma/client": "5.4.2",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "http": "^0.0.1-security",
-    "prisma": "5.4.2"
+    "mongodb": "^6.0.0",
+    "mongoose": "^7.5.0"
   }
 }
