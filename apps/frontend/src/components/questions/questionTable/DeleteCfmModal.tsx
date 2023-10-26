@@ -23,7 +23,9 @@ const DeleteCfmModal: React.FC<DeleteCfmModalProps> = ({
   return (
     <Modal title="Confirm Delete" setOpen={setOpen} open={open}>
       <div className="mt-10 space-y-10">
-        <p>Are you sure you want to delete this question?</p>
+        <p className="text-sm text-gray-500">
+          Are you sure you want to delete this question?
+        </p>
         <div className="mt-6 flex items-center justify-end gap-x-6">
           <button
             type="button"
