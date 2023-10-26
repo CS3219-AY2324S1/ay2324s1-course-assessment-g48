@@ -36,11 +36,11 @@ const QuestionTable: FC<QuestionTableProps> = ({
     description: "",
     categories: [],
     complexity: "",
-    inputs: [],
-    outputs: [],
+    testcases: [{ number: 1, input: "", output: "" }],
     constraints: "",
     followUp: "",
     starterCode: "",
+    dateCreated: new Date(),
   });
   const [questionToEdit, setQuestionToEdit] = useState<Question>({
     _id: "",
@@ -48,11 +48,11 @@ const QuestionTable: FC<QuestionTableProps> = ({
     description: "",
     categories: [],
     complexity: "",
-    inputs: [],
-    outputs: [],
+    testcases: [{ number: 1, input: "", output: "" }],
     constraints: "",
     followUp: "",
     starterCode: "",
+    dateCreated: new Date(),
   });
 
   const [openEdit, setOpenEdit] = useState(false);

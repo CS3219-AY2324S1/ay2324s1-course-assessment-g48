@@ -8,6 +8,7 @@ export const questionRouter = Router();
 
 // Gets question from mongodb
 questionRouter.get("/", async (req: Request, res: Response) => {
+  // Todo: enhance security
   if (!Object.values(Role).includes(req.headers.role as Role)) {
     res.status(401).json({ error: "Only registered users are allowed to view questions." });
     return;
@@ -20,9 +21,10 @@ questionRouter.get("/", async (req: Request, res: Response) => {
 
 questionRouter.get("/leetcode", async (req: Request, res: Response) => {
   // Remember to login before invoking this function as you need permisssions (command: firebase login)
+  // SERVER IS DOWN
   axios
     .get(
-      "https://us-central1-cs3219-398215.cloudfunctions.net/leetcodeQuestionsFetch"
+      "https://asia-southeast1-cs3219-398215.cloudfunctions.net/leetcodeQuestionsFetch"
     )
     .then((response) => {
       // Handle the data from the serverless function
@@ -82,6 +84,7 @@ questionRouter.delete(
   }
 );
 
+
 // Adds question to mongodb
 questionRouter.post(
   "/",
@@ -107,11 +110,11 @@ questionRouter.post(
       description: body.description,
       categories: body.categories,
       complexity: body.complexity,
-      inputs: body.inputs,
-      outputs: body.outputs,
       constraints: body.constraints,
       followUp: body.followUp,
       starterCode: body.starterCode,
+      testcases: body.testcases,
+      // A date will be created by default!
     });
     question
       .save()
@@ -124,7 +127,7 @@ questionRouter.post(
 questionRouter.put(
   "/:id",
   async (req: Request, res: Response, next: NextFunction) => {
-    const { title, description, categories, complexity, inputs, outputs, constraints, followUp, starterCode } = req.body;
+    const { title, description, categories, complexity, testcases, constraints, followUp, starterCode, dateCreated  } = req.body;
     const id = req.params.id;
 
     if (req.headers.role !== Role.Admin) {
@@ -134,7 +137,7 @@ questionRouter.put(
 
     await Question.findByIdAndUpdate(
       id,
-      { title, description, categories, complexity, inputs, outputs, constraints, followUp, starterCode },
+      { title, description, categories, complexity, testcases, constraints, followUp, starterCode, dateCreated },
       { new: true, runValidators: true, context: "query" }
     )
       .then((updatedQuestion) => {

@@ -68,9 +68,7 @@ const EditQuestionModal: React.FC<EditQuestionModalProps> = ({
               </div>
               <div className="mt-3">
                 <article className="prose max-w-none">
-                  <ReactMarkdown>
-                    {newQuestion.description}
-                  </ReactMarkdown>
+                  <ReactMarkdown>{newQuestion.description}</ReactMarkdown>
                 </article>
               </div>
             </div>

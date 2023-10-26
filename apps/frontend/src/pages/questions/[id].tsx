@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import useQuestionById from '@/hook/useQuestionById';
-import QuestionWorkspace from '@/components/questions/questionPage/QuestionWorkspace';
-import { useRouter } from 'next/router';
-import useSessionUser from '@/hook/useSessionUser';
+import React, { useEffect, useState } from "react";
+import useQuestionById from "@/hook/useQuestionById";
+import QuestionWorkspace from "@/components/questions/questionPage/QuestionWorkspace";
+import { useRouter } from "next/router";
+import useSessionUser from "@/hook/useSessionUser";
 
-type QuestionPageProps = {
-  
-};
+type QuestionPageProps = {};
 
 const QuestionPage: React.FC<QuestionPageProps> = () => {
   const router = useRouter();

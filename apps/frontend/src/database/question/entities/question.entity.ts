@@ -4,9 +4,15 @@ export type Question = {
   description: string;
   categories: string[];
   complexity: string;
-  inputs: string[];
-  outputs: string[];
+  testcases: [
+    {
+      number: number;
+      input: string;
+      output: string;
+    },
+  ];
   constraints: string;
   followUp: string;
   starterCode: string;
+  dateCreated: Date;
 };

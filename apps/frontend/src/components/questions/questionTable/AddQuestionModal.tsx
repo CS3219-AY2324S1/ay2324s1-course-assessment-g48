@@ -23,11 +23,11 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
     description: "",
     categories: [],
     complexity: "",
-    inputs: [],
-    outputs: [],
+    testcases: [{ number: 1, input: "", output: "" }],
     constraints: "",
     followUp: "",
     starterCode: "",
+    dateCreated: new Date(),
   });
   const [error, setError] = useState<string>("");
   const {
@@ -48,11 +48,11 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
           description: "",
           categories: [],
           complexity: "",
-          inputs: [],
-          outputs: [],
+          testcases: [{ number: 1, input: "", output: "" }],
           constraints: "",
           followUp: "",
           starterCode: "",
+          dateCreated: new Date(),
         });
         reset();
         setError("");
@@ -72,7 +72,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
               <div className="col-span-full">
                 <label
                   htmlFor="title"
-                  className="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
+                  className="block text-sm font-medium leading-6 text-gray-900 dark:text-black"
                 >
                   Title
                 </label>
@@ -137,9 +137,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                 </div>
                 <div className="mt-3">
                   <article className="prose max-w-none">
-                    <ReactMarkdown>
-                      {newQuestion.description}
-                    </ReactMarkdown>
+                    <ReactMarkdown>{newQuestion.description}</ReactMarkdown>
                   </article>
                 </div>
               </div>

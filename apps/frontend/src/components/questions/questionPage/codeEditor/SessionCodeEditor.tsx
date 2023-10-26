@@ -23,6 +23,7 @@ const SessionCodeEditor: React.FC<SessionCodeEditorProps> = ({ sessionId }) => {
         )
         .then((res) => {
           console.log(res.data.docId);
+          console.log("docId received");
           setDocUrl(res.data.docId);
         });
     }
@@ -31,6 +32,7 @@ const SessionCodeEditor: React.FC<SessionCodeEditorProps> = ({ sessionId }) => {
   const [doc, changeDoc] = useDocument<Doc>(docUrl);
 
   const increment = (value: any, event: any) => {
+    console.log("reflecting changes in code editor through changeDoc...");
     changeDoc((d) => (d.text = value));
   };
 
