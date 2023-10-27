@@ -51,6 +51,7 @@ class Solution {
   );
 
   if (!onChangeCode) {
+    console.log("individual code editor")
     onChangeCode = (value: any, event: any) => {
       changeCode(value);
     };
@@ -159,8 +160,7 @@ class Solution {
   }
 
   useEffect(() => {
-    changeCode(code ?? "");
-    console.log("currCode", code);
+    changeCode(currCode ?? code);
   }, [currCode, code]);
 
   return (

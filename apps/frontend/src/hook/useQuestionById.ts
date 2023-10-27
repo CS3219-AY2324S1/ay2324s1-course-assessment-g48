@@ -24,7 +24,6 @@ function useQuestionById(qid: string, userRole?: Role) {
         }
       }
     }
-
     fetchData();
   }, [qid, userRole]);
 

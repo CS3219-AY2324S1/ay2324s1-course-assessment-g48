@@ -18,7 +18,7 @@ const SessionQuestionWorkspace: React.FC<SessionQuestionWorkspaceProps> = ({
     <>
       <Split className="split flex-1">
         <DescriptionPanel question={question} />
-        <SessionCodeEditor sessionId={sessionId} />
+        <SessionCodeEditor question={question} sessionId={sessionId} />
       </Split>
       <ChatWidget />
     </>
