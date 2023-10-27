@@ -11,7 +11,7 @@ import rehypeKatex from "rehype-katex";
 import remarkMath from "remark-math";
 import { useError } from "@/hook/ErrorContext";
 
-function classNames(...classes: any[]) {
+function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
@@ -42,7 +42,6 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
   const [blank, setBlank] = useState(true);
   const [testcases, setTestCases] = useState<TestCase[]>([
     {
-      number: 1,
       input: "",
       output: "",
     },
@@ -51,7 +50,6 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
     setTestCases([
       ...testcases,
       {
-        number: -1,
         input: "",
         output: "",
       },
@@ -79,16 +77,10 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
   } = useInput((s: string) => s.trim().length > 0);
   const handleAddQuestion = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const indexedTestCases = testcases.map((testCase, index) => {
-      return {
-        ...testCase,
-        number: index+1,
-      };
-    });
 
     const updatedQuestion = {
       ...newQuestion,
-      testcases: indexedTestCases
+      testcases
     };
 
     setNewQuestion(updatedQuestion);
@@ -350,7 +342,6 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                               if (testcases.length === 1) {
                                 setTestCases([
                                   {
-                                    number: 1,
                                     input: "",
                                     output: "",
                                   },

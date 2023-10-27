@@ -16,25 +16,19 @@ const PanelHeader: React.FC<PanelHeaderProps> = ({
         className="flex flex-col h-full justify-center rounded-t-[5px] py-[10px] px-3 dark:bg-gray-800 bg-slate-100 text-xs cursor-pointer relative transition-all"
       >
         Description
-      </div>
-      {!isSubmissionActive && (
-        <>
-          <div>Description tab active</div>
+        {!isSubmissionActive && (
           <hr className="bg-gray-700 dark:bg-dark-gray-700 absolute -bottom-[1px] right-0 h-[2px] w-full" />
-        </>
-      )}
+        )}
+      </div>
       <div
         onClick={() => handleSubmissionClick()}
         className="flex flex-col h-full justify-center rounded-t-[5px] py-[10px] px-3 dark:bg-gray-800 bg-slate-100 text-xs cursor-pointer relative transition-all"
       >
         Submission
-      </div>
-      {isSubmissionActive && (
-        <>
-          <div>Submission tab active</div>
+        {isSubmissionActive && (
           <hr className="bg-gray-700 dark:bg-dark-gray-700 absolute -bottom-[1px] right-0 h-[2px] w-full" />
-        </>
-      )}
+        )}
+      </div>
     </div>
   );
 };
