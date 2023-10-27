@@ -17,9 +17,12 @@ const QuestionPage: React.FC<QuestionPageProps> = () => {
     setUserRole(sessionUser.role);
   }, [sessionUser]);
 
-  
-  return <div className='flex h-[calc(100vh-60px)]'>
-    {question && <QuestionWorkspace question={question} />}
-  </div>
-}
+  console.log("live question: ", question);
+
+  return (
+    <div className="flex h-[calc(100vh-60px)]">
+      {question && <QuestionWorkspace question={question} />}
+    </div>
+  );
+};
 export default QuestionPage;

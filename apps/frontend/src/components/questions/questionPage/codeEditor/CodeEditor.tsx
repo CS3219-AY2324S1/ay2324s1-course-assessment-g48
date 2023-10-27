@@ -10,6 +10,7 @@ import axios from "axios";
 import { languageOptions } from "@/utils/constants/LanguageOptions";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import useKeyPress from "@/hook/useKeyPress";
 
 type CodeEditorProps = {
   onChangeCode?: (value: any, event: any) => void;
@@ -42,19 +43,38 @@ class Solution {
 
   const { isDarkMode } = useTheme();
   const monacoRef = useRef<any>(null);
-  const [code, changeCode] = useState(currCode ?? "");
-  const [customInput, setCustomInput] = useState("");
+  const [sessionCode, changeSessionCode] = useState(currCode ?? "");
+  // const [soloCode, changeSoloCode] = useState("");
+  const [customInput, setCustomInput] = useState(""); // todo: custom input for the console...
   const [outputDetails, setOutputDetails] = useState(null);
   const [processing, setProcessing] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState(
     languageOptions[0].label
   );
 
+  const enterPress = useKeyPress("Enter");
+  const ctrlPress = useKeyPress("Control");
+
   if (!onChangeCode) {
     onChangeCode = (value: any, event: any) => {
-      changeCode(value);
+      changeSessionCode(value);
     };
   }
+
+  const onSoloCodeChange = (
+    action: string,
+    data: React.SetStateAction<string>
+  ) => {
+    switch (action) {
+      case "code": {
+        changeSessionCode(data);
+        break;
+      }
+      default: {
+        console.warn("case not handled!", action, data);
+      }
+    }
+  };
 
   const handleCompile = () => {
     setProcessing(true);
@@ -64,7 +84,7 @@ class Solution {
     const formData = {
       language_id: language?.id,
       // encode source code in base64
-      source_code: btoa(code),
+      source_code: btoa(sessionCode),
       stdin: btoa(customInput),
     };
     const options = {
@@ -158,9 +178,20 @@ class Solution {
     monacoRef.current = editor;
   }
 
+  // session live editor
   useEffect(() => {
-    changeCode(currCode ?? "");
+    changeSessionCode(currCode ?? "");
+    console.log("code rn is:", currCode);
   }, [currCode]);
+
+  // ctrl + enter => run
+  useEffect(() => {
+    if (enterPress && ctrlPress) {
+      console.log("enterPress", enterPress);
+      console.log("ctrlPress", ctrlPress);
+      handleCompile();
+    }
+  }, [ctrlPress, enterPress]);
 
   return (
     <>
@@ -179,7 +210,7 @@ class Solution {
               height="100%"
               onChange={onChangeCode}
               defaultValue={starterCode}
-              value={code}
+              value={sessionCode}
               theme={isDarkMode ? "vs-dark" : "light"}
               defaultLanguage="javascript"
               onMount={handleEditorDidMount}
@@ -188,6 +219,7 @@ class Solution {
           {/* Exec Panel can still be abstracted to QuestionWorkspace -> future enhancement */}
           <ExecPanel question={question} outputDetails={outputDetails} />
         </Split>
+        {/* Gotta check whether toastcontainer actually works... */}
         <ToastContainer
           position="top-right"
           autoClose={2000}
@@ -200,7 +232,7 @@ class Solution {
           pauseOnHover
         />
         <EditorFooter
-          userCode={code}
+          userCode={sessionCode}
           processing={processing}
           handleCompile={handleCompile}
         />
