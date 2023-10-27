@@ -1,10 +1,10 @@
-type TestCaseHeaderProps = {
+type ExecHeaderProps = {
   handleResultClick: () => void;
   handleTestCaseClick: () => void;
   isResultActive: boolean;
 };
 
-const TestCaseHeader: React.FC<TestCaseHeaderProps> = ({
+const ExecHeader: React.FC<ExecHeaderProps> = ({
   handleResultClick,
   handleTestCaseClick,
   isResultActive,
@@ -38,4 +38,4 @@ const TestCaseHeader: React.FC<TestCaseHeaderProps> = ({
     </>
   );
 };
-export default TestCaseHeader;
+export default ExecHeader;

@@ -17,15 +17,16 @@ const TestCaseContent: React.FC<TestCaseContentProps> = ({
   return (
     <>
       <div className="flex">
-        {question.testcases.map(
-          (testcase: { number: Key | number | null | undefined }) => (
+        {question.testcases.map((testcase, index) => {
+          const testNum = index + 1; // Calculate or assign the desired value
+          return (
             <TestCaseChip
-              key={testcase.number}
-              testNum={testcase.number as number | null}
-              onClick={() => handleTestCaseChipClick(testcase.number as number)}
+              key={testNum}
+              testNum={testNum as number | null}
+              onClick={() => handleTestCaseChipClick(testNum as number)}
             />
-          )
-        )}
+          );
+        })}
       </div>
       {selectedTestCaseChip !== null && (
         <InputOutput
