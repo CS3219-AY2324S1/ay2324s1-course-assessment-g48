@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import EditorNav from "./EditorNav";
 import Split from "react-split";
-import TestCaseHeader from "./TestCaseHeader";
+import TestCaseHeader from "./ExecPanel/TestCaseHeader";
 import EditorFooter from "./EditorFooter";
 import { useTheme } from "@/hook/ThemeContext";
 import { Editor } from "@monaco-editor/react";
+import TestCaseContent from "./ExecPanel/TestCaseContent";
+import ResultContent from "./ExecPanel/ResultContent";
 import { Question } from "@/database/question/entities/question.entity";
-import TestCaseContent from "./TestCaseContent";
-import ResultContent from "./ResultContent";
 
 type CodeEditorProps = {
   onChangeCode?: (value: any, event: any) => void;

@@ -38,6 +38,8 @@ const QuestionDescriptionPanel: React.FC<QuestionDescriptionPanelProps> = ({
         </div>
       </div>
 
+      {/* Bottom content */}
+
       <div className="flex px-0 py-4 overflow-y-auto bg-slate-50 dark:bg-gray-800 h-screen transition-all">
         <div className="px-5">
           <div className="w-full">
