@@ -1,6 +1,10 @@
 import { Editor } from "@monaco-editor/react";
 import { SetStateAction, useState } from "react";
 
+/*
+WIP will not work
+*/
+
 type EditorWindowProps = {
   onSoloCodeChange: (
     action: string,
