@@ -3,8 +3,8 @@ apiVersion: v1
 kind: Service
 metadata:
   name: peerprep-rabbitmq
-  annotations:
-    cloud.google.com/network-tier: Standard
+  # annotations:
+  #   cloud.google.com/network-tier: Standard
 spec:
   selector:
     app: peerprep-rabbitmq
@@ -15,8 +15,7 @@ spec:
     # - protocol: TCP
     #   name: port-15672
     #   port: 15672
-  type: LoadBalancer
-  loadBalancerIP: 35.213.173.19
+  type: ClusterIP
 
 ---
 
@@ -42,3 +41,4 @@ spec:
             cpu: "500m"
         ports:
         - containerPort: 5672
+      dnsPolicy: ClusterFirst

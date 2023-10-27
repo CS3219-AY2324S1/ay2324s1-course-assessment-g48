@@ -97,6 +97,8 @@ docker tag peerprep-question deployment87/dply87:peerprep-question
 docker tag peerprep-queue deployment87/dply87:peerprep-queue
 docker tag peerprep-session deployment87/dply87:peerprep-session
 
+# Compose for Dev
+docker compose -f Docker-compose.dev.yml up -ddoc
 ```
 
 ### Cool Tricks

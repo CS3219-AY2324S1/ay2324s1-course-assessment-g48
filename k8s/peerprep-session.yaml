@@ -2,8 +2,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: peerprep-session
-  annotations:
-    cloud.google.com/network-tier: Standard
 spec:
   selector:
     app: peerprep-session
@@ -14,8 +12,7 @@ spec:
   - protocol: TCP
     name: port-8251
     port: 8251
-  type: LoadBalancer
-  loadBalancerIP: 35.213.173.19
+  type: ClusterIP
 
 ---
 
@@ -42,3 +39,4 @@ spec:
         ports:
         - containerPort: 8250
         - containerPort: 8251
+      dnsPolicy: ClusterFirst

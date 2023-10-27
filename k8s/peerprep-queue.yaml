@@ -2,16 +2,15 @@ apiVersion: v1
 kind: Service
 metadata:
   name: peerprep-queue
-  annotations:
-    cloud.google.com/network-tier: Standard
+  # annotations:
+  #   cloud.google.com/network-tier: Standard
 spec:
   selector:
     app: peerprep-queue
   ports:
   - protocol: TCP
     port: 8002
-  type: LoadBalancer
-  loadBalancerIP: 35.213.173.19
+  type: ClusterIP
 
 ---
 
@@ -37,3 +36,4 @@ spec:
             cpu: "500m"
         ports:
         - containerPort: 8002
+      # dnsPolicy: ClusterFirst

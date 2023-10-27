@@ -4,6 +4,7 @@ import * as logger from "./utils/logger";
 import * as config from "./utils/config";
 import { questionRouter } from "./controllers/api/questionRouter";
 import cors from "cors";
+import { testRouter } from "./controllers/api/testRouter";
 
 export const app = express();
 const allowedOrigins = [
@@ -19,10 +20,10 @@ const allowedOrigins = [
   'http://leetpal.com:8001',
   'http://leetpal.com:8000',
   'http://leetpal.com:3000',
-  'http://34.87.168.130',
-  'http://34.87.168.130:3000',
-  'http://34.87.168.130:8000',
-  'http://34.87.168.130:8001'
+  'http://34.120.70.36',
+  'http://34.120.70.36:3000',
+  'http://34.120.70.36:8000',
+  'http://34.120.70.36:8001'
 ];
 
 app.use(
@@ -53,3 +54,4 @@ mongoose
 app.use(express.json());
 
 app.use("/api/question", questionRouter);
+app.use("/ping", testRouter);

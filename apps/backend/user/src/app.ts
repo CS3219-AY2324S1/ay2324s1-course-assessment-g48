@@ -1,6 +1,7 @@
 import express from "express";
 import { userRouter } from "./controllers/api/userRouter";
 import cors from "cors";
+import { testRouter } from "./controllers/api/testRouter";
 
 export const app = express();
 
@@ -14,14 +15,11 @@ const allowedOrigins = [
     'http://localhost:8002',
     'http://localhost:9000',
     'http://leetpal.com',
-    'http://leetpal.com:3000',
-    'http://leetpal.com:8001',
-    'http://leetpal.com:8000',
-    'http://leetpal.com:3000',
-    'http://34.87.168.130',
-    'http://34.87.168.130:3000',
-    'http://34.87.168.130:8000',
-    'http://34.87.168.130:8001'
+    'http://www.leetpal.com',
+    'http://34.120.70.36',
+    'http://34.120.70.36:3000',
+    'http://34.120.70.36:8000',
+    'http://34.120.70.36:8001'
 ];
 
 app.use(
@@ -40,4 +38,5 @@ app.use(
 
 app.use(express.json());
 app.use("/api/users", userRouter);
+app.use("/ping", testRouter);
 

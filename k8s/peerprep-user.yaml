@@ -2,16 +2,14 @@ apiVersion: v1
 kind: Service
 metadata:
   name: peerprep-user
-  annotations:
-      cloud.google.com/network-tier: Standard
 spec:
   selector:
     app: peerprep-user
   ports:
   - protocol: TCP
     port: 8001
-  type: LoadBalancer
-  loadBalancerIP: 35.213.173.19
+    targetPort: 8001
+  type: ClusterIP
 
 ---
 
@@ -30,7 +28,7 @@ spec:
     spec:
       containers:
       - name: peerprep-user
-        image: deployment87/dply87:peerprep-user
+        image: deployment87/dply87:peerprep-user-v1.0.5
         env:
         - name: PSQL_DATABASE_URL
           value: postgresql://postgres:qShhYgujF3MbMP@peerprep-postgres:5432/peerprep
@@ -48,4 +46,13 @@ spec:
             cpu: "500m"
         ports:
         - containerPort: 8001
+        livenessProbe:
+          httpGet:
+            path: /ping
+            port: 8001
+        readinessProbe:
+          httpGet:
+            path: /ping
+            port: 8001
+      # dnsPolicy: ClusterFirst
 

@@ -2,16 +2,14 @@ apiVersion: v1
 kind: Service
 metadata:
   name: peerprep-question
-  annotations:
-    cloud.google.com/network-tier: Standard
 spec:
   selector:
     app: peerprep-question
   ports:
   - protocol: TCP
     port: 8000
-  type: LoadBalancer
-  loadBalancerIP: 35.213.173.19
+    targetPort: 8000
+  type: ClusterIP
 
 ---
 
@@ -30,10 +28,20 @@ spec:
     spec:
       containers:
       - name: peerprep-question
-        image: deployment87/dply87:peerprep-question-v1.0.0
+        image: deployment87/dply87:peerprep-question-v1.0.2
         resources:
           limits:
             memory: "256Mi"
             cpu: "500m"
         ports:
         - containerPort: 8000
+        livenessProbe:
+          httpGet:
+            path: /ping
+            port: 8000
+        readinessProbe:
+          httpGet:
+            path: /ping
+            port: 8000
+      # dnsPolicy: ClusterFirst
+
