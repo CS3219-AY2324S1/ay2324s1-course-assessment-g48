@@ -1,4 +1,7 @@
 import mongoose, { Document, Schema } from "mongoose";
+import moment from "moment-timezone";
+
+// console.log("time:" , moment().tz("Asia/Singapore").format())
 
 interface Question extends Document {
   id: string;
@@ -10,7 +13,6 @@ interface Question extends Document {
   followUp: string;
   starterCode: string;
   testcases: [{
-    number: number;
     input: string;
     output: string;
   }]
@@ -53,10 +55,6 @@ const questionSchema = new Schema({
   },
   testcases: [
     {
-      number: {
-        type: Number,
-        required: false,
-      },
       input: {
         type: String,
         required: false,
@@ -69,24 +67,27 @@ const questionSchema = new Schema({
   ],
   dateCreated: {
     type: Date,
-    default: Date.now, // Set the default value to the current date and time
+    // Dysfunctional
+    default: Date.now,
     required: false,
-  },
-});
+  }, 
+},  
+{versionKey: false} // Removes the __v: 0 attribute
+);
+
 
 // Removes the __v: 0 attribute 
 questionSchema.set('toJSON', {
   transform: (document, returnedObject) => {
       returnedObject.id = returnedObject._id.toString()
-      delete returnedObject.__v
-
-    // Remove _id from the testcases array
-    if (Array.isArray(returnedObject.testcases)) {
-      returnedObject.testcases = returnedObject.testcases.map((tc) => {
-        const { _id, ...rest } = tc;
-        return rest;
-      });
-    }
+    // // Remove _id from the testcases array
+    // if (Array.isArray(returnedObject.testcases)) {
+    //   returnedObject.testcases = returnedObject.testcases.map((tc) => {
+    //     const { _id, ...rest } = tc;
+    //     delete tc.__v;
+    //     return rest;
+    //   });
+    // }
   }
 })
 
