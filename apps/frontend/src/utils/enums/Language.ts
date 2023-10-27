@@ -1,4 +1,5 @@
 export enum Language {
+    c = "C",
     cplusplus = "C++",
     csharp = "C#",
     java = "Java",

@@ -18,7 +18,7 @@ const QuestionPage: React.FC<QuestionPageProps> = () => {
   }, [sessionUser]);
 
   
-  return <div className='flex h-[calc(100vh-60px)]'>
+  return <div className='flex'>
     {question && <QuestionWorkspace question={question} />}
   </div>
 }

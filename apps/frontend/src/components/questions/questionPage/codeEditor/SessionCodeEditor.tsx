@@ -5,12 +5,16 @@ import { useDocument } from "@automerge/automerge-repo-react-hooks";
 import { Doc } from "@/utils/doc";
 import CodeEditor from "./CodeEditor";
 import { useRouter } from "next/router";
+import { Question } from "@/database/question/entities/question.entity";
+import { Language } from "@/utils/enums/Language";
 
 type SessionCodeEditorProps = {
+  question: Question;
   sessionId: string;
+  initialLanguage: Language;
 };
 
-const SessionCodeEditor: React.FC<SessionCodeEditorProps> = ({ sessionId }) => {
+const SessionCodeEditor: React.FC<SessionCodeEditorProps> = ({ question, sessionId, initialLanguage }) => {
   // TODO: Get sessionID here somehow? Not sure if this works
   const sessionID = sessionId as string;
   const router = useRouter()
@@ -47,6 +51,6 @@ const SessionCodeEditor: React.FC<SessionCodeEditorProps> = ({ sessionId }) => {
     changeDoc((d) => (d.text = value));
   };
 
-  return <CodeEditor currCode={doc?.text} onChangeCode={increment} />;
+  return <CodeEditor currCode={doc?.text} onChangeCode={increment} question={question} initialLanguage={initialLanguage} />;
 };
 export default SessionCodeEditor;

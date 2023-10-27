@@ -6,17 +6,20 @@ import EditorFooter from "./EditorFooter";
 import { useTheme } from "@/hook/ThemeContext";
 import { Editor } from "@monaco-editor/react";
 import { Question } from "@/database/question/entities/question.entity";
+import { Language } from "@/utils/enums/Language";
 
 type CodeEditorProps = {
   onChangeCode?: (value: any, event: any) => void;
   currCode?: string;
   question: Question;
+  initialLanguage?: Language;
 };
 
 const CodeEditor: React.FC<CodeEditorProps> = ({
   onChangeCode,
   currCode,
   question,
+  initialLanguage,
 }) => {
   // TODO: make it dynamic
   const starterCode = `/**
@@ -57,9 +60,14 @@ class Solution {
     changeCode(currCode ?? "");
   }, [currCode]);
 
+  const [selectedLanguage, setSelectedLanguage] = useState(initialLanguage ?? Language.javascript);
+
   return (
     <div className="flex flex-col h-full dark:bg-gray-800 relative overflow-hidden">
-      <EditorNav />
+      <EditorNav
+        language={selectedLanguage}
+        updateLanguageInCodeEditor={setSelectedLanguage}
+      />
       <Split
         className="flex-col split h-[calc(100vh-120px)]"
         direction="vertical"
@@ -72,7 +80,7 @@ class Solution {
             defaultValue={starterCode}
             value={code}
             theme={isDarkMode ? "vs-dark" : "light"}
-            defaultLanguage="javascript"
+            language={selectedLanguage?.toLowerCase() ?? Language.javascript.toLowerCase()}
             onMount={handleEditorDidMount}
           />
         </div>

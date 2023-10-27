@@ -5,16 +5,21 @@ import {
 } from "@heroicons/react/24/outline";
 import { Language } from "@/utils/enums/Language";
 
-const EditorNav = () => {
+type EditorNavProps = {
+  language?: Language;
+  updateLanguageInCodeEditor: (language: Language) => void;
+};
+
+const EditorNav: React.FC<EditorNavProps> = ({ language, updateLanguageInCodeEditor }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState("JavaScript");
+  //TODO: disable language change if session
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
-  const selectLanguage = (language:Language) => {
-    setSelectedLanguage(language);
+  const selectLanguage = (language: Language) => {
+    updateLanguageInCodeEditor(language);
     setIsDropdownOpen(false); // Close the dropdown after selecting an option
   };
 
@@ -24,7 +29,7 @@ const EditorNav = () => {
         <button className="languageBtn ml-2" onClick={toggleDropdown}>
           <div className="flex items-center px-1">
             <div className="text-xs text-label-2 dark:text-white">
-              {selectedLanguage}
+              {language}
             </div>
           </div>
           {isDropdownOpen && (

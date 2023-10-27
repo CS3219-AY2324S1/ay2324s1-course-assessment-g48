@@ -17,7 +17,7 @@ const PanelHeader: React.FC<PanelHeaderProps> = ({
       >
         Description
         {!isSubmissionActive && (
-          <hr className="bg-gray-700 dark:bg-dark-gray-700 absolute -bottom-[1px] right-0 h-[2px] w-full" />
+          <hr className="border-slate-500 dark:border-white absolute -bottom-[1px] right-0 h-[2px] w-full" />
         )}
       </div>
       <div
@@ -26,7 +26,7 @@ const PanelHeader: React.FC<PanelHeaderProps> = ({
       >
         Submission
         {isSubmissionActive && (
-          <hr className="bg-gray-700 dark:bg-dark-gray-700 absolute -bottom-[1px] right-0 h-[2px] w-full" />
+          <hr className="border-slate-500 dark:border-white absolute -bottom-[1px] right-0 h-[2px] w-full" />
         )}
       </div>
     </div>
