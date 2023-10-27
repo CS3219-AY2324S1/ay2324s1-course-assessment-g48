@@ -14,7 +14,7 @@ import { useState } from "react";
 
 export default function OauthSignUp() {
   const { sessionUser } = useSessionUser();
-  const [newUsername, setUsername] = useState(sessionUser?.username ?? "");
+  const [newUsername, setUsername] = useState(sessionUser.username);
   const [errorMessage, setErrorMessage] = useState("");
   const [openAlert, setOpenAlert] = useState<boolean>(false);
   const searchParams = useSearchParams();
@@ -93,7 +93,7 @@ export default function OauthSignUp() {
             <FormInput
               type="text"
               label="Username"
-              value={newUsername}
+              value={newUsername!}
               onChange={setUsername}
             />
           </div>

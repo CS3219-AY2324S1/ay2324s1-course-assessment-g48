@@ -1,18 +1,17 @@
-import { BASE_URL, getUserById } from "@/database/user/userService";
+import { getUserById } from "@/database/user/userService";
 import { matchingSocket } from "@/utils/socket/socket";
-import { useSession } from "next-auth/react";
 import React, { FormEventHandler, useEffect, useState } from "react";
-import { io } from "socket.io-client";
 import { Language } from "@/utils/enums/Language";
 import { Complexity } from "@/utils/enums/Complexity";
 import { MatchedState } from "@/utils/enums/MatchingState";
 import Countdown from "@/components/Countdown";
 import useTimer from "@/hook/useTimer";
 import useSessionUser from "@/hook/useSessionUser";
-import Alert from "@/components/Alert";
 import { User } from "@/database/user/entities/user.entity";
 import { useRouter } from "next/router";
 import { useError } from "@/hook/ErrorContext";
+import { Role } from "@/utils/enums/Role";
+import LoadingModal from "@/components/LoadingModal";
 type matchingProps = {};
 
 const MatchingPage: React.FC<matchingProps> = () => {
@@ -22,7 +21,8 @@ const MatchingPage: React.FC<matchingProps> = () => {
   );
   const [difficulty, setDifficulty] = useState<string>(Complexity.Easy);
   const { sessionUser } = useSessionUser();
-  const user = sessionUser;
+  const [userRole, setUserRole] = useState(sessionUser.role);
+  const [disableBtnCancel, setDisableBtnCancel] = useState(true);
   const { error, setError, clearError } = useError();
   const [peer, setPeer] = useState<User | null>(null);
   const router = useRouter();
@@ -57,7 +57,7 @@ const MatchingPage: React.FC<matchingProps> = () => {
     });
     setIsMatching(MatchedState.MATCHING);
     setTimeout(() => {
-      matchingSocket.emit("matching", { difficulty, user });
+      matchingSocket.emit("matching", { difficulty, user: sessionUser });
       matchingSocket.on("timeout", () => {
         setToNotMatchingState();
         setError("Timed out, try again.");
@@ -91,6 +91,13 @@ const MatchingPage: React.FC<matchingProps> = () => {
   };
 
   useEffect(() => {
+    if (isMatching === MatchedState.MATCHING) {
+          setTimeout(() => {
+            setDisableBtnCancel(false);
+          }, 2000);
+    } else {
+      setDisableBtnCancel(true);
+    }
     return () => {
       matchingSocket.on("timeout", () => {
         setToNotMatchingState();
@@ -99,6 +106,19 @@ const MatchingPage: React.FC<matchingProps> = () => {
       });
     }
   }, [isRunning]);
+
+  useEffect(() => {
+    setUserRole(sessionUser.role);
+  }, [sessionUser]);
+
+  if (userRole == Role.Unknown) {
+    return <LoadingModal isLoading={true} />;
+  }
+
+  if (userRole == undefined) {
+    router.push("/401");
+    return;
+  }
 
   return (
     <>
@@ -169,6 +189,7 @@ const MatchingPage: React.FC<matchingProps> = () => {
             <button
               className="block w-full rounded-m px-3.5 py-2.5 text-center text-sm font-semibold text-gray-900 dark:text-white shadow-s"
               onClick={setToNotMatchingState}
+              disabled={disableBtnCancel}
             >
               Cancel
             </button>

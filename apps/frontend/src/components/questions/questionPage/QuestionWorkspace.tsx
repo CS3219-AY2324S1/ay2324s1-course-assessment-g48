@@ -14,7 +14,7 @@ const QuestionWorkspace: React.FC<QuestionWorkspaceProps> = ({ question }) => {
     <>
       <Split className="split flex-1">
         <DescriptionPanel question={question} />
-        <CodeEditor />
+        <CodeEditor question={question} />
       </Split>
       <ChatWidget />
     </>

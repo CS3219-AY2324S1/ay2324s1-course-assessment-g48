@@ -40,15 +40,15 @@ app.use(
   })
 )
 
-logger.info("connecting to", config.MONGODB_URI);
+logger.info("Question service connecting to", config.MONGODB_URI);
 
 mongoose
   .connect(config.MONGODB_URI || "")
   .then(() => {
-    logger.info("connected to MongoDB");
+    logger.info("Question service connected to MongoDB");
   })
   .catch((error) => {
-    logger.error("error connection to MongoDB:", error.message);
+    logger.error("Question service error connection to MongoDB:", error.message);
   });
 
 app.use(express.json());
