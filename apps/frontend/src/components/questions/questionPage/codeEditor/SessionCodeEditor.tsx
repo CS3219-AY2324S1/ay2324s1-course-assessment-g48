@@ -51,6 +51,6 @@ const SessionCodeEditor: React.FC<SessionCodeEditorProps> = ({ question, session
     changeDoc((d) => (d.text = value));
   };
 
-  return <CodeEditor currCode={doc?.text} onChangeCode={increment} question={question} initialLanguage={initialLanguage} />;
+  return <CodeEditor currCode={doc?.text} onChangeCode={increment} question={question} initialLanguage={initialLanguage} hasSession={true} />;
 };
 export default SessionCodeEditor;

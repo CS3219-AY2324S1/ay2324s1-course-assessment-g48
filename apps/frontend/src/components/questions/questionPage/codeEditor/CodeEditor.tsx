@@ -13,6 +13,7 @@ type CodeEditorProps = {
   currCode?: string;
   question: Question;
   initialLanguage?: Language;
+  hasSession?: boolean;
 };
 
 const CodeEditor: React.FC<CodeEditorProps> = ({
@@ -20,6 +21,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   currCode,
   question,
   initialLanguage,
+  hasSession
 }) => {
   // TODO: make it dynamic
   const starterCode = `/**
@@ -67,6 +69,7 @@ class Solution {
       <EditorNav
         language={selectedLanguage}
         updateLanguageInCodeEditor={setSelectedLanguage}
+        hasSession={hasSession!}
       />
       <Split
         className="flex-col split h-[calc(100vh-120px)]"
@@ -92,4 +95,9 @@ class Solution {
     </div>
   );
 };
+
+CodeEditor.defaultProps = {
+  hasSession: false
+};
+
 export default CodeEditor;
