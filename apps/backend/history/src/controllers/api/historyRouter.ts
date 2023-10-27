@@ -39,7 +39,7 @@ historyRouter.get("/", async (req: Request, res: Response) => {
         return;
     }
     History.find({}).then((history) => {
-        res.json(history);
+        res.status(200).json(history);
     });
 });
 

@@ -74,8 +74,9 @@ class Solution {
 
 
   useEffect(() => {
-    changeCode(currCode ?? "");
-  }, [currCode]);
+    changeCode(code ?? "");
+    console.log("currCode", code);
+  }, [currCode, code]);
 
   return (
     <div className="flex flex-col h-full dark:bg-gray-800 relative overflow-hidden">
