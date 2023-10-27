@@ -13,7 +13,6 @@ interface Question extends Document {
   followUp: string;
   starterCode: string;
   testcases: [{
-    number: number;
     input: string;
     output: string;
   }]
@@ -56,10 +55,6 @@ const questionSchema = new Schema({
   },
   testcases: [
     {
-      number: {
-        type: Number,
-        required: false,
-      },
       input: {
         type: String,
         required: false,

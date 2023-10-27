@@ -5,8 +5,12 @@ type SubmissionContentProps = {};
 const SubmissionContent: React.FC<SubmissionContentProps> = ({}) => {
   return (
     <>
-      <div className="text-sm font-medium leading-5 dark:text-white">
-        <span className="text-green-500">Success</span>
+      <div className="flex px-0 py-4 overflow-y-auto bg-slate-50 dark:bg-gray-800 h-screen transition-all">
+        <div className="px-5">
+          <div className="w-full">
+            <span className="text-green-500">Success</span>
+          </div>
+        </div>
       </div>
     </>
   );

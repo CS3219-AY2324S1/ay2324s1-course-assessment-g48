@@ -12,7 +12,6 @@ export type Question = {
 };
 
 export type TestCase = {
-  number: number;
   input: string;
   output: string;
 };
