@@ -8,9 +8,9 @@ export default function Session() {
   const { sessionUser } = useSessionUser();
   const [userRole, setUserRole] = useState(sessionUser.role);
   const sessionID = useRouter().query.sessionId as string;
-  const questionId = "6509aea00cbd6c2179ad44d2";
+  const questionId = "6509aea00cbd6c2179ad44d2"; // hardcoded, to be changed
   const { question } = useQuestionById(questionId, userRole);
-  
+
   useEffect(() => {
     console.log(sessionID)
     setUserRole(sessionUser.role);

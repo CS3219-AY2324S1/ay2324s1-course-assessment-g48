@@ -6,14 +6,7 @@ import { Question, TestCase } from "@/database/question/entities/question.entity
 import Modal from "@/components/Modal";
 
 type EditQuestionModalProps = {
-  onEditQuestion: {
-    _id: string;
-    title: string;
-    description: string;
-    categories: string[];
-    complexity: string;
-    testcases: TestCase[];
-  };
+  onEditQuestion: Question;
   onUpdate: (newQuestion: Question) => Promise<void>;
   setOpen: (open: boolean) => void;
   open: boolean;
@@ -75,9 +68,7 @@ const EditQuestionModal: React.FC<EditQuestionModalProps> = ({
               </div>
               <div className="mt-3">
                 <article className="prose max-w-none">
-                  <ReactMarkdown>
-                    {newQuestion.description}
-                  </ReactMarkdown>
+                  <ReactMarkdown>{newQuestion.description}</ReactMarkdown>
                 </article>
               </div>
             </div>

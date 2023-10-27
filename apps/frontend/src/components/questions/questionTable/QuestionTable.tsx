@@ -38,6 +38,10 @@ const QuestionTable: FC<QuestionTableProps> = ({
     categories: [],
     complexity: "",
     testcases: [],
+    constraints: "",
+    followUp: "",
+    starterCode: "",
+    dateCreated: new Date(),
   });
   const [questionToEdit, setQuestionToEdit] = useState<Question>({
     _id: "",
@@ -46,6 +50,10 @@ const QuestionTable: FC<QuestionTableProps> = ({
     categories: [],
     complexity: "",
     testcases: [],
+    constraints: "",
+    followUp: "",
+    starterCode: "",
+    dateCreated: new Date(),
   });
   const [questionToDelete, setQuestionToDelete] = useState<Question>({
     _id: "",
@@ -54,6 +62,10 @@ const QuestionTable: FC<QuestionTableProps> = ({
     categories: [],
     complexity: "",
     testcases: [],
+    constraints: "",
+    followUp: "",
+    starterCode: "",
+    dateCreated: new Date(),
   });
 
   const [openEdit, setOpenEdit] = useState(false);

@@ -1,4 +1,3 @@
-import { Question } from "@/database/question/entities/question.entity";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
 import { useEffect, useState } from "react";
 

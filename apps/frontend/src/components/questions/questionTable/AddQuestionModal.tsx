@@ -32,6 +32,10 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
     categories: [],
     complexity: "",
     testcases: [],
+    constraints: "",
+    followUp: "",
+    starterCode: "",
+    dateCreated: new Date(),
   });
   const { setError } = useError();
   const [blank, setBlank] = useState(true);
@@ -72,11 +76,20 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
   } = useInput((s: string) => s.trim().length > 0);
   const handleAddQuestion = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setNewQuestion({
-      ...newQuestion,
-      testcases: testcases
+    const indexedTestCases = testcases.map((testCase, index) => {
+      return {
+        ...testCase,
+        number: index+1,
+      };
     });
-    await onSave(newQuestion)
+
+    const updatedQuestion = {
+      ...newQuestion,
+      testcases: indexedTestCases
+    };
+
+    setNewQuestion(updatedQuestion);
+    await onSave(updatedQuestion)
       .then(() => {
         setNewQuestion({
           _id: "",
@@ -85,6 +98,10 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
           categories: [],
           complexity: "",
           testcases: [],
+          constraints: "",
+          followUp: "",
+          starterCode: "",
+          dateCreated: new Date(),
         });
         reset();
         setOpen(false);
