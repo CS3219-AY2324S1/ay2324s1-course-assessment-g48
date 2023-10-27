@@ -68,10 +68,7 @@ const questionSchema = new Schema({
   dateCreated: {
     type: Date,
     // Dysfunctional
-    default: function() {
-      console.log("date:", new Date(moment().tz("Asia/Singapore").format()))
-      return new Date().toLocaleString("en-SG", {timeZone: "Asia/Singapore"});
-    }, // Set the default value to the current date and time
+    default: Date.now,
     required: false,
   }, 
 },  
