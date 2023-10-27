@@ -23,8 +23,8 @@ type ChatWindowProps = {
 
 // https://fredrikoseberg.github.io/react-chatbot-kit-docs/docs/
 const ChatWindow: React.FC<ChatWindowProps> = ({ visible }) => {
-  const opacity = visible ? "opacity-100" : "opacity-0";
-  const zIndex = visible ? "z-20" : "z-0";
+  const opacity = "opacity-100";
+  const zIndex ="z-20";
   const { isDarkMode } = useTheme();
   const chatTheme = isDarkMode ? "dark-chat" : "";
 
@@ -39,6 +39,9 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ visible }) => {
       botAvatar: BotAvatar
     },
   };
+  if (!visible) {
+    return <></>
+  }
 
   return (
     <div className={`chatWindow ${zIndex} ${opacity} ${chatTheme}`}>

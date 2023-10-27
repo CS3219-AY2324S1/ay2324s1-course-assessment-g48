@@ -2,19 +2,11 @@ import ReactMarkdown from "react-markdown";
 import { Complexity } from "@/utils/enums/Complexity";
 import { Category } from "@/utils/enums/Category";
 import { useEffect, useState } from "react";
-import { Question } from "@/database/question/entities/question.entity";
+import { Question, TestCase } from "@/database/question/entities/question.entity";
 import Modal from "@/components/Modal";
 
 type EditQuestionModalProps = {
-  onEditQuestion: {
-    _id: string;
-    title: string;
-    description: string;
-    categories: string[];
-    complexity: string;
-    testcases: [{ number: number; input: string; output: string }];
-    dateCreated: Date;
-  };
+  onEditQuestion: Question;
   onUpdate: (newQuestion: Question) => Promise<void>;
   setOpen: (open: boolean) => void;
   open: boolean;

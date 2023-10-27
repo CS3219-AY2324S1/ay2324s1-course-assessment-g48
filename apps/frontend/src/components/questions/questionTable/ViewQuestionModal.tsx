@@ -5,15 +5,7 @@ import Modal from "@/components/Modal";
 import { Question } from "@/database/question/entities/question.entity";
 
 type ViewQuestionModalProps = {
-  onViewQuestion: {
-    _id: string;
-    title: string;
-    description: string;
-    categories: string[];
-    complexity: string;
-    testcases: [{ number: number; input: string; output: string }];
-    dateCreated: Date;
-  };
+  onViewQuestion: Question;
   setOpen: (open: boolean) => void;
   open: boolean;
   handleQuestionClick: (question: Question) => void;

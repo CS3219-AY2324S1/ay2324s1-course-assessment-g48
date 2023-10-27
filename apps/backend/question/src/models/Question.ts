@@ -9,6 +9,9 @@ interface Question extends Document {
   description: string;
   categories: string[];
   complexity: string;
+  constraints: string;
+  followUp: string;
+  starterCode: string;
   testcases: [{
     number: number;
     input: string;
@@ -37,6 +40,18 @@ const questionSchema = new Schema({
   complexity: {
     type: String,
     enum: ["Easy", "Medium", "Hard"],
+    required: false,
+  },
+  constraints: {
+    type: String,
+    required: false,
+  },
+  followUp: {
+    type: String,
+    required: false,
+  },
+  starterCode: {
+    type: String,
     required: false,
   },
   testcases: [

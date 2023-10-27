@@ -110,6 +110,9 @@ questionRouter.post(
       description: body.description,
       categories: body.categories,
       complexity: body.complexity,
+      constraints: body.constraints,
+      followUp: body.followUp,
+      starterCode: body.starterCode,
       testcases: body.testcases,
       // A date will be created by default!
     });
@@ -124,7 +127,7 @@ questionRouter.post(
 questionRouter.put(
   "/:id",
   async (req: Request, res: Response, next: NextFunction) => {
-    const { title, description, categories, complexity, testcases, dateCreated } = req.body;
+    const { title, description, categories, complexity, testcases, constraints, followUp, starterCode, dateCreated  } = req.body;
     const id = req.params.id;
 
     if (req.headers.role !== Role.Admin) {
@@ -134,7 +137,7 @@ questionRouter.put(
 
     await Question.findByIdAndUpdate(
       id,
-      { title, description, categories, complexity, testcases, dateCreated },
+      { title, description, categories, complexity, testcases, constraints, followUp, starterCode, dateCreated },
       { new: true, runValidators: true, context: "query" }
     )
       .then((updatedQuestion) => {

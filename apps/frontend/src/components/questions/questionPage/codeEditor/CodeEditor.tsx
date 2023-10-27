@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import EditorNav from "./EditorNav";
 import Split from "react-split";
 import TestCaseHeader from "./ExecPanel/TestCaseHeader";
@@ -8,6 +8,7 @@ import { Editor } from "@monaco-editor/react";
 import TestCaseContent from "./ExecPanel/TestCaseContent";
 import ResultContent from "./ExecPanel/ResultContent";
 import { Question } from "@/database/question/entities/question.entity";
+
 
 type CodeEditorProps = {
   onChangeCode?: (value: any, event: any) => void;
@@ -39,6 +40,7 @@ class Solution {
 };`;
 
   const { isDarkMode } = useTheme();
+  const monacoRef = useRef<any>(null);
 
   const [code, changeCode] = useState(currCode ?? "");
   const [isResultActive, setIsResultActive] = useState(false);
@@ -64,6 +66,13 @@ class Solution {
     };
   }
 
+  function handleEditorDidMount(editor:any, monaco:any) {
+    // here is another way to get monaco instance
+    // you can also store it in `useRef` for further usage
+    monacoRef.current = editor;
+  }
+
+
   useEffect(() => {
     changeCode(currCode ?? "");
   }, [currCode]);
@@ -84,6 +93,7 @@ class Solution {
             value={code}
             theme={isDarkMode ? "vs-dark" : "light"}
             defaultLanguage="javascript"
+            onMount={handleEditorDidMount}
           />
         </div>
         <div className="w-full px-5 overflow-auto dark:bg-neutral-800">
