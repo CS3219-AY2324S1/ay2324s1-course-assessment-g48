@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, } from "react";
 import EditorNav from "./EditorNav";
 import ExecPanel from "../execPanel/ExecPanel";
 import Split from "react-split";
@@ -10,9 +10,13 @@ import axios from "axios";
 import { languageOptions } from "@/utils/constants/LanguageOptions";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import monaco from "monaco-editor";
 
 type CodeEditorProps = {
-  onChangeCode?: (value: any, event: any) => void;
+  onChangeCode?: (
+    value?: string,
+    event?: monaco.editor.IModelContentChangedEvent
+  ) => void;
   currCode?: string;
   question: Question;
 };
@@ -41,10 +45,9 @@ class Solution {
 };`;
 
   const { isDarkMode } = useTheme();
-  const monacoRef = useRef<any>(null);
   const [code, changeCode] = useState(currCode ?? "");
   const [customInput, setCustomInput] = useState("");
-  const [outputDetails, setOutputDetails] = useState(null);
+  const [outputDetails, setOutputDetails] = useState("");
   const [processing, setProcessing] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState(
     languageOptions[0].label
@@ -52,8 +55,10 @@ class Solution {
 
   if (!onChangeCode) {
     console.log("individual code editor")
-    onChangeCode = (value: any, event: any) => {
-      changeCode(value);
+    onChangeCode = (
+      value?: string,
+    ) => {
+      changeCode(value?? "");
     };
   }
 
@@ -89,7 +94,7 @@ class Solution {
         checkStatus(token);
       })
       .catch((err) => {
-        let error = err.response ? err.response.data : err;
+        const error = err.response ? err.response.data : err;
         setProcessing(false);
         console.log(error);
       });
@@ -106,8 +111,8 @@ class Solution {
       },
     };
     try {
-      let response = await axios.request(options);
-      let statusId = response.data.status?.id;
+      const response = await axios.request(options);
+      const statusId = response.data.status?.id;
 
       // Processed - we have a result
       if (statusId === Status.InQueue || statusId === Status.Processing) {
@@ -153,11 +158,6 @@ class Solution {
     });
   };
 
-  function handleEditorDidMount(editor: any, monaco: any) {
-    // here is another way to get monaco instance
-    // you can also store it in `useRef` for further usage
-    monacoRef.current = editor;
-  }
 
   useEffect(() => {
     changeCode(currCode ?? code);
@@ -183,7 +183,7 @@ class Solution {
               value={code}
               theme={isDarkMode ? "vs-dark" : "light"}
               defaultLanguage="javascript"
-              onMount={handleEditorDidMount}
+
             />
           </div>
           {/* Exec Panel can still be abstracted to QuestionWorkspace -> future enhancement */}

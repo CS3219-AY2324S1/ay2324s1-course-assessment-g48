@@ -21,7 +21,7 @@ const navigation = [
   { name: "Chat", href: "/chat", current: false },
 ];
 
-function classNames(...classes: any[]) {
+function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
@@ -33,7 +33,7 @@ type NavbarProps = {
 
 const Navbar: React.FC<NavbarProps> = ({
   session,
-  openSlideOver,
+  // openSlideOver,
   setSlideOver,
 }) => {
   const router = useRouter();

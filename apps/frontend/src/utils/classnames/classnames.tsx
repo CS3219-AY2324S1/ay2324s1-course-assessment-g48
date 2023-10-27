@@ -4,6 +4,6 @@
  * to an element based on the provided arguments and their corresponding conditions.
  */
 
-export const classnames = (...args: any[]) => {
+export const classnames = (...args: string[]) => {
   return args.join(" ");
 };

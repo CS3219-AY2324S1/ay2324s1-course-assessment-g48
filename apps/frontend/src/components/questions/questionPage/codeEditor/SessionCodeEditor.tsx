@@ -6,6 +6,7 @@ import { Doc } from "@/utils/doc";
 import CodeEditor from "./CodeEditor";
 import { useRouter } from "next/router";
 import { Question } from "@/database/question/entities/question.entity";
+import monaco from "monaco-editor";
 
 type SessionCodeEditorProps = {
   sessionId: string;
@@ -44,9 +45,12 @@ const SessionCodeEditor: React.FC<SessionCodeEditorProps> = ({ sessionId, questi
   }
   , [doc]);
 
-  const increment = (value: any, event: any) => {
-    console.log("reflecting changes in code editor through changeDoc...");
-    changeDoc((d) => (d.text = value));
+  const increment = (
+    value?: string,
+    event?: monaco.editor.IModelContentChangedEvent
+  ) => {
+    console.log("reflecting changes in code editor through changeDoc...", event);
+    changeDoc((d) => (d.text = value ?? ""));
   };
 
   return <CodeEditor question={question} currCode={doc?.text} onChangeCode={increment} />;
