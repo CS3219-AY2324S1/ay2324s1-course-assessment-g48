@@ -6,7 +6,7 @@ const ResultCaseContent: React.FC<ResultContentProps> = ({}) => {
   return (
     <>
       <div className="text-sm font-medium leading-5 dark:text-white">
-        This is a cry for help
+        <span className="text-green-500">Success</span>
       </div>
     </>
   );

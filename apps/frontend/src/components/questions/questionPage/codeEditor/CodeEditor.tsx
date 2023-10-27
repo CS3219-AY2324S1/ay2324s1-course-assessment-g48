@@ -1,14 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
 import EditorNav from "./EditorNav";
+import ExecPanel from "../execPanel/ExecPanel";
 import Split from "react-split";
-import TestCaseHeader from "./ExecPanel/TestCaseHeader";
 import EditorFooter from "./EditorFooter";
 import { useTheme } from "@/hook/ThemeContext";
 import { Editor } from "@monaco-editor/react";
-import TestCaseContent from "./ExecPanel/TestCaseContent";
-import ResultContent from "./ExecPanel/ResultContent";
 import { Question } from "@/database/question/entities/question.entity";
-
 
 type CodeEditorProps = {
   onChangeCode?: (value: any, event: any) => void;
@@ -43,22 +40,6 @@ class Solution {
   const monacoRef = useRef<any>(null);
 
   const [code, changeCode] = useState(currCode ?? "");
-  const [isResultActive, setIsResultActive] = useState(false);
-  const [selectedTestCaseChip, setSelectedTestCaseChip] = useState<
-    number | null
-  >(1);
-
-  const handleResultClick = () => {
-    setIsResultActive(true);
-  };
-
-  const handleTestCaseClick = () => {
-    setIsResultActive(false);
-  };
-
-  const handleTestCaseChipClick = (testNum: number) => {
-    setSelectedTestCaseChip(testNum);
-  };
 
   if (!onChangeCode) {
     onChangeCode = (value: any, event: any) => {
@@ -66,12 +47,11 @@ class Solution {
     };
   }
 
-  function handleEditorDidMount(editor:any, monaco:any) {
+  function handleEditorDidMount(editor: any, monaco: any) {
     // here is another way to get monaco instance
     // you can also store it in `useRef` for further usage
     monacoRef.current = editor;
   }
-
 
   useEffect(() => {
     changeCode(currCode ?? "");
@@ -96,23 +76,8 @@ class Solution {
             onMount={handleEditorDidMount}
           />
         </div>
-        <div className="w-full px-5 overflow-auto dark:bg-neutral-800">
-          <TestCaseHeader
-            handleResultClick={handleResultClick}
-            handleTestCaseClick={handleTestCaseClick}
-            isResultActive={isResultActive}
-          />
-
-          {!isResultActive ? (
-            <TestCaseContent
-              question={question}
-              handleTestCaseChipClick={handleTestCaseChipClick}
-              selectedTestCaseChip={selectedTestCaseChip}
-            />
-          ) : (
-            <ResultContent />
-          )}
-        </div>
+        {/* Exec Panel can still be abstracted to QuestionWorkspace -> future enhancement */}
+        <ExecPanel question={question} />
       </Split>
 
       <EditorFooter />

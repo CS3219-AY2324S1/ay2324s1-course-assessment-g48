@@ -1,6 +1,6 @@
 import React from "react";
 import Split from "react-split";
-import DescriptionPanel from "./DescriptionPanel";
+import DescriptionPanel from "./descriptionPanel/DescriptionPanel";
 import { Question } from "@/database/question/entities/question.entity";
 import SessionCodeEditor from "./codeEditor/SessionCodeEditor";
 import ChatWidget from "@/components/chat/ChatWidget";
