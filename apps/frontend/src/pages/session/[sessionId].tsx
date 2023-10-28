@@ -14,6 +14,7 @@ export default function Session() {
   const languageSelected = Language.javascript; // hardcoded, to be changed
 
   useEffect(() => {
+    console.log(sessionID);
     setUserRole(sessionUser.role);
   }, [sessionUser]);
 

@@ -152,3 +152,8 @@ questionRouter.put(
       .catch((err) => next(err));
   }
 );
+
+questionRouter.post(
+  "/:id/run",
+  
+)

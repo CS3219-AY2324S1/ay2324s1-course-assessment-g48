@@ -1,14 +1,15 @@
 import React, { useState } from "react";
-import TestCaseContent from "./TestCaseContent";
-import ResultContent from "./ResultContent";
-import TestCaseHeader from "./TestCaseHeader";
+import TestCaseContent from "./testCaseTab/TestCaseContent";
+import ResultContent from "./resultTab/ResultContent";
+import ExecHeader from "./ExecHeader";
 import { Question } from "@/database/question/entities/question.entity";
 
 type ExecPanelProps = {
   question: Question;
+  outputDetails: any;
 };
 
-const ExecPanel: React.FC<ExecPanelProps> = ({ question }) => {
+const ExecPanel: React.FC<ExecPanelProps> = ({ question, outputDetails }) => {
   const [isResultActive, setIsResultActive] = useState<boolean>(false);
   const [selectedTestCaseChip, setSelectedTestCaseChip] = useState<
     number | null
@@ -28,7 +29,7 @@ const ExecPanel: React.FC<ExecPanelProps> = ({ question }) => {
 
   return (
     <div className="w-full px-5 overflow-auto dark:bg-neutral-800">
-      <TestCaseHeader
+      <ExecHeader
         handleResultClick={handleResultClick}
         handleTestCaseClick={handleTestCaseClick}
         isResultActive={isResultActive}
@@ -41,7 +42,7 @@ const ExecPanel: React.FC<ExecPanelProps> = ({ question }) => {
           selectedTestCaseChip={selectedTestCaseChip}
         />
       ) : (
-        <ResultContent />
+        <ResultContent outputDetails={outputDetails} />
       )}
     </div>
   );

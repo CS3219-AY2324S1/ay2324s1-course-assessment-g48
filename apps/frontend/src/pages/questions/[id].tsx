@@ -16,7 +16,6 @@ const QuestionPage: React.FC<QuestionPageProps> = () => {
   useEffect(() => {
     setUserRole(sessionUser.role);
   }, [sessionUser]);
-
   
   return <div className='flex'>
     {question && <QuestionWorkspace question={question} />}
