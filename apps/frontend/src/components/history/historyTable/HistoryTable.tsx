@@ -15,12 +15,13 @@ const HistoryTable: React.FC<HistoryTableProps> = ({
 }) => {
     const { sessionUser } = useSessionUser();
     const [userRole, setUserRole] = useState(sessionUser.role);
-    const router = useRouter();
-    const { histories, totalHistories, completedQuestion} = useHistories(sessionUser.id, userRole);
+  const router = useRouter();
+    const { histories, totalHistories} = useHistories(sessionUser.id, userRole);
     const [historyPerPage, setHistoryPerPage] = useState(10);
 
-      function handleQuestionClick(questionId: string): void {
-        router.push(`/questions/${questionId}`);
+  function handleQuestionClick(historyId: string, historyQuestionId: string): void {
+        const seperator = "&";
+        router.push(`/history/detail/${historyId}${seperator}${historyQuestionId}`);
       }
     
     useEffect(() => {
@@ -63,42 +64,45 @@ const HistoryTable: React.FC<HistoryTableProps> = ({
             </thead>
 
             <tbody>
-              {completedQuestion.map((question, index) => (
-                <tr
-                  key={index}
-                  className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-                >
-                <th scope="row" className="py-2 center">
-                    {new Date(question.completedAt).toLocaleString()}
-                </th>
-                <td
-                          className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap center dark:text-white cursor-pointer"
-                          onClick={() => handleQuestionClick(question.questionId)}
-                >
-                    {question.questionTitle}
-                </td>
-                <td className="px-6 py-4">
-                    {question.result}
-                </td>
-                <td className={"px-6 py-4"}>
-                    {question.runTime}
-                  </td>
-                <td className="px-6 py-4">
-                        {question.language}
-                  </td>
-                  {userRole === Role.Admin && (
-                    <>
-                      <td className="px-6 py-4 center">
-                        <button
-                                      className="bg-red-600 hover:bg-red-800 text-white font-bold py-2 px-4 rounded-full"
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </>
-                  )}
-                </tr>
-              ))}
+              {histories.map((history) => (
+                history.completed.map((question: CompletedQuestion, index) => 
+                (
+                  <tr
+                    key={index}
+                    className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                  >
+                    <th scope="row" className="py-2 center">
+                      {new Date(question.completedAt).toLocaleString()}
+                    </th>
+                    <td
+                      className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap center dark:text-white cursor-pointer"
+                      onClick={() => handleQuestionClick(history._id, question._id)}
+                    >
+                      {question.questionTitle}
+                    </td>
+                    <td className="px-6 py-4">
+                      {question.result}
+                    </td>
+                    <td className={"px-6 py-4"}>
+                      {question.runTime}
+                    </td>
+                    <td className="px-6 py-4">
+                      {question.language}
+                    </td>
+                    {userRole === Role.Admin && (
+                      <>
+                        <td className="px-6 py-4 center">
+                          <button
+                            className="bg-red-600 hover:bg-red-800 text-white font-bold py-2 px-4 rounded-full"
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      </>
+                    )}
+                  </tr>
+                )
+              )))}
             </tbody>
           </table>
         </div>

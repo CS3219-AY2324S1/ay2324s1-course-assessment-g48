@@ -3,6 +3,7 @@ export type History = {
     sessionId: string;
     completed: CompletedQuestion[];
     date: Date;
+    _id: string;
 }
 
 export type CompletedQuestion = {
@@ -13,4 +14,5 @@ export type CompletedQuestion = {
     answer: string;
     result: string;
     completedAt: Date;
+    _id: string;
 }

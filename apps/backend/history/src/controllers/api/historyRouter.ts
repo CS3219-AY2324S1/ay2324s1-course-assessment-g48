@@ -45,11 +45,28 @@ historyRouter.get("/", async (req: Request, res: Response) => {
 
 // Gets history from mongodb
 historyRouter.get("/:id", async (req: Request, res: Response) => {
+    const { questionid } = req.headers;
+    console.log(questionid);
     if (!Object.values(Role).includes(req.headers.role as Role)) {
         res.status(401).json({ error: "Only registered users are allowed to view history." });
         return;
     }
     History.findById(req.params.id).then((history) => {
+        if (!history) {
+            res.status(404).json({
+                error: `A history with id ${req.params.id} does not exist.`,
+            });
+            return;
+        }
+        if (questionid) {
+            const data = history.completed.filter((element) => element.id === questionid)[0];
+            if (!data) {
+                res.status(404).json({ error: `A history with history question id ${questionid} does not exist.` });
+                return;
+            }
+            res.status(200).json(data)
+            return;
+        }
         res.status(200).json(history);
     });
 });

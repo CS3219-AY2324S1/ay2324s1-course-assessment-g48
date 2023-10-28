@@ -55,10 +55,11 @@ export const getAllHistory = async (userRole?: Role) => {
 }
 
 // Get history by id
-export const getHistoryById = async (id: string, userRole?: Role) => {
+export const getHistoryById = async (id: string, qid?: string, userRole?: Role) => {
     const config = {
         headers: {
             role: userRole,
+            questionid: qid,
         },
     };
     return await axios

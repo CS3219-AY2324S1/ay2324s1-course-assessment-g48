@@ -1,6 +1,7 @@
 import mongoose, { Document, Schema } from "mongoose";
 
 interface CompletedQuestion extends Document {
+  id: string;
   questionId: string;
   answer: string;
   result: string;
@@ -8,6 +9,7 @@ interface CompletedQuestion extends Document {
 }
 
 interface History extends Document {
+  id: string;
   userIds: number[];
   sessionId: string;
   completed: CompletedQuestion[];
