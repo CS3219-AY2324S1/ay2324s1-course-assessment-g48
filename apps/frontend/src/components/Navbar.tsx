@@ -17,7 +17,7 @@ import useNotification from "@/hook/useNotfication";
 const navigation = [
   { name: "Question", href: "/questions", current: false },
   { name: "Matching", href: "/matching", current: false },
-  { name: "History", href: "/history", current: false },
+  { name: "History", href: "/history/user", current: false },
   { name: "Chat", href: "/chat", current: false },
 ];
 

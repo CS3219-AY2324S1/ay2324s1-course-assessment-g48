@@ -19,6 +19,18 @@ const completedQuestionSchema = new Schema({
     type: String,
     required: true,
   },
+  questionTitle: {
+    type: String,
+    required: true,
+  },
+  runTime: {
+    type: Number,
+    required: true,
+  },
+  language: {
+    type: String,
+    required: true,
+  },
   answer: {
     type: String,
     required: true,

@@ -7,6 +7,9 @@ export type History = {
 
 export type CompletedQuestion = {
     questionId: string;
+    questionTitle: string;
+    runTime: number;
+    language: string
     answer: string;
     result: string;
     completedAt: Date;

@@ -1,4 +1,6 @@
-type SubmitProps = {};
+type SubmitProps = {
+  userCode: string;
+};
 
 const Submit: React.FC<SubmitProps> = ({}) => {
   return (

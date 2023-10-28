@@ -3,7 +3,7 @@ import { Role } from "@/utils/enums/Role";
 import { History } from "./entities/history.entity";
 import Router from "next/router";
 
-const BASE_URL = process.env.NEXT_PUBLIC_QUESTION_SERVICE + "/api/history";
+const BASE_URL = process.env.NEXT_PUBLIC_HISTORY_SERVICE + "/api/history";
 
 // Post new history
 export const postNewHistory = async(
@@ -103,7 +103,7 @@ export const updateHistoryById = async (
 }
 
 // Get history by userId
-export const getHistoryByUserId = async (userId: string, userRole?: Role) => {
+export const getHistoryByUserId = async (userId: number, userRole?: Role) => {
     const config = {
         headers: {
             role: userRole,

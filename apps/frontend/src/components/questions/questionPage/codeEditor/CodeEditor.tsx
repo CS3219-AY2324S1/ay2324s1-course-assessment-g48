@@ -204,6 +204,7 @@ class Solution {
           userCode={code}
           processing={processing}
           handleCompile={handleCompile}
+          question={question}
         />
       </div>
     </>
