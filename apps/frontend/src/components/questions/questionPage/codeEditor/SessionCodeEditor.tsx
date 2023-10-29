@@ -6,7 +6,7 @@ import { Doc } from "@/utils/doc";
 import CodeEditor from "./CodeEditor";
 import { useRouter } from "next/router";
 import { Question } from "@/database/question/entities/question.entity";
-import { Language } from "@/utils/enums/Language";
+import { Language } from "@/utils/class/Language";
 
 type SessionCodeEditorProps = {
   question: Question;

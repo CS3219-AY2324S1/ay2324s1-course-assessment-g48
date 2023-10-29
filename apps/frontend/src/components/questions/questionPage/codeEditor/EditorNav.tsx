@@ -4,10 +4,11 @@ import {
   Cog6ToothIcon,
 } from "@heroicons/react/24/outline";
 import { languageOptions } from "@/utils/constants/LanguageOptions";
+import { Language } from "@/utils/class/Language";
 
 type EditorNavProps = {
-  selectedLanguage: string;
-  setSelectedLanguage: (language: string) => void;
+  selectedLanguage: Language;
+  setSelectedLanguage: (language: Language) => void;
   hasSession: boolean;
 };
 
@@ -22,7 +23,7 @@ const EditorNav: React.FC<EditorNavProps> = ({
     setIsDropdownOpen(!isDropdownOpen);
   };
 
-  const selectLanguage = (language: string) => {
+  const selectLanguage = (language: Language) => {
     setSelectedLanguage(language);
     setIsDropdownOpen(false); // Close the dropdown after selecting an option
   };
@@ -33,8 +34,7 @@ const EditorNav: React.FC<EditorNavProps> = ({
         <button className="languageBtn ml-2" onClick={toggleDropdown}>
           <div className="flex items-center px-1">
             <div className="text-xs text-label-2 dark:text-white group">
-              {/* Todo: change to label */}
-              {selectedLanguage}
+              {selectedLanguage.label}
               {hasSession && <div className="languageTooltip">Language cannot be changed while session is active.</div>}
             </div>
           </div>
@@ -44,7 +44,7 @@ const EditorNav: React.FC<EditorNavProps> = ({
                 <li
                   key={index}
                   className="cursor-pointer hover:bg-gray-200 p-2 text-xs rounded-md"
-                  onClick={() => selectLanguage(language.label)}
+                  onClick={() => selectLanguage(language)}
                 >
                   {language.label}
                 </li>

@@ -11,7 +11,7 @@ import { languageOptions } from "@/utils/constants/LanguageOptions";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import useKeyPress from "@/hook/useKeyPress";
-import { Language } from "@/utils/enums/Language";
+import { Language } from "@/utils/class/Language";
 
 /*
 WIP
@@ -51,13 +51,13 @@ class Solution {
 };`;
 
   const { isDarkMode } = useTheme();
-  const monacoRef = useRef<any>(null);
+  const monacoRef = useRef(null);
   const [sessionCode, changeSessionCode] = useState(currCode ?? "");
   // const [soloCode, changeSoloCode] = useState("");
   const [customInput, setCustomInput] = useState(""); // todo: custom input for the console...
   const [outputDetails, setOutputDetails] = useState(null);
   const [processing, setProcessing] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState(initialLanguage ?? languageOptions[0].label);
+  const [selectedLanguage, setSelectedLanguage] = useState(initialLanguage ?? languageOptions[0]);
 
   const enterPress = useKeyPress("Enter");
   const ctrlPress = useKeyPress("Control");
@@ -86,7 +86,7 @@ class Solution {
   const handleCompile = () => {
     setProcessing(true);
     const language = languageOptions.find(
-      (lang) => lang.value === selectedLanguage
+      (lang) => lang.value === selectedLanguage.value
     );
     const formData = {
       language_id: language?.id,
@@ -209,7 +209,7 @@ class Solution {
           hasSession={hasSession!}
         />
         <Split
-          className="flex-col split h-[calc(100vh-120px)]"
+          className="flex-col split h-[calc(100vh-120px)] w-full"
           direction="vertical"
           sizes={[60, 40]}
         >
@@ -220,7 +220,7 @@ class Solution {
               defaultValue={starterCode}
               value={sessionCode}
               theme={isDarkMode ? "vs-dark" : "light"}
-              defaultLanguage="javascript"
+              language={selectedLanguage.value.toLowerCase()}
               onMount={handleEditorDidMount}
             />
           </div>

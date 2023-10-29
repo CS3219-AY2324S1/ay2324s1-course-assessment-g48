@@ -1,7 +1,6 @@
 import { getUserById } from "@/database/user/userService";
 import { matchingSocket } from "@/utils/socket/socket";
 import React, { FormEventHandler, useEffect, useState } from "react";
-import { Language } from "@/utils/enums/Language";
 import { Complexity } from "@/utils/enums/Complexity";
 import { MatchedState } from "@/utils/enums/MatchingState";
 import Countdown from "@/components/Countdown";
@@ -12,6 +11,7 @@ import { useRouter } from "next/router";
 import { useError } from "@/hook/ErrorContext";
 import { Role } from "@/utils/enums/Role";
 import LoadingModal from "@/components/LoadingModal";
+import { languageOptions } from "@/utils/constants/LanguageOptions";
 type matchingProps = {};
 
 const MatchingPage: React.FC<matchingProps> = () => {
@@ -19,7 +19,7 @@ const MatchingPage: React.FC<matchingProps> = () => {
   const [isMatching, setIsMatching] = useState<number>(
     isRunning ? MatchedState.MATCHING : MatchedState.NOT_MATCHING
   );
-  const [difficulty, setDifficulty] = useState<string>(Complexity.Easy);
+  const [difficulty, setDifficulty] = useState<Complexity>(Complexity.Easy);
   const { sessionUser } = useSessionUser();
   const [userRole, setUserRole] = useState(sessionUser.role);
   const [disableBtnCancel, setDisableBtnCancel] = useState(true);
@@ -140,8 +140,8 @@ const MatchingPage: React.FC<matchingProps> = () => {
                 name="language"
                 className="block w-full rounded-md border-0 px-3.5 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               >
-                {Object.values(Language).map((languageOption) => (
-                  <option key={languageOption}>{languageOption}</option>
+                {languageOptions.map((languageOption, index) => (
+                  <option key={index}>{languageOption.label}</option>
                 ))}
               </select>
             </div>

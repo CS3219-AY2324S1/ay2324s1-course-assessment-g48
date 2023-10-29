@@ -5,7 +5,7 @@ import { Question } from "@/database/question/entities/question.entity";
 import CodeEditor from "./codeEditor/CodeEditor";
 import ChatWidget from "@/components/chat/ChatWidget";
 import SessionCodeEditor from "./codeEditor/SessionCodeEditor";
-import { Language } from "@/utils/enums/Language";
+import { Language } from "@/utils/class/Language";
 
 type QuestionWorkspaceProps = {
   question: Question;
