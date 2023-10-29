@@ -26,7 +26,6 @@ function useQuestionById(qid: string, userRole?: Role) {
     }
     fetchData();
   }, [qid, userRole]);
-  console.log("useQuestionByID question", question);
   return { question, isLoading, error };
 }
 

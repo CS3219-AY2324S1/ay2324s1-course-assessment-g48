@@ -43,7 +43,9 @@ const OutputWindow: React.FC<OutputWindowProps> = ({ outputDetails }) => {
       <p className="text-sm font-medium mt-4 dark:text-white">OutputWindow:</p>
       <div className="w-full h-56 rounded-lg border px-3 py-[10px] bg-slate-100 border-transparent text-white font-normal text-sm mt-2 transition-all overflow-y-auto dark:bg-neutral-700">
         {outputDetails ? <>{getOutput()}</> : null}
-        <pre>this is a test</pre>
+        <pre>
+          this is a placeholder. Output will be generated above this text.
+        </pre>
       </div>
     </>
   );

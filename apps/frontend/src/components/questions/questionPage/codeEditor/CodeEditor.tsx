@@ -47,8 +47,7 @@ class Solution {
 
   const { isDarkMode } = useTheme();
   const monacoRef = useRef<any>(null);
-  const [sessionCode, changeSessionCode] = useState(currCode ?? "");
-  // const [soloCode, changeSoloCode] = useState("");
+  const [code, changeCode] = useState(currCode ?? "");
   const [customInput, setCustomInput] = useState(""); // todo: custom input for the console...
   const [outputDetails, setOutputDetails] = useState(null);
   const [processing, setProcessing] = useState(false);
@@ -61,49 +60,33 @@ class Solution {
 
   if (!onChangeCode) {
     onChangeCode = (value: any, event: any) => {
-      changeSessionCode(value);
+      changeCode(value);
     };
+    // console.log("Using solo code editor. Current code:", code);
   }
-
-  const onSoloCodeChange = (
-    action: string,
-    data: React.SetStateAction<string>
-  ) => {
-    switch (action) {
-      case "code": {
-        changeSessionCode(data);
-        break;
-      }
-      default: {
-        console.warn("case not handled!", action, data);
-      }
-    }
-  };
 
   const handleCompile = () => {
     setProcessing(true);
     const language = languageOptions.find(
-      (lang) => lang.value === selectedLanguage
+      (lang) => lang.label === selectedLanguage
     );
     const formData = {
       language_id: language?.id,
       // encode source code in base64
-      source_code: btoa(sessionCode),
+      source_code: btoa(code),
       stdin: btoa(customInput),
     };
     const options = {
       method: "POST",
-      url: process.env.REACT_APP_RAPID_API_URL,
+      url: "https://judge0-ce.p.rapidapi.com/submissions", // process.env.REACT_APP_RAPID_API_URL,
       params: { base64_encoded: "true", fields: "*" },
       headers: {
         "content-type": "application/json",
-        "Content-Type": "application/json",
-        "X-RapidAPI-Host": process.env.REACT_APP_RAPID_API_HOST,
-        "X-RapidAPI-Key": process.env.REACT_APP_RAPID_API_KEY,
+        "X-RapidAPI-Host": "judge0-ce.p.rapidapi.com", // process.env.REACT_APP_RAPID_API_HOST,
+        "X-RapidAPI-Key": "c4ba28b1c9mshc8447e97471c1e8p1a210cjsne208ca879c2a", // process.env.REACT_APP_RAPID_API_KEY,
       },
       data: formData,
     };
-
     axios
       .request(options)
       .then(function (response) {
@@ -112,7 +95,7 @@ class Solution {
         checkStatus(token);
       })
       .catch((err) => {
-        let error = err.response ? err.response.data : err;
+        const error = err.response ? err.response.data : err.message;
         setProcessing(false);
         console.log(error);
       });
@@ -121,16 +104,16 @@ class Solution {
   const checkStatus = async (token: string) => {
     const options = {
       method: "GET",
-      url: process.env.REACT_APP_RAPID_API_URL + "/" + token,
+      url: "https://judge0-ce.p.rapidapi.com/submissions" + "/" + token, // process.env.REACT_APP_RAPID_API_URL + "/" + token,
       params: { base64_encoded: "true", fields: "*" },
       headers: {
-        "X-RapidAPI-Host": process.env.REACT_APP_RAPID_API_HOST,
-        "X-RapidAPI-Key": process.env.REACT_APP_RAPID_API_KEY,
+        "X-RapidAPI-Host": "judge0-ce.p.rapidapi.com", // process.env.REACT_APP_RAPID_API_HOST,
+        "X-RapidAPI-Key": "c4ba28b1c9mshc8447e97471c1e8p1a210cjsne208ca879c2a", // process.env.REACT_APP_RAPID_API_KEY,
       },
     };
     try {
-      let response = await axios.request(options);
-      let statusId = response.data.status?.id;
+      const response = await axios.request(options);
+      const statusId = response.data.status?.id;
 
       // Processed - we have a result
       if (statusId === Status.InQueue || statusId === Status.Processing) {
@@ -156,7 +139,7 @@ class Solution {
   const showSuccessToast = (msg: string) => {
     toast.success(msg || `Compiled Successfully!`, {
       position: "top-right",
-      autoClose: 1000,
+      autoClose: 3000,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,
@@ -167,7 +150,7 @@ class Solution {
   const showErrorToast = (msg: string) => {
     toast.error(msg || `Something went wrong! Please try again.`, {
       position: "top-right",
-      autoClose: 1000,
+      autoClose: 3000,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,
@@ -184,8 +167,7 @@ class Solution {
 
   // session live editor
   useEffect(() => {
-    changeSessionCode(currCode ?? "");
-    console.log("code rn is:", currCode);
+    changeCode(currCode ?? code);
   }, [currCode]);
 
   // ctrl + enter => run
@@ -214,7 +196,7 @@ class Solution {
               height="100%"
               onChange={onChangeCode}
               defaultValue={starterCode}
-              value={sessionCode}
+              value={code}
               theme={isDarkMode ? "vs-dark" : "light"}
               defaultLanguage="javascript"
               onMount={handleEditorDidMount}
@@ -236,7 +218,7 @@ class Solution {
           pauseOnHover
         />
         <EditorFooter
-          userCode={sessionCode}
+          userCode={code}
           processing={processing}
           handleCompile={handleCompile}
         />
