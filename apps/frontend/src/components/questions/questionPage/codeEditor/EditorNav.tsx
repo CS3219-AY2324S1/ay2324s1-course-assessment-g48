@@ -35,7 +35,7 @@ const EditorNav: React.FC<EditorNavProps> = ({
           <div className="flex items-center px-1">
             <div className="text-xs text-label-2 dark:text-white group">
               {selectedLanguage.label}
-              {hasSession && <div className="languageTooltip">Language cannot be changed while session is active.</div>}
+              {hasSession && <div className="languageTooltip">Language cannot be changed after matching.</div>}
             </div>
           </div>
           {isDropdownOpen && !hasSession && (

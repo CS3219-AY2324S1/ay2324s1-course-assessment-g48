@@ -14,7 +14,6 @@ import useSessionUser from "@/hook/useSessionUser";
 import OAuthButton from "./OAuthButton";
 import { Role } from "@/utils/enums/Role";
 import Image from "next/image";
-import Alert from "../Alert";
 import { OAuthType } from "@/utils/enums/OAuthType";
 import AuthInfoModal from "../AuthInfoModal";
 import { AuthInfo } from "@/utils/enums/AuthInfo";

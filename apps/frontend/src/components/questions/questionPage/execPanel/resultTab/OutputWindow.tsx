@@ -1,3 +1,5 @@
+import { Status } from "@/utils/enums/Status";
+
 type OutputWindowProps = {
   outputDetails: any;
 };
@@ -15,11 +17,12 @@ const OutputWindow: React.FC<OutputWindowProps> = ({ outputDetails }) => {
       );
     } else if (statusId === Status.Accepted) {
       // accepted (id: 3)
+      console.log("outputdetails accepted:", outputDetails);
       return (
         <pre className="px-2 py-1 font-normal text-xs text-green-500">
           {atob(outputDetails.stdout) !== null
             ? `${atob(outputDetails.stdout)}`
-            : null}
+            : "accepted"}
         </pre>
       );
     } else if (statusId === Status.WrongAnswer) {
@@ -43,7 +46,9 @@ const OutputWindow: React.FC<OutputWindowProps> = ({ outputDetails }) => {
       <p className="text-sm font-medium mt-4 dark:text-white">OutputWindow:</p>
       <div className="w-full h-56 rounded-lg border px-3 py-[10px] bg-slate-100 border-transparent text-white font-normal text-sm mt-2 transition-all overflow-y-auto dark:bg-neutral-700">
         {outputDetails ? <>{getOutput()}</> : null}
-        <pre>this is a test</pre>
+        <pre>
+          this is a placeholder. Output will be generated above this text.
+        </pre>
       </div>
     </>
   );

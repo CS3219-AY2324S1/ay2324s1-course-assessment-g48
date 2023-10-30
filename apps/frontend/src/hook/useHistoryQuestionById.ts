@@ -1,22 +1,22 @@
-import { Question } from "@/database/question/entities/question.entity";
-import { getQuestionById } from "@/database/question/questionService";
+import { CompletedQuestion } from "@/database/history/entities/history.entity";
+import { getHistoryById } from "@/database/history/historyService";
 import { Role } from "@/utils/enums/Role";
 import { useEffect, useState } from "react";
 
-function useQuestionById(qid: string, userRole?: Role) {
+function useHistoryQuestionById(hid: string, qid: string, userRole?: Role) {
   const [isLoading, setIsLoading] = useState(false);
-  const [question, setQuestion] = useState<Question | null>(null);
+  const [historyQuestion, setHistoryQuestion] = useState<CompletedQuestion | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchData() {
-      if (qid) {
+      if (hid) {
         setIsLoading(true);
         setError(null);
         if (userRole === Role.Unknown) return;
         try {
-          const data = await getQuestionById(qid, userRole);
-          setQuestion(data);
+          const data = await getHistoryById(hid, qid, userRole);
+          setHistoryQuestion(data);
           setIsLoading(false);
         } catch (error) {
           setError(`Error fetching question:, ${error}`);
@@ -25,8 +25,9 @@ function useQuestionById(qid: string, userRole?: Role) {
       }
     }
     fetchData();
-  }, [qid, userRole]);
-  return { question, isLoading, error };
+  }, [hid, userRole]);
+
+  return { historyQuestion, isLoading, error };
 }
 
-export default useQuestionById;
+export default useHistoryQuestionById;

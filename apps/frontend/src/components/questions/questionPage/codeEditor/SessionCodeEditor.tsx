@@ -7,6 +7,7 @@ import CodeEditor from "./CodeEditor";
 import { useRouter } from "next/router";
 import { Question } from "@/database/question/entities/question.entity";
 import { Language } from "@/utils/class/Language";
+import monaco from "monaco-editor";
 
 type SessionCodeEditorProps = {
   question: Question;
@@ -18,7 +19,7 @@ const SessionCodeEditor: React.FC<SessionCodeEditorProps> = ({ question, session
   // TODO: Get sessionID here somehow? Not sure if this works
   const sessionID = sessionId as string;
   const router = useRouter();
-  console.log("question from sesscodeeditor", question);
+
   const [docUrl, setDocUrl] = useState<AutomergeUrl>();
 
   useEffect(() => {
@@ -46,9 +47,15 @@ const SessionCodeEditor: React.FC<SessionCodeEditorProps> = ({ question, session
     console.log("doc", doc);
   }, [doc]);
 
-  const increment = (value: any, event: any) => {
-    console.log("reflecting changes in code editor through changeDoc...");
-    changeDoc((d) => (d.text = value));
+  const increment = (
+    value?: string,
+    event?: monaco.editor.IModelContentChangedEvent
+  ) => {
+    console.log(
+      "reflecting changes in code editor through changeDoc...",
+      event
+    );
+    changeDoc((d) => (d.text = value ?? ""));
   };
 
   return (

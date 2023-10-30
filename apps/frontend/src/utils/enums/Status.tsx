@@ -1,4 +1,4 @@
-enum Status {
+export enum Status {
   InQueue = 1,
   Processing = 2,
   Accepted = 3,

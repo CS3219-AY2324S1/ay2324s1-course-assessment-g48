@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import EditorNav from "./EditorNav";
 import ExecPanel from "../execPanel/ExecPanel";
 import Split from "react-split";
@@ -11,14 +11,15 @@ import { languageOptions } from "@/utils/constants/LanguageOptions";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import useKeyPress from "@/hook/useKeyPress";
+import monaco from "monaco-editor";
 import { Language } from "@/utils/class/Language";
-
-/*
-WIP
-*/
+import { Status } from "@/utils/enums/Status";
 
 type CodeEditorProps = {
-  onChangeCode?: (value: any, event: any) => void;
+  onChangeCode?: (
+    value?: string,
+    event?: monaco.editor.IModelContentChangedEvent
+  ) => void;
   currCode?: string;
   question: Question;
   initialLanguage?: Language;
@@ -51,11 +52,9 @@ class Solution {
 };`;
 
   const { isDarkMode } = useTheme();
-  const monacoRef = useRef(null);
-  const [sessionCode, changeSessionCode] = useState(currCode ?? "");
-  // const [soloCode, changeSoloCode] = useState("");
-  const [customInput, setCustomInput] = useState(""); // todo: custom input for the console...
-  const [outputDetails, setOutputDetails] = useState(null);
+  const [code, changeCode] = useState(currCode ?? "");
+  const [customInput, setCustomInput] = useState(""); // todo: for console
+  const [outputDetails, setOutputDetails] = useState("");
   const [processing, setProcessing] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState(initialLanguage ?? languageOptions[0]);
 
@@ -63,25 +62,11 @@ class Solution {
   const ctrlPress = useKeyPress("Control");
 
   if (!onChangeCode) {
-    onChangeCode = (value: any, event: any) => {
-      changeSessionCode(value);
+    onChangeCode = (value?: string) => {
+      changeCode(value ?? "");
     };
+    // console.log("Using solo code editor. Current code:", code);
   }
-
-  const onSoloCodeChange = (
-    action: string,
-    data: React.SetStateAction<string>
-  ) => {
-    switch (action) {
-      case "code": {
-        changeSessionCode(data);
-        break;
-      }
-      default: {
-        console.warn("case not handled!", action, data);
-      }
-    }
-  };
 
   const handleCompile = () => {
     setProcessing(true);
@@ -91,18 +76,21 @@ class Solution {
     const formData = {
       language_id: language?.id,
       // encode source code in base64
-      source_code: btoa(sessionCode),
+      source_code: btoa(code),
       stdin: btoa(customInput),
     };
     const options = {
       method: "POST",
-      url: process.env.REACT_APP_RAPID_API_URL,
+      url: String(process.env.NEXT_PUBLIC_RAPID_API_URL),
       params: { base64_encoded: "true", fields: "*" },
       headers: {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers":
+          "Origin, X-Requested-With, Content-Type, Accept",
+        "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE",
         "content-type": "application/json",
-        "Content-Type": "application/json",
-        "X-RapidAPI-Host": process.env.REACT_APP_RAPID_API_HOST,
-        "X-RapidAPI-Key": process.env.REACT_APP_RAPID_API_KEY,
+        "X-RapidAPI-Host": String(process.env.NEXT_PUBLIC_RAPID_API_HOST),
+        "X-RapidAPI-Key": String(process.env.NEXT_PUBLIC_RAPID_API_KEY),
       },
       data: formData,
     };
@@ -115,7 +103,7 @@ class Solution {
         checkStatus(token);
       })
       .catch((err) => {
-        const error = err.response ? err.response.data : err;
+        const error = err.response ? err.response.data : err.message;
         setProcessing(false);
         console.log(error);
       });
@@ -124,16 +112,21 @@ class Solution {
   const checkStatus = async (token: string) => {
     const options = {
       method: "GET",
-      url: process.env.REACT_APP_RAPID_API_URL + "/" + token,
+      url: process.env.NEXT_PUBLIC_RAPID_API_URL + "/" + token,
       params: { base64_encoded: "true", fields: "*" },
       headers: {
-        "X-RapidAPI-Host": process.env.REACT_APP_RAPID_API_HOST,
-        "X-RapidAPI-Key": process.env.REACT_APP_RAPID_API_KEY,
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers":
+          "Origin, X-Requested-With, Content-Type, Accept",
+        "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE",
+        "X-RapidAPI-Host": String(process.env.NEXT_PUBLIC_RAPID_API_HOST),
+        "X-RapidAPI-Key": String(process.env.NEXT_PUBLIC_RAPID_API_KEY),
       },
     };
     try {
       const response = await axios.request(options);
-      const statusId = response.data.status?.id;
+      console.log("response", response.data);
+      const statusId = response.data.status_id;
 
       // Processed - we have a result
       if (statusId === Status.InQueue || statusId === Status.Processing) {
@@ -159,7 +152,7 @@ class Solution {
   const showSuccessToast = (msg: string) => {
     toast.success(msg || `Compiled Successfully!`, {
       position: "top-right",
-      autoClose: 1000,
+      autoClose: 3000,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,
@@ -170,7 +163,7 @@ class Solution {
   const showErrorToast = (msg: string) => {
     toast.error(msg || `Something went wrong! Please try again.`, {
       position: "top-right",
-      autoClose: 1000,
+      autoClose: 3000,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,
@@ -179,17 +172,10 @@ class Solution {
     });
   };
 
-  function handleEditorDidMount(editor: any, monaco: any) {
-    // here is another way to get monaco instance
-    // you can also store it in `useRef` for further usage
-    monacoRef.current = editor;
-  }
-
   // session live editor
   useEffect(() => {
-    changeSessionCode(currCode ?? "");
-    console.log("code rn is:", currCode);
-  }, [currCode]);
+    changeCode(currCode ?? code);
+  }, [currCode, code]);
 
   // ctrl + enter => run
   useEffect(() => {
@@ -218,10 +204,9 @@ class Solution {
               height="100%"
               onChange={onChangeCode}
               defaultValue={starterCode}
-              value={sessionCode}
+              value={code}
               theme={isDarkMode ? "vs-dark" : "light"}
               language={selectedLanguage.value.toLowerCase()}
-              onMount={handleEditorDidMount}
             />
           </div>
           {/* Exec Panel can still be abstracted to QuestionWorkspace -> future enhancement */}
@@ -240,9 +225,10 @@ class Solution {
           pauseOnHover
         />
         <EditorFooter
-          userCode={sessionCode}
+          userCode={code}
           processing={processing}
           handleCompile={handleCompile}
+          question={question}
         />
       </div>
     </>

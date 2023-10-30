@@ -1,10 +1,12 @@
 import { ChevronDoubleUpIcon } from "@heroicons/react/24/outline";
 import Run from "./Run";
 import Submit from "./Submit";
+import { Question } from "@/database/question/entities/question.entity";
 
 type EditorFooterProps = {
   userCode: string;
   processing: boolean;
+  question: Question;
   handleCompile: () => void;
 };
 
