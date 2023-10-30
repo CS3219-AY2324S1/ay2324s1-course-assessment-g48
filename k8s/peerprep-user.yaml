@@ -28,7 +28,7 @@ spec:
     spec:
       containers:
       - name: peerprep-user
-        image: deployment87/dply87:peerprep-user-v1.0.5
+        image: deployment87/dply87:peerprep-user-v1.1.0
         env:
         - name: PSQL_DATABASE_URL
           value: postgresql://postgres:qShhYgujF3MbMP@peerprep-postgres:5432/peerprep

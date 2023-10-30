@@ -36,4 +36,17 @@ spec:
             name: peerprep-user
             port:
               number: 8001
-
+      - pathType: Prefix
+        path: /queue
+        backend:
+          service:
+            name: peerprep-queue
+            port:
+              number: 8002
+      - pathType: Prefix
+        path: /session
+        backend:
+          service:
+            name: peerprep-session
+            port:
+              number: 8251

@@ -60,7 +60,7 @@ export class DifficultyQueue {
       //   console.log(`First user uid: ${firstUserUid}, second user uid: ${uid}`)
       const firstUserSocket = this.socketMap.get(firstUserUid);
       const secondUserSocket = this.socketMap.get(uid);
-      const randomSessionId = await this.generateSession(firstUserUid, uid);
+      const randomSessionId = 123; //await this.generateSession(firstUserUid, uid); //!!!!!!!!!!!!!!!CHANGE!!!!!!!!!!!!!!!!!!!!
       if (!firstUserSocket || !secondUserSocket) {
         throw new Error(
           "There was no socket associated with the firstUserSocket"
@@ -104,7 +104,7 @@ export class DifficultyQueue {
 
   private async connectToAmqp() {
     console.log("Connecting to RabbitMQ", process.env.RABBITMQ_URL);
-    const connection = await amqp.connect(process.env.RABBITMQ_URL || "amqp://leetpal.com:5672");
+    const connection = await amqp.connect(process.env.RABBITMQ_URL || "amqp://peerprep-rabbitmq");
     const channel = await connection.createChannel();
 
     await channel.assertQueue(this.nameSpace, { durable: true });

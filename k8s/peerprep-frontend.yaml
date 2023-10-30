@@ -32,11 +32,10 @@ spec:
     spec:
       containers:
       - name: peerprep-frontend
-        image: deployment87/dply87:peerprep-frontend-v1.0.9
+        image: deployment87/dply87:peerprep-frontend-v1.1.14
         resources:
           limits:
             memory: "256Mi"
             cpu: "500m"
         ports:
         - containerPort: 3000
-      # dnsPolicy: ClusterFirst

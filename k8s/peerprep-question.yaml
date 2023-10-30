@@ -28,7 +28,7 @@ spec:
     spec:
       containers:
       - name: peerprep-question
-        image: deployment87/dply87:peerprep-question-v1.0.2
+        image: deployment87/dply87:peerprep-question-v1.1.0
         resources:
           limits:
             memory: "256Mi"
@@ -43,5 +43,4 @@ spec:
           httpGet:
             path: /ping
             port: 8000
-      # dnsPolicy: ClusterFirst
 

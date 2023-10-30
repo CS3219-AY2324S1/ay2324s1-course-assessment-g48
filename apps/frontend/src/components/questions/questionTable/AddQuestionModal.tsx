@@ -42,7 +42,6 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
   const [blank, setBlank] = useState(true);
   const [testcases, setTestCases] = useState<TestCase[]>([
     {
-      number: 1,
       input: "",
       output: "",
     },
@@ -51,7 +50,6 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
     setTestCases([
       ...testcases,
       {
-        number: -1,
         input: "",
         output: "",
       },
@@ -188,7 +186,6 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                   <article className="prose max-w-none">
                     <ReactMarkdown
                       remarkPlugins={[remarkMath]}
-                      rehypePlugins={[rehypeKatex]}
                     >
                       {newQuestion.description}
                     </ReactMarkdown>
@@ -350,7 +347,6 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                               if (testcases.length === 1) {
                                 setTestCases([
                                   {
-                                    number: 1,
                                     input: "",
                                     output: "",
                                   },

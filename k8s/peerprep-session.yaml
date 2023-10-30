@@ -31,7 +31,7 @@ spec:
     spec:
       containers:
       - name: peerprep-session
-        image: deployment87/dply87:peerprep-session-v1.0.0
+        image: deployment87/dply87:peerprep-session-v1.1.1
         resources:
           limits:
             memory: "256Mi"
@@ -39,4 +39,3 @@ spec:
         ports:
         - containerPort: 8250
         - containerPort: 8251
-      dnsPolicy: ClusterFirst

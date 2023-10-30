@@ -91,14 +91,14 @@ docker cp peerprep-frontend:/app/build .
 docker push deployment87/dply87:peerprep-user
 
 # Tagging 
-docker tag peerprep-frontend deployment87/dply87:peerprep-frontend
-docker tag peerprep-user deployment87/dply87:peerprep-user
-docker tag peerprep-question deployment87/dply87:peerprep-question
-docker tag peerprep-queue deployment87/dply87:peerprep-queue
-docker tag peerprep-session deployment87/dply87:peerprep-session
+docker tag peerprep-frontend deployment87/dply87:peerprep-frontend-v1.1.0
+docker tag peerprep-user deployment87/dply87:peerprep-user-v1.1.0
+docker tag peerprep-question deployment87/dply87:peerprep-question-v1.1.0
+docker tag peerprep-queue deployment87/dply87:peerprep-queue-v1.1.0
+docker tag peerprep-session deployment87/dply87:peerprep-session-v1.1.0
 
 # Compose for Dev
-docker compose -f Docker-compose.dev.yml up -ddoc
+docker compose -f Docker-compose.dev.yml up -d
 ```
 
 ### Cool Tricks

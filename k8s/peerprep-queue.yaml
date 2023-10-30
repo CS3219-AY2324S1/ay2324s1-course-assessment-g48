@@ -29,11 +29,18 @@ spec:
     spec:
       containers:
       - name: peerprep-question
-        image: deployment87/dply87:peerprep-queue-v1.0.0
+        image: deployment87/dply87:peerprep-queue-v1.1.12
         resources:
           limits:
             memory: "256Mi"
             cpu: "500m"
         ports:
         - containerPort: 8002
-      # dnsPolicy: ClusterFirst
+        livenessProbe:
+          httpGet:
+            path: /ping
+            port: 8002
+        readinessProbe:
+          httpGet:
+            path: /ping
+            port: 8002
