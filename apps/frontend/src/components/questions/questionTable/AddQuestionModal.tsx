@@ -1,6 +1,4 @@
 import { useState } from "react";
-import { Complexity } from "../../../utils/enums/Complexity";
-import { Category } from "../../../utils/enums/Category";
 import useInput from "../../../hook/useInput";
 import {
   Question,
@@ -10,11 +8,11 @@ import {
 } from "../../../database/question/entities/question.entity";
 import Modal from "../../Modal";
 import { useError } from "@/hook/ErrorContext";
-import TestCases from "./modalParts/TestCases";
+import TestCasesInput from "./modalParts/TestCasesInput";
 import TitleInput from "./modalParts/TitleInput";
 import DescriptionInput from "./modalParts/DescriptionInput";
 import ComplexityInput from "./modalParts/ComplexityInput";
-
+import CategoriesInput from "./modalParts/CategoriesInput";
 
 type AddQuestionModalProps = {
   onSave: (newQuestion: Question) => Promise<void>;
@@ -32,10 +30,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
   const [blank, setBlank] = useState(true);
   const [testcases, setTestCases] = useState<TestCase[]>([initialTestCase]);
   const handleAddTestCase = () => {
-    setTestCases([
-      ...testcases,
-      initialTestCase
-    ]);
+    setTestCases([...testcases, initialTestCase]);
   };
   const handleInputChange = (index: number, inputValue: string) => {
     const updatedTestCases = [...testcases];
@@ -77,7 +72,6 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
       });
   };
 
-
   return (
     <>
       <Modal title="Add Question" setOpen={setOpen} open={open}>
@@ -95,7 +89,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
 
               <DescriptionInput
                 newQuestion={newQuestion}
-                setNewQuestion={setNewQuestion} 
+                setNewQuestion={setNewQuestion}
               />
             </div>
 
@@ -103,65 +97,13 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
               newQuestion={newQuestion}
               setNewQuestion={setNewQuestion}
             />
-            
-            {/* For Catergories */}
-            <div className="mt-10 space-y-10">
-              <fieldset>
-                <legend className="text-sm font-semibold leading-6 text-gray-900">
-                  Categories
-                </legend>
-                <p className="mt-1 text-sm leading-6 text-gray-600">
-                  Choose the categories of the question
-                </p>
-                <div className="mt-6 space-y-6 category-container">
-                  {Object.values(Category).map((category) => (
-                    <div className="relative flex gap-x-3" key={category}>
-                      <div className="flex h-6 items-center">
-                        <input
-                          id={`${category}`}
-                          name="catergory"
-                          type="checkbox"
-                          className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                          value={newQuestion.categories}
-                          onChange={(e) => {
-                            const { checked } = e.target;
-                            if (checked) {
-                              // If the checkbox is checked, add the category to the array
-                              setNewQuestion({
-                                ...newQuestion,
-                                categories: [
-                                  ...newQuestion.categories,
-                                  category,
-                                ],
-                              });
-                            } else {
-                              // If the checkbox is unchecked, remove the category from the array
-                              setNewQuestion({
-                                ...newQuestion,
-                                categories: newQuestion.categories.filter(
-                                  (item) => item !== category
-                                ),
-                              });
-                            }
-                            console.log(newQuestion.categories);
-                          }}
-                        />
-                      </div>
-                      <div className="text-sm leading-6">
-                        <label
-                          htmlFor={`${category}`}
-                          className="font-medium text-gray-900"
-                        >
-                          {category}
-                        </label>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </fieldset>
-            </div>
 
-            <TestCases
+            <CategoriesInput 
+              newQuestion={newQuestion}
+              setNewQuestion={setNewQuestion}
+            />
+
+            <TestCasesInput
               testcases={testcases}
               setTestCases={setTestCases}
               handleInputChange={handleInputChange}

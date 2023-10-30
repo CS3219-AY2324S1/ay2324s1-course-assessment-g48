@@ -1,10 +1,13 @@
-import { TestCase, initialTestCase } from "@/database/question/entities/question.entity";
+import {
+  TestCase,
+  initialTestCase,
+} from "@/database/question/entities/question.entity";
 import { classNames } from "@/utils/classnames/classnames";
 import { Tab } from "@headlessui/react";
 import { PlusSmallIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import React, { Fragment, useEffect } from "react";
 
-type TestCasesProps = {
+type TestCasesInputProps = {
   testcases: TestCase[];
   setTestCases: (testcases: TestCase[]) => void;
   handleAddTestCase: () => void;
@@ -14,7 +17,7 @@ type TestCasesProps = {
   setBlank: (blank: boolean) => void;
 };
 
-const TestCases: React.FC<TestCasesProps> = ({
+const TestCasesInput: React.FC<TestCasesInputProps> = ({
   testcases,
   setTestCases,
   handleAddTestCase,
@@ -23,9 +26,11 @@ const TestCases: React.FC<TestCasesProps> = ({
   blank,
   setBlank,
 }) => {
-  
   useEffect(() => {
-    setBlank(testcases.filter((item) => item.input === "" || item.output === "").length > 0)
+    setBlank(
+      testcases.filter((item) => item.input === "" || item.output === "")
+        .length > 0
+    );
   }, [testcases, setBlank]);
 
   return (
@@ -140,4 +145,4 @@ const TestCases: React.FC<TestCasesProps> = ({
     </div>
   );
 };
-export default TestCases;
+export default TestCasesInput;
