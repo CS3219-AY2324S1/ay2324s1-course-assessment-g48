@@ -11,9 +11,9 @@ const CodeViewer: React.FC<CodeViewerProps> = ({ answer }) => {
     const { isDarkMode } = useTheme();
     
     return (
-      <div className=" overflow-y-hidden dark:bg-neutral-800">
+      <div className="flex justify-center items-center overflow-y-hidden dark:bg-neutral-800 border border-gray-500 p-5">
         <Editor
-          height="100%"
+          height="50vh"
           value={answer}
           theme={isDarkMode ? "vs-dark" : "light"}
           defaultLanguage="javascript"

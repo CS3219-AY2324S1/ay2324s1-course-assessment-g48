@@ -16,6 +16,9 @@ const QuestionPage: React.FC<QuestionPageProps> = () => {
   useEffect(() => {
     setUserRole(sessionUser.role);
   }, [sessionUser]);
+  if (!question) {
+    router.push("/404");
+  }
 
   
   return <div className='flex h-[calc(100vh-60px)]'>
