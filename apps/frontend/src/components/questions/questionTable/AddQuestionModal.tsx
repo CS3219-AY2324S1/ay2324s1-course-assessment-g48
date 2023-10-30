@@ -7,7 +7,6 @@ import { Question, TestCase } from "../../../database/question/entities/question
 import Modal from "../../Modal";
 import { Tab } from "@headlessui/react";
 import { PlusSmallIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import rehypeKatex from "rehype-katex";
 import remarkMath from "remark-math";
 import { useError } from "@/hook/ErrorContext";
 
@@ -42,7 +41,6 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
   const [blank, setBlank] = useState(true);
   const [testcases, setTestCases] = useState<TestCase[]>([
     {
-      number: 1,
       input: "",
       output: "",
     },
@@ -51,7 +49,6 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
     setTestCases([
       ...testcases,
       {
-        number: -1,
         input: "",
         output: "",
       },
@@ -188,7 +185,6 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                   <article className="prose max-w-none">
                     <ReactMarkdown
                       remarkPlugins={[remarkMath]}
-                      rehypePlugins={[rehypeKatex]}
                     >
                       {newQuestion.description}
                     </ReactMarkdown>
@@ -350,7 +346,6 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                               if (testcases.length === 1) {
                                 setTestCases([
                                   {
-                                    number: 1,
                                     input: "",
                                     output: "",
                                   },
@@ -369,7 +364,6 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                           <input
                             className="ml-2 block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 focus:ring-0 sm:text-sm sm:leading-6"
                             type="text"
-                            name="input"
                             value={testcase.input}
                             onChange={(e) => handleInputChange(index, e.target.value)}
                           />
@@ -390,7 +384,6 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                           <input
                             className="ml-2 block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 focus:ring-0 sm:text-sm sm:leading-6"
                             type="text"
-                            name="output"
                             value={testcase.output}
                             onChange={(e) => handleOutputChange(index, e.target.value)}
                           />

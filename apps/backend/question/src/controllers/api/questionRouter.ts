@@ -15,7 +15,7 @@ questionRouter.get("/", async (req: Request, res: Response) => {
   }
 
   Question.find({}).then((question) => {
-    res.json(question);
+    res.status(200).json(question);
   });
 });
 
@@ -49,7 +49,7 @@ questionRouter.get(
     Question.findById(req.params.id)
       .then((question) => {
         if (question) {
-          res.json(question);
+          res.status(200).json(question);
         } else {
           res.status(404).json({
             error: `A question with id ${req.params.id} does not exist`,
@@ -147,7 +147,7 @@ questionRouter.put(
             .json({ error: `A question with id ${id} does not exist.` });
           return;
         }
-        res.json(updatedQuestion);
+        res.status(200).json(updatedQuestion);
       })
       .catch((err) => next(err));
   }

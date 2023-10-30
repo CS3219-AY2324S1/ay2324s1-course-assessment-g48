@@ -8,7 +8,7 @@ import Alert from "./Alert";
 
 const Layout = ({ children }: PropsWithChildren) => {
   const { data: session, status } = useSession();
-  const { error, setError, clearError } = useError();
+  const { error, clearError } = useError();
   const [openAlert, setOpenAlert] = useState(false);
   const [openSlideOver, setOpenSlideOver] = useState(false);
 

@@ -5,7 +5,7 @@ import { Role } from "@/utils/enums/Role";
 
 function useSessionUser() {
   const { data: session } = useSession();
-  const [sessionUser, setSessionUser] = useState<User>({
+  const [sessionUser, setSessionUser] = useState<User>(session?.user ?? {
     id: -1,
     username: "",
     email: "",

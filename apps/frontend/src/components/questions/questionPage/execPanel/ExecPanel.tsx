@@ -6,7 +6,7 @@ import { Question } from "@/database/question/entities/question.entity";
 
 type ExecPanelProps = {
   question: Question;
-  outputDetails: any;
+  outputDetails: string;
 };
 
 const ExecPanel: React.FC<ExecPanelProps> = ({ question, outputDetails }) => {

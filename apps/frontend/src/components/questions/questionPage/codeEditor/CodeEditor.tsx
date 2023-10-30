@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import EditorNav from "./EditorNav";
 import ExecPanel from "../execPanel/ExecPanel";
 import Split from "react-split";
@@ -11,13 +11,14 @@ import { languageOptions } from "@/utils/constants/LanguageOptions";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import useKeyPress from "@/hook/useKeyPress";
-
-/*
-WIP
-*/
+import monaco from "monaco-editor";
+import { Status } from "@/utils/enums/Status";
 
 type CodeEditorProps = {
-  onChangeCode?: (value: any, event: any) => void;
+  onChangeCode?: (
+    value?: string,
+    event?: monaco.editor.IModelContentChangedEvent
+  ) => void;
   currCode?: string;
   question: Question;
 };
@@ -46,10 +47,9 @@ class Solution {
 };`;
 
   const { isDarkMode } = useTheme();
-  const monacoRef = useRef<any>(null);
   const [code, changeCode] = useState(currCode ?? "");
-  const [customInput, setCustomInput] = useState(""); // todo: custom input for the console...
-  const [outputDetails, setOutputDetails] = useState(null);
+  const [customInput, setCustomInput] = useState(""); // todo: for console
+  const [outputDetails, setOutputDetails] = useState("");
   const [processing, setProcessing] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState(
     languageOptions[0].label
@@ -59,8 +59,8 @@ class Solution {
   const ctrlPress = useKeyPress("Control");
 
   if (!onChangeCode) {
-    onChangeCode = (value: any, event: any) => {
-      changeCode(value);
+    onChangeCode = (value?: string) => {
+      changeCode(value ?? "");
     };
     // console.log("Using solo code editor. Current code:", code);
   }
@@ -78,15 +78,20 @@ class Solution {
     };
     const options = {
       method: "POST",
-      url: "https://judge0-ce.p.rapidapi.com/submissions", // process.env.REACT_APP_RAPID_API_URL,
+      url: String(process.env.NEXT_PUBLIC_API_URL),
       params: { base64_encoded: "true", fields: "*" },
       headers: {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers":
+          "Origin, X-Requested-With, Content-Type, Accept",
+        "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE",
         "content-type": "application/json",
-        "X-RapidAPI-Host": "judge0-ce.p.rapidapi.com", // process.env.REACT_APP_RAPID_API_HOST,
-        "X-RapidAPI-Key": "c4ba28b1c9mshc8447e97471c1e8p1a210cjsne208ca879c2a", // process.env.REACT_APP_RAPID_API_KEY,
+        "X-RapidAPI-Host": String(process.env.NEXT_PUBLIC_API_HOST),
+        "X-RapidAPI-Key": String(process.env.NEXT_PUBLIC_API_KEY),
       },
       data: formData,
     };
+
     axios
       .request(options)
       .then(function (response) {
@@ -104,16 +109,21 @@ class Solution {
   const checkStatus = async (token: string) => {
     const options = {
       method: "GET",
-      url: "https://judge0-ce.p.rapidapi.com/submissions" + "/" + token, // process.env.REACT_APP_RAPID_API_URL + "/" + token,
+      url: process.env.NEXT_PUBLIC_API_URL + "/" + token,
       params: { base64_encoded: "true", fields: "*" },
       headers: {
-        "X-RapidAPI-Host": "judge0-ce.p.rapidapi.com", // process.env.REACT_APP_RAPID_API_HOST,
-        "X-RapidAPI-Key": "c4ba28b1c9mshc8447e97471c1e8p1a210cjsne208ca879c2a", // process.env.REACT_APP_RAPID_API_KEY,
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers":
+          "Origin, X-Requested-With, Content-Type, Accept",
+        "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE",
+        "X-RapidAPI-Host": String(process.env.NEXT_PUBLIC_API_HOST),
+        "X-RapidAPI-Key": String(process.env.NEXT_PUBLIC_API_KEY),
       },
     };
     try {
       const response = await axios.request(options);
-      const statusId = response.data.status?.id;
+      console.log("response", response.data);
+      const statusId = response.data.status_id;
 
       // Processed - we have a result
       if (statusId === Status.InQueue || statusId === Status.Processing) {
@@ -159,16 +169,10 @@ class Solution {
     });
   };
 
-  function handleEditorDidMount(editor: any, monaco: any) {
-    // here is another way to get monaco instance
-    // you can also store it in `useRef` for further usage
-    monacoRef.current = editor;
-  }
-
   // session live editor
   useEffect(() => {
     changeCode(currCode ?? code);
-  }, [currCode]);
+  }, [currCode, code]);
 
   // ctrl + enter => run
   useEffect(() => {
@@ -199,7 +203,6 @@ class Solution {
               value={code}
               theme={isDarkMode ? "vs-dark" : "light"}
               defaultLanguage="javascript"
-              onMount={handleEditorDidMount}
             />
           </div>
           {/* Exec Panel can still be abstracted to QuestionWorkspace -> future enhancement */}
@@ -221,6 +224,7 @@ class Solution {
           userCode={code}
           processing={processing}
           handleCompile={handleCompile}
+          question={question}
         />
       </div>
     </>

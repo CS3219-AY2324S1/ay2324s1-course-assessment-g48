@@ -1,3 +1,5 @@
+import { Status } from "@/utils/enums/Status";
+
 type OutputWindowProps = {
   outputDetails: any;
 };
