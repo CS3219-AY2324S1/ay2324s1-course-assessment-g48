@@ -4,7 +4,7 @@ export const languageOptions: Language[] = [
   {
     id: 63,
     label: "JavaScript (Node.js 12.14.0)",
-    value: "JavaScript",
+    value: "javascript",
   },
   {
     id: 45,
@@ -24,7 +24,8 @@ export const languageOptions: Language[] = [
   {
     id: 50,
     label: "C (GCC 9.2.0)",
-    value: "c",
+    // monaco doesn't support c, so just use cpp instead
+    value: "cpp",
   },
   {
     id: 54,
@@ -161,7 +162,6 @@ export const languageOptions: Language[] = [
   {
     id: 71,
     label: "Python (3.8.1)",
-    // can this be changed to python3?
     value: "python",
   },
   {

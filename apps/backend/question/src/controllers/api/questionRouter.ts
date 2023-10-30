@@ -110,6 +110,7 @@ questionRouter.post(
       description: body.description,
       categories: body.categories,
       complexity: body.complexity,
+      examples: body.examples,
       constraints: body.constraints,
       followUp: body.followUp,
       starterCode: body.starterCode,
@@ -127,9 +128,9 @@ questionRouter.post(
 questionRouter.put(
   "/:id",
   async (req: Request, res: Response, next: NextFunction) => {
-    const { title, description, categories, complexity, testcases, constraints, followUp, starterCode, dateCreated  } = req.body;
+    const { title, description, categories, complexity, examples, constraints, followUp, starterCode, testcases, dateCreated  } = req.body;
     const id = req.params.id;
-
+    
     if (req.headers.role !== Role.Admin) {
       res.status(401).json({ error: "Only admins are allowed to add questions." });
       return;
@@ -137,7 +138,7 @@ questionRouter.put(
 
     await Question.findByIdAndUpdate(
       id,
-      { title, description, categories, complexity, testcases, constraints, followUp, starterCode, dateCreated },
+      { title, description, categories, complexity, examples, constraints, followUp, starterCode, testcases, dateCreated },
       { new: true, runValidators: true, context: "query" }
     )
       .then((updatedQuestion) => {

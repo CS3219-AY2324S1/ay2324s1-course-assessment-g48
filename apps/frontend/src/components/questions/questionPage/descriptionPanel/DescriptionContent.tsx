@@ -18,7 +18,7 @@ const DescriptionContent: React.FC<DescriptionContentProps> = ({
       case Complexity.Hard:
         return "text-red-600 bg-red-700 dark:bg-red-800/50";
       default:
-        console.log(`Unknown Complexity: ${complexity}`);
+        console.error(`Unknown Complexity: ${complexity}`);
         return ""; // Default or unknown complexity
     }
   }

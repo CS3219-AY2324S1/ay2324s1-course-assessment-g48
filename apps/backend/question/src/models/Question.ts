@@ -1,16 +1,25 @@
 import mongoose, { Document, Schema } from "mongoose";
+import { LanguageId } from "./enum/LanguageId";
+import { Category } from "./enum/Category";
+import { Complexity } from "./enum/Complexity";
 
 // console.log("time:" , moment().tz("Asia/Singapore").format())
 
 interface Question extends Document {
   id: string;
+  // left side of question page
   title: string;
   description: string;
   categories: string[];
   complexity: string;
+  examples: string[];
   constraints: string;
   followUp: string;
-  starterCode: string;
+  // right side of question page
+  starterCode: [{
+    languageId: number,
+    code: string
+  }],
   testcases: [{
     input: string;
     output: string;
@@ -31,15 +40,19 @@ const questionSchema = new Schema({
   categories: {
     type: [{
       type: String,
-      enum: ["Algorithms","Bit Manipulation","Brainteaser","Databases","Data Structures","Recursion","Strings"],    
+      enum: Object.values(Category),    
     }],
     required: false,
   },
   complexity: {
     type: String,
-    enum: ["Easy", "Medium", "Hard"],
+    enum: Object.values(Complexity),
     required: false,
   },
+  examples: [{
+    type: String,
+    required: false,
+  }],
   constraints: {
     type: String,
     required: false,
@@ -48,10 +61,19 @@ const questionSchema = new Schema({
     type: String,
     required: false,
   },
-  starterCode: {
-    type: String,
-    required: false,
-  },
+  starterCode: [
+    {
+      languageId: {
+        type: Number,
+        enum: Object.values(LanguageId).filter((v) => !isNaN(Number(v))),
+        required: false,
+      },
+      code: {
+        type: String,
+        required: false,
+      },
+    }
+  ],
   testcases: [
     {
       input: {
