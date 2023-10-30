@@ -35,3 +35,13 @@ export const initialQuestion = {
   starterCode: [],
   dateCreated: new Date(),
 };
+
+export const initialTestCase = {
+  input: "",
+  output: "",
+};
+
+export const initialStarterCode = {
+  languageId: -1,
+  code: "",
+};

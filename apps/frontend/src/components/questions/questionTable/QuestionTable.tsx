@@ -12,7 +12,10 @@ import { Complexity } from "@/utils/enums/Complexity";
 import useSessionUser from "@/hook/useSessionUser";
 import { Role } from "@/utils/enums/Role";
 import { useRouter } from "next/router";
-import { Question, initialQuestion } from "@/database/question/entities/question.entity";
+import {
+  Question,
+  initialQuestion,
+} from "@/database/question/entities/question.entity";
 import QuestionPagination from "./QuestionPagination";
 import DeleteCfmModal from "./DeleteCfmModal";
 
@@ -27,13 +30,15 @@ const QuestionTable: FC<QuestionTableProps> = ({
   openAdd,
   hidden,
 }) => {
-  const [questionsPerPage, setQuestionsPerPage] = useState(10);
+  const [questionsPerPage] = useState(10);
   const { sessionUser } = useSessionUser();
   const [userRole, setUserRole] = useState(sessionUser.role);
   const { questions, totalQuestions, handleTrigger } = useQuestions(userRole);
   const [viewQuestion, setViewQuestion] = useState<Question>(initialQuestion);
-  const [questionToEdit, setQuestionToEdit] = useState<Question>(initialQuestion);
-  const [questionToDelete, setQuestionToDelete] = useState<Question>(initialQuestion);
+  const [questionToEdit, setQuestionToEdit] =
+    useState<Question>(initialQuestion);
+  const [questionToDelete, setQuestionToDelete] =
+    useState<Question>(initialQuestion);
 
   const [openEdit, setOpenEdit] = useState(false);
   const [openView, setOpenView] = useState(false);
@@ -61,7 +66,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
         setOpenAdd(false);
       })
       .catch((e) => {
-        throw new String(e);
+        throw String(e);
       });
   };
 
@@ -187,7 +192,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
                       <button
                         className="bg-red-600 hover:bg-red-800 text-white font-bold py-2 px-4 rounded-full"
                         onClick={() => {
-                          setOpenDelCfm(true)
+                          setOpenDelCfm(true);
                           setQuestionToDelete(question);
                         }}
                       >

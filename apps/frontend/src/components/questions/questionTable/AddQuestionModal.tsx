@@ -1,18 +1,19 @@
-import { Fragment, useState, useEffect } from "react";
+import { useState } from "react";
 import { Complexity } from "../../../utils/enums/Complexity";
 import { Category } from "../../../utils/enums/Category";
 import useInput from "../../../hook/useInput";
 import ReactMarkdown from "react-markdown";
-import { Question, TestCase, initialQuestion } from "../../../database/question/entities/question.entity";
+import {
+  Question,
+  TestCase,
+  initialQuestion,
+  initialTestCase,
+} from "../../../database/question/entities/question.entity";
 import Modal from "../../Modal";
-import { Tab } from "@headlessui/react";
-import { PlusSmallIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import remarkMath from "remark-math";
 import { useError } from "@/hook/ErrorContext";
+import TestCases from "./modalParts/TestCases";
 
-function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(" ");
-}
 
 type AddQuestionModalProps = {
   onSave: (newQuestion: Question) => Promise<void>;
@@ -28,33 +29,25 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
   const [newQuestion, setNewQuestion] = useState<Question>(initialQuestion);
   const { setError } = useError();
   const [blank, setBlank] = useState(true);
-  const [testcases, setTestCases] = useState<TestCase[]>([
-    {
-      input: "",
-      output: "",
-    },
-  ]);
+  const [testcases, setTestCases] = useState<TestCase[]>([initialTestCase]);
   const handleAddTestCase = () => {
     setTestCases([
       ...testcases,
-      {
-        input: "",
-        output: "",
-      },
+      initialTestCase
     ]);
-  }
-  const handleInputChange = (index:number, inputValue:string) => {
+  };
+  const handleInputChange = (index: number, inputValue: string) => {
     const updatedTestCases = [...testcases];
     updatedTestCases[index].input = inputValue;
     setTestCases(updatedTestCases);
   };
 
-  const handleOutputChange = (index:number, outputValue:string) => {
+  const handleOutputChange = (index: number, outputValue: string) => {
     const updatedTestCases = [...testcases];
     updatedTestCases[index].output = outputValue;
     setTestCases(updatedTestCases);
   };
-  
+
   const {
     value,
     valueIsValid,
@@ -68,7 +61,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
 
     const updatedQuestion = {
       ...newQuestion,
-      testcases
+      testcases,
     };
 
     setNewQuestion(updatedQuestion);
@@ -83,9 +76,6 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
       });
   };
 
-  useEffect(() => {
-    testcases.filter((item) => item.input === "" || item.output === "").length > 0 ? setBlank(true) : setBlank(false);
-  }, [testcases]);
 
   return (
     <>
@@ -155,9 +145,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                 </div>
                 <div className="mt-3">
                   <article className="prose max-w-none">
-                    <ReactMarkdown
-                      remarkPlugins={[remarkMath]}
-                    >
+                    <ReactMarkdown remarkPlugins={[remarkMath]}>
                       {newQuestion.description}
                     </ReactMarkdown>
                   </article>
@@ -260,118 +248,15 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
               </fieldset>
             </div>
 
-            <div className="mt-10">
-              <div className="flex items-center justify-between">
-                <div>
-                  <legend className="text-sm font-semibold leading-6 text-gray-900">
-                    Test Cases
-                  </legend>
-                  <p className="mt-1 text-sm leading-6 text-gray-600">
-                    Add test cases for the question
-                  </p>
-                </div>
-                <button className="relative rounded-full bg-indigo-600 p-1 text-white hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2"
-                  onClick={handleAddTestCase}
-                type="button">
-                  <PlusSmallIcon className="h-6 w-6" aria-hidden="true" />
-                </button>
-              </div>
-              <Tab.Group as="div" className="mt-2">
-                <div className="border-b border-gray-200">
-                  <Tab.List className="-mb-px flex space-x-8 px-3 overflow-x-auto scrollbar-hidden">
-                    {testcases.map((testcase, index) => (
-                      <Tab
-                        key={index}
-                        className={({ selected }) =>
-                          classNames(
-                            selected
-                              ? "border-indigo-600 text-indigo-600"
-                              : "border-transparent text-gray-900",
-                            "flex-0 whitespace-nowrap border-b-2 px-1 py-4 text-sm font-medium"
-                          )
-                        }
-                      >
-                        Test Case {index+1}
-                      </Tab>
-                    ))}
-                  </Tab.List>
-                </div>
-                <Tab.Panels as={Fragment}>
-                  {testcases.map((testcase, index) => (
-                    <Tab.Panel
-                      key={index}
-                      className="space-y-5 px-4 pb-8 pt-5"
-                    >
-                      <div>
-                        <div className="flex items-center justify-between">
-                        <div>
-                        <legend className="block text-sm font-semibold leading-6 text-gray-900">
-                          Input
-                        </legend>
-                        <p className="mt-1 text-sm leading-6 text-gray-600">
-                          i.e Array: [1,2,3]
-                          </p>
-                          </div>
-                          <button className="relative rounded-full bg-red-600 p-1 text-white hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2"
-                            type="button"
-                            onClick={() => {
-                              if (testcases.length === 1) {
-                                setTestCases([
-                                  {
-                                    input: "",
-                                    output: "",
-                                  },
-                                ]);
-                              } else {
-                                setTestCases(testcases.filter((item) => item !== testcase));
-                              }
-                            }}>
-                            <XMarkIcon className="h-4 w-4" aria-hidden="true" />
-                            </button>
-                          </div>
-                        <div
-                          className={`mt-2 flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset
-                            focus-within:ring-indigo-600 sm:max-w-full`}
-                        >
-                          <input
-                            className="ml-2 block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 focus:ring-0 sm:text-sm sm:leading-6"
-                            type="text"
-                            value={testcase.input}
-                            onChange={(e) => handleInputChange(index, e.target.value)}
-                          />
-                        </div>
-                      </div>
-
-                      <div>
-                        <legend className="block text-sm font-semibold leading-6 text-gray-900">
-                          Output
-                        </legend>
-                        <p className="mt-1 text-sm leading-6 text-gray-600">
-                          i.e Array: [1,2,3]
-                        </p>
-                        <div
-                          className={`mt-2 flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset
-                            focus-within:ring-indigo-600 sm:max-w-full`}
-                        >
-                          <input
-                            className="ml-2 block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 focus:ring-0 sm:text-sm sm:leading-6"
-                            type="text"
-                            value={testcase.output}
-                            onChange={(e) => handleOutputChange(index, e.target.value)}
-                          />
-                        </div>
-                      </div>
-                      
-                    </Tab.Panel>
-                  ))}
-                </Tab.Panels>
-                {blank ? (
-                  <label className="ml-5 mt-1 text-sm leading-6 text-red-600">
-                    Test case cannot be empty.
-                  </label>) : <></>}
-              </Tab.Group>
-
-            </div>
+            <TestCases
+              testcases={testcases}
+              setTestCases={setTestCases}
+              handleInputChange={handleInputChange}
+              handleOutputChange={handleOutputChange}
+              handleAddTestCase={handleAddTestCase}
+              blank={blank}
+              setBlank={setBlank}
+            />
           </div>
           <div className="border-b border-gray-900/10 pb-12" />
           <div className="mt-6 flex items-center justify-end gap-x-6">
