@@ -12,7 +12,7 @@ import { Complexity } from "@/utils/enums/Complexity";
 import useSessionUser from "@/hook/useSessionUser";
 import { Role } from "@/utils/enums/Role";
 import { useRouter } from "next/router";
-import { Question } from "@/database/question/entities/question.entity";
+import { Question, initialQuestion } from "@/database/question/entities/question.entity";
 import QuestionPagination from "./QuestionPagination";
 import DeleteCfmModal from "./DeleteCfmModal";
 
@@ -31,42 +31,9 @@ const QuestionTable: FC<QuestionTableProps> = ({
   const { sessionUser } = useSessionUser();
   const [userRole, setUserRole] = useState(sessionUser.role);
   const { questions, totalQuestions, handleTrigger } = useQuestions(userRole);
-  const [viewQuestion, setViewQuestion] = useState<Question>({
-    _id: "",
-    title: "",
-    description: "",
-    categories: [],
-    complexity: "",
-    testcases: [],
-    constraints: "",
-    followUp: "",
-    starterCode: "",
-    dateCreated: new Date(),
-  });
-  const [questionToEdit, setQuestionToEdit] = useState<Question>({
-    _id: "",
-    title: "",
-    description: "",
-    categories: [],
-    complexity: "",
-    testcases: [],
-    constraints: "",
-    followUp: "",
-    starterCode: "",
-    dateCreated: new Date(),
-  });
-  const [questionToDelete, setQuestionToDelete] = useState<Question>({
-    _id: "",
-    title: "",
-    description: "",
-    categories: [],
-    complexity: "",
-    testcases: [],
-    constraints: "",
-    followUp: "",
-    starterCode: "",
-    dateCreated: new Date(),
-  });
+  const [viewQuestion, setViewQuestion] = useState<Question>(initialQuestion);
+  const [questionToEdit, setQuestionToEdit] = useState<Question>(initialQuestion);
+  const [questionToDelete, setQuestionToDelete] = useState<Question>(initialQuestion);
 
   const [openEdit, setOpenEdit] = useState(false);
   const [openView, setOpenView] = useState(false);

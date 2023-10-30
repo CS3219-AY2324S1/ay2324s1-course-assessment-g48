@@ -4,14 +4,34 @@ export type Question = {
   description: string;
   categories: string[];
   complexity: string;
+  examples: string[];
   testcases: TestCase[];
   constraints: string;
+  starterCode: StarterCode[];
   followUp: string;
-  starterCode: string;
   dateCreated: Date;
 };
 
 export type TestCase = {
   input: string;
   output: string;
+};
+
+export type StarterCode = {
+  languageId: number;
+  code: string;
+}
+
+export const initialQuestion = {
+  _id: "",
+  title: "",
+  description: "",
+  categories: [],
+  complexity: "",
+  examples: [],
+  testcases: [],
+  constraints: "",
+  followUp: "",
+  starterCode: [],
+  dateCreated: new Date(),
 };

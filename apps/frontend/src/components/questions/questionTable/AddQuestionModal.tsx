@@ -3,7 +3,7 @@ import { Complexity } from "../../../utils/enums/Complexity";
 import { Category } from "../../../utils/enums/Category";
 import useInput from "../../../hook/useInput";
 import ReactMarkdown from "react-markdown";
-import { Question, TestCase } from "../../../database/question/entities/question.entity";
+import { Question, TestCase, initialQuestion } from "../../../database/question/entities/question.entity";
 import Modal from "../../Modal";
 import { Tab } from "@headlessui/react";
 import { PlusSmallIcon, XMarkIcon } from "@heroicons/react/24/outline";
@@ -25,18 +25,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
   setOpen,
   open,
 }) => {
-  const [newQuestion, setNewQuestion] = useState<Question>({
-    _id: "",
-    title: "",
-    description: "",
-    categories: [],
-    complexity: "",
-    testcases: [],
-    constraints: "",
-    followUp: "",
-    starterCode: "",
-    dateCreated: new Date(),
-  });
+  const [newQuestion, setNewQuestion] = useState<Question>(initialQuestion);
   const { setError } = useError();
   const [blank, setBlank] = useState(true);
   const [testcases, setTestCases] = useState<TestCase[]>([
@@ -85,18 +74,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
     setNewQuestion(updatedQuestion);
     await onSave(updatedQuestion)
       .then(() => {
-        setNewQuestion({
-          _id: "",
-          title: "",
-          description: "",
-          categories: [],
-          complexity: "",
-          testcases: [],
-          constraints: "",
-          followUp: "",
-          starterCode: "",
-          dateCreated: new Date(),
-        });
+        setNewQuestion(initialQuestion);
         reset();
         setOpen(false);
       })
