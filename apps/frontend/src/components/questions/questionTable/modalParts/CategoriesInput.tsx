@@ -29,6 +29,7 @@ const CategoriesInput: React.FC<CategoriesInputProps> = ({
                   name="catergory"
                   type="checkbox"
                   className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                  checked={newQuestion.categories.includes(category)}
                   value={newQuestion.categories}
                   onChange={(e) => {
                     const { checked } = e.target;

@@ -28,6 +28,7 @@ const ComplexityInput: React.FC<ComplexityInputProps> = ({
                 name="complexity"
                 value={complexityOption}
                 type="radio"
+                checked={newQuestion.complexity === complexityOption}
                 className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
                 onChange={() =>
                   setNewQuestion({
