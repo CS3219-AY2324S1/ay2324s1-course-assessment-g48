@@ -78,7 +78,7 @@ class Solution {
     };
     const options = {
       method: "POST",
-      url: String(process.env.NEXT_PUBLIC_API_URL),
+      url: String(process.env.NEXT_PUBLIC_RAPID_API_URL),
       params: { base64_encoded: "true", fields: "*" },
       headers: {
         "Access-Control-Allow-Credentials": "true",
@@ -86,8 +86,8 @@ class Solution {
           "Origin, X-Requested-With, Content-Type, Accept",
         "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE",
         "content-type": "application/json",
-        "X-RapidAPI-Host": String(process.env.NEXT_PUBLIC_API_HOST),
-        "X-RapidAPI-Key": String(process.env.NEXT_PUBLIC_API_KEY),
+        "X-RapidAPI-Host": String(process.env.NEXT_PUBLIC_RAPID_API_HOST),
+        "X-RapidAPI-Key": String(process.env.NEXT_PUBLIC_RAPID_API_KEY),
       },
       data: formData,
     };
@@ -116,8 +116,8 @@ class Solution {
         "Access-Control-Allow-Headers":
           "Origin, X-Requested-With, Content-Type, Accept",
         "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE",
-        "X-RapidAPI-Host": String(process.env.NEXT_PUBLIC_API_HOST),
-        "X-RapidAPI-Key": String(process.env.NEXT_PUBLIC_API_KEY),
+        "X-RapidAPI-Host": String(process.env.NEXT_PUBLIC_RAPID_API_HOST),
+        "X-RapidAPI-Key": String(process.env.NEXT_PUBLIC_RAPID_API_KEY),
       },
     };
     try {
