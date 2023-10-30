@@ -109,7 +109,7 @@ class Solution {
   const checkStatus = async (token: string) => {
     const options = {
       method: "GET",
-      url: process.env.NEXT_PUBLIC_API_URL + "/" + token,
+      url: process.env.NEXT_PUBLIC_RAPID_API_URL + "/" + token,
       params: { base64_encoded: "true", fields: "*" },
       headers: {
         "Access-Control-Allow-Credentials": "true",

@@ -22,7 +22,7 @@ const OutputWindow: React.FC<OutputWindowProps> = ({ outputDetails }) => {
         <pre className="px-2 py-1 font-normal text-xs text-green-500">
           {atob(outputDetails.stdout) !== null
             ? `${atob(outputDetails.stdout)}`
-            : null}
+            : "accepted"}
         </pre>
       );
     } else if (statusId === Status.WrongAnswer) {
