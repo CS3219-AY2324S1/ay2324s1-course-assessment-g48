@@ -38,7 +38,8 @@ function useSessionUser() {
   }, [session]);
   return !isLoading ? { sessionUser, setSessionUser } : {sessionUser: { 
     ...sessionUser,
-    role: Role.Unknown 
+    role: Role.Unknown,
+    access_token: session?.user?.accessToken
   }, setSessionUser: setSessionUser};
 }
 

@@ -9,6 +9,7 @@ import {
 } from "../../database/user";
 import { OAuth, Role } from "@prisma/client";
 import logger from "../../utils/logger";
+import { signJwtAccessToken } from "../../database/jwt";
 
 export const userRouter = Router();
 
@@ -18,7 +19,7 @@ userRouter.post(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { email, username, password, oauth, role } = req.body;
-      console.log("body:" ,req.body);
+      console.log("body:", req.body);
       const cleanedEmail = email?.trim();
       const cleanedUsername = username?.trim();
       const cleanedPassword = password?.trim();
@@ -155,10 +156,10 @@ userRouter.get(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const body = req.body;
-      console.log("body:" , body);
+      console.log("body:", body);
       // TODO: hash the password
       const { email, password, oauth } = body;
-      console.log("Login Body: ", body)
+      console.log("Login Body: ", body);
       const cleanedEmail = email?.trim();
       console.log("Uncleaned Password: ", password);
       const cleanedPassword = password?.trim();
@@ -187,7 +188,10 @@ userRouter.get(
           }
 
           // return user
-          res.status(200).json(user);
+          const { password: userPassword, ...userExcludePassword } = user;
+          const accessToken = signJwtAccessToken(userExcludePassword);
+    
+          res.status(200).json({...userExcludePassword, accessToken});
           return;
         }
 
@@ -210,9 +214,10 @@ userRouter.get(
         });
         return;
       }
+      const { password: userPassword, ...userExcludePassword } = user;
+      const accessToken = signJwtAccessToken(userExcludePassword);
 
-      console.log("User found!!!!!!!!!!!!!!!!!!!!!!!!1");
-      res.status(200).json(user);
+      res.status(200).json({...userExcludePassword, accessToken});
     } catch (error) {
       console.error("UserRouter login error:", error);
       next(error);

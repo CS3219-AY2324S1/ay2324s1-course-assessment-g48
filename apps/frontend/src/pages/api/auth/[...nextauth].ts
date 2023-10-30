@@ -14,6 +14,7 @@ declare module "next-auth" {
     password?: string;
     oauth?: OAuthType[];
     role?: Role;
+    accessToken?: string;
   }
 }
 
@@ -81,6 +82,7 @@ export default NextAuth({
           }
           user.oauth = findOAuthUser.oauth;
           user.role = findOAuthUser.role;
+          user.accessToken = findOAuthUser.accessToken;
         }
       }
       if (user) {
@@ -101,9 +103,5 @@ export default NextAuth({
       }
       return session;
     },
-  },
-  session: {
-    strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60, // 30 days
   },
 });

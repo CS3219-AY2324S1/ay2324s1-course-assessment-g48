@@ -31,18 +31,7 @@ export const authOptions = {
           password: credentials?.password,
           oauth: credentials?.oauth as OAuthType,
         });
-        if (user) {
-          return {
-            id: user.id,
-            username: user.username,
-            email: user.email,
-            password: user.password,
-            oauth: user.oauth,
-            role: user.role
-          };
-        } else {
-          return null;
-        }
+        return user ?? null;
       },
     }),
     GoogleProvider({
@@ -69,10 +58,6 @@ export const authOptions = {
       }
     }),
   ],
-  jwt: {
-    maxAge: 30 * 24 * 60 * 60, // 30 days
-  },
-  secret: process.env.NEXTAUTH_SECRET,
   pages: {
     signIn: "/signin",
   },
