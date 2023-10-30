@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Complexity } from "../../../utils/enums/Complexity";
 import { Category } from "../../../utils/enums/Category";
 import useInput from "../../../hook/useInput";
-import ReactMarkdown from "react-markdown";
 import {
   Question,
   TestCase,
@@ -10,10 +9,10 @@ import {
   initialTestCase,
 } from "../../../database/question/entities/question.entity";
 import Modal from "../../Modal";
-import remarkMath from "remark-math";
 import { useError } from "@/hook/ErrorContext";
 import TestCases from "./modalParts/TestCases";
 import TitleInput from "./modalParts/TitleInput";
+import DescriptionInput from "./modalParts/DescriptionInput";
 
 
 type AddQuestionModalProps = {
@@ -93,37 +92,12 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
                 setNewQuestion={setNewQuestion}
               />
 
-              <div className="col-span-full">
-                <legend className="block text-sm font-semibold leading-6 text-gray-900">
-                  Description
-                </legend>
-                <p className="mt-1 text-sm leading-6 text-gray-600">
-                  Markdown is supported
-                </p>
-                <div className="mt-2">
-                  <textarea
-                    id="description"
-                    name="description"
-                    rows={3}
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    defaultValue={""}
-                    onChange={(e) =>
-                      setNewQuestion({
-                        ...newQuestion,
-                        description: e.target.value,
-                      })
-                    }
-                  />
-                </div>
-                <div className="mt-3">
-                  <article className="prose max-w-none">
-                    <ReactMarkdown remarkPlugins={[remarkMath]}>
-                      {newQuestion.description}
-                    </ReactMarkdown>
-                  </article>
-                </div>
-              </div>
+              <DescriptionInput
+                newQuestion={newQuestion}
+                setNewQuestion={setNewQuestion} 
+              />
             </div>
+
             {/* For Complexity */}
             <div className="mt-10 space-y-10">
               <fieldset>
