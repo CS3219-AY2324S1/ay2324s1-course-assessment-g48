@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { PlusIcon, ArrowPathIcon } from "@heroicons/react/20/solid";
+import { PlusIcon } from "@heroicons/react/20/solid";
 import useQuestions from "@/hook/useQuestions";
 import LoadingModal from "@/components/LoadingModal";
 import useSessionUser from "@/hook/useSessionUser";

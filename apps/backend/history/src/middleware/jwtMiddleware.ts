@@ -1,7 +1,7 @@
 import axios, { AxiosError } from 'axios';
 import { Request, Response, NextFunction } from 'express';
-import { Role } from '../models/enum/Role';
 import { OAuthType } from '../models/enum/OAuthType';
+import { Role } from "../models/enum/Role";
 
 interface User {
   id: number;
@@ -25,7 +25,7 @@ function getAxiosErrorMessage(error: unknown) {
     }
     return error.response?.data?.error
   }
-  return String(error)
+  return error
 }
 
 const verifyJwtToken = async (token?: string) => {

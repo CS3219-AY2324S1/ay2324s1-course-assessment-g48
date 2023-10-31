@@ -1,16 +1,18 @@
-import { Router, NextFunction, Request, Response } from "express";
+import { Router, NextFunction, Response } from "express";
 import History from "../../models/History";
 import { Role } from "../../models/enum/Role";
+import { AuthenticatedRequest, jwtMiddleware } from "../../middleware/jwtMiddleware";
 
 export const historyRouter = Router();
     
 // Creates history in mongodb
-historyRouter.post("/", async (req: Request, res: Response, next: NextFunction) => {
+historyRouter.post("/", jwtMiddleware, async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const body = req.body;
+    const user = req.user;
 
-    if (!Object.values(Role).includes(req.headers.role as Role)) {
-    res.status(401).json({ error: "Only registered users are allowed to create history." });
-    return;
+    if (!Object.values(Role).includes(user?.role as Role)) {
+        res.status(401).json({ error: "Only registered users are allowed to create history." });
+        return;
     }
     const isExisting = await History.findOne({ sessionId: body.sessionId });
 
@@ -33,8 +35,9 @@ historyRouter.post("/", async (req: Request, res: Response, next: NextFunction) 
 });
 
 // Gets all histories from mongodb
-historyRouter.get("/", async (req: Request, res: Response) => {
-    if (req.headers.role !== Role.Admin) {
+historyRouter.get("/", jwtMiddleware, async (req: AuthenticatedRequest, res: Response) => {
+    const user = req.user;
+    if (user?.role !== Role.Admin) {
         res.status(401).json({ error: "Only admins are allowed to view all histories." });
         return;
     }
@@ -44,10 +47,11 @@ historyRouter.get("/", async (req: Request, res: Response) => {
 });
 
 // Gets history from mongodb
-historyRouter.get("/:id", async (req: Request, res: Response) => {
+historyRouter.get("/:id", jwtMiddleware, async (req: AuthenticatedRequest, res: Response) => {
     const { questionid } = req.headers;
+    const user = req.user;
     console.log(questionid);
-    if (!Object.values(Role).includes(req.headers.role as Role)) {
+    if (!Object.values(Role).includes(user?.role as Role)) {
         res.status(401).json({ error: "Only registered users are allowed to view history." });
         return;
     }
@@ -72,12 +76,13 @@ historyRouter.get("/:id", async (req: Request, res: Response) => {
 });
 
 // Updates history in mongodb
-historyRouter.put("/:id", async (req: Request, res: Response, next: NextFunction) => {
+historyRouter.put("/:id", jwtMiddleware, async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const {  completed  } = req.body;
+    const user = req.user;
 
-    if (!Object.values(Role).includes(req.headers.role as Role)) {
-    res.status(401).json({ error: "Only registered users are allowed to update history." });
-    return;
+    if (!Object.values(Role).includes(user?.role as Role)) {
+        res.status(401).json({ error: "Only registered users are allowed to update history." });
+        return;
     }
 
     await History.findByIdAndUpdate(req.params.id, {
@@ -96,10 +101,11 @@ historyRouter.put("/:id", async (req: Request, res: Response, next: NextFunction
 });
 
 // Gets history using UserId from mongodb
-historyRouter.get("/user/:userId", async (req: Request, res: Response) => {
-    if (!Object.values(Role).includes(req.headers.role as Role)) {
-    res.status(401).json({ error: "Only registered users are allowed to view their own history." });
-    return;
+historyRouter.get("/user/:userId", jwtMiddleware, async (req: AuthenticatedRequest, res: Response) => {
+    const user = req.user;
+    if (!Object.values(Role).includes(user?.role as Role)) {
+        res.status(401).json({ error: "Only registered users are allowed to view their own history." });
+        return;
     }
     History.find({ userIds: req.params.userId }).then((history) => {
         res.status(200).json(history);
@@ -107,8 +113,9 @@ historyRouter.get("/user/:userId", async (req: Request, res: Response) => {
 });
 
 // Delete history from mongodb by id
-historyRouter.delete("/:id", async (req: Request, res: Response, next: NextFunction) => {
-    if (req.headers.role !== Role.Admin) {
+historyRouter.delete("/:id", jwtMiddleware, async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    const user = req.user;
+    if (user?.role !== Role.Admin) {
         res.status(401).json({ error: "Only admins are allowed to delete history." });
         return;
     }
@@ -125,10 +132,11 @@ historyRouter.delete("/:id", async (req: Request, res: Response, next: NextFunct
 });
 
 // Delete user's histories from mongodb
-historyRouter.delete("/user/:userId", async (req: Request, res: Response, next: NextFunction) => {
-    if (!Object.values(Role).includes(req.headers.role as Role)) {
-    res.status(401).json({ error: "Only registered users are allowed to delete their own history." });
-    return;
+historyRouter.delete("/user/:userId", jwtMiddleware, async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    const user = req.user;
+    if (!Object.values(Role).includes(user?.role as Role)) {
+        res.status(401).json({ error: "Only registered users are allowed to delete their own history." });
+        return;
     }
     History.deleteMany({ userIds: req.params.userId })
         .then((history) => {
@@ -143,8 +151,9 @@ historyRouter.delete("/user/:userId", async (req: Request, res: Response, next: 
 });
 
 // Gets history using sessionId from mongodb
-historyRouter.get("/session/:sessionId", async (req: Request, res: Response) => {
-    if (!Object.values(Role).includes(req.headers.role as Role)) {
+historyRouter.get("/session/:sessionId", jwtMiddleware, async (req: AuthenticatedRequest, res: Response) => {
+    const user = req.user;
+    if (!Object.values(Role).includes(user?.role as Role)) {
         res.status(401).json({ error: "Only registered users are allowed to view their session history." });
         return;
     }
