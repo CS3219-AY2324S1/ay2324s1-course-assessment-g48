@@ -1,9 +1,8 @@
 import { CompletedQuestion } from "@/database/history/entities/history.entity";
 import { getHistoryById } from "@/database/history/historyService";
-import { Role } from "@/utils/enums/Role";
 import { useEffect, useState } from "react";
 
-function useHistoryQuestionById(hid: string, qid: string, userRole?: Role) {
+function useHistoryQuestionById(hid: string, qid: string, accessToken?: string | null) {
   const [isLoading, setIsLoading] = useState(false);
   const [historyQuestion, setHistoryQuestion] = useState<CompletedQuestion | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -13,9 +12,9 @@ function useHistoryQuestionById(hid: string, qid: string, userRole?: Role) {
       if (hid) {
         setIsLoading(true);
         setError(null);
-        if (userRole === Role.Unknown) return;
+        if (accessToken === null) return;
         try {
-          const data = await getHistoryById(hid, qid, userRole);
+          const data = await getHistoryById(hid, qid, accessToken);
           setHistoryQuestion(data);
           setIsLoading(false);
         } catch (error) {
@@ -25,7 +24,7 @@ function useHistoryQuestionById(hid: string, qid: string, userRole?: Role) {
       }
     }
     fetchData();
-  }, [hid, userRole]);
+  }, [hid, qid, accessToken]);
 
   return { historyQuestion, isLoading, error };
 }

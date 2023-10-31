@@ -1,5 +1,4 @@
 import axios from "axios";
-import { Role } from "@/utils/enums/Role";
 import { History } from "./entities/history.entity";
 import Router from "next/router";
 
@@ -8,11 +7,11 @@ const BASE_URL = process.env.NEXT_PUBLIC_HISTORY_SERVICE + "/api/history";
 // Post new history
 export const postNewHistory = async(
     newHistory: History,
-    userRole: Role
+    accessToken?: string,
 ) => {
     const config = {
         headers: {
-            role: userRole,
+            Authorization: `Bearer ${accessToken}`,
         },
     };
     return await axios
@@ -34,10 +33,10 @@ export const postNewHistory = async(
 }
 
 // Get all history
-export const getAllHistory = async (userRole?: Role) => {
+export const getAllHistory = async (accessToken?: string) => {
     const config = {
         headers: {
-        role: userRole,
+            Authorization: `Bearer ${accessToken}`,
         },
     };
     return await axios
@@ -55,10 +54,10 @@ export const getAllHistory = async (userRole?: Role) => {
 }
 
 // Get history by id
-export const getHistoryById = async (id: string, qid?: string, userRole?: Role) => {
+export const getHistoryById = async (id: string, qid?: string, accessToken?: string) => {
     const config = {
         headers: {
-            role: userRole,
+            Authorization: `Bearer ${accessToken}`,
             questionid: qid,
         },
     };
@@ -80,11 +79,11 @@ export const getHistoryById = async (id: string, qid?: string, userRole?: Role) 
 export const updateHistoryById = async (
     id: string,
     updatedHistory: History,
-    userRole: Role
+    accessToken?: string
 ) => {
     const config = {
         headers: {
-            role: userRole,
+            Authorization: `Bearer ${accessToken}`,
         },
     };
     return await axios
@@ -104,10 +103,10 @@ export const updateHistoryById = async (
 }
 
 // Get history by userId
-export const getHistoryByUserId = async (userId: number, userRole?: Role) => {
+export const getHistoryByUserId = async (userId: number, accessToken?: string) => {
     const config = {
         headers: {
-            role: userRole,
+            Authorization: `Bearer ${accessToken}`,
         },
     };
     return await axios
@@ -125,10 +124,10 @@ export const getHistoryByUserId = async (userId: number, userRole?: Role) => {
 }
 
 // Delete history by id
-export const deleteHistoryById = async (id: string, userRole: Role) => {
+export const deleteHistoryById = async (id: string, accessToken?: string) => {
     const config = {
         headers: {
-            role: userRole,
+            Authorization: `Bearer ${accessToken}`,
         },
     };
     return await axios
@@ -146,10 +145,10 @@ export const deleteHistoryById = async (id: string, userRole: Role) => {
 }
 
 // Delete history by userId
-export const deleteHistoryByUserId = async (userId: string, userRole: Role) => {
+export const deleteHistoryByUserId = async (userId: string, accessToken?: string) => {
     const config = {
         headers: {
-            role: userRole,
+            Authorization: `Bearer ${accessToken}`,
         },
     };
     return await axios
@@ -167,10 +166,10 @@ export const deleteHistoryByUserId = async (userId: string, userRole: Role) => {
 }
 
 // Get history by sessionId
-export const getHistoryBySessionId = async (sessionId: string, userRole?: Role) => {
+export const getHistoryBySessionId = async (sessionId: string, accessToken?: string) => {
     const config = {
         headers: {
-            role: userRole,
+            Authorization: `Bearer ${accessToken}`,
         },
     };
     return await axios
