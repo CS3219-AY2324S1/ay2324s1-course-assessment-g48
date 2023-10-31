@@ -1,17 +1,51 @@
 import { Server } from "socket.io";
 import { DifficultyQueue } from "./queue/difficultyQueue";
 import { PORT } from "./utils/config";
+import express from "express";
+import http from "http";
 
-const io = new Server(PORT, {});
+class App {
+  io: Server;
+
+  constructor() {
+    const app = express();
+    const server = http.createServer(app);
+    this.io = new Server(server, {
+      path: "/queue",
+    });
+
+    server.listen(PORT, () => {
+      console.log("Queue Server is listening on port 8002");
+    });
+
+    app.get("/ping", (req, res) => {
+      res.status(200).json({ message: "pong" });
+    });
+  }
+}
+
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+  path: "/queue",
+});
+
+server.listen(PORT, () => {
+  console.log("Queue Server is listening on port 8002");
+});
+
+app.get("/ping", (req, res) => {
+  res.status(200).json({ message: "pong" });
+});
 
 enum Difficulty {
   EASY = "Easy",
+
   MEDIUM = "Medium",
   HARD = "Hard",
 }
 
 io.on("connect", (socket) => {
-
   //   socket.disconnect();
   socket.on("matching", (data, callback) => {
     console.log(`\n`);
