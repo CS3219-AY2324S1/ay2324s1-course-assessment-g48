@@ -3,12 +3,12 @@ import Question from "../../models/Question";
 import logger from "../../utils/logger";
 import axios from "axios";
 import { Role } from "../../models/enum/Role";
-import { AuthenticatedRequest, jwtMiddleware } from "../../middleware/jwtMiddleware";
+import { AuthenticatedRequest, jwtGuard } from "../../guard/jwtGuard";
 
 export const questionRouter = Router();
 
 // Gets question from mongodb
-questionRouter.get("/", jwtMiddleware, async (req: AuthenticatedRequest, res: Response) => {
+questionRouter.get("/", jwtGuard, async (req: AuthenticatedRequest, res: Response) => {
   // Todo: enhance security
   const user = req.user;
   if (!Object.values(Role).includes(user?.role as Role)) {
@@ -40,7 +40,7 @@ questionRouter.get("/leetcode", async (req: Request, res: Response) => {
 
 // Fetches individual question by id
 questionRouter.get(
-  "/:id", jwtMiddleware,
+  "/:id", jwtGuard,
   async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const user = req.user;
     if (!Object.values(Role).includes(user?.role as Role)) {
@@ -67,7 +67,7 @@ questionRouter.get(
 
 // Deletes question from mongodb
 questionRouter.delete(
-  "/:id", jwtMiddleware,
+  "/:id", jwtGuard,
   async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const user = req.user;
     if (user?.role !== Role.Admin) {
@@ -91,7 +91,7 @@ questionRouter.delete(
 
 // Adds question to mongodb
 questionRouter.post(
-  "/", jwtMiddleware,
+  "/", jwtGuard,
   async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const body = req.body;
     const user = req.user;
@@ -131,7 +131,7 @@ questionRouter.post(
 
 // Updates question in mongodb
 questionRouter.put(
-  "/:id", jwtMiddleware,
+  "/:id", jwtGuard,
   async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const { title, description, categories, complexity, examples, constraints, followUp, starterCode, testcases, dateCreated  } = req.body;
     const id = req.params.id;

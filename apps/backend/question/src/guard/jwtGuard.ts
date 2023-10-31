@@ -1,7 +1,7 @@
 import axios, { AxiosError } from 'axios';
 import { Request, Response, NextFunction } from 'express';
+import { Role } from '../models/enum/Role';
 import { OAuthType } from '../models/enum/OAuthType';
-import { Role } from "../models/enum/Role";
 
 interface User {
   id: number;
@@ -25,7 +25,7 @@ function getAxiosErrorMessage(error: unknown) {
     }
     return error.response?.data?.error
   }
-  return error
+  return String(error)
 }
 
 const verifyJwtToken = async (token?: string) => {
@@ -38,7 +38,7 @@ const verifyJwtToken = async (token?: string) => {
 };
 
 
-export const jwtMiddleware = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+export const jwtGuard = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   const accessToken = req.headers.authorization?.split(" ")[1];
   if (!accessToken) {
     res.status(401).json({ error: "No JWT token was provided." });
