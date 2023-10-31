@@ -15,6 +15,8 @@ import { useRouter } from "next/router";
 import { Question } from "@/database/question/entities/question.entity";
 import QuestionPagination from "./QuestionPagination";
 import DeleteCfmModal from "./DeleteCfmModal";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
+import { Category } from "@/utils/enums/Category";
 
 type QuestionTableProps = {
   setOpenAdd: (open: boolean) => void;
@@ -80,6 +82,27 @@ const QuestionTable: FC<QuestionTableProps> = ({
     indexOfFirstRecord,
     indexOfLastRecord
   );
+    const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedDifficulty, setSelectedDifficulty] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const handleInputChange = (e) => {
+    setSearchTerm(e.target.value);
+    // Implement your search logic here
+  };
+
+    const handleCategoryChange = (
+      event: React.ChangeEvent<HTMLSelectElement>
+    ) => {
+      setSelectedCategory(event.target.value);
+      console.log(event.target.value);
+    };
+
+    const handleDifficultyChange = (
+      event: React.ChangeEvent<HTMLSelectElement>
+    ) => {
+      setSelectedDifficulty(event.target.value);
+    };
 
   useEffect(() => {
     setUserRole(sessionUser.role);
@@ -131,9 +154,56 @@ const QuestionTable: FC<QuestionTableProps> = ({
 
   return (
     <>
-      <div className="overflow-auto shadow-md sm:rounded-lg">
+      <div className="flex items-center mb-4 space-x-4 justify-between">
+        <div className="flex items-center space-x-4">
+          <div className="relative">
+            <select
+              id="categoryDropdown"
+              className="border rounded-md px-4 py-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm text-sm w-36 appearance-none"
+              onChange={handleCategoryChange}
+              value={selectedCategory}
+            >
+              <option value="">All Categories</option>
+              {Object.values(Category).map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="relative">
+            <select
+              id="difficultyDropdown"
+              className="border rounded-md px-4 py-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm text-sm w-36 appearance-none"
+              onChange={handleDifficultyChange}
+              value={selectedDifficulty}
+            >
+              <option value="">All Difficulties</option>
+              {Object.values(Complexity).map((difficulty) => (
+                <option key={difficulty} value={difficulty}>
+                  {difficulty}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <div className="relative flex items-center">
+          <MagnifyingGlassIcon className="h-5 w-5 text-gray-400 absolute left-3" />
+
+          <input
+            type="text"
+            placeholder="Search"
+            className="pl-10 pr-4 border rounded-md px-4 py-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm text-sm w-full"
+            value={searchTerm}
+            onChange={handleInputChange}
+          />
+        </div>
+      </div>
+
+      <div className="overflow-x-auto shadow-md rounded-lg">
         <table
-          className="relative text-sm text-left text-gray-500 dark:text-gray-400 w-full"
+          className=" relative text-sm text-left text-gray-500 dark:text-gray-400 w-full"
           hidden={hidden}
         >
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -167,7 +237,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
           </thead>
 
           <tbody>
-            {currentQuestions.map((question, index) => (
+            {currentQuestions.filter(question => (question.categories.includes(selectedCategory) || selectedCategory === "") && (question.complexity.includes(selectedDifficulty) || selectedDifficulty === "")).map((question, index) => (
               <tr
                 key={index}
                 className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
@@ -220,7 +290,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
                       <button
                         className="bg-red-600 hover:bg-red-800 text-white font-bold py-2 px-4 rounded-full"
                         onClick={() => {
-                          setOpenDelCfm(true)
+                          setOpenDelCfm(true);
                           setQuestionToDelete(question);
                         }}
                       >
@@ -233,17 +303,18 @@ const QuestionTable: FC<QuestionTableProps> = ({
             ))}
           </tbody>
         </table>
-        <QuestionPagination
-          hidden={hidden}
-          totalQuestionsNum={totalQuestions}
-          questionsPerPage={questionsPerPage}
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-          numberOfPages={numberOfPages}
-          indexOfFirstRecord={indexOfFirstRecord}
-          indexOfLastRecord={indexOfLastRecord}
-        />
       </div>
+      <QuestionPagination
+        hidden={hidden}
+        totalQuestionsNum={totalQuestions}
+        questionsPerPage={questionsPerPage}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        numberOfPages={numberOfPages}
+        indexOfFirstRecord={indexOfFirstRecord}
+        indexOfLastRecord={indexOfLastRecord}
+      />
+
       <AddQuestionModal
         onSave={handleSaveQuestion}
         setOpen={setOpenAdd}

@@ -29,8 +29,12 @@ const HistoryQuestionPage: React.FC<HistoryQuestionPageProps> = () => {
             <legend className="block text-base font-semibold leading-6 text-gray-900 dark:text-white">
               Question Title:
             </legend>
-            <label className="text-gray-900 dark:text-white cursor-pointer underline"
-              onClick={() => router.push(`/questions/${historyQuestion?.questionId}`)}>
+            <label
+              className="text-gray-900 dark:text-white cursor-pointer underline"
+              onClick={() =>
+                router.push(`/questions/${historyQuestion?.questionId}`)
+              }
+            >
               {historyQuestion?.questionTitle}
             </label>
           </div>
@@ -38,7 +42,13 @@ const HistoryQuestionPage: React.FC<HistoryQuestionPageProps> = () => {
             <legend className="block text-base font-semibold leading-6 text-gray-900 dark:text-white">
               Status:
             </legend>
-            <label className={`text-gray-900 dark:text-white capitalize ${historyQuestion?.result === "incorrect" ? }`} >
+            <label
+              className={`text-gray-900 capitalize 
+              ${
+                historyQuestion?.result === "correct"
+                  ? "text-green-600"
+                  : "text-red-600" }`}
+            >
               {historyQuestion?.result}
             </label>
           </div>
@@ -49,7 +59,7 @@ const HistoryQuestionPage: React.FC<HistoryQuestionPageProps> = () => {
               Submitted:
             </legend>
             <label className="text-gray-900 dark:text-white">
-              {new Date(historyQuestion?.completedAt).toLocaleString()}
+              {new Date(historyQuestion?.completedAt ?? "").toLocaleString()}
             </label>
           </div>
           <div className="mt-2">

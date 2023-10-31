@@ -80,7 +80,7 @@ const HistoryTable: React.FC<HistoryTableProps> = ({
                     >
                       {question.questionTitle}
                     </td>
-                    <td className="px-6 py-4">
+                    <td className={`px-6 py-4 capitalize ${question.result === "correct" ? "text-green-600" : "text-red-600"}`}>
                       {question.result}
                     </td>
                     <td className={"px-6 py-4"}>
