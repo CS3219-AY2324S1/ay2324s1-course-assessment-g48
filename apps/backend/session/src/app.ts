@@ -1,81 +1,8 @@
-// // @ts-check
-// import fs from "fs";
-// import express from "express";
-// import { WebSocketServer } from "ws";
-// import { Repo, RepoConfig, PeerId } from "@automerge/automerge-repo";
-// import { NodeWSServerAdapter } from "@automerge/automerge-repo-network-websocket";
-// import { NodeFSStorageAdapter } from "@automerge/automerge-repo-storage-nodefs";
-// import { Server } from "http";
-// import os from "os";
-// import { PORT } from "./utils/config";
-
-// export class WSServer {
-//   socket: WebSocketServer;
-//   server: Server;
-//   isReady: boolean = false;
-//   readyResolvers: ((value) => void)[] = [];
-
-//   constructor() {
-//     const dir = "automerge-sync-server-data";
-//     if (!fs.existsSync(dir)) {
-//       fs.mkdirSync(dir);
-//     }
-
-//     const hostname = os.hostname();
-
-//     this.socket = new WebSocketServer({ noServer: true });
-
-//     const app = express();
-//     app.use(express.static("public"));
-
-//     const config: RepoConfig = {
-//       network: [new NodeWSServerAdapter(this.socket)],
-//       storage: new NodeFSStorageAdapter(dir),
-//       peerId: `storage-server-${hostname}` as PeerId,
-//       // Since this is a server, we don't share generously — meaning we only sync documents they already
-//       // know about and can ask for by ID.
-//       sharePolicy: async () => false,
-//     };
-//     const serverRepo = new Repo(config);
-
-//     app.get("/", (req, res) => {
-//       res.send(`👍 @automerge/example-sync-server is running`);
-//     });
-
-//     this.server = app.listen(PORT, () => {
-//       console.log(`Listening on port ${PORT}`);
-//       this.isReady = true;
-//       this.readyResolvers.forEach((resolve) => resolve(true));
-//     });
-
-//     this.server.on("upgrade", (request, socket, head) => {
-//       this.socket.handleUpgrade(request, socket, head, (socket) => {
-//         this.socket.emit("connection", socket, request);
-//       });
-//     });
-//   }
-
-//   async ready() {
-//     if (this.isReady) {
-//       return true;
-//     }
-
-//     return new Promise((resolve) => {
-//       this.readyResolvers.push(resolve);
-//     });
-//   }
-
-//   close() {
-//     this.socket.close();
-//     this.server.close();
-//   }
-// }
-// new WSServer();
-
 import { WebSocketServer } from "ws";
 import express, { Express } from "express";
 import { SessionRouter } from "./routes/sessionRouter.ts";
 import cors from "cors";
+import { PORT } from "./utils/config.ts";
 
 class SessionServer {
   private wss: WebSocketServer;
@@ -85,7 +12,7 @@ class SessionServer {
   constructor() {
     this.wss = new WebSocketServer({ noServer: true });
     this.app = express();
-    const server = this.app.listen(8250);
+    const server = this.app.listen(PORT);
 
     server.on("upgrade", (request, socket, head) => {
       this.wss.handleUpgrade(request, socket, head, (socket) => {

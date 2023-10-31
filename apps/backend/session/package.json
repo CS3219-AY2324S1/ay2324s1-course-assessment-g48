@@ -31,6 +31,7 @@
     "@automerge/automerge-repo-storage-indexeddb": "^1.0.6",
     "@automerge/automerge-repo-storage-nodefs": "^1.0.6",
     "@types/ws": "^8.5.7",
+    "axios": "^1.6.0",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "firebase-functions": "^4.4.1",

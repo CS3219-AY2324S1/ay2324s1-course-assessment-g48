@@ -1,27 +1,18 @@
 import { Server } from "socket.io";
 import { MONGODB_URI, PORT } from "./utils/config";
-import Chatroom from "./model/Chatroom";
 import mongoose from "mongoose";
-import { ChatroomService } from "./services/ChatroomService";
+import express, { json } from "express";
+import MessageController from "./controllers/messageController";
+import { chatroomRouter } from "./routes/chatroomRouter";
 
-const io = new Server(PORT, {});
+const app = express();
+const io = new Server(app.listen(PORT), {});
 
-const chatroomService = new ChatroomService();
+const messageController = new MessageController(io);
 
-io.on("connect", (socket) => {
-  socket.on("connectToChatroom", async ({ chatroomId }) => {
-    socket.join(chatroomId);
-    const messages = await chatroomService.getMessages(chatroomId);
-    console.log(messages);
-    socket.emit("receiveMessage", { messages });
-    socket.on("sendMessage", (message) => {
-      console.log(message);
-      chatroomService.appendMessages(chatroomId, [message]);
-      io.to(chatroomId).emit("receiveMessage", { messages: [message] });
-    });
-  });
-  socket.emit("connected");
-});
+io.on("connect", (socket) => messageController.handleConnection(socket));
+app.use(json());
+app.use(chatroomRouter);
 
 mongoose
   .connect(MONGODB_URI || "")
@@ -32,10 +23,10 @@ mongoose
     console.log("error connection to MongoDB:", error.message);
   });
 
-// const chatroom = new Chatroom({
-//   messages: [{ timestamp: new Date(), uid: 1, content: "HELLO" }],
-//   users: [],
-// });
-// console.log(chatroom);
-// chatroom.save();
-// console.log(`added ${JSON.stringify(chatroom)}`);
+process.on("SIGINT", () => {
+  console.log("Process is terminating. Closing all WebSockets.");
+  mongoose.disconnect();
+  io.fetchSockets().then((sockets) =>
+    sockets.forEach((socket) => socket.disconnect())
+  );
+});
