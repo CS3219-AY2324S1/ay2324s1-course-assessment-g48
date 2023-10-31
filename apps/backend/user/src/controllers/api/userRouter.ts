@@ -9,7 +9,7 @@ import {
 } from "../../database/user";
 import { OAuth, Role } from "@prisma/client";
 import logger from "../../utils/logger";
-import { signJwtAccessToken, verifyJwtToken } from "../../database/jwt";
+import { signJwtAccessToken, verifyJwtToken } from "../../utils/jwt";
 
 export const userRouter = Router();
 
