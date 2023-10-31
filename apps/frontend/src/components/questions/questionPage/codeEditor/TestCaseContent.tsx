@@ -14,10 +14,14 @@ const TestCaseContent: React.FC<TestCaseContentProps> = ({
   handleTestCaseChipClick,
   selectedTestCaseChip,
 }) => {
+  if (!question) {
+    return <></>;
+  }
+
   return (
     <>
       <div className="flex">
-        {question.testcases.map(
+        {(question.testcases ? question.testcases : []).map(
           (testcase: { number: Key | number | null | undefined }) => (
             <TestCaseChip
               key={testcase.number}

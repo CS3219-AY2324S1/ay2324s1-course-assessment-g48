@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "concurrently --prefix \"{time}-{pid}\" --timings --handle-input --kill-others-on-fail \"yarn --cwd ./apps/backend/question run dev\" \"yarn --cwd ./apps/backend/queue run dev\" \"yarn --cwd ./apps/backend/session run dev\" \"yarn --cwd ./apps/backend/user run dev\" \"yarn --cwd ./apps/frontend run dev\" \"yarn --cwd ./apps/backend/history run dev\"",
+    "dev": "concurrently --prefix \"{time}-{pid}\" --timings --handle-input --kill-others-on-fail --n question,queue,session,user,frontend,history \"yarn --cwd ./apps/backend/question run dev\" \"yarn --cwd ./apps/backend/queue run dev\" \"yarn --cwd ./apps/backend/session run dev\" \"yarn --cwd ./apps/backend/user run dev\" \"yarn --cwd ./apps/frontend run dev\" \"yarn --cwd ./apps/backend/history run dev\"",
     "install-all": "cd ./apps/frontend && yarn install && cd ../backend/user && yarn install && cd ../chat && yarn install && cd ../history && yarn install && cd ../question && yarn install && cd ../queue && yarn install && cd ../user && yarn install"
   },
   "author": "",

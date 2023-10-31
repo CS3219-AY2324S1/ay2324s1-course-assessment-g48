@@ -84,7 +84,8 @@ class SessionServer {
 
   constructor() {
     this.wss = new WebSocketServer({ noServer: true });
-    const server = express().listen(8250);
+    this.app = express();
+    const server = this.app.listen(8250);
 
     server.on("upgrade", (request, socket, head) => {
       this.wss.handleUpgrade(request, socket, head, (socket) => {
@@ -92,7 +93,6 @@ class SessionServer {
       });
     });
 
-    this.app = express();
     this.app.use(express.json());
     const allowedOrigins = [
       "http://localhost",
@@ -126,7 +126,6 @@ class SessionServer {
     this.app.use("/session", (req, res, next) =>
       this.router.router(req, res, next)
     );
-    this.app.listen(8251);
   }
 }
 
