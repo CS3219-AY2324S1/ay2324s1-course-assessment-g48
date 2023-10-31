@@ -1,9 +1,8 @@
 import { Question } from "@/database/question/entities/question.entity";
 import { getQuestionById } from "@/database/question/questionService";
-import { Role } from "@/utils/enums/Role";
 import { useEffect, useState } from "react";
 
-function useQuestionById(qid: string, userRole?: Role) {
+function useQuestionById(qid: string, accessToken?: string | null) {
   const [isLoading, setIsLoading] = useState(false);
   const [question, setQuestion] = useState<Question | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -13,9 +12,9 @@ function useQuestionById(qid: string, userRole?: Role) {
       if (qid) {
         setIsLoading(true);
         setError(null);
-        if (userRole === Role.Unknown) return;
+        if (accessToken === null) return;
         try {
-          const data = await getQuestionById(qid, userRole);
+          const data = await getQuestionById(qid, accessToken);
           setQuestion(data);
           setIsLoading(false);
         } catch (error) {
@@ -26,7 +25,7 @@ function useQuestionById(qid: string, userRole?: Role) {
     }
 
     fetchData();
-  }, [qid, userRole]);
+  }, [qid, accessToken]);
 
   return { question, isLoading, error };
 }

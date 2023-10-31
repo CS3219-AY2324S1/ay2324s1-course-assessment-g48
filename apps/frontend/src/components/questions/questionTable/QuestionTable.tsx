@@ -27,10 +27,11 @@ const QuestionTable: FC<QuestionTableProps> = ({
   openAdd,
   hidden,
 }) => {
-  const [questionsPerPage, setQuestionsPerPage] = useState(10);
+  const [questionsPerPage] = useState(10);
   const { sessionUser } = useSessionUser();
   const [userRole, setUserRole] = useState(sessionUser.role);
-  const { questions, totalQuestions, handleTrigger } = useQuestions(userRole);
+  const [accessToken, setAccessToken] = useState(sessionUser.accessToken);
+  const { questions, totalQuestions, handleTrigger } = useQuestions(accessToken);
   const [viewQuestion, setViewQuestion] = useState<Question>({
     _id: "",
     title: "",
@@ -83,11 +84,12 @@ const QuestionTable: FC<QuestionTableProps> = ({
 
   useEffect(() => {
     setUserRole(sessionUser.role);
+    setAccessToken(sessionUser.accessToken);
   }, [sessionUser]);
 
   const handleSaveQuestion = async (newQuestion: Question) => {
     const questionToAdd = { ...newQuestion };
-    await postNewQuestion(questionToAdd, userRole!)
+    await postNewQuestion(questionToAdd, accessToken!)
       .then(() => {
         handleTrigger();
 
@@ -99,7 +101,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
   };
 
   const handleDeleteQuestion = async (id: string) => {
-    await deleteQuestionById(id, userRole!)
+    await deleteQuestionById(id, accessToken!)
       .then(() => {
         handleTrigger();
         setOpenDelCfm(false);
@@ -110,7 +112,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
   };
 
   const handleEditQuestion = async (editQuestion: Question) => {
-    await updateQuestionById(editQuestion._id, editQuestion, userRole!)
+    await updateQuestionById(editQuestion._id, editQuestion, accessToken!)
       .then(() => {
         handleTrigger();
         setOpenEdit(false);

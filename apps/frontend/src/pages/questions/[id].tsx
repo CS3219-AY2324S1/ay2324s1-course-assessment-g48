@@ -10,14 +10,13 @@ const QuestionPage: React.FC<QuestionPageProps> = () => {
   const router = useRouter();
   const qid = router.query.id;
   const { sessionUser } = useSessionUser();
-  const [userRole, setUserRole] = useState(sessionUser.role);
-  const { question } = useQuestionById(qid as string, userRole);
+  const [accessToken, setAccessToken] = useState(sessionUser.accessToken);
+  const { question } = useQuestionById(qid as string, accessToken);
 
   useEffect(() => {
-    setUserRole(sessionUser.role);
+    setAccessToken(sessionUser.accessToken);
   }, [sessionUser]);
 
-  
   return <div className='flex h-[calc(100vh-60px)]'>
     {question && <QuestionWorkspace question={question} />}
   </div>

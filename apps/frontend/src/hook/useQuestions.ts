@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { getAllQuestions } from "../database/question/questionService";
 import { Question } from "@/database/question/entities/question.entity";
-import { Role } from "@/utils/enums/Role";
 
-function useQuestions(userRole?: Role) {
+function useQuestions(accessToken?: string | null) {
   const [isLoading, setIsLoading] = useState(false);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [trigger, setTrigger] = useState(false);
@@ -14,8 +13,8 @@ function useQuestions(userRole?: Role) {
 
   useEffect(() => {
     setIsLoading(true);
-    if (userRole === Role.Unknown) return;
-    getAllQuestions(userRole).then((questions) => {
+    if (accessToken === null) return;
+    getAllQuestions(accessToken).then((questions) => {
       setQuestions(questions);
       setTotalQuestions(questions.length);
       setTimeout(() => {
@@ -25,7 +24,7 @@ function useQuestions(userRole?: Role) {
     }).catch((error) => {
     console.error(error);
     });
-  }, [trigger, userRole]);
+  }, [accessToken, trigger]);
   return { questions, totalQuestions, setQuestions, isLoading, handleTrigger };
 }
 

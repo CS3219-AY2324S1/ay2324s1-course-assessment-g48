@@ -1,17 +1,16 @@
 import axios from "axios";
 import { Question } from "./entities/question.entity";
-import { Role } from "@/utils/enums/Role";
 import Router from "next/router";
 
 const BASE_URL = process.env.NEXT_PUBLIC_QUESTION_SERVICE + "/api/question";
 
 export const postNewQuestion = async (
   newQuestion: Question,
-  userRole: Role
+  accessToken: string,
 ) => {
   const config = {
     headers: {
-      role: userRole,
+      Authorization: `Bearer ${accessToken}`,
     },
   };
   return await axios
@@ -38,10 +37,10 @@ export const postNewQuestion = async (
     });
 };
 
-export const getAllQuestions = async (userRole?: Role) => {
+export const getAllQuestions = async (accessToken?: string) => {
   const config = {
     headers: {
-      role: userRole,
+      Authorization: `Bearer ${accessToken}`,
     },
   };
   return await axios
@@ -58,10 +57,10 @@ export const getAllQuestions = async (userRole?: Role) => {
     });
 };
 
-export const getQuestionById = async (id: string, userRole?: Role) => {
+export const getQuestionById = async (id: string, accessToken?: string) => {
   const config = {
     headers: {
-      role: userRole,
+      Authorization: `Bearer ${accessToken}`,
     },
   };
   return await axios
@@ -86,10 +85,10 @@ export const getQuestionById = async (id: string, userRole?: Role) => {
     });
 };
 
-export const deleteQuestionById = async (id: string, userRole: Role) => {
+export const deleteQuestionById = async (id: string, accessToken:string) => {
   const config = {
     headers: {
-      role: userRole,
+      Authorization: `Bearer ${accessToken}`,
     },
   };
   return await axios
@@ -117,11 +116,11 @@ export const deleteQuestionById = async (id: string, userRole: Role) => {
 export const updateQuestionById = async (
   id: string,
   updatedQuestion: Partial<Question>,
-  userRole: Role
+  accessToken: string,
 ) => {
   const config = {
     headers: {
-      role: userRole,
+      Authorization: `Bearer ${accessToken}`,
     },
   };
   return await axios.put(BASE_URL + "/" + id, {

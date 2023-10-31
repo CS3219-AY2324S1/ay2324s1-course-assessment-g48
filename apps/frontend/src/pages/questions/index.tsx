@@ -10,9 +10,11 @@ export default function QuestionsRepo() {
   const [openAdd, setOpenAdd] = useState(false);
   const { sessionUser } = useSessionUser();
   const [userRole, setUserRole] = useState(sessionUser.role);
-  const { isLoading } = useQuestions(userRole);
+  const [accessToken, setAccessToken] = useState(sessionUser.accessToken);
+  const { isLoading } = useQuestions(accessToken);
 
   useEffect(() => {
+    setAccessToken(sessionUser.accessToken);
     setUserRole(sessionUser.role);
   }, [sessionUser]);
 
