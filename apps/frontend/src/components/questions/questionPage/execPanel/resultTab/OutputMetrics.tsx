@@ -3,6 +3,31 @@ type OutputMetricsProps = {
 };
 
 const OutputMetrics: React.FC<OutputMetricsProps> = ({ outputDetails }) => {
+  function FormatRuntime(outputDetails: any) {
+    if (outputDetails !== "" && !undefined && !null) {
+      if (outputDetails.time < 1) {
+        outputDetails.time = Number(outputDetails.time) * 1000 + " ms";
+      } else {
+        outputDetails.time = Number(outputDetails.time) + " s";
+      }
+    }
+
+    return outputDetails;
+  }
+
+  function FormatSpace(outputDetails: any) {
+    if (outputDetails !== "" && !undefined && !null) {
+      if (outputDetails.memory < 1000) {
+        outputDetails.memory = Number(outputDetails.memory) + " KB";
+      } else {
+        outputDetails.memory =
+          (Number(outputDetails.memory) / 1000).toFixed(1) + " MB";
+      }
+    }
+
+    return outputDetails;
+  }
+
   return (
     <>
       <p className="text-sm font-medium mt-4 dark:text-white">Output details</p>
@@ -16,13 +41,13 @@ const OutputMetrics: React.FC<OutputMetricsProps> = ({ outputDetails }) => {
         <p className="text-sm">
           Memory:{" "}
           <span className="font-semibold px-2 py-1 rounded-md">
-            {outputDetails?.memory}
+            {FormatSpace(outputDetails).memory}
           </span>
         </p>
         <p className="text-sm">
-          Time:{" "}
+          Runtime:{" "}
           <span className="font-semibold px-2 py-1 rounded-md">
-            {outputDetails?.time}
+            {FormatRuntime(outputDetails).time}
           </span>
         </p>
       </div>

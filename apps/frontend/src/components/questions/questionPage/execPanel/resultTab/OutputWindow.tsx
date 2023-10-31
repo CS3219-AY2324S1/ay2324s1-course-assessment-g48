@@ -6,6 +6,7 @@ type OutputWindowProps = {
 
 const OutputWindow: React.FC<OutputWindowProps> = ({ outputDetails }) => {
   const getOutput = () => {
+    console.log("getOutput() called");
     let statusId = outputDetails?.status?.id;
 
     if (statusId === Status.CompilationError) {
@@ -17,7 +18,6 @@ const OutputWindow: React.FC<OutputWindowProps> = ({ outputDetails }) => {
       );
     } else if (statusId === Status.Accepted) {
       // accepted (id: 3)
-      console.log("outputdetails accepted:", outputDetails);
       return (
         <pre className="px-2 py-1 font-normal text-xs text-green-500">
           {atob(outputDetails.stdout) !== null

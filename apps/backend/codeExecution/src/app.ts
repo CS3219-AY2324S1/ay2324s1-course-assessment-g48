@@ -1,9 +1,8 @@
 import express from "express";
-import { userRouter } from "./controllers/api/userRouter";
 import cors from "cors";
+import { codeExecutionRouter } from "./controllers/api/codeExecutionRouter";
 
 export const app = express();
-
 const allowedOrigins = [
   "http://localhost",
   "http://localhost:80",
@@ -35,4 +34,5 @@ app.use(
 );
 
 app.use(express.json());
-app.use("/api/users", userRouter);
+
+app.use("/api/codeExecution", codeExecutionRouter);
