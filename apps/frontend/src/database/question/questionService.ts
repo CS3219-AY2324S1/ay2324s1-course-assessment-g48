@@ -5,8 +5,8 @@ import Router from "next/router";
 const BASE_URL = process.env.NEXT_PUBLIC_QUESTION_SERVICE + "/api/question";
 
 export const postNewQuestion = async (
-  newQuestion: Question,
   accessToken: string,
+  newQuestion: Question,
 ) => {
   const config = {
     headers: {
@@ -14,17 +14,11 @@ export const postNewQuestion = async (
     },
   };
   return await axios
-    .post(BASE_URL, {
-      title: newQuestion.title,
-      description: newQuestion.description,
-      categories: newQuestion.categories,
-      complexity: newQuestion.complexity,
-      testcases: newQuestion.testcases,
-      constraints: newQuestion.constraints,
-      followUp: newQuestion.followUp,
-      starterCode: newQuestion.starterCode,
-      dateCreated: newQuestion.dateCreated,
-    }, config)
+    .post(
+      BASE_URL,
+      newQuestion,
+      config
+    )
     .then((response) => {
       return response.data;
     })
@@ -115,28 +109,24 @@ export const deleteQuestionById = async (id: string, accessToken:string) => {
 
 export const updateQuestionById = async (
   id: string,
-  updatedQuestion: Partial<Question>,
   accessToken: string,
+  updatedQuestion: Partial<Question>,
 ) => {
   const config = {
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },
   };
-  return await axios.put(BASE_URL + "/" + id, {
-    title: updatedQuestion.title,
-    description: updatedQuestion.description,
-    categories: updatedQuestion.categories,
-    complexity: updatedQuestion.complexity,
-    testcases: updatedQuestion.testcases,
-    constraints: updatedQuestion.constraints,
-    followUp: updatedQuestion.followUp,
-    starterCode: updatedQuestion.starterCode,
-  }, config)
-  .then((response) => {
-    return response.data;
-  })
-  .catch((error) => {
+  return await axios
+    .put(
+      BASE_URL + "/" + id,
+      updatedQuestion,
+      config
+    )
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
       if (error.response) {
         if (error.response.status === 401) {
           Router.push("/401");

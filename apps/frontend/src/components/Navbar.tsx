@@ -1,11 +1,7 @@
 import { Fragment } from "react";
 import Image from "next/image";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
-import {
-  Bars3Icon,
-  BellIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
+import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { signOut } from "next-auth/react";
 import { Session } from "next-auth";
 import { useRouter } from "next/router";
@@ -13,17 +9,18 @@ import ModeToggleButton from "./ModeToggleButton";
 import Link from "next/link";
 import Stopwatch from "./Stopwatch";
 import useNotification from "@/hook/useNotfication";
+import { classNames } from "@/utils/classnames/classnames";
 
 const navigation = [
   { name: "Question", href: "/questions", current: false },
   { name: "Matching", href: "/matching", current: false },
-  { name: "History", href: "/history", current: false },
+  { name: "History", href: "/history/user", current: false },
   { name: "Chat", href: "/chat", current: false },
 ];
 
-function classNames(...classes: any[]) {
-  return classes.filter(Boolean).join(" ");
-}
+// function classNames(...classes: string[]) {
+//   return classes.filter(Boolean).join(" ");
+// }
 
 type NavbarProps = {
   session: Session | null;
@@ -33,15 +30,15 @@ type NavbarProps = {
 
 const Navbar: React.FC<NavbarProps> = ({
   session,
-  openSlideOver,
+  // openSlideOver,
   setSlideOver,
 }) => {
   const router = useRouter();
   const currentPath = router.pathname;
-  const isQuestionPage = currentPath === '/questions/[id]'
-  const {numberOfUnreadNotifications} = useNotification()
+  const isQuestionPage = currentPath === "/questions/[id]";
+  const { numberOfUnreadNotifications } = useNotification();
   function handleSignOutClick() {
-    signOut({callbackUrl: '/'});
+    signOut({ callbackUrl: "/" });
   }
 
   return (
@@ -72,11 +69,9 @@ const Navbar: React.FC<NavbarProps> = ({
                 <>
                   <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                     <div className="flex flex-shrink-0 items-center">
-                      <Link
-                        href="/"
-                      >
+                      <Link href="/">
                         <span className="self-center text-2xl font-semibold whitespace-nowrap text-white">
-                          PeerPrep
+                          LeetPal
                         </span>
                       </Link>
                     </div>
@@ -94,7 +89,7 @@ const Navbar: React.FC<NavbarProps> = ({
                         onClick={() => router.push("/")}
                       >
                         <span className="self-center text-2xl font-semibold whitespace-nowrap text-white">
-                          PeerPrep
+                          LeetPal
                         </span>
                       </a>
                     </div>
@@ -123,7 +118,7 @@ const Navbar: React.FC<NavbarProps> = ({
                   </div>
 
                   <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 space-x-2">
-                    {isQuestionPage && (<Stopwatch />)}
+                    {isQuestionPage && <Stopwatch />}
                     <ModeToggleButton />
                     <button
                       type="button"
@@ -133,11 +128,14 @@ const Navbar: React.FC<NavbarProps> = ({
                       <span className="absolute -inset-1.5" />
                       <span className="sr-only">View notifications</span>
                       <div className="flex">
-                      <BellIcon className="h-6 w-6" aria-hidden="true" />
-                      {
-                        (numberOfUnreadNotifications() > 0) ?
-                          <span className="notification-counter">{numberOfUnreadNotifications()}</span>:<></>
-                      }
+                        <BellIcon className="h-6 w-6" aria-hidden="true" />
+                        {numberOfUnreadNotifications() > 0 ? (
+                          <span className="notification-counter">
+                            {numberOfUnreadNotifications()}
+                          </span>
+                        ) : (
+                          <></>
+                        )}
                       </div>
                     </button>
 

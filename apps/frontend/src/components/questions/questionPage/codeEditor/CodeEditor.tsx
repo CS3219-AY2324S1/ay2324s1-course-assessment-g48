@@ -1,25 +1,37 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import EditorNav from "./EditorNav";
+import ExecPanel from "../execPanel/ExecPanel";
 import Split from "react-split";
-import TestCaseHeader from "./TestCaseHeader";
-import EditorFooter from "./EditorFooter";
+import EditorFooter from "./editorFooter/EditorFooter";
 import { useTheme } from "@/hook/ThemeContext";
 import { Editor } from "@monaco-editor/react";
 import { Question } from "@/database/question/entities/question.entity";
-import TestCaseContent from "./TestCaseContent";
-import ResultContent from "./ResultContent";
-
+import axios from "axios";
+import { languageOptions } from "@/utils/constants/LanguageOptions";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import useKeyPress from "@/hook/useKeyPress";
+import monaco from "monaco-editor";
+import { Language } from "@/utils/class/Language";
+import { Status } from "@/utils/enums/Status";
 
 type CodeEditorProps = {
-  onChangeCode?: (value: any, event: any) => void;
+  onChangeCode?: (
+    value?: string,
+    event?: monaco.editor.IModelContentChangedEvent
+  ) => void;
   currCode?: string;
   question: Question;
+  initialLanguage?: Language;
+  hasSession?: boolean;
 };
 
 const CodeEditor: React.FC<CodeEditorProps> = ({
   onChangeCode,
   currCode,
   question,
+  initialLanguage,
+  hasSession
 }) => {
   // TODO: make it dynamic
   const starterCode = `/**
@@ -40,83 +52,191 @@ class Solution {
 };`;
 
   const { isDarkMode } = useTheme();
-  const monacoRef = useRef<any>(null);
-
   const [code, changeCode] = useState(currCode ?? "");
-  const [isResultActive, setIsResultActive] = useState(false);
-  const [selectedTestCaseChip, setSelectedTestCaseChip] = useState<
-    number | null
-  >(1);
+  const [customInput, setCustomInput] = useState(""); // todo: for console
+  const [outputDetails, setOutputDetails] = useState("");
+  const [processing, setProcessing] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState(initialLanguage ?? languageOptions[0]);
 
-  const handleResultClick = () => {
-    setIsResultActive(true);
-  };
-
-  const handleTestCaseClick = () => {
-    setIsResultActive(false);
-  };
-
-  const handleTestCaseChipClick = (testNum: number) => {
-    setSelectedTestCaseChip(testNum);
-  };
+  const enterPress = useKeyPress("Enter");
+  const ctrlPress = useKeyPress("Control");
 
   if (!onChangeCode) {
-    onChangeCode = (value: any, event: any) => {
-      changeCode(value);
+    onChangeCode = (value?: string) => {
+      changeCode(value ?? "");
     };
+    // console.log("Using solo code editor. Current code:", code);
   }
 
-  function handleEditorDidMount(editor:any, monaco:any) {
-    // here is another way to get monaco instance
-    // you can also store it in `useRef` for further usage
-    monacoRef.current = editor;
-  }
+  const handleCompile = () => {
+    setProcessing(true);
+    const language = languageOptions.find(
+      (lang) => lang.value === selectedLanguage.value
+    );
+    const formData = {
+      language_id: language?.id,
+      // encode source code in base64
+      source_code: btoa(code),
+      stdin: btoa(customInput),
+    };
+    const options = {
+      method: "POST",
+      url: String(process.env.NEXT_PUBLIC_RAPID_API_URL),
+      params: { base64_encoded: "true", fields: "*" },
+      headers: {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers":
+          "Origin, X-Requested-With, Content-Type, Accept",
+        "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE",
+        "content-type": "application/json",
+        "X-RapidAPI-Host": String(process.env.NEXT_PUBLIC_RAPID_API_HOST),
+        "X-RapidAPI-Key": String(process.env.NEXT_PUBLIC_RAPID_API_KEY),
+      },
+      data: formData,
+    };
 
+    axios
+      .request(options)
+      .then(function (response) {
+        console.log("res.data", response.data);
+        const token = response.data.token;
+        checkStatus(token);
+      })
+      .catch((err) => {
+        const error = err.response ? err.response.data : err.message;
+        setProcessing(false);
+        console.log(error);
+      });
+  };
 
+  const checkStatus = async (token: string) => {
+    const options = {
+      method: "GET",
+      url: process.env.NEXT_PUBLIC_RAPID_API_URL + "/" + token,
+      params: { base64_encoded: "true", fields: "*" },
+      headers: {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers":
+          "Origin, X-Requested-With, Content-Type, Accept",
+        "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE",
+        "X-RapidAPI-Host": String(process.env.NEXT_PUBLIC_RAPID_API_HOST),
+        "X-RapidAPI-Key": String(process.env.NEXT_PUBLIC_RAPID_API_KEY),
+      },
+    };
+    try {
+      const response = await axios.request(options);
+      console.log("response", response.data);
+      const statusId = response.data.status_id;
+
+      // Processed - we have a result
+      if (statusId === Status.InQueue || statusId === Status.Processing) {
+        // in queue(id: 1) or still processing (id: 2)
+        setTimeout(() => {
+          checkStatus(token);
+        }, 2000);
+        return;
+      } else {
+        setProcessing(false);
+        setOutputDetails(response.data);
+        showSuccessToast(`Compiled Successfully!`);
+        console.log("response.data", response.data);
+        return;
+      }
+    } catch (err) {
+      console.log("err", err);
+      setProcessing(false);
+      showErrorToast((err as Error).message);
+    }
+  };
+
+  const showSuccessToast = (msg: string) => {
+    toast.success(msg || `Compiled Successfully!`, {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+  };
+  const showErrorToast = (msg: string) => {
+    toast.error(msg || `Something went wrong! Please try again.`, {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+  };
+
+  // session live editor
   useEffect(() => {
-    changeCode(currCode ?? "");
-  }, [currCode]);
+    changeCode(currCode ?? code);
+  }, [currCode, code]);
+
+  // ctrl + enter => run
+  useEffect(() => {
+    if (enterPress && ctrlPress) {
+      console.log("enterPress", enterPress);
+      console.log("ctrlPress", ctrlPress);
+      handleCompile();
+    }
+  }, [ctrlPress, enterPress]);
 
   return (
-    <div className="flex flex-col h-full dark:bg-gray-800 relative overflow-hidden">
-      <EditorNav />
-      <Split
-        className="flex-col split h-[calc(100vh-120px)]"
-        direction="vertical"
-        sizes={[60, 40]}
-      >
-        <div className="w-full overflow-auto dark:bg-neutral-800">
-          <Editor
-            height="100%"
-            onChange={onChangeCode}
-            defaultValue={starterCode}
-            value={code}
-            theme={isDarkMode ? "vs-dark" : "light"}
-            defaultLanguage="javascript"
-            onMount={handleEditorDidMount}
-          />
-        </div>
-        <div className="w-full px-5 overflow-auto dark:bg-neutral-800">
-          <TestCaseHeader
-            handleResultClick={handleResultClick}
-            handleTestCaseClick={handleTestCaseClick}
-            isResultActive={isResultActive}
-          />
-
-          {!isResultActive ? (
-            <TestCaseContent
-              question={question}
-              handleTestCaseChipClick={handleTestCaseChipClick}
-              selectedTestCaseChip={selectedTestCaseChip}
+    <>
+      <div className="flex flex-col h-full dark:bg-gray-800 relative overflow-hidden">
+        <EditorNav
+          selectedLanguage={selectedLanguage}
+          setSelectedLanguage={setSelectedLanguage}
+          hasSession={hasSession!}
+        />
+        <Split
+          className="flex-col split h-[calc(100vh-120px)] w-full"
+          direction="vertical"
+          sizes={[60, 40]}
+        >
+          <div className="w-full overflow-auto dark:bg-neutral-800">
+            <Editor
+              height="100%"
+              onChange={onChangeCode}
+              defaultValue={starterCode}
+              value={code}
+              theme={isDarkMode ? "vs-dark" : "light"}
+              language={selectedLanguage.value.toLowerCase()}
             />
-          ) : (
-            <ResultContent />
-          )}
-        </div>
-      </Split>
-
-      <EditorFooter />
-    </div>
+          </div>
+          {/* Exec Panel can still be abstracted to QuestionWorkspace -> future enhancement */}
+          <ExecPanel question={question} outputDetails={outputDetails} />
+        </Split>
+        {/* Gotta check whether toastcontainer actually works... */}
+        <ToastContainer
+          position="top-right"
+          autoClose={2000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
+        <EditorFooter
+          userCode={code}
+          processing={processing}
+          handleCompile={handleCompile}
+          question={question}
+        />
+      </div>
+    </>
   );
 };
+
+CodeEditor.defaultProps = {
+  hasSession: false
+};
+
 export default CodeEditor;

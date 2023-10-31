@@ -1,16 +1,26 @@
 import mongoose, { Document, Schema } from "mongoose";
+import { LanguageId } from "./enum/LanguageId";
+import { Category } from "./enum/Category";
+import { Complexity } from "./enum/Complexity";
+
+// console.log("time:" , moment().tz("Asia/Singapore").format())
 
 interface Question extends Document {
   id: string;
+  // left side of question page
   title: string;
   description: string;
   categories: string[];
   complexity: string;
+  examples: string[];
   constraints: string;
   followUp: string;
-  starterCode: string;
+  // right side of question page
+  starterCode: [{
+    languageId: number,
+    code: string
+  }],
   testcases: [{
-    number: number;
     input: string;
     output: string;
   }]
@@ -30,15 +40,19 @@ const questionSchema = new Schema({
   categories: {
     type: [{
       type: String,
-      enum: ["Algorithms","Bit Manipulation","Brainteaser","Databases","Data Structures","Recursion","Strings"],    
+      enum: Object.values(Category),    
     }],
     required: false,
   },
   complexity: {
     type: String,
-    enum: ["Easy", "Medium", "Hard"],
+    enum: Object.values(Complexity),
     required: false,
   },
+  examples: [{
+    type: String,
+    required: false,
+  }],
   constraints: {
     type: String,
     required: false,
@@ -47,16 +61,21 @@ const questionSchema = new Schema({
     type: String,
     required: false,
   },
-  starterCode: {
-    type: String,
-    required: false,
-  },
-  testcases: [
+  starterCode: [
     {
-      number: {
+      languageId: {
         type: Number,
+        enum: Object.values(LanguageId).filter((v) => !isNaN(Number(v))),
         required: false,
       },
+      code: {
+        type: String,
+        required: false,
+      },
+    }
+  ],
+  testcases: [
+    {
       input: {
         type: String,
         required: false,
@@ -69,24 +88,27 @@ const questionSchema = new Schema({
   ],
   dateCreated: {
     type: Date,
-    default: Date.now, // Set the default value to the current date and time
+    // Dysfunctional
+    default: Date.now,
     required: false,
-  },
-});
+  }, 
+},  
+{versionKey: false} // Removes the __v: 0 attribute
+);
+
 
 // Removes the __v: 0 attribute 
 questionSchema.set('toJSON', {
   transform: (document, returnedObject) => {
       returnedObject.id = returnedObject._id.toString()
-      delete returnedObject.__v
-
-    // Remove _id from the testcases array
-    if (Array.isArray(returnedObject.testcases)) {
-      returnedObject.testcases = returnedObject.testcases.map((tc) => {
-        const { _id, ...rest } = tc;
-        return rest;
-      });
-    }
+    // // Remove _id from the testcases array
+    // if (Array.isArray(returnedObject.testcases)) {
+    //   returnedObject.testcases = returnedObject.testcases.map((tc) => {
+    //     const { _id, ...rest } = tc;
+    //     delete tc.__v;
+    //     return rest;
+    //   });
+    // }
   }
 })
 

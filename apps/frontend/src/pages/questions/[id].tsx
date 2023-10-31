@@ -16,8 +16,8 @@ const QuestionPage: React.FC<QuestionPageProps> = () => {
   useEffect(() => {
     setAccessToken(sessionUser.accessToken);
   }, [sessionUser]);
-
-  return <div className='flex h-[calc(100vh-60px)]'>
+  
+  return <div className='flex'>
     {question && <QuestionWorkspace question={question} />}
   </div>
 }

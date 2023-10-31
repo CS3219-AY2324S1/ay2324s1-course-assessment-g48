@@ -12,7 +12,10 @@ import { Complexity } from "@/utils/enums/Complexity";
 import useSessionUser from "@/hook/useSessionUser";
 import { Role } from "@/utils/enums/Role";
 import { useRouter } from "next/router";
-import { Question } from "@/database/question/entities/question.entity";
+import {
+  Question,
+  initialQuestion,
+} from "@/database/question/entities/question.entity";
 import QuestionPagination from "./QuestionPagination";
 import DeleteCfmModal from "./DeleteCfmModal";
 
@@ -32,42 +35,11 @@ const QuestionTable: FC<QuestionTableProps> = ({
   const [userRole, setUserRole] = useState(sessionUser.role);
   const [accessToken, setAccessToken] = useState(sessionUser.accessToken);
   const { questions, totalQuestions, handleTrigger } = useQuestions(accessToken);
-  const [viewQuestion, setViewQuestion] = useState<Question>({
-    _id: "",
-    title: "",
-    description: "",
-    categories: [],
-    complexity: "",
-    testcases: [],
-    constraints: "",
-    followUp: "",
-    starterCode: "",
-    dateCreated: new Date(),
-  });
-  const [questionToEdit, setQuestionToEdit] = useState<Question>({
-    _id: "",
-    title: "",
-    description: "",
-    categories: [],
-    complexity: "",
-    testcases: [],
-    constraints: "",
-    followUp: "",
-    starterCode: "",
-    dateCreated: new Date(),
-  });
-  const [questionToDelete, setQuestionToDelete] = useState<Question>({
-    _id: "",
-    title: "",
-    description: "",
-    categories: [],
-    complexity: "",
-    testcases: [],
-    constraints: "",
-    followUp: "",
-    starterCode: "",
-    dateCreated: new Date(),
-  });
+  const [viewQuestion, setViewQuestion] = useState<Question>(initialQuestion);
+  const [questionToEdit, setQuestionToEdit] =
+    useState<Question>(initialQuestion);
+  const [questionToDelete, setQuestionToDelete] =
+    useState<Question>(initialQuestion);
 
   const [openEdit, setOpenEdit] = useState(false);
   const [openView, setOpenView] = useState(false);
@@ -89,14 +61,14 @@ const QuestionTable: FC<QuestionTableProps> = ({
 
   const handleSaveQuestion = async (newQuestion: Question) => {
     const questionToAdd = { ...newQuestion };
-    await postNewQuestion(questionToAdd, accessToken!)
+    await postNewQuestion(accessToken!, questionToAdd)
       .then(() => {
         handleTrigger();
 
         setOpenAdd(false);
       })
       .catch((e) => {
-        throw new String(e);
+        throw String(e);
       });
   };
 
@@ -112,7 +84,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
   };
 
   const handleEditQuestion = async (editQuestion: Question) => {
-    await updateQuestionById(editQuestion._id, editQuestion, accessToken!)
+    await updateQuestionById(editQuestion._id, accessToken!, editQuestion)
       .then(() => {
         handleTrigger();
         setOpenEdit(false);
@@ -222,7 +194,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
                       <button
                         className="bg-red-600 hover:bg-red-800 text-white font-bold py-2 px-4 rounded-full"
                         onClick={() => {
-                          setOpenDelCfm(true)
+                          setOpenDelCfm(true);
                           setQuestionToDelete(question);
                         }}
                       >

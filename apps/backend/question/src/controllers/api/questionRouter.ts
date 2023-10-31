@@ -52,7 +52,7 @@ questionRouter.get(
     Question.findById(req.params.id)
       .then((question) => {
         if (question) {
-          res.json(question);
+          res.status(200).json(question);
         } else {
           res.status(404).json({
             error: `A question with id ${req.params.id} does not exist`,
@@ -115,6 +115,7 @@ questionRouter.post(
       description: body.description,
       categories: body.categories,
       complexity: body.complexity,
+      examples: body.examples,
       constraints: body.constraints,
       followUp: body.followUp,
       starterCode: body.starterCode,
@@ -132,7 +133,7 @@ questionRouter.post(
 questionRouter.put(
   "/:id", jwtMiddleware,
   async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    const { title, description, categories, complexity, testcases, constraints, followUp, starterCode, dateCreated  } = req.body;
+    const { title, description, categories, complexity, examples, constraints, followUp, starterCode, testcases, dateCreated  } = req.body;
     const id = req.params.id;
     const user = req.user;
 
@@ -143,7 +144,7 @@ questionRouter.put(
 
     await Question.findByIdAndUpdate(
       id,
-      { title, description, categories, complexity, testcases, constraints, followUp, starterCode, dateCreated },
+      { title, description, categories, complexity, examples, constraints, followUp, starterCode, testcases, dateCreated },
       { new: true, runValidators: true, context: "query" }
     )
       .then((updatedQuestion) => {
@@ -153,8 +154,13 @@ questionRouter.put(
             .json({ error: `A question with id ${id} does not exist.` });
           return;
         }
-        res.json(updatedQuestion);
+        res.status(200).json(updatedQuestion);
       })
       .catch((err) => next(err));
   }
 );
+
+questionRouter.post(
+  "/:id/run",
+  
+)

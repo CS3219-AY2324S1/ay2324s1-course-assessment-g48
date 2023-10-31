@@ -23,7 +23,6 @@ function useQuestionById(qid: string, accessToken?: string | null) {
         }
       }
     }
-
     fetchData();
   }, [qid, accessToken]);
 
