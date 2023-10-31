@@ -9,7 +9,7 @@ import {
 } from "../../database/user";
 import { OAuth, Role } from "@prisma/client";
 import logger from "../../utils/logger";
-import { signJwtAccessToken } from "../../database/jwt";
+import { signJwtAccessToken, verifyJwtToken } from "../../database/jwt";
 
 export const userRouter = Router();
 
@@ -224,6 +224,16 @@ userRouter.get(
     }
   }
 );
+
+userRouter.get("/verifyJwt", async (req: Request, res: Response) => {
+  const accessToken = req.headers.authorization?.split(" ")[1];
+  const userPayload = verifyJwtToken(accessToken);
+  if (!accessToken || !userPayload) {
+    res.status(401).json({ error: "Invalid JWT token." });
+    return;
+  }
+  res.status(200).json(userPayload);
+});
 
 // Update a user
 userRouter.put(

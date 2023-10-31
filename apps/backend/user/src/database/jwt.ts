@@ -17,10 +17,10 @@ export function signJwtAccessToken(
   return token;
 }
 
-export function verifyJwtToken(token: string) {
+export function verifyJwtToken(token?: string) {
   try {
     const secret = process.env.JWT_SECRET_KEY;
-    const payload = jwt.verify(token, secret!);
+    const payload = jwt.verify(token!, secret!);
     return payload as JwtPayload;
   } catch (error) {
     console.error(error);

@@ -3,19 +3,21 @@ import Question from "../../models/Question";
 import logger from "../../utils/logger";
 import axios from "axios";
 import { Role } from "../../models/enum/Role";
+import { AuthenticatedRequest, jwtMiddleware } from "../../middleware/jwtMiddleware";
 
 export const questionRouter = Router();
 
 // Gets question from mongodb
-questionRouter.get("/", async (req: Request, res: Response) => {
+questionRouter.get("/", jwtMiddleware, async (req: AuthenticatedRequest, res: Response) => {
   // Todo: enhance security
-  if (!Object.values(Role).includes(req.headers.role as Role)) {
+  const user = req.user;
+  if (!Object.values(Role).includes(user?.role as Role)) {
     res.status(401).json({ error: "Only registered users are allowed to view questions." });
     return;
   }
 
   Question.find({}).then((question) => {
-    res.json(question);
+    res.status(200).json(question);
   });
 });
 
@@ -38,9 +40,10 @@ questionRouter.get("/leetcode", async (req: Request, res: Response) => {
 
 // Fetches individual question by id
 questionRouter.get(
-  "/:id",
-  (req: Request, res: Response, next: NextFunction) => {
-    if (!Object.values(Role).includes(req.headers.role as Role)) {
+  "/:id", jwtMiddleware,
+  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    const user = req.user;
+    if (!Object.values(Role).includes(user?.role as Role)) {
       res.status(401).json({ error: "Only registered users are allowed to view questions." });
       return;
     }
@@ -64,9 +67,10 @@ questionRouter.get(
 
 // Deletes question from mongodb
 questionRouter.delete(
-  "/:id",
-  async (req: Request, res: Response, next: NextFunction) => {
-    if (req.headers.role !== Role.Admin) {
+  "/:id", jwtMiddleware,
+  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    const user = req.user;
+    if (user?.role !== Role.Admin) {
       res.status(401).json({ error: "Only admins are allowed to delete questions." });
       return;
     }
@@ -87,11 +91,12 @@ questionRouter.delete(
 
 // Adds question to mongodb
 questionRouter.post(
-  "/",
-  async (req: Request, res: Response, next: NextFunction) => {
+  "/", jwtMiddleware,
+  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const body = req.body;
+    const user = req.user;
 
-    if (req.headers.role !== Role.Admin) {
+    if (user?.role !== Role.Admin) {
       res.status(401).json({ error: "Only admins are allowed to add questions." });
       return;
     }
@@ -125,12 +130,13 @@ questionRouter.post(
 
 // Updates question in mongodb
 questionRouter.put(
-  "/:id",
-  async (req: Request, res: Response, next: NextFunction) => {
+  "/:id", jwtMiddleware,
+  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const { title, description, categories, complexity, testcases, constraints, followUp, starterCode, dateCreated  } = req.body;
     const id = req.params.id;
+    const user = req.user;
 
-    if (req.headers.role !== Role.Admin) {
+    if (user?.role !== Role.Admin) {
       res.status(401).json({ error: "Only admins are allowed to add questions." });
       return;
     }
