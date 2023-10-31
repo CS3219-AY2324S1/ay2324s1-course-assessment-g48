@@ -1,11 +1,13 @@
-import { Socket } from "socket.io";
+import { Server, Socket } from "socket.io";
 import QueueService from "../services/queueService";
 
 class SocketController {
   queueService: QueueService;
+  io: Server;
 
-  constructor() {
+  constructor(io: Server) {
     this.queueService = new QueueService();
+    this.io = io;
   }
 
   handleConnection(socket: Socket) {
@@ -36,6 +38,15 @@ class SocketController {
   handleDisconnect(socket: Socket, uid: number) {
     this.queueService.cleanUp(uid);
     socket.removeAllListeners();
+  }
+
+  async onExit() {
+    this.io.fetchSockets().then((sockets) => {
+      sockets.forEach((socket) => {
+        socket.disconnect(true);
+      });
+    });
+    this.queueService.onExit();
   }
 }
 

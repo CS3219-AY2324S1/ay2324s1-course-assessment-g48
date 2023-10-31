@@ -18,7 +18,7 @@ function useTimer() {
     const interval = setInterval(() => {
       setCountDown(initialCountDown);
       initialCountDown -= 1000;
-      if (initialCountDown < 1 ) {
+      if (initialCountDown < 1) {
         setIsRunning(false);
         clearInterval(interval);
       }

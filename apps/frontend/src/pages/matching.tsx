@@ -30,7 +30,6 @@ const MatchingPage: React.FC<matchingProps> = () => {
   const handleMatchConnection: FormEventHandler = (e) => {
     e.preventDefault();
     console.log(difficulty);
-    toggleTimer(new Date().getTime() + 30000);
     if (isMatching == MatchedState.MATCHING) {
       setToNotMatchingState();
       return;
@@ -48,6 +47,7 @@ const MatchingPage: React.FC<matchingProps> = () => {
   const setToMatchingState = () => {
     // Set the state of the page to looking for match.
     clearError();
+    setDisableBtnCancel(true);
     matchingSocket.connect();
     matchingSocket.on("matched", setToMatchedState);
     matchingSocket.on("other-connection", () => {
@@ -55,16 +55,21 @@ const MatchingPage: React.FC<matchingProps> = () => {
       setError("This account has attempted to match from another location.");
       disconnectSocket();
     });
+    matchingSocket.on("error", (err) => {
+      setError(err);
+      setToNotMatchingState();
+    });
     setIsMatching(MatchedState.MATCHING);
-    setTimeout(() => {
-      matchingSocket.emit("matching", { difficulty, user: sessionUser });
-      matchingSocket.on("timeout", () => {
-        setToNotMatchingState();
-        setError("Timed out, try again.");
-        disconnectSocket();
-      });
-      
-    }, 2000);
+    matchingSocket.emit("matching", { difficulty, user: sessionUser });
+    matchingSocket.on("timeout", () => {
+      setToNotMatchingState();
+      setError("Timed out, try again.");
+      disconnectSocket();
+    });
+    matchingSocket.on("connected", () => {
+      toggleTimer(new Date().getTime() + 30000);
+      setDisableBtnCancel(false);
+    });
   };
 
   const setToMatchedState = (data: any) => {
@@ -89,23 +94,6 @@ const MatchingPage: React.FC<matchingProps> = () => {
     console.log("disconnecting");
     matchingSocket.disconnect();
   };
-
-  useEffect(() => {
-    if (isMatching === MatchedState.MATCHING) {
-          setTimeout(() => {
-            setDisableBtnCancel(false);
-          }, 2000);
-    } else {
-      setDisableBtnCancel(true);
-    }
-    return () => {
-      matchingSocket.on("timeout", () => {
-        setToNotMatchingState();
-        setError("Timed out, try again.");
-        disconnectSocket();
-      });
-    }
-  }, [isRunning]);
 
   useEffect(() => {
     setUserRole(sessionUser.role);

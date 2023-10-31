@@ -1,5 +1,4 @@
 import { Server } from "socket.io";
-import { DifficultyQueue } from "./queue/difficultyQueue";
 import { PORT } from "./utils/config";
 import express from "express";
 import http from "http";
@@ -16,17 +15,12 @@ server.listen(PORT, () => {
 
 app.use("/ping", new PingRouter().routes());
 
-const socketController = new SocketController();
+const socketController = new SocketController(io);
 
 io.on("connect", (socket) => socketController.handleConnection(socket));
 
 process.on("SIGINT", () => {
   console.log("Process is terminating. Closing all WebSockets.");
 
-  io.fetchSockets().then((sockets) => {
-    sockets.forEach((socket) => {
-      socket.disconnect(true);
-    });
-    process.exit(0);
-  });
+  socketController.onExit().then(() => process.exit(0));
 });

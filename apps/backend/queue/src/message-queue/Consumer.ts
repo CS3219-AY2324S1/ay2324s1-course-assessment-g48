@@ -3,7 +3,6 @@ import amqp from "amqplib";
 class Consumer {
   queue: string;
   onMessage: (msg: number) => Promise<void>;
-
   constructor(queue: string, onMessage: (msg: number) => Promise<void>) {
     this.queue = queue;
     this.onMessage = onMessage;

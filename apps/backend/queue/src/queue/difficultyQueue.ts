@@ -20,23 +20,6 @@ export class DifficultyQueue {
     this.consumer = new Consumer(nameSpace, (uid) => this.matchUsers(uid));
   }
 
-  public async generateSession(user1: number, user2: number) {
-    const sessionID = await axios
-      .post(SESSION_URL, { users: [user1, user2] })
-      .then((response) => {
-        return response.data.sessionId;
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-    return sessionID;
-  }
-
-  public isThereWaitingUser() {
-    console.log("Checking if there is a waiting user");
-    return this.waitList.length > 0;
-  }
-
   public attemptToMatchUsers(uid: number, socket: Socket) {
     this.socketMap.set(uid, socket);
     this.producer.produceMessage(String(uid));
@@ -53,26 +36,41 @@ export class DifficultyQueue {
     console.log(this.waitList);
     if (this.isThereWaitingUser()) {
       const firstUserUid = this.waitList.shift();
-      if (firstUserUid === undefined) {
-        throw new Error("For some reason there is no UID in the waiting list");
-      }
-      //   console.log(`First user uid: ${firstUserUid}, second user uid: ${uid}`)
-      const firstUserSocket = this.socketMap.get(firstUserUid);
       const secondUserSocket = this.socketMap.get(uid);
+
+      if (firstUserUid === undefined) {
+        secondUserSocket?.emit(
+          "error",
+          "For some reason there is no UID in the waiting list"
+        );
+        this.cleanup(uid);
+        return;
+      }
+
+      const firstUserSocket = this.socketMap.get(firstUserUid);
+
       const randomSessionId = await this.generateSession(firstUserUid, uid);
       if (!firstUserSocket || !secondUserSocket) {
-        throw new Error(
-          "There was no socket associated with the firstUserSocket"
-        );
+        secondUserSocket &&
+          secondUserSocket?.emit(
+            "error",
+            "There was no socket associated with the first user"
+          );
+        firstUserSocket &&
+          firstUserSocket?.emit(
+            "error",
+            "There was no socket associated with the second user"
+          );
+        this.cleanup(uid);
+        this.cleanup(firstUserUid);
+        return;
       }
       firstUserSocket.emit("matched", {
         peerId: uid,
-        err: "",
         sessionId: randomSessionId,
       });
       secondUserSocket.emit("matched", {
         peerId: firstUserUid,
-        err: "",
         sessionId: randomSessionId,
       });
       console.log(
@@ -89,15 +87,36 @@ export class DifficultyQueue {
     }
   }
 
-  public removeFromSocketMap(...uids: number[]) {
+  public cleanup(uid: number) {
+    this.removeFromSocketMap(uid);
+    this.waitList = this.waitList.filter((num) => num != uid);
+  }
+
+  public onExit() {
+    this.producer.close();
+  }
+
+  private async generateSession(user1: number, user2: number) {
+    const sessionID = await axios
+      .post(SESSION_URL, { users: [user1, user2] })
+      .then((response) => {
+        return response.data.sessionId;
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    return sessionID;
+  }
+
+  private removeFromSocketMap(...uids: number[]) {
     for (const uid of uids) {
       this.socketMap.get(uid)?.removeAllListeners();
       this.socketMap.delete(uid);
     }
   }
 
-  public cleanup(uid: number) {
-    this.removeFromSocketMap(uid);
-    this.waitList = this.waitList.filter((num) => num != uid);
+  private isThereWaitingUser() {
+    console.log("Checking if there is a waiting user");
+    return this.waitList.length > 0;
   }
 }
