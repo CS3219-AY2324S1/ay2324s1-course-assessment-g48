@@ -4,9 +4,10 @@ import { Question } from '@/database/question/entities/question.entity';
 
 type QuestionSearchBarProps = {
     questions: Question[];
+    setSearch: React.Dispatch<React.SetStateAction<string>>;
 };
 
-const QuestionSearchBar: React.FC<QuestionSearchBarProps> = ({ questions}) => {
+const QuestionSearchBar: React.FC<QuestionSearchBarProps> = ({ questions, setSearch}) => {
     
     const [searchTerm, setSearchTerm] = useState("");
     const [searchResults, setSearchResults] = useState<Question[]>([]);
@@ -28,7 +29,15 @@ const QuestionSearchBar: React.FC<QuestionSearchBarProps> = ({ questions}) => {
       // For example, you might filter a list of items based on the input value.
       // const filteredResults = yourSearchLogic(searchTerm);
         // setSearchResults(filteredResults);
+        setSearch(searchTerm);
     }
+    };
+    const handleResultClick = (result: Question) => {
+        setSearchTerm(result.title);
+        console.log("handle", result.title)
+        setIsInputFocused(false); // Close the dropdown after selecting a result
+        setSearch(result.title);
+
   };
     
     useEffect(() => {
@@ -54,10 +63,10 @@ const QuestionSearchBar: React.FC<QuestionSearchBarProps> = ({ questions}) => {
       </div>
 
       {/* Dropdown for search results */}
-      {isInputFocused &&searchResults.length > 0 && (
+      {isInputFocused && searchResults.length > 0 && (
         <div className="absolute top-full left-0 mt-2 w-full bg-white border border-gray-300 rounded shadow-lg z-10">
           {searchResults.map((result, index) => (
-            <div key={index} className="p-2 hover:bg-gray-100 cursor-pointer">
+              <div key={index} className="p-2 hover:bg-gray-100 cursor-pointer" onMouseDown={() => handleResultClick(result)}>
               {result.title}
             </div>
           ))}

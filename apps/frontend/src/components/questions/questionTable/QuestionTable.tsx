@@ -33,6 +33,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
   const { sessionUser } = useSessionUser();
   const [userRole, setUserRole] = useState(sessionUser.role);
   const { questions, totalQuestions, handleTrigger } = useQuestions(userRole);
+  const [searchResults, setSearchResults] = useState("");
   const [viewQuestion, setViewQuestion] = useState<Question>({
     _id: "",
     title: "",
@@ -110,10 +111,11 @@ const QuestionTable: FC<QuestionTableProps> = ({
           (question.categories.includes(selectedCategory) ||
             selectedCategory === "") &&
           (question.complexity.includes(selectedDifficulty) ||
-            selectedDifficulty === "")
+            selectedDifficulty === "") && 
+          question.title.toLowerCase().includes(searchResults.toLowerCase())
       )
     );
-  }, [selectedCategory, selectedDifficulty, questions]);
+  }, [selectedCategory, selectedDifficulty, questions, searchResults]);
 
   const handleSaveQuestion = async (newQuestion: Question) => {
     const questionToAdd = { ...newQuestion };
@@ -195,7 +197,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
             </select>
           </div>
         </div>
-        <QuestionSearchBar questions={filteredQuestions}  />
+        <QuestionSearchBar questions={filteredQuestions} setSearch={setSearchResults} />
       </div>
 
       <div className="overflow-x-auto shadow-md rounded-lg">
