@@ -4,6 +4,7 @@ import { Repo, RepoConfig } from "@automerge/automerge-repo";
 import { NodeWSServerAdapter } from "@automerge/automerge-repo-network-websocket";
 import logger from "../utils/logger.ts";
 import { WebSocketServer } from "ws";
+import mongoose from "mongoose";
 
 export class SessionController {
   private sessionManager: SessionManagerService;
@@ -30,9 +31,13 @@ export class SessionController {
     res.status(200).json({ sessionId: sessionId.toString() });
   }
 
-  public getSession(req: Request, res: Response, next: NextFunction) {
+  public async getSessionHandler(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
     const sessionId = req.params.sessionId;
-    const docId = this.sessionManager.getDoc(sessionId);
+    const docId = await this.sessionManager.getDocId(sessionId);
 
     console.log(`getting session with SessionId of ${sessionId}`);
 
@@ -46,5 +51,15 @@ export class SessionController {
   public clearAllSessions(req: Request, res: Response, next: NextFunction) {
     this.sessionManager.clearAllSessions();
     res.status(200).json({ msg: "cleared" });
+  }
+
+  public async handleCleanup() {
+    await this.saveToDatabase();
+    mongoose.disconnect();
+  }
+
+  public async saveToDatabase() {
+    console.log("Saving to database");
+    await this.sessionManager.saveToDatabase();
   }
 }

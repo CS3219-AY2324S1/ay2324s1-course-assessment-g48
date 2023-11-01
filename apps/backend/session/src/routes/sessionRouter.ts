@@ -1,6 +1,7 @@
 import Router, { Express } from "express";
 import { SessionController } from "../controllers/sessionController.ts";
 import { WebSocketServer } from "ws";
+import mongoose from "mongoose";
 
 export class SessionRouter {
   public router: Express;
@@ -15,11 +16,22 @@ export class SessionRouter {
     );
 
     this.router.get("/get-session/:sessionId", (req, res, next) =>
-      sessionController.getSession(req, res, next)
+      sessionController.getSessionHandler(req, res, next)
     );
 
     this.router.post("/clear", (req, res, next) =>
       sessionController.clearAllSessions(req, res, next)
     );
+
+    process.on("SIGINT", () => {
+      sessionController.handleCleanup().then((res) => process.exit(0));
+    });
+
+    process.on("uncaughtException", () => {
+      //   sessionController.saveToDatabase();
+      sessionController.handleCleanup().then((res) => process.exit(0));
+    });
+
+    setInterval(() => sessionController.saveToDatabase(), 1000 * 60 * 60);
   }
 }

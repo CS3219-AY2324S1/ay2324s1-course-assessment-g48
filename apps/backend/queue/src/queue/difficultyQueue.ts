@@ -50,6 +50,21 @@ export class DifficultyQueue {
       const firstUserSocket = this.socketMap.get(firstUserUid);
 
       const randomSessionId = await this.generateSession(firstUserUid, uid);
+
+      if (!randomSessionId) {
+        secondUserSocket?.emit(
+          "error",
+          "Something went wrong when creating your session."
+        );
+        firstUserSocket?.emit(
+          "error",
+          "Something went wrong when creating your session."
+        );
+        this.cleanup(uid);
+        this.cleanup(firstUserUid);
+        return;
+      }
+
       if (!firstUserSocket || !secondUserSocket) {
         secondUserSocket &&
           secondUserSocket?.emit(

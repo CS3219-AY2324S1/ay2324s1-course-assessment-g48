@@ -12,7 +12,7 @@ export default function Session() {
   const { question } = useQuestionById(questionId, userRole);
 
   useEffect(() => {
-    console.log(sessionID);
+    // console.log(sessionID);
     setUserRole(sessionUser.role);
   }, [sessionUser]);
 
