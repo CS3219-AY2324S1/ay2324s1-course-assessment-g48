@@ -102,6 +102,7 @@ class SessionServer {
       "http://localhost:8080",
       "http://localhost:8001",
       "http://localhost:8022",
+      "http://localhost:8420",
       "http://localhost:8500",
       "http://localhost:9000",
       "http://peerprep-user:8001",

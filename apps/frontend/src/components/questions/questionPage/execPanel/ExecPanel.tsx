@@ -36,13 +36,9 @@ const ExecPanel: React.FC<ExecPanelProps> = ({ question, outputDetails }) => {
       />
 
       {!isResultActive ? (
-        <TestCaseContent
-          question={question}
-          handleTestCaseChipClick={handleTestCaseChipClick}
-          selectedTestCaseChip={selectedTestCaseChip}
-        />
+        <TestCaseContent question={question} />
       ) : (
-        <ResultContent outputDetails={outputDetails} />
+        <ResultContent outputDetails={outputDetails} question={question} />
       )}
     </div>
   );

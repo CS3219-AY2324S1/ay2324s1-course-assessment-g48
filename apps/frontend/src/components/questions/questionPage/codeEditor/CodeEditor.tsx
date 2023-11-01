@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import EditorNav from "./EditorNav";
 import ExecPanel from "../execPanel/ExecPanel";
 import Split from "react-split";
@@ -51,15 +51,25 @@ class Solution {
   }
 };`;
 
+  // WIP formatStarterCode(starterCode, selectedLanguage)
+  function formatStarterCode(starterCode: string, language: string) {
+    const lang = findLanguage(language);
+  }
+
+  function findLanguage(language: string) {
+    return languageOptions.find((lang) => lang.label === language);
+  }
+
   const { isDarkMode } = useTheme();
   const [code, changeCode] = useState(currCode ?? "");
   const [customInput, setCustomInput] = useState(""); // todo: for console
   const [outputDetails, setOutputDetails] = useState("");
   const [processing, setProcessing] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState(initialLanguage ?? languageOptions[0]);
+  const [selectedLanguage, setSelectedLanguage] = useState(initialLanguage ?? languageOptions[0]); // "javascript language"
 
   const enterPress = useKeyPress("Enter");
   const ctrlPress = useKeyPress("Control");
+  const memoizedOutputDetails = useMemo(() => outputDetails, [outputDetails]);
 
   if (!onChangeCode) {
     onChangeCode = (value?: string) => {
@@ -68,66 +78,30 @@ class Solution {
     // console.log("Using solo code editor. Current code:", code);
   }
 
-  const handleCompile = () => {
+  const handleCompile = async () => {
     setProcessing(true);
-    const language = languageOptions.find(
-      (lang) => lang.value === selectedLanguage.value
-    );
+    console.log("tc output", question.testcases[0].output);
     const formData = {
-      language_id: language?.id,
+      language_id: selectedLanguage?.id,
       // encode source code in base64
       source_code: btoa(code),
       stdin: btoa(customInput),
+      expected_output: btoa(question.testcases[0].output), // hardcoded tc
     };
-    const options = {
-      method: "POST",
-      url: String(process.env.NEXT_PUBLIC_RAPID_API_URL),
-      params: { base64_encoded: "true", fields: "*" },
-      headers: {
-        "Access-Control-Allow-Credentials": "true",
-        "Access-Control-Allow-Headers":
-          "Origin, X-Requested-With, Content-Type, Accept",
-        "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE",
-        "content-type": "application/json",
-        "X-RapidAPI-Host": String(process.env.NEXT_PUBLIC_RAPID_API_HOST),
-        "X-RapidAPI-Key": String(process.env.NEXT_PUBLIC_RAPID_API_KEY),
-      },
-      data: formData,
-    };
-
-    axios
-      .request(options)
-      .then(function (response) {
-        console.log("res.data", response.data);
-        const token = response.data.token;
-        checkStatus(token);
-      })
-      .catch((err) => {
-        const error = err.response ? err.response.data : err.message;
-        setProcessing(false);
-        console.log(error);
-      });
+    try {
+      const response = await axios.post("/api/codeExecution/compile", formData);
+      const token = response.data.token;
+      checkStatus(token);
+    } catch (err) {
+      setProcessing(false);
+      console.log(err);
+    }
   };
 
   const checkStatus = async (token: string) => {
-    const options = {
-      method: "GET",
-      url: process.env.NEXT_PUBLIC_RAPID_API_URL + "/" + token,
-      params: { base64_encoded: "true", fields: "*" },
-      headers: {
-        "Access-Control-Allow-Credentials": "true",
-        "Access-Control-Allow-Headers":
-          "Origin, X-Requested-With, Content-Type, Accept",
-        "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE",
-        "X-RapidAPI-Host": String(process.env.NEXT_PUBLIC_RAPID_API_HOST),
-        "X-RapidAPI-Key": String(process.env.NEXT_PUBLIC_RAPID_API_KEY),
-      },
-    };
     try {
-      const response = await axios.request(options);
-      console.log("response", response.data);
+      const response = await axios.get(`/api/codeExecution/status/${token}`);
       const statusId = response.data.status_id;
-
       // Processed - we have a result
       if (statusId === Status.InQueue || statusId === Status.Processing) {
         // in queue(id: 1) or still processing (id: 2)
@@ -137,13 +111,15 @@ class Solution {
         return;
       } else {
         setProcessing(false);
+        console.log(
+          "response.data output details in checkStatus",
+          response.data
+        );
         setOutputDetails(response.data);
         showSuccessToast(`Compiled Successfully!`);
-        console.log("response.data", response.data);
         return;
       }
     } catch (err) {
-      console.log("err", err);
       setProcessing(false);
       showErrorToast((err as Error).message);
     }
@@ -210,7 +186,10 @@ class Solution {
             />
           </div>
           {/* Exec Panel can still be abstracted to QuestionWorkspace -> future enhancement */}
-          <ExecPanel question={question} outputDetails={outputDetails} />
+          <ExecPanel
+            question={question}
+            outputDetails={memoizedOutputDetails}
+          />
         </Split>
         {/* Gotta check whether toastcontainer actually works... */}
         <ToastContainer
