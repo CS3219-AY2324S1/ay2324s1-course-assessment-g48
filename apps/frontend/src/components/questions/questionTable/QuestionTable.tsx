@@ -15,8 +15,8 @@ import { useRouter } from "next/router";
 import { Question } from "@/database/question/entities/question.entity";
 import QuestionPagination from "./QuestionPagination";
 import DeleteCfmModal from "./DeleteCfmModal";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import { Category } from "@/utils/enums/Category";
+import QuestionSearchBar from "./QuestionSearchBar";
 
 type QuestionTableProps = {
   setOpenAdd: (open: boolean) => void;
@@ -85,12 +85,6 @@ const QuestionTable: FC<QuestionTableProps> = ({
   );
     const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedDifficulty, setSelectedDifficulty] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
-
-  const handleInputChange = (e) => {
-    setSearchTerm(e.target.value);
-    // Implement your search logic here
-  };
 
     const handleCategoryChange = (
       event: React.ChangeEvent<HTMLSelectElement>
@@ -201,17 +195,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
             </select>
           </div>
         </div>
-        <div className="relative flex items-center">
-          <MagnifyingGlassIcon className="h-5 w-5 text-gray-400 absolute left-3" />
-
-          <input
-            type="text"
-            placeholder="Search"
-            className="pl-10 pr-4 border rounded-md px-4 py-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm text-sm w-full"
-            value={searchTerm}
-            onChange={handleInputChange}
-          />
-        </div>
+        <QuestionSearchBar questions={filteredQuestions}  />
       </div>
 
       <div className="overflow-x-auto shadow-md rounded-lg">
