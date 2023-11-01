@@ -9,7 +9,6 @@ type RunProps = {
 const Run: React.FC<RunProps> = ({ userCode, processing, handleCompile }) => {
   return (
     <>
-      {/*onClick={handleCompile} to be added */}
       <button
         onClick={handleCompile}
         disabled={!userCode}

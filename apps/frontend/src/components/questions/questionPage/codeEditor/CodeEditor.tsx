@@ -79,6 +79,7 @@ class Solution {
     };
     try {
       const response = await axios.post("/api/codeExecution/compile", formData);
+      console.log("response.data outputdetails", response.data);
       const token = response.data.token;
       checkStatus(token);
     } catch (err) {
@@ -100,6 +101,7 @@ class Solution {
         return;
       } else {
         setProcessing(false);
+        console.log("response.data outputdetails", response.data);
         setOutputDetails(response.data);
         showSuccessToast(`Compiled Successfully!`);
         return;

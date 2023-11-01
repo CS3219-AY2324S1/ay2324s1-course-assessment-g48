@@ -1,4 +1,5 @@
 import { Status } from "@/utils/enums/Status";
+import OutputBox from "./OutputBox";
 
 type OutputWindowProps = {
   outputDetails: any;
@@ -6,7 +7,6 @@ type OutputWindowProps = {
 
 const OutputWindow: React.FC<OutputWindowProps> = ({ outputDetails }) => {
   const getOutput = () => {
-    console.log("getOutput() called");
     let statusId = outputDetails?.status?.id;
 
     if (statusId === Status.CompilationError) {
@@ -22,7 +22,7 @@ const OutputWindow: React.FC<OutputWindowProps> = ({ outputDetails }) => {
         <pre className="px-2 py-1 font-normal text-xs text-green-500">
           {atob(outputDetails.stdout) !== null
             ? `${atob(outputDetails.stdout)}`
-            : "accepted"}
+            : "Accepted"}
         </pre>
       );
     } else if (statusId === Status.WrongAnswer) {
@@ -33,22 +33,23 @@ const OutputWindow: React.FC<OutputWindowProps> = ({ outputDetails }) => {
         </pre>
       );
     } else {
-      // runtime error (id: 7, 8, 9, 10, 11, 12)
+      // runtime error (id: 7, 8, 9, 10, 11, 12) or have not submitted
       return (
         <pre className="px-2 py-1 font-normal text-xs text-red-500">
-          {atob(outputDetails?.stderr)}
+          {outputDetails?.stderr !== undefined
+            ? `${atob(outputDetails?.stderr)}`
+            : ""}
         </pre>
       );
     }
   };
   return (
     <>
-      <p className="text-sm font-medium mt-4 dark:text-white">OutputWindow:</p>
-      <div className="w-full h-56 rounded-lg border px-3 py-[10px] bg-slate-100 border-transparent text-white font-normal text-sm mt-2 transition-all overflow-y-auto dark:bg-neutral-700">
-        {outputDetails ? <>{getOutput()}</> : null}
-        <pre>
-          this is a placeholder. Output will be generated above this text.
-        </pre>
+      <p className="text-lg font-medium mt-4 dark:text-white">OutputWindow:</p>
+      <div className="space-y-4">
+        <OutputBox title="Your input:" content={"input content"} />
+        <OutputBox title="Output:" content={getOutput()} />
+        <OutputBox title="Expected Output:" content={"expected output"} />
       </div>
     </>
   );

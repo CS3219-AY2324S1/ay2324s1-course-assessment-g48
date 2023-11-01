@@ -28,12 +28,11 @@ const EditorFooter: React.FC<EditorFooterProps> = ({
         </div>
 
         <div className="flex ml-auto items-center space-x-4">
-          <Run
+          <Submit
             userCode={userCode}
             processing={processing}
             handleCompile={handleCompile}
           />
-          <Submit userCode={userCode} processing={processing} />
         </div>
       </div>
     </div>
