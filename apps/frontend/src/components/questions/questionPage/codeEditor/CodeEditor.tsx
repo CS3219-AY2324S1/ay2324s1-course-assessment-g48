@@ -84,7 +84,7 @@ class Solution {
       // encode source code in base64
       source_code: btoa(code),
       stdin: btoa(customInput),
-      expected_output: btoa(question.testcases[0].output),
+      expected_output: btoa(question.testcases[0].output), // hardcoded tc
     };
     try {
       const response = await axios.post("/api/codeExecution/compile", formData);

@@ -29,6 +29,13 @@ const OutputWindow: React.FC<OutputWindowProps> = ({ outputDetails }) => {
       // wrong answer (id: 4)
       return (
         <pre className="px-2 py-1 font-normal text-xs text-red-500">
+          {`Wrong Answer`}
+        </pre>
+      );
+    } else if (statusId === Status.TimeLimitExceeded) {
+      // time limit exceeded (id: 5)
+      return (
+        <pre className="px-2 py-1 font-normal text-xs text-red-500">
           {`Time Limit Exceeded`}
         </pre>
       );
@@ -43,6 +50,7 @@ const OutputWindow: React.FC<OutputWindowProps> = ({ outputDetails }) => {
       );
     }
   };
+  console.log();
   return (
     <>
       <p className="text-lg font-medium mt-4 dark:text-white">OutputWindow:</p>
@@ -58,7 +66,7 @@ const OutputWindow: React.FC<OutputWindowProps> = ({ outputDetails }) => {
           title="Expected Output:"
           content={
             outputDetails?.expected_output !== undefined
-              ? outputDetails?.expected_output
+              ? `${atob(outputDetails.expected_output)}`
               : ""
           }
         />

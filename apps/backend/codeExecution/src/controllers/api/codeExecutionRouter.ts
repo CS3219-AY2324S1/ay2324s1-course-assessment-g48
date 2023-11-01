@@ -5,7 +5,7 @@ export const codeExecutionRouter = Router();
 
 // Compiles a submission
 codeExecutionRouter.post("/compile", async (req: Request, res: Response, next: NextFunction) => {
-    const { language_id, source_code, stdin } = req.body;
+    const { language_id, source_code, stdin, expected_output } = req.body;
 
     console.log("req.body: ", req.body)
     const options = {
@@ -20,7 +20,8 @@ codeExecutionRouter.post("/compile", async (req: Request, res: Response, next: N
         data: {
             language_id,
             source_code,
-            stdin
+            stdin,
+            expected_output
         },
     };
 
