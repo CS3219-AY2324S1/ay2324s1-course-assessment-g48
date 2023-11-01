@@ -46,13 +46,22 @@ class Solution {
   }
 };`;
 
+  // WIP formatStarterCode(starterCode, selectedLanguage)
+  function formatStarterCode(starterCode: string, language: string) {
+    const lang = findLangugage(language);
+  }
+
+  function findLangugage(language: string) {
+    return languageOptions.find((lang) => lang.label === language);
+  }
+
   const { isDarkMode } = useTheme();
   const [code, changeCode] = useState(currCode ?? "");
   const [customInput, setCustomInput] = useState(""); // todo: for console
   const [outputDetails, setOutputDetails] = useState("");
   const [processing, setProcessing] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState(
-    languageOptions[0].label
+    languageOptions[0].label // "javascript language"
   );
 
   const enterPress = useKeyPress("Enter");
@@ -68,18 +77,17 @@ class Solution {
 
   const handleCompile = async () => {
     setProcessing(true);
-    const language = languageOptions.find(
-      (lang) => lang.label === selectedLanguage
-    );
+    const language = findLangugage(selectedLanguage);
+    console.log("tc output", question.testcases[0].output);
     const formData = {
       language_id: language?.id,
       // encode source code in base64
       source_code: btoa(code),
       stdin: btoa(customInput),
+      expected_output: btoa(question.testcases[0].output),
     };
     try {
       const response = await axios.post("/api/codeExecution/compile", formData);
-      console.log("response.data outputdetails", response.data);
       const token = response.data.token;
       checkStatus(token);
     } catch (err) {
@@ -101,7 +109,10 @@ class Solution {
         return;
       } else {
         setProcessing(false);
-        console.log("response.data outputdetails", response.data);
+        console.log(
+          "response.data outputdetails in checkStatus",
+          response.data
+        );
         setOutputDetails(response.data);
         showSuccessToast(`Compiled Successfully!`);
         return;

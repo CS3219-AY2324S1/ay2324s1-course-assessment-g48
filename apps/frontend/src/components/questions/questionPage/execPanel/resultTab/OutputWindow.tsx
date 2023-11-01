@@ -47,9 +47,21 @@ const OutputWindow: React.FC<OutputWindowProps> = ({ outputDetails }) => {
     <>
       <p className="text-lg font-medium mt-4 dark:text-white">OutputWindow:</p>
       <div className="space-y-4">
-        <OutputBox title="Your input:" content={"input content"} />
-        <OutputBox title="Output:" content={getOutput()} />
-        <OutputBox title="Expected Output:" content={"expected output"} />
+        <OutputBox
+          title="Your input:"
+          content={
+            outputDetails?.input !== undefined ? outputDetails.input : ""
+          }
+        />
+        <OutputBox title="Your Output:" content={getOutput()} />
+        <OutputBox
+          title="Expected Output:"
+          content={
+            outputDetails?.expected_output !== undefined
+              ? outputDetails?.expected_output
+              : ""
+          }
+        />
       </div>
     </>
   );
