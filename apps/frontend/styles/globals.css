@@ -246,3 +246,11 @@ body {
 .scrollbar-hidden::-webkit-scrollbar-thumb {
   background-color: transparent;
 }
+
+/* SearchComponent.css */
+.truncate-input {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%; /* Ensure the input doesn't exceed its parent's width */
+}
