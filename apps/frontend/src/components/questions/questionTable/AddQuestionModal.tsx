@@ -28,18 +28,22 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
   const [newQuestion, setNewQuestion] = useState<Question>(initialQuestion);
   const { setError } = useError();
   const [blank, setBlank] = useState(true);
-  const [testcases, setTestCases] = useState<TestCase[]>([initialTestCase]);
+  const [testCases, setTestCases] = useState<TestCase[]>([initialTestCase]);
   const handleAddTestCase = () => {
-    setTestCases([...testcases, initialTestCase]);
+    // TODO: not sure why initialTestCase is mutated
+    setTestCases([...testCases, {
+      input: "",
+      output: "",
+    }]);
   };
   const handleInputChange = (index: number, inputValue: string) => {
-    const updatedTestCases = [...testcases];
+    const updatedTestCases = [...testCases];
     updatedTestCases[index].input = inputValue;
     setTestCases(updatedTestCases);
   };
 
   const handleOutputChange = (index: number, outputValue: string) => {
-    const updatedTestCases = [...testcases];
+    const updatedTestCases = [...testCases];
     updatedTestCases[index].output = outputValue;
     setTestCases(updatedTestCases);
   };
@@ -57,7 +61,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
 
     const updatedQuestion = {
       ...newQuestion,
-      testcases,
+      testcases: testCases,
     };
 
     setNewQuestion(updatedQuestion);
@@ -73,69 +77,67 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
   };
 
   return (
-    <>
-      <Modal title="Add Question" setOpen={setOpen} open={open}>
-        <form onSubmit={handleAddQuestion}>
-          <div className="space-y-12">
-            <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-              <TitleInput
-                hasError={hasError}
-                value={value}
-                valueChangeHandler={valueChangeHandler}
-                inputBlurHandler={inputBlurHandler}
-                newQuestion={newQuestion}
-                setNewQuestion={setNewQuestion}
-              />
-
-              <DescriptionInput
-                newQuestion={newQuestion}
-                setNewQuestion={setNewQuestion}
-              />
-            </div>
-
-            <ComplexityInput
+    <Modal title="Add Question" setOpen={setOpen} open={open}>
+      <form onSubmit={handleAddQuestion}>
+        <div className="space-y-12">
+          <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+            <TitleInput
+              hasError={hasError}
+              value={value}
+              valueChangeHandler={valueChangeHandler}
+              inputBlurHandler={inputBlurHandler}
               newQuestion={newQuestion}
               setNewQuestion={setNewQuestion}
             />
 
-            <CategoriesInput 
+            <DescriptionInput
               newQuestion={newQuestion}
               setNewQuestion={setNewQuestion}
             />
+          </div>
 
-            <TestCasesInput
-              testcases={testcases}
-              setTestCases={setTestCases}
-              handleInputChange={handleInputChange}
-              handleOutputChange={handleOutputChange}
-              handleAddTestCase={handleAddTestCase}
-              blank={blank}
-              setBlank={setBlank}
-            />
-          </div>
-          <div className="border-b border-gray-900/10 pb-12" />
-          <div className="mt-6 flex items-center justify-end gap-x-6">
-            <button
-              type="button"
-              className="text-sm font-semibold leading-6 text-gray-900"
-              onClick={() => {
-                setOpen(false);
-                reset();
-              }}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={!valueIsValid || blank}
-              className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            >
-              Add
-            </button>
-          </div>
-        </form>
-      </Modal>
-    </>
+          <ComplexityInput
+            newQuestion={newQuestion}
+            setNewQuestion={setNewQuestion}
+          />
+
+          <CategoriesInput
+            newQuestion={newQuestion}
+            setNewQuestion={setNewQuestion}
+          />
+
+          <TestCasesInput
+            testcases={testCases}
+            setTestCases={setTestCases}
+            handleInputChange={handleInputChange}
+            handleOutputChange={handleOutputChange}
+            handleAddTestCase={handleAddTestCase}
+            blank={blank}
+            setBlank={setBlank}
+          />
+        </div>
+        <div className="border-b border-gray-900/10 pb-12" />
+        <div className="mt-6 flex items-center justify-end gap-x-6">
+          <button
+            type="button"
+            className="text-sm font-semibold leading-6 text-gray-900"
+            onClick={() => {
+              setOpen(false);
+              reset();
+            }}
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={!valueIsValid || blank}
+            className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          >
+            Add
+          </button>
+        </div>
+      </form>
+    </Modal>
   );
 };
 export default AddQuestionModal;

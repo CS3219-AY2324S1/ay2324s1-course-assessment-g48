@@ -27,10 +27,7 @@ const TestCasesInput: React.FC<TestCasesInputProps> = ({
   setBlank,
 }) => {
   useEffect(() => {
-    setBlank(
-      testcases.filter((item) => item.input === "" || item.output === "")
-        .length > 0
-    );
+    setBlank(testcases.filter((item) => item.input === "" || item.output === "").length > 0);
   }, [testcases, setBlank]);
 
   return (
