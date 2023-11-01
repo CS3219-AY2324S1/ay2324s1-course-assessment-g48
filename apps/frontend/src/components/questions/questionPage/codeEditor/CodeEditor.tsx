@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, } from "react";
 import EditorNav from "./EditorNav";
 import ExecPanel from "../execPanel/ExecPanel";
 import Split from "react-split";
@@ -10,6 +10,7 @@ import axios from "axios";
 import { languageOptions } from "@/utils/constants/LanguageOptions";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import monaco from "monaco-editor";
 import useKeyPress from "@/hook/useKeyPress";
 
 /*
@@ -17,7 +18,10 @@ WIP
 */
 
 type CodeEditorProps = {
-  onChangeCode?: (value: any, event: any) => void;
+  onChangeCode?: (
+    value?: string,
+    event?: monaco.editor.IModelContentChangedEvent
+  ) => void;
   currCode?: string;
   question: Question;
 };
@@ -46,11 +50,9 @@ class Solution {
 };`;
 
   const { isDarkMode } = useTheme();
-  const monacoRef = useRef<any>(null);
-  const [sessionCode, changeSessionCode] = useState(currCode ?? "");
-  // const [soloCode, changeSoloCode] = useState("");
-  const [customInput, setCustomInput] = useState(""); // todo: custom input for the console...
-  const [outputDetails, setOutputDetails] = useState(null);
+  const [code, changeCode] = useState(currCode ?? "");
+  const [customInput, setCustomInput] = useState("");
+  const [outputDetails, setOutputDetails] = useState("");
   const [processing, setProcessing] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState(
     languageOptions[0].label
@@ -60,25 +62,13 @@ class Solution {
   const ctrlPress = useKeyPress("Control");
 
   if (!onChangeCode) {
-    onChangeCode = (value: any, event: any) => {
-      changeSessionCode(value);
+    console.log("individual code editor")
+    onChangeCode = (
+      value?: string,
+    ) => {
+      changeCode(value?? "");
     };
   }
-
-  const onSoloCodeChange = (
-    action: string,
-    data: React.SetStateAction<string>
-  ) => {
-    switch (action) {
-      case "code": {
-        changeSessionCode(data);
-        break;
-      }
-      default: {
-        console.warn("case not handled!", action, data);
-      }
-    }
-  };
 
   const handleCompile = () => {
     setProcessing(true);
@@ -88,7 +78,7 @@ class Solution {
     const formData = {
       language_id: language?.id,
       // encode source code in base64
-      source_code: btoa(sessionCode),
+      source_code: btoa(code),
       stdin: btoa(customInput),
     };
     const options = {
@@ -112,7 +102,7 @@ class Solution {
         checkStatus(token);
       })
       .catch((err) => {
-        let error = err.response ? err.response.data : err;
+        const error = err.response ? err.response.data : err;
         setProcessing(false);
         console.log(error);
       });
@@ -129,8 +119,8 @@ class Solution {
       },
     };
     try {
-      let response = await axios.request(options);
-      let statusId = response.data.status?.id;
+      const response = await axios.request(options);
+      const statusId = response.data.status?.id;
 
       // Processed - we have a result
       if (statusId === Status.InQueue || statusId === Status.Processing) {
@@ -176,26 +166,11 @@ class Solution {
     });
   };
 
-  function handleEditorDidMount(editor: any, monaco: any) {
-    // here is another way to get monaco instance
-    // you can also store it in `useRef` for further usage
-    monacoRef.current = editor;
-  }
 
   // session live editor
   useEffect(() => {
-    changeSessionCode(currCode ?? "");
-    console.log("code rn is:", currCode);
-  }, [currCode]);
-
-  // ctrl + enter => run
-  useEffect(() => {
-    if (enterPress && ctrlPress) {
-      console.log("enterPress", enterPress);
-      console.log("ctrlPress", ctrlPress);
-      handleCompile();
-    }
-  }, [ctrlPress, enterPress]);
+    changeCode(currCode ?? code);
+  }, [currCode, code]);
 
   return (
     <>
@@ -214,10 +189,10 @@ class Solution {
               height="100%"
               onChange={onChangeCode}
               defaultValue={starterCode}
-              value={sessionCode}
+              value={code}
               theme={isDarkMode ? "vs-dark" : "light"}
               defaultLanguage="javascript"
-              onMount={handleEditorDidMount}
+
             />
           </div>
           {/* Exec Panel can still be abstracted to QuestionWorkspace -> future enhancement */}
@@ -236,9 +211,10 @@ class Solution {
           pauseOnHover
         />
         <EditorFooter
-          userCode={sessionCode}
+          userCode={code}
           processing={processing}
           handleCompile={handleCompile}
+          question={question}
         />
       </div>
     </>

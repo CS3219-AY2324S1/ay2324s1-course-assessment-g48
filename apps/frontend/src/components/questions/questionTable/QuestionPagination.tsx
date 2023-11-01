@@ -57,7 +57,7 @@ const QuestionPagination: React.FC<QuestionPaginationProps> = ({
 
   if (hidden) return <></>;
   return (
-    <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6 dark:bg-gray-700">
+    <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6 dark:bg-gray-700 rounded-b-lg">
       <div className="flex flex-1 justify-between sm:hidden">
         <button
           disabled={currentPage === 1}
@@ -91,14 +91,14 @@ const QuestionPagination: React.FC<QuestionPaginationProps> = ({
             <button
               disabled={currentPage === 1}
               onClick={handlePreviousPage}
-              className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:bg-gray-50"
+              className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:bg-gray-100 disabled:dark:bg-gray-500 disabled:dark:ring-gray-700"
             >
               <span className="sr-only">Previous</span>
               <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
             </button>
             {/* Current: "z-10 bg-indigo-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600", Default: "text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-offset-0" */}
             <input
-              className="border rounded py-1 px-2 text-center w-16"
+              className="border rounded py-1 px-2 text-center w-16 dark:bg-gray-200 dark:text-gray-800"
               type="text"
               value={pageNumber}
               onChange={handleInputChange}
@@ -107,7 +107,7 @@ const QuestionPagination: React.FC<QuestionPaginationProps> = ({
             <button
               disabled={currentPage === numberOfPages}
               onClick={handleNextPage}
-              className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:bg-gray-50"
+              className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:bg-gray-100 disabled:dark:bg-gray-500 disabled:dark:ring-gray-700"
             >
               <span className="sr-only">Next</span>
               <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
