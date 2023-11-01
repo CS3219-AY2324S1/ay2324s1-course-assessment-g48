@@ -18,6 +18,8 @@ import {
 } from "@/database/question/entities/question.entity";
 import QuestionPagination from "./QuestionPagination";
 import DeleteCfmModal from "./DeleteCfmModal";
+import { Category } from "@/utils/enums/Category";
+import QuestionSearchBar from "./QuestionSearchBar";
 
 type QuestionTableProps = {
   setOpenAdd: (open: boolean) => void;
@@ -35,6 +37,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
   const [userRole, setUserRole] = useState(sessionUser.role);
   const [accessToken, setAccessToken] = useState(sessionUser.accessToken);
   const { questions, totalQuestions, handleTrigger } = useQuestions(accessToken);
+  const [searchResults, setSearchResults] = useState("");
   const [viewQuestion, setViewQuestion] = useState<Question>(initialQuestion);
   const [questionToEdit, setQuestionToEdit] =
     useState<Question>(initialQuestion);
@@ -45,19 +48,48 @@ const QuestionTable: FC<QuestionTableProps> = ({
   const [openView, setOpenView] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [openDelCfm, setOpenDelCfm] = useState(false);
+  const [filteredQuestions, setFilteredQuestions] = useState(questions);
   const router = useRouter();
   const numberOfPages = Math.ceil(totalQuestions / questionsPerPage);
   const indexOfLastRecord = currentPage * questionsPerPage;
   const indexOfFirstRecord = indexOfLastRecord - questionsPerPage;
-  const currentQuestions = questions.slice(
+  const currentQuestions = filteredQuestions.slice(
     indexOfFirstRecord,
     indexOfLastRecord
   );
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedDifficulty, setSelectedDifficulty] = useState("");
+
+  const handleCategoryChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setSelectedCategory(event.target.value);
+    console.log(event.target.value);
+  };
+
+  const handleDifficultyChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setSelectedDifficulty(event.target.value);
+  };
 
   useEffect(() => {
     setUserRole(sessionUser.role);
     setAccessToken(sessionUser.accessToken);
   }, [sessionUser]);
+
+  useEffect(() => {
+    setFilteredQuestions(
+      questions.filter(
+        (question) =>
+          (question.categories.includes(selectedCategory) ||
+            selectedCategory === "") &&
+          (question.complexity.includes(selectedDifficulty) ||
+            selectedDifficulty === "") &&
+          question.title.toLowerCase().includes(searchResults.toLowerCase())
+      )
+    );
+  }, [selectedCategory, selectedDifficulty, questions, searchResults]);
 
   const handleSaveQuestion = async (newQuestion: Question) => {
     const questionToAdd = { ...newQuestion };
@@ -105,9 +137,49 @@ const QuestionTable: FC<QuestionTableProps> = ({
 
   return (
     <>
-      <div className="overflow-auto shadow-md sm:rounded-lg">
+      <div className="flex items-center mb-4 space-x-4 justify-between">
+        <div className="flex items-center space-x-4">
+          <div className="relative">
+            <select
+              id="categoryDropdown"
+              className="border rounded-md px-4 py-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm text-sm w-36 appearance-none"
+              onChange={handleCategoryChange}
+              value={selectedCategory}
+            >
+              <option value="">All Categories</option>
+              {Object.values(Category).map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="relative">
+            <select
+              id="difficultyDropdown"
+              className="border rounded-md px-4 py-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm text-sm w-36 appearance-none"
+              onChange={handleDifficultyChange}
+              value={selectedDifficulty}
+            >
+              <option value="">All Difficulties</option>
+              {Object.values(Complexity).map((difficulty) => (
+                <option key={difficulty} value={difficulty}>
+                  {difficulty}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <QuestionSearchBar
+          questions={filteredQuestions}
+          setSearch={setSearchResults}
+        />
+      </div>
+
+      <div className="overflow-x-auto shadow-md rounded-lg">
         <table
-          className="relative text-sm text-left text-gray-500 dark:text-gray-400 w-full"
+          className=" relative text-sm text-left text-gray-500 dark:text-gray-400 w-full"
           hidden={hidden}
         >
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -207,17 +279,18 @@ const QuestionTable: FC<QuestionTableProps> = ({
             ))}
           </tbody>
         </table>
-        <QuestionPagination
-          hidden={hidden}
-          totalQuestionsNum={totalQuestions}
-          questionsPerPage={questionsPerPage}
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-          numberOfPages={numberOfPages}
-          indexOfFirstRecord={indexOfFirstRecord}
-          indexOfLastRecord={indexOfLastRecord}
-        />
       </div>
+      <QuestionPagination
+        hidden={hidden}
+        totalQuestionsNum={filteredQuestions.length}
+        questionsPerPage={questionsPerPage}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        numberOfPages={numberOfPages}
+        indexOfFirstRecord={indexOfFirstRecord}
+        indexOfLastRecord={indexOfLastRecord}
+      />
+
       <AddQuestionModal
         onSave={handleSaveQuestion}
         setOpen={setOpenAdd}

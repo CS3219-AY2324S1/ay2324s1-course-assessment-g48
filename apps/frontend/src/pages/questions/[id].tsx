@@ -16,6 +16,10 @@ const QuestionPage: React.FC<QuestionPageProps> = () => {
   useEffect(() => {
     setAccessToken(sessionUser.accessToken);
   }, [sessionUser]);
+
+  if (question === null) {
+    router.push("/404");
+  }
   
   return <div className='flex'>
     {question && <QuestionWorkspace question={question} />}

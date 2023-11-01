@@ -15,7 +15,6 @@ const navigation = [
   { name: "Question", href: "/questions", current: false },
   { name: "Matching", href: "/matching", current: false },
   { name: "History", href: "/history/user", current: false },
-  { name: "Chat", href: "/chat", current: false },
 ];
 
 // function classNames(...classes: string[]) {
@@ -175,19 +174,6 @@ const Navbar: React.FC<NavbarProps> = ({
                                 )}
                               >
                                 Your Profile
-                              </a>
-                            )}
-                          </Menu.Item>
-                          <Menu.Item>
-                            {({ active }) => (
-                              <a
-                                onClick={() => router.push("/settings")}
-                                className={classNames(
-                                  active ? "bg-gray-100" : "",
-                                  "block px-4 py-2 text-sm text-gray-700"
-                                )}
-                              >
-                                Settings
                               </a>
                             )}
                           </Menu.Item>

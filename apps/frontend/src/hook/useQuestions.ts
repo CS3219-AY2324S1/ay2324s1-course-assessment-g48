@@ -7,6 +7,7 @@ function useQuestions(accessToken?: string | null) {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [trigger, setTrigger] = useState(false);
   const [totalQuestions, setTotalQuestions] = useState(0);
+  
   const handleTrigger = () => {
     setTrigger(!trigger); // Toggles the trigger state
   };
