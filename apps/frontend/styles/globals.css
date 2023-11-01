@@ -62,7 +62,15 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 9990;
+}
+
+.alert {
   z-index: 9999;
+}
+
+.navbar-menu {
+  z-index: 9995;
 }
 
 /* notification counter*/

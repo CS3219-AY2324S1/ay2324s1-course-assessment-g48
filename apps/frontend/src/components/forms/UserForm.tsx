@@ -81,6 +81,10 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
           message: "Invalid email or password."
         });
       } else {
+        setError({
+          type: 4,
+          message: "Account login successfully!"
+        })
         router.push("/questions");
       }
     } catch (err) {
@@ -131,6 +135,10 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
             message: "That email or username has already been taken."
           });
       } else {
+        setError({
+          type: 4,
+          message: "Account login successfully!"
+        })
         router.push("/questions");
       }
     } catch (err) {
@@ -162,6 +170,11 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
           message: response.error
         });
         return;
+      } else {
+        setError({
+          type: 4,
+          message: "Profile updated successfully!"
+        });
       }
 
       if (sessionUser) {
@@ -191,6 +204,11 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
         message: response.error
       });
       return;
+    } else {
+      setError({
+        type: 4,
+        message: "Profile deleted successfully!"
+      });
     }
     signOut({callbackUrl: "/"});
   };

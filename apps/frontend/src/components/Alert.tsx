@@ -14,7 +14,7 @@ const Alert: React.FC<AlertProps> = ({ error, hidden, setHide }) => {
     <Transition.Root show={hidden} as={Fragment}>
       <Dialog
         as="div"
-        className="fixed inset-0 z-10 w-screen pointer-events-none"
+        className="fixed inset-0 w-screen pointer-events-none alert"
         onClose={setHide}
       >
         <Transition.Child
