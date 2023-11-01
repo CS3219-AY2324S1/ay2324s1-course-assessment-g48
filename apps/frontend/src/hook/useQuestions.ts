@@ -8,6 +8,7 @@ function useQuestions(userRole?: Role) {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [trigger, setTrigger] = useState(false);
   const [totalQuestions, setTotalQuestions] = useState(0);
+  
   const handleTrigger = () => {
     setTrigger(!trigger); // Toggles the trigger state
   };
@@ -26,6 +27,7 @@ function useQuestions(userRole?: Role) {
     console.error(error);
     });
   }, [trigger, userRole]);
+
   return { questions, totalQuestions, setQuestions, isLoading, handleTrigger };
 }
 

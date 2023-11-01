@@ -74,11 +74,12 @@ const QuestionTable: FC<QuestionTableProps> = ({
   const [openView, setOpenView] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [openDelCfm, setOpenDelCfm] = useState(false);
+  const [filteredQuestions, setFilteredQuestions] = useState(questions);
   const router = useRouter();
   const numberOfPages = Math.ceil(totalQuestions / questionsPerPage);
   const indexOfLastRecord = currentPage * questionsPerPage;
   const indexOfFirstRecord = indexOfLastRecord - questionsPerPage;
-  const currentQuestions = questions.slice(
+  const currentQuestions = filteredQuestions.slice(
     indexOfFirstRecord,
     indexOfLastRecord
   );
@@ -104,9 +105,21 @@ const QuestionTable: FC<QuestionTableProps> = ({
       setSelectedDifficulty(event.target.value);
     };
 
+    useEffect(() => {
+      setUserRole(sessionUser.role);
+    }, [sessionUser]);
+  
   useEffect(() => {
-    setUserRole(sessionUser.role);
-  }, [sessionUser]);
+    setFilteredQuestions(
+      questions.filter(
+        (question) =>
+          (question.categories.includes(selectedCategory) ||
+            selectedCategory === "") &&
+          (question.complexity.includes(selectedDifficulty) ||
+            selectedDifficulty === "")
+      )
+    );
+  }, [selectedCategory, selectedDifficulty, questions]);
 
   const handleSaveQuestion = async (newQuestion: Question) => {
     const questionToAdd = { ...newQuestion };
@@ -237,7 +250,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
           </thead>
 
           <tbody>
-            {currentQuestions.filter(question => (question.categories.includes(selectedCategory) || selectedCategory === "") && (question.complexity.includes(selectedDifficulty) || selectedDifficulty === "")).map((question, index) => (
+            {currentQuestions.map((question, index) => (
               <tr
                 key={index}
                 className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
@@ -306,7 +319,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
       </div>
       <QuestionPagination
         hidden={hidden}
-        totalQuestionsNum={totalQuestions}
+        totalQuestionsNum={filteredQuestions.length}
         questionsPerPage={questionsPerPage}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
