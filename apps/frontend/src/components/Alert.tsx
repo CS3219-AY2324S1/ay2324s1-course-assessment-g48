@@ -1,14 +1,15 @@
+import { Error } from "@/hook/ErrorContext";
+import { errorType } from "@/utils/constants/AlertType";
 import { Dialog, Transition } from "@headlessui/react";
 import React, { Fragment } from "react";
 
 type AlertProps = {
-  message: string;
+  error: Error;
   hidden: boolean;
   setHide: (value: boolean) => void;
-  green?: boolean;
 };
 
-const Alert: React.FC<AlertProps> = ({ message, hidden, setHide, green }) => {
+const Alert: React.FC<AlertProps> = ({ error, hidden, setHide }) => {
   return (
     <Transition.Root show={hidden} as={Fragment}>
       <Dialog
@@ -26,10 +27,14 @@ const Alert: React.FC<AlertProps> = ({ message, hidden, setHide, green }) => {
           leaveTo="translate-y-full"
         >
           <div
-            className={`fixed bottom-0 left-0 p-4 ml-4 mb-4 font-regular  rounded-lg ${green ? "bg-green-500" :"bg-red-500"} text-base leading-5 text-white opacity-100`}
+            className={`fixed bottom-0 left-0 p-4 ml-4 mb-4 font-regular  rounded-lg ${errorType.find(
+              (item) => {
+                return item.type === error.type;
+              }
+            )?.color} text-base leading-5 text-white opacity-100`}
             role="alert"
           >
-            {message}
+            {error.message}
           </div>
         </Transition.Child>
       </Dialog>

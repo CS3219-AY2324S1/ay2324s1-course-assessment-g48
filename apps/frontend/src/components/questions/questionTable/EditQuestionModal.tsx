@@ -4,6 +4,7 @@ import { Category } from "@/utils/enums/Category";
 import { useEffect, useState } from "react";
 import { Question, TestCase } from "@/database/question/entities/question.entity";
 import Modal from "@/components/Modal";
+import { useError } from "@/hook/ErrorContext";
 
 type EditQuestionModalProps = {
   onEditQuestion: Question;
@@ -19,17 +20,19 @@ const EditQuestionModal: React.FC<EditQuestionModalProps> = ({
   open,
 }) => {
   const [newQuestion, setNewQuestion] = useState<Question>(onEditQuestion);
-  const [error, setError] = useState<string>("");
+  const { setError } = useError();
 
   const handleEditQuestion = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     await onUpdate(newQuestion)
       .then(() => {
-        setError("");
         setOpen(false);
       })
       .catch((e) => {
-        setError(e);
+        setError({
+          type: 1,
+          messgae: e
+        });
       });
   };
 
@@ -177,7 +180,6 @@ const EditQuestionModal: React.FC<EditQuestionModalProps> = ({
             className="text-sm font-semibold leading-6 text-gray-900"
             onClick={() => {
               setOpen(false);
-              setError("");
             }}
           >
             Cancel

@@ -2,24 +2,26 @@ import { Question } from "@/database/question/entities/question.entity";
 import { getQuestionById } from "@/database/question/questionService";
 import { Role } from "@/utils/enums/Role";
 import { useEffect, useState } from "react";
+import { useError } from "./ErrorContext";
 
 function useQuestionById(qid: string, userRole?: Role) {
   const [isLoading, setIsLoading] = useState(false);
   const [question, setQuestion] = useState<Question | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const { setError } = useError();
 
   useEffect(() => {
     async function fetchData() {
       if (qid) {
         setIsLoading(true);
-        setError(null);
         if (userRole === Role.Unknown) return;
         try {
           const data = await getQuestionById(qid, userRole);
           setQuestion(data);
           setIsLoading(false);
         } catch (error) {
-          setError(`Error fetching question:, ${error}`);
+          setError({
+            type: 1,
+            message: `Error fetching question:, ${error}`});
           setIsLoading(false);
         }
       }
@@ -27,7 +29,7 @@ function useQuestionById(qid: string, userRole?: Role) {
     fetchData();
   }, [qid, userRole]);
 
-  return { question, isLoading, error };
+  return { question, isLoading };
 }
 
 export default useQuestionById;

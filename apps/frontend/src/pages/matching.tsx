@@ -52,7 +52,9 @@ const MatchingPage: React.FC<matchingProps> = () => {
     matchingSocket.on("matched", setToMatchedState);
     matchingSocket.on("other-connection", () => {
       setToNotMatchingState();
-      setError("This account has attempted to match from another location.");
+      setError({
+        type: 1,
+        message: "This account has attempted to match from another location."});
       disconnectSocket();
     });
     setIsMatching(MatchedState.MATCHING);
@@ -60,7 +62,9 @@ const MatchingPage: React.FC<matchingProps> = () => {
       matchingSocket.emit("matching", { difficulty, user: sessionUser });
       matchingSocket.on("timeout", () => {
         setToNotMatchingState();
-        setError("Timed out, try again.");
+        setError({
+          type: 1,
+          message: "Timed out, try again."});
         disconnectSocket();
       });
       
@@ -81,7 +85,9 @@ const MatchingPage: React.FC<matchingProps> = () => {
         console.log(err);
       });
     setIsMatching(MatchedState.MATCHED);
-    setError("Matched with a peer!");
+    setError({
+      type: 4,
+      message: "Matched with a peer!"});
     router.push(`/session/${data.sessionId}`);
   };
 
@@ -101,7 +107,9 @@ const MatchingPage: React.FC<matchingProps> = () => {
     return () => {
       matchingSocket.on("timeout", () => {
         setToNotMatchingState();
-        setError("Timed out, try again.");
+        setError({
+          type: 1,
+          message: "Timed out, try again."});
         disconnectSocket();
       });
     }
