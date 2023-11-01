@@ -2,9 +2,11 @@ import React, { useEffect, useRef } from "react";
 import { ChatBubbleOvalLeftEllipsisIcon } from "@heroicons/react/24/outline";
 import ChatWindow from "./ChatWindow";
 
-type ChatWidgetProps = {};
+type ChatWidgetProps = {
+  sessionId?: string;
+};
 
-const ChatWidget: React.FC<ChatWidgetProps> = () => {
+const ChatWidget: React.FC<ChatWidgetProps> = ({sessionId}) => {
   const ref = useRef<HTMLDivElement>(null);
   const [showChatWindow, setShowChatWindow] = React.useState(false);
 
@@ -23,7 +25,7 @@ const ChatWidget: React.FC<ChatWidgetProps> = () => {
   return (
     <>
       <div ref={ref} >
-        <ChatWindow visible={showChatWindow}/>
+        <ChatWindow sessionId={sessionId} visible={showChatWindow}/>
       </div>
       <div className="absolute bottom-16 right-10 z-10 group">
         <div className="btnTooltip -top-0.5 right-16">Chat</div>

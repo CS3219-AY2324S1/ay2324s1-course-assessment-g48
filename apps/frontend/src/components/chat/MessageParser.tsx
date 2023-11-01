@@ -1,3 +1,4 @@
+import { chatroomSocket } from '@/utils/socket/socket';
 import React from 'react';
 
 const MessageParser = ({ children }: { children: React.ReactNode }, actions: any) => {
@@ -9,8 +10,13 @@ const MessageParser = ({ children }: { children: React.ReactNode }, actions: any
   };
 
   const sendMessageToWebsocket = (message: any) => {
-    //TODO
     console.log(message);
+    chatroomSocket.emit("sendMessage", {
+      uid: 1,
+      content: message,
+      timestamp: new Date(),
+    });
+    console.log("HELLO");
   };
 
   return (

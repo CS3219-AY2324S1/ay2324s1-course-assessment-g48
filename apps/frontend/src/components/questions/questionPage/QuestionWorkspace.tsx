@@ -32,7 +32,7 @@ const QuestionWorkspace: React.FC<QuestionWorkspaceProps> = ({
           <CodeEditor question={question} />
         )}
       </Split>
-      <ChatWidget />
+      <ChatWidget sessionId={sessionId}/>
     </>
   );
 };
