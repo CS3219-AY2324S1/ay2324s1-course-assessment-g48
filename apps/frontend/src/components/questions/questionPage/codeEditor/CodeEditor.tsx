@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import EditorNav from "./EditorNav";
 import ExecPanel from "../execPanel/ExecPanel";
 import Split from "react-split";
-import EditorFooter from "./editorFooter/EditorFooter";
+import EditorFooter from "../execPanel/editorFooter/EditorFooter";
 import { useTheme } from "@/hook/ThemeContext";
 import { Editor } from "@monaco-editor/react";
 import { Question } from "@/database/question/entities/question.entity";
@@ -46,15 +46,6 @@ class Solution {
   }
 };`;
 
-  // WIP formatStarterCode(starterCode, selectedLanguage)
-  function formatStarterCode(starterCode: string, language: string) {
-    const lang = findLangugage(language);
-  }
-
-  function findLangugage(language: string) {
-    return languageOptions.find((lang) => lang.label === language);
-  }
-
   const { isDarkMode } = useTheme();
   const [code, changeCode] = useState(currCode ?? "");
   const [customInput, setCustomInput] = useState(""); // todo: for console
@@ -63,6 +54,7 @@ class Solution {
   const [selectedLanguage, setSelectedLanguage] = useState(
     languageOptions[0].label // "javascript language"
   );
+  const [selectedTestCaseChip, setSelectedTestCaseChip] = useState<number>(1);
 
   const enterPress = useKeyPress("Enter");
   const ctrlPress = useKeyPress("Control");
@@ -75,16 +67,25 @@ class Solution {
     // console.log("Using solo code editor. Current code:", code);
   }
 
+  const handleTestCaseChipClick = (testNum: number) => {
+    setSelectedTestCaseChip(testNum);
+  };
+
+  function findLangugage(language: string) {
+    return languageOptions.find((lang) => lang.label === language);
+  }
+
   const handleCompile = async () => {
     setProcessing(true);
     const language = findLangugage(selectedLanguage);
-    console.log("tc output", question.testcases[0].output);
     const formData = {
       language_id: language?.id,
       // encode source code in base64
       source_code: btoa(code),
       stdin: btoa(customInput),
-      expected_output: btoa(question.testcases[0].output), // hardcoded tc
+      expected_output: btoa(
+        question.testcases[selectedTestCaseChip - 1].output
+      ),
     };
     try {
       const response = await axios.post("/api/codeExecution/compile", formData);
@@ -182,13 +183,13 @@ class Solution {
               defaultLanguage="javascript"
             />
           </div>
-          {/* Exec Panel can still be abstracted to QuestionWorkspace -> future enhancement */}
           <ExecPanel
             question={question}
             outputDetails={memoizedOutputDetails}
+            selectedTestCaseChip={selectedTestCaseChip}
+            handleTestCaseChipClick={handleTestCaseChipClick}
           />
         </Split>
-        {/* Gotta check whether toastcontainer actually works... */}
         <ToastContainer
           position="top-right"
           autoClose={2000}

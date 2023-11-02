@@ -1,25 +1,21 @@
 import { Question } from "@/database/question/entities/question.entity";
 import OutputMetrics from "./OutputMetrics";
 import OutputWindow from "./OutputWindow";
-import { useState } from "react";
 import TestCaseChip from "../testCaseTab/TestCaseChip";
 
 type ResultContentProps = {
   outputDetails: any;
   question: Question;
+  selectedTestCaseChip: number;
+  handleTestCaseChipClick: (testNum: number) => void;
 };
 
 const ResultCaseContent: React.FC<ResultContentProps> = ({
   outputDetails,
   question,
+  selectedTestCaseChip,
+  handleTestCaseChipClick,
 }) => {
-  const [selectedTestCaseChip, setSelectedTestCaseChip] = useState<
-    number | null
-  >(1);
-
-  const handleTestCaseChipClick = (testNum: number) => {
-    setSelectedTestCaseChip(testNum);
-  };
   return (
     <>
       <div className="flex">
@@ -34,7 +30,12 @@ const ResultCaseContent: React.FC<ResultContentProps> = ({
       {selectedTestCaseChip !== null && (
         <div className="text-sm font-medium leading-5 dark:text-white">
           <div className="font-semibold mb-12">
-            <OutputWindow outputDetails={outputDetails} />
+            <OutputWindow
+              outputDetails={outputDetails}
+              expected_output={
+                question.testcases[selectedTestCaseChip - 1].output
+              }
+            />
             <OutputMetrics outputDetails={outputDetails} />
           </div>
         </div>

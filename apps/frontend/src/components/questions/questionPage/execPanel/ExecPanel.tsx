@@ -7,13 +7,17 @@ import { Question } from "@/database/question/entities/question.entity";
 type ExecPanelProps = {
   question: Question;
   outputDetails: string;
+  selectedTestCaseChip: number | null;
+  handleTestCaseChipClick: (testNum: number) => void;
 };
 
-const ExecPanel: React.FC<ExecPanelProps> = ({ question, outputDetails }) => {
+const ExecPanel: React.FC<ExecPanelProps> = ({
+  question,
+  outputDetails,
+  selectedTestCaseChip,
+  handleTestCaseChipClick,
+}) => {
   const [isResultActive, setIsResultActive] = useState<boolean>(false);
-  const [selectedTestCaseChip, setSelectedTestCaseChip] = useState<
-    number | null
-  >(1);
 
   const handleResultClick = () => {
     setIsResultActive(true);
@@ -21,10 +25,6 @@ const ExecPanel: React.FC<ExecPanelProps> = ({ question, outputDetails }) => {
 
   const handleTestCaseClick = () => {
     setIsResultActive(false);
-  };
-
-  const handleTestCaseChipClick = (testNum: number) => {
-    setSelectedTestCaseChip(testNum);
   };
 
   return (
@@ -38,7 +38,12 @@ const ExecPanel: React.FC<ExecPanelProps> = ({ question, outputDetails }) => {
       {!isResultActive ? (
         <TestCaseContent question={question} />
       ) : (
-        <ResultContent outputDetails={outputDetails} question={question} />
+        <ResultContent
+          outputDetails={outputDetails}
+          question={question}
+          selectedTestCaseChip={selectedTestCaseChip}
+          handleTestCaseChipClick={handleTestCaseChipClick}
+        />
       )}
     </div>
   );

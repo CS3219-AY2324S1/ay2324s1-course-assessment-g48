@@ -3,9 +3,13 @@ import OutputBox from "./OutputBox";
 
 type OutputWindowProps = {
   outputDetails: any;
+  expected_output: string;
 };
 
-const OutputWindow: React.FC<OutputWindowProps> = ({ outputDetails }) => {
+const OutputWindow: React.FC<OutputWindowProps> = ({
+  outputDetails,
+  expected_output,
+}) => {
   const getOutput = () => {
     let statusId = outputDetails?.status?.id;
 
@@ -58,18 +62,12 @@ const OutputWindow: React.FC<OutputWindowProps> = ({ outputDetails }) => {
         <OutputBox
           title="Your input:"
           content={
-            outputDetails?.input !== undefined ? outputDetails.input : ""
+            outputDetails?.stdin !== undefined ? outputDetails.stdin : ""
           }
         />
         <OutputBox title="Your Output:" content={getOutput()} />
-        <OutputBox
-          title="Expected Output:"
-          content={
-            outputDetails?.expected_output !== undefined
-              ? `${atob(outputDetails.expected_output)}`
-              : ""
-          }
-        />
+        {/* Todo: Add the tcs themselves itself */}
+        <OutputBox title="Expected Output:" content={expected_output} />
       </div>
     </>
   );
