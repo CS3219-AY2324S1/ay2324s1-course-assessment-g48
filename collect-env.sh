@@ -2,40 +2,29 @@
 
 # Define the output .env file at the root
 OUTPUT_ENV=".env"
+ROOT_DIR="apps"  # Define your root directory here
 
 # Remove the existing .env file if it exists
 rm -f $OUTPUT_ENV
 
 # Function to append env files into one
 append_env_file() {
-    local FOLDER=$1
+    local ENV_PATH=$1
+    local DIR_NAME=$(dirname "${ENV_PATH}")
+    local BASE_NAME=$(basename "${DIR_NAME}")
+
     # Append the name of the folder
-    echo "${FOLDER} .env variables: " >> $OUTPUT_ENV
+    echo "${BASE_NAME} .env variables: " >> $OUTPUT_ENV
     echo "-----------------------------------" >> $OUTPUT_ENV
-    # Check if the .env file exists and append it to the root .env file
-    if [[ -f "$FOLDER/.env" ]]; then
-        cat "$FOLDER/.env" >> $OUTPUT_ENV
-    else
-        echo "No .env file found in $FOLDER"
-    fi
+    # Append the .env file contents to the root .env file
+    cat "$ENV_PATH" >> $OUTPUT_ENV
     # Add a newline for separation
     echo -e "\n" >> $OUTPUT_ENV
 }
 
-# List of directories
-DIRS=(
-    "apps/frontend"
-    "apps/backend/queue"
-    "apps/backend/chat"
-    "apps/backend/question"
-    "apps/backend/session"
-    "apps/backend/user"
-    "apps/backend/history"
-)
-
-# Iterate over directories and append env files
-for DIR in "${DIRS[@]}"; do
-    append_env_file $DIR
+# Find all .env files in the directory tree and iterate over them
+find $ROOT_DIR -name '.env' | while read ENV_FILE; do
+    append_env_file "$ENV_FILE"
 done
 
 # Notify user
