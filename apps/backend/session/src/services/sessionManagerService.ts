@@ -82,10 +82,8 @@ export class SessionManagerService {
         docId: handle.url,
         chatroomId: session.chatroomId,
       });
-      return handle.url;
-    } else {
-      return this.sessionToUserMap.get(sessionId)?.docId;
     }
+    return this.sessionToUserMap.get(sessionId);
   }
 
   public clearAllSessions() {

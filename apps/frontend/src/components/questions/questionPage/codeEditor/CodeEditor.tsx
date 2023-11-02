@@ -9,11 +9,10 @@ import { Question } from "@/database/question/entities/question.entity";
 import TestCaseContent from "./TestCaseContent";
 import ResultContent from "./ResultContent";
 
-
 type CodeEditorProps = {
   onChangeCode?: (value: any, event: any) => void;
   currCode?: string;
-  question: Question;
+  question?: Question;
 };
 
 const CodeEditor: React.FC<CodeEditorProps> = ({
@@ -66,12 +65,11 @@ class Solution {
     };
   }
 
-  function handleEditorDidMount(editor:any, monaco:any) {
+  function handleEditorDidMount(editor: any, monaco: any) {
     // here is another way to get monaco instance
     // you can also store it in `useRef` for further usage
     monacoRef.current = editor;
   }
-
 
   useEffect(() => {
     changeCode(currCode ?? "");
@@ -89,7 +87,6 @@ class Solution {
           <Editor
             height="100%"
             onChange={onChangeCode}
-            defaultValue={starterCode}
             value={code}
             theme={isDarkMode ? "vs-dark" : "light"}
             defaultLanguage="javascript"

@@ -1,6 +1,9 @@
-import React from 'react';
+import React from "react";
 
-const MessageParser = ({ children }: { children: React.ReactNode }, actions: any) => {
+const MessageParser = (
+  { children }: { children: React.ReactNode },
+  actions: any
+) => {
   const parse = (message: any) => {
     if (!message) {
       return;
@@ -10,12 +13,14 @@ const MessageParser = ({ children }: { children: React.ReactNode }, actions: any
 
   const sendMessageToWebsocket = (message: any) => {
     //TODO
+    console.log(actions);
+    // actions.handleSendMessage(message);
     console.log(message);
   };
 
   return (
     <div>
-      {React.Children.map(children, (child) => {  
+      {React.Children.map(children, (child) => {
         return React.cloneElement(child as React.ReactElement<any>, {
           parse: parse,
           actions: {},

@@ -4,7 +4,7 @@ import { Key } from "react";
 import { Question } from "@/database/question/entities/question.entity";
 
 type TestCaseContentProps = {
-  question: Question;
+  question?: Question;
   handleTestCaseChipClick: (resultNum: number) => void;
   selectedTestCaseChip: number | null;
 };

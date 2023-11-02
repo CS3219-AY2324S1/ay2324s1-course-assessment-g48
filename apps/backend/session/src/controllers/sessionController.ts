@@ -37,15 +37,19 @@ export class SessionController {
     next: NextFunction
   ) {
     const sessionId = req.params.sessionId;
-    const docId = await this.sessionManager.getDocId(sessionId);
+    const sessionWithDoc = await this.sessionManager.getDocId(sessionId);
 
     console.log(`getting session with SessionId of ${sessionId}`);
 
-    if (!docId) {
+    if (!sessionWithDoc) {
+      return res.status(404).json({ err: "No session found" });
+    }
+
+    if (!sessionWithDoc.docId) {
       return res.status(404).json({ err: "No document found" });
     }
-    console.log(`Found docId ${docId} for ${sessionId} `);
-    return res.status(200).json({ docId });
+    console.log(`Found docId ${sessionWithDoc.docId} for ${sessionId} `);
+    return res.status(200).json(sessionWithDoc);
   }
 
   public clearAllSessions(req: Request, res: Response, next: NextFunction) {
@@ -54,8 +58,7 @@ export class SessionController {
   }
 
   public async handleCleanup() {
-    await this.saveToDatabase();
-    mongoose.disconnect();
+    await this.saveToDatabase().then((res) => mongoose.disconnect());
   }
 
   public async saveToDatabase() {
