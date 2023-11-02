@@ -31,7 +31,7 @@ const EditQuestionModal: React.FC<EditQuestionModalProps> = ({
       .catch((e) => {
         setError({
           type: 1,
-          messgae: e
+          message: e
         });
       });
   };

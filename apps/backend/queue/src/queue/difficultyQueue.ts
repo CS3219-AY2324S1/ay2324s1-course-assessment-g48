@@ -13,6 +13,7 @@ export class DifficultyQueue {
     this.waitList = [];
     this.socketMap = new Map();
     this.connectToAmqp();
+    console.log("main", this.waitList)
   }
 
   public async generateSession(user1: number, user2: number) {
@@ -46,8 +47,8 @@ export class DifficultyQueue {
       this.socketMap.get(uid)?.emit("other-connection");
       this.cleanup(uid);
     } else {
-      //   console.log(this.waitList)
-      //   console.log(`${this.nameSpace} queue does not have ${uid}`)
+        // console.log(this.waitList)
+        // console.log(`${this.nameSpace} queue does not have ${uid}`)
     }
   }
 
@@ -100,6 +101,8 @@ export class DifficultyQueue {
   public cleanup(uid: number) {
     this.removeFromSocketMap(uid);
     this.waitList = this.waitList.filter((num) => num != uid);
+    console.log("cleanup", uid)
+    console.log(`Waitlist: [${JSON.stringify(this.waitList.join(", "))}]`);
   }
 
   private async connectToAmqp() {
@@ -107,6 +110,7 @@ export class DifficultyQueue {
     const connection = await amqp.connect(process.env.RABBITMQ_URL || "amqp://localhost:5672");
     const channel = await connection.createChannel();
 
+    console.log(this.nameSpace)
     await channel.assertQueue(this.nameSpace, { durable: true });
 
     channel.consume(this.nameSpace, async (message) => {

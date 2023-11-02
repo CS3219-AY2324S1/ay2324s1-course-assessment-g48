@@ -30,7 +30,7 @@ const MatchingPage: React.FC<matchingProps> = () => {
   const handleMatchConnection: FormEventHandler = (e) => {
     e.preventDefault();
     console.log(difficulty);
-    toggleTimer(new Date().getTime() + 30000);
+    
     if (isMatching == MatchedState.MATCHING) {
       setToNotMatchingState();
       return;
@@ -40,8 +40,8 @@ const MatchingPage: React.FC<matchingProps> = () => {
 
   const setToNotMatchingState = () => {
     // Set the state of the page to not looking for match.
-    reset();
     disconnectSocket();
+    reset();
     setIsMatching(MatchedState.NOT_MATCHING);
   };
 
@@ -49,6 +49,10 @@ const MatchingPage: React.FC<matchingProps> = () => {
     // Set the state of the page to looking for match.
     clearError();
     matchingSocket.connect();
+    matchingSocket.on("connected", () => {
+      console. log("connected with backend")
+    })
+    
     matchingSocket.on("matched", setToMatchedState);
     matchingSocket.on("other-connection", () => {
       setToNotMatchingState();
@@ -57,9 +61,15 @@ const MatchingPage: React.FC<matchingProps> = () => {
         message: "This account has attempted to match from another location."});
       disconnectSocket();
     });
-    setIsMatching(MatchedState.MATCHING);
-    setTimeout(() => {
+
+      console.log("set matching", matchingSocket)
       matchingSocket.emit("matching", { difficulty, user: sessionUser });
+      matchingSocket.on("matching", () => { 
+        console.log("emitted");
+        setIsMatching(MatchedState.MATCHING);
+        toggleTimer(new Date().getTime() + 30000);
+      })
+      
       matchingSocket.on("timeout", () => {
         setToNotMatchingState();
         setError({
@@ -67,8 +77,7 @@ const MatchingPage: React.FC<matchingProps> = () => {
           message: "Timed out, try again."});
         disconnectSocket();
       });
-      
-    }, 2000);
+  
   };
 
   const setToMatchedState = (data: any) => {
@@ -98,9 +107,7 @@ const MatchingPage: React.FC<matchingProps> = () => {
 
   useEffect(() => {
     if (isMatching === MatchedState.MATCHING) {
-          setTimeout(() => {
-            setDisableBtnCancel(false);
-          }, 2000);
+      setDisableBtnCancel(false);
     } else {
       setDisableBtnCancel(true);
     }
@@ -113,7 +120,7 @@ const MatchingPage: React.FC<matchingProps> = () => {
         disconnectSocket();
       });
     }
-  }, [isRunning]);
+  }, [isRunning, isMatching]);
 
   useEffect(() => {
     setUserRole(sessionUser.role);
