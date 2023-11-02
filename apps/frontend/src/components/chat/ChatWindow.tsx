@@ -8,9 +8,8 @@ import { useTheme } from "@/hook/ThemeContext";
 import ChatValidator from "@/utils/chat/ChatValidator";
 import Avatar from "./Avatar";
 import ChatHeader from "./ChatHeader";
-import { chatroomSocket } from "@/utils/socket/socket";
 import useSessionUser from "@/hook/useSessionUser";
-import { IMessage } from "react-chatbot-kit/build/src/interfaces/IMessages";
+import { useChatroom } from "@/hook/useChatroom";
 
 const BotAvatar = () => <Avatar />;
 function createChatHeader(header: string) {
@@ -25,14 +24,6 @@ type ChatWindowProps = {
   botAvatar?: any;
 };
 
-interface Message {
-  id: string;
-  uid: number;
-  content: string;
-  timestamp: Date;
-}
-
-
 // https://fredrikoseberg.github.io/react-chatbot-kit-docs/docs/
 const ChatWindow: React.FC<ChatWindowProps> = ({ visible }) => {
   const opacity = "opacity-100";
@@ -46,31 +37,11 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ visible }) => {
   // TODO: get other user's name from chatroomId
   const testUser = "Person Name";
 
+  const { messages, handleSubmit } = useChatroom(chatroomId);
+
   // can remove testMessages when done testing
   // ChatBotMessage is other user's message
   // ClientMessage is your message
-  const testMessages = [createChatBotMessage("first message", {}), createClientMessage("second message", {})];
-  const [messages, setMessages] = useState<IMessage[]>(testMessages); 
-
-
-  useEffect(() => {
-    chatroomSocket.connect();
-    chatroomSocket.on("receiveMessage", ({ messages }) => {
-      console.log(messages);
-      const updatedMessages = messages.map((message: Message) => {
-        const isUser = message.uid === sessionUser.id;
-        if (isUser) {
-          return createClientMessage(message.content, {});
-        }
-        return createChatBotMessage(message.content, {});
-      });
-      setMessages((pastMessages) => [...pastMessages, ...updatedMessages]);
-    });
-    chatroomSocket.emit("connectToChatroom", { chatroomId });
-    return () => {
-      chatroomSocket.disconnect();
-    };
-  }, [sessionUser.id]);
 
   const CustomConfig = {
     ...ChatConfig,
@@ -79,7 +50,15 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ visible }) => {
       header: createChatHeader(testUser),
       botAvatar: BotAvatar
     },
+    state: {
+      handleSubmit: handleSubmit
+    },
   };
+  const iMessages = messages.map((message) =>
+    sessionUser.id == message.uid
+      ? createClientMessage(message.content, {})
+      : createChatBotMessage(message.content, {})
+  );
   if (!visible) {
     return <></>
   }
@@ -91,7 +70,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ visible }) => {
         actionProvider={ActionProvider}
         messageParser={MessageParser}
         validator={ChatValidator}
-        messageHistory={messages}
+        messageHistory={iMessages}
       />
     </div>
   );

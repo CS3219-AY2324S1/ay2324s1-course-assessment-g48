@@ -1,30 +1,29 @@
-import { chatroomSocket } from '@/utils/socket/socket';
 import React from 'react';
 
-const MessageParser = ({ children }: { children: React.ReactNode }, actions: any) => {
-  const parse = (message: any) => {
-    if (!message) {
-      return;
-    }
-    sendMessageToWebsocket(message);
+type MessageParserProps = {
+  children: React.ReactNode;
+  actions: {
+    handleHello: () => void;
+    getChatState: () => any;
   };
+};
 
-  const sendMessageToWebsocket = (message: any) => {
-    console.log(message);
-    chatroomSocket.emit("sendMessage", {
-      uid: 1,
-      content: message,
-      timestamp: new Date(),
-    });
-    console.log("HELLO");
+const MessageParser = ({ children, actions }: MessageParserProps) => {
+  const parse = async (message: string) => {
+    if (message.includes('hello')) {
+      actions.handleHello();
+    }
+    const chatState = await actions.getChatState();
+    console.log("MessageParser", chatState);
+    chatState.handleSubmit(message);
   };
 
   return (
     <div>
-      {React.Children.map(children, (child) => {  
+      {React.Children.map(children, (child) => {
         return React.cloneElement(child as React.ReactElement<any>, {
           parse: parse,
-          actions: {},
+          actions,
         });
       })}
     </div>

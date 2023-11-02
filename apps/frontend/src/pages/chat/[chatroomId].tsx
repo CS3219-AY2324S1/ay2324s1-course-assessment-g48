@@ -23,7 +23,7 @@ export default function Chat() {
     setMessages([]);
     chatroomSocket.connect();
     chatroomSocket.on("receiveMessage", ({ messages }) => {
-      console.log(messages);
+      console.log("Receive message", messages);
       setMessages((pastMessages) => [...pastMessages, ...messages]);
     });
     chatroomSocket.emit("connectToChatroom", { chatroomId });
@@ -33,7 +33,7 @@ export default function Chat() {
     return () => {
       chatroomSocket.disconnect();
     };
-  }, []);
+  }, [chatroomId, messages]);
 
   const [newMessage, setNewMessage] = useState<string>("");
 
