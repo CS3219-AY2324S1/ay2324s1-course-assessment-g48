@@ -47,7 +47,9 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ visible, chatroomId }) => {
       header: createChatHeader(testUser),
       botAvatar: BotAvatar,
     },
-    handleSendMessage: handleSubmit,
+    state: {
+      handleSubmit: handleSubmit
+    },
   };
 
   const iMessages = messages.map((message) =>

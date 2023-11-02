@@ -1,27 +1,45 @@
-import React from "react";
+import React from 'react';
 
-type ActionProviderProps = {
-  createChatBotMessage: any;
-  setState: any;
-  children: any;
-  handleSendMessage: (message: string) => void;
-};
+const ActionProvider = ({ createChatBotMessage, setState, children }: any) => {
+  const handleHello = () => {
+    const botMessage = createChatBotMessage('Hello. Nice to meet you.');
 
-const ActionProvider = ({
-  createChatBotMessage,
-  setState,
-  children,
-  handleSendMessage,
-}: ActionProviderProps) => {
+    setState((prev) => ({
+      ...prev,
+      messages: [...prev.messages, botMessage],
+    }));
+  };
+
+
+  const getChatState = () => {
+    return new Promise((resolve) => {
+      let currState: unknown = undefined;
+      setState((state: { [key: string]: any }) => {
+        currState = state;
+        return { ...state };
+      });
+      const checkCurrState = () => {
+        if (currState !== undefined) {
+          resolve(currState);
+        } else {
+          setTimeout(checkCurrState, 100); // Adjust the timeout as needed
+        }
+      };
+      checkCurrState();
+    });
+  };
+
   return (
     <div>
-      {React.Children.map(children, (child: any) => {
+      {React.Children.map(children, (child) => {
         return React.cloneElement(child, {
-          actions: { handleSendMessage },
+          actions: {
+            handleHello,
+            getChatState,
+          },
         });
       })}
     </div>
   );
 };
-
 export default ActionProvider;

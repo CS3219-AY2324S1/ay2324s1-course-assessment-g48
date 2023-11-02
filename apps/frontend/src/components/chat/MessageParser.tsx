@@ -1,21 +1,24 @@
 import React from "react";
 
-const MessageParser = (
-  { children }: { children: React.ReactNode },
-  actions: any
-) => {
-  const parse = (message: any) => {
+type MessageParserProps = {
+  children: React.ReactNode;
+  actions: {
+    handleHello: () => void;
+    getChatState: () => any;
+  };
+};
+
+const MessageParser = ({ children, actions }: MessageParserProps) => {
+  const parse = async (message: string) => {
     if (!message) {
       return;
     }
-    sendMessageToWebsocket(message);
+    await sendMessageToWebsocket(message);
   };
 
-  const sendMessageToWebsocket = (message: any) => {
-    //TODO
-    console.log(actions);
-    // actions.handleSendMessage(message);
-    console.log(message);
+  const sendMessageToWebsocket = async (message: string) => {
+    const chatState = await actions.getChatState();
+    chatState.handleSubmit(message);
   };
 
   return (
@@ -23,7 +26,7 @@ const MessageParser = (
       {React.Children.map(children, (child) => {
         return React.cloneElement(child as React.ReactElement<any>, {
           parse: parse,
-          actions: {},
+          actions
         });
       })}
     </div>
