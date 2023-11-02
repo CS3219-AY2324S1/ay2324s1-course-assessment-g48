@@ -16,23 +16,22 @@ const StarterCodeInput: React.FC<StarterCodeInputProps> = ({
   setNewQuestion
 }) => {
   const scrollRef = useHorizontalScroll();
-  const [starterCodes, setStarterCodes] = React.useState<StarterCode[]>(newQuestion.starterCode);
+  const [currStarterCode, setCurrStarterCode] = React.useState<StarterCode[]>(newQuestion.starterCode);
   const handleStarterCodeChange = (languageId: number, value: string) => {
-    const index = starterCodes.findIndex((starterCode) => starterCode.languageId === languageId);
+    const index = currStarterCode.findIndex((starterCode) => starterCode.languageId === languageId);
     if (index === -1) {
       console.log(`selectedLanguage ${languageId} not found.`);
-      setStarterCodes([...starterCodes, { languageId, code: value }]);
+      setCurrStarterCode([...currStarterCode, { languageId, code: value }]);
     } else {
-      const updatedStarterCodes = [...starterCodes];
+      const updatedStarterCodes = [...currStarterCode];
       updatedStarterCodes[index].code = value;
-      setStarterCodes(updatedStarterCodes);
+      setCurrStarterCode(updatedStarterCodes);
     }
 
     setNewQuestion({
       ...newQuestion,
-      starterCode: starterCodes,
+      starterCode: currStarterCode,
     })
-    console.log(newQuestion);
   };
   return (
     <div className="mt-10">
