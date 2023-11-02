@@ -31,7 +31,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   currCode,
   question,
   initialLanguage,
-  hasSession
+  hasSession,
 }) => {
   // TODO: make it dynamic
   const starterCode = `/**
@@ -65,7 +65,9 @@ class Solution {
   const [customInput, setCustomInput] = useState(""); // todo: for console
   const [outputDetails, setOutputDetails] = useState("");
   const [processing, setProcessing] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState(initialLanguage ?? languageOptions[0]); // "javascript language"
+  const [selectedLanguage, setSelectedLanguage] = useState(
+    initialLanguage ?? languageOptions[0]
+  ); // "javascript language"
 
   const enterPress = useKeyPress("Enter");
   const ctrlPress = useKeyPress("Control");
@@ -163,59 +165,53 @@ class Solution {
   }, [ctrlPress, enterPress]);
 
   return (
-    <>
-      <div className="flex flex-col h-full dark:bg-gray-800 relative overflow-hidden">
-        <EditorNav
-          selectedLanguage={selectedLanguage}
-          setSelectedLanguage={setSelectedLanguage}
-          hasSession={hasSession!}
-        />
-        <Split
-          className="flex-col split h-[calc(100vh-120px)] w-full"
-          direction="vertical"
-          sizes={[60, 40]}
-        >
-          <div className="w-full overflow-auto dark:bg-neutral-800">
-            <Editor
-              height="100%"
-              onChange={onChangeCode}
-              defaultValue={starterCode}
-              value={code}
-              theme={isDarkMode ? "vs-dark" : "light"}
-              language={selectedLanguage.value.toLowerCase()}
-            />
-          </div>
-          {/* Exec Panel can still be abstracted to QuestionWorkspace -> future enhancement */}
-          <ExecPanel
-            question={question}
-            outputDetails={memoizedOutputDetails}
+    <div className="flex flex-col h-full dark:bg-gray-800 relative overflow-hidden">
+      <EditorNav
+        selectedLanguage={selectedLanguage}
+        setSelectedLanguage={setSelectedLanguage}
+        hasSession={hasSession!}
+      />
+      <Split
+        className="flex-col split h-[calc(100vh-120px)] w-full"
+        direction="vertical"
+        sizes={[60, 40]}
+      >
+        <div className="w-full overflow-auto dark:bg-neutral-800">
+          <Editor
+            onChange={onChangeCode}
+            defaultValue={starterCode}
+            value={code}
+            theme={isDarkMode ? "vs-dark" : "light"}
+            language={selectedLanguage.value.toLowerCase()}
           />
-        </Split>
-        {/* Gotta check whether toastcontainer actually works... */}
-        <ToastContainer
-          position="top-right"
-          autoClose={2000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-        />
-        <EditorFooter
-          userCode={code}
-          processing={processing}
-          handleCompile={handleCompile}
-          question={question}
-        />
-      </div>
-    </>
+        </div>
+        {/* Exec Panel can still be abstracted to QuestionWorkspace -> future enhancement */}
+        <ExecPanel question={question} outputDetails={memoizedOutputDetails} />
+      </Split>
+      {/* Gotta check whether toastcontainer actually works... */}
+      <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
+      <EditorFooter
+        userCode={code}
+        processing={processing}
+        handleCompile={handleCompile}
+        question={question}
+      />
+    </div>
   );
 };
 
 CodeEditor.defaultProps = {
-  hasSession: false
+  hasSession: false,
 };
 
 export default CodeEditor;

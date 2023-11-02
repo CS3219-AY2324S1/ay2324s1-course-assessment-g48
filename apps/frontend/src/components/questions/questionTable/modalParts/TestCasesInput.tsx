@@ -1,7 +1,7 @@
 import {
   TestCase,
-  initialTestCase,
 } from "@/database/question/entities/question.entity";
+import { useHorizontalScroll } from "@/hook/useHorizontalScroll";
 import { classNames } from "@/utils/classnames/classnames";
 import { Tab } from "@headlessui/react";
 import { PlusSmallIcon, XMarkIcon } from "@heroicons/react/24/outline";
@@ -27,9 +27,12 @@ const TestCasesInput: React.FC<TestCasesInputProps> = ({
   setBlank,
 }) => {
   useEffect(() => {
-    setBlank(testcases.filter((item) => item.input === "" || item.output === "").length > 0);
+    setBlank(
+      testcases.filter((item) => item.input === "" || item.output === "")
+        .length > 0
+    );
   }, [testcases, setBlank]);
-
+  const scrollRef = useHorizontalScroll();
   return (
     <div className="mt-10">
       <div className="flex items-center justify-between">
@@ -51,7 +54,7 @@ const TestCasesInput: React.FC<TestCasesInputProps> = ({
       </div>
       <Tab.Group as="div" className="mt-2">
         <div className="border-b border-gray-200">
-          <Tab.List className="-mb-px flex space-x-8 px-3 overflow-x-auto scrollbar-hidden">
+          <Tab.List ref={scrollRef} className="-mb-px flex space-x-8 py-1 overflow-x-auto">
             {testcases.map((testcase, index) => (
               <Tab
                 key={index}
@@ -87,7 +90,12 @@ const TestCasesInput: React.FC<TestCasesInputProps> = ({
                     type="button"
                     onClick={() => {
                       if (testcases.length === 1) {
-                        setTestCases([initialTestCase]);
+                        setTestCases([
+                          {
+                            input: "",
+                            output: "",
+                          },
+                        ]);
                       } else {
                         setTestCases(
                           testcases.filter((item) => item !== testcase)

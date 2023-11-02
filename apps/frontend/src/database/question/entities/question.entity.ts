@@ -40,8 +40,3 @@ export const initialTestCase = {
   input: "",
   output: "",
 };
-
-export const initialStarterCode = {
-  languageId: -1,
-  code: "",
-};
