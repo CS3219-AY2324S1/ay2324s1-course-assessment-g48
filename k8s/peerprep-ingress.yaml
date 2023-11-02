@@ -5,6 +5,7 @@ metadata:
   annotations:
     # ingressClassName: nginx
     kubernetes.io/ingress.global-static-ip-name: leetpal-lb
+    networking.gke.io/managed-certificates: managed-cert
 spec:
   defaultBackend:
     service:
@@ -44,9 +45,16 @@ spec:
             port:
               number: 8002
       - pathType: Prefix
+        path: /api/history
+        backend:
+          service:
+            name: peerprep-history
+            port:
+              number: 8003
+      - pathType: Prefix
         path: /session
         backend:
           service:
             name: peerprep-session
             port:
-              number: 8251
+              number: 8250

@@ -21,6 +21,7 @@ const SessionCodeEditor: React.FC<SessionCodeEditorProps> = ({ sessionId, questi
   const [docUrl, setDocUrl] = useState<AutomergeUrl>();
 
   useEffect(() => {
+    console.log("sessionID here", sessionID);
     if (sessionID) {
       axios
         .get(

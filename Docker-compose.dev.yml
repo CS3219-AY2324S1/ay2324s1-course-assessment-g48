@@ -40,22 +40,23 @@ services:
     environment:
       - ./apps/frontend/.env.local
     depends_on:
-      - peerprep-user                       # Ensure that the backend service is started first
-      - peerprep-question                   # Ensure that the backend service is started first
-      - peerprep-queue                      # Ensure that the backend service is started first
-      - peerprep-session                    # Ensure that the backend service is started first
+      - peerprep-user                           # Ensure that the backend service is started first
+      - peerprep-question                       # Ensure that the backend service is started first
+      - peerprep-queue                          # Ensure that the backend service is started first
+      - peerprep-session                        # Ensure that the backend service is started first
+      - peerprep-history                        # Ensure that the backend service is started first
     networks:
       - peerprep-network
 
   peerprep-question:
-    container_name: peerprep-question       # Name of the container
-    image: peerprep-question                # Name of the image
+    container_name: peerprep-question           # Name of the container
+    image: peerprep-question                    # Name of the image
     restart: always
     build:
-      context: ./apps/backend/question      # Build context is the path to the backend directory
+      context: ./apps/backend/question          # Build context is the path to the backend directory
       dockerfile: Dockerfile.question.dev       # Path to the Dockerfile for the backend
     ports:
-      - "8000:8000"                         # Map backend container's port 8000 to host's port 8000
+      - "8000:8000"                             # Map backend container's port 8000 to host's port 8000
     # volumes:
     #   - ./apps/backend/question:/app      # Mount the backend directory as a volume
     environment:
@@ -64,33 +65,33 @@ services:
       - peerprep-network
 
   peerprep-user:
-    container_name: peerprep-user           # Name of the container
-    image: peerprep-user                    # Name of the image
+    container_name: peerprep-user               # Name of the container
+    image: peerprep-user                        # Name of the image
     restart: always
     build:
-      context: ./apps/backend/user          # Build context is the path to the backend directory
+      context: ./apps/backend/user              # Build context is the path to the backend directory
       dockerfile: Dockerfile.user.dev           # Path to the Dockerfile for the backend
     ports:
-      - "8001:8001"                         # Map backend container's port 8000 to host's port 8000
+      - "8001:8001"                             # Map backend container's port 8000 to host's port 8000
     # volumes:
     #   - ./apps/backend/user:/app          # Mount the backend directory as a volume
     environment:
       - ./apps/backend/user/.env.dev
     depends_on:
-      postgres:                             # Ensure that the backend service is started first
+      postgres:                                 # Ensure that the backend service is started first
         condition: service_started
     networks:
       - peerprep-network
 
   peerprep-queue:
-    container_name: peerprep-queue          # Name of the container
+    container_name: peerprep-queue              # Name of the container
     image: peerprep-queue  
     restart: always
     build:
-      context: ./apps/backend/queue         # Build context is the path to the backend directory
+      context: ./apps/backend/queue             # Build context is the path to the backend directory
       dockerfile: Dockerfile.queue.dev          # Path to the Dockerfile for the backend
     ports:
-      - "8002:8002"                         # Map backend container's port 8000 to host's port 8000
+      - "8002:8002"                             # Map backend container's port 8002 to host's port 8002
     environment:
       - ./apps/backend/queue/.env.dev
     networks:
@@ -100,17 +101,32 @@ services:
         condition: service_healthy
 
   peerprep-session:
-    container_name: peerprep-session       # Name of the container
-    image: peerprep-session                # Name of the image
+    container_name: peerprep-session        
+    image: peerprep-session                
     restart: always
     build:
-      context: ./apps/backend/session      # Build context is the path to the backend directory
-      dockerfile: Dockerfile.session.dev       # Path to the Dockerfile for the backend
+      context: ./apps/backend/session       
+      dockerfile: Dockerfile.session.dev    
     ports:
-      - "8250:8250"                         # Map backend container's port 8250 to host's port 8250
-      - "8251:8251"                         # Map backend container's port 8251 to host's port 8251
+      - "8250:8250"                                             
     # volumes:
-    #   - ./apps/backend/question:/app      # Mount the backend directory as a volume
+    #   - ./apps/backend/question:/app      
+    environment:
+      - ./apps/backend/session/.env.dev
+    networks:
+      - peerprep-network
+
+  peerprep-history:
+    container_name: peerprep-history        
+    image: peerprep-history                 
+    restart: always
+    build:
+      context: ./apps/backend/history       
+      dockerfile: Dockerfile.history.dev    
+    ports:
+      - "8003:8003"                         
+    # volumes:
+    #   - ./apps/backend/question:/app 
     environment:
       - ./apps/backend/session/.env.dev
     networks:

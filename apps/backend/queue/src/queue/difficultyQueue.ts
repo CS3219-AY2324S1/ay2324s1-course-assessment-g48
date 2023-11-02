@@ -60,7 +60,7 @@ export class DifficultyQueue {
       //   console.log(`First user uid: ${firstUserUid}, second user uid: ${uid}`)
       const firstUserSocket = this.socketMap.get(firstUserUid);
       const secondUserSocket = this.socketMap.get(uid);
-      const randomSessionId = 123; //await this.generateSession(firstUserUid, uid); //!!!!!!!!!!!!!!!CHANGE!!!!!!!!!!!!!!!!!!!!
+      const randomSessionId = await this.generateSession(firstUserUid, uid); //!!!!!!!!!!!!!!!CHANGE!!!!!!!!!!!!!!!!!!!!
       if (!firstUserSocket || !secondUserSocket) {
         throw new Error(
           "There was no socket associated with the firstUserSocket"

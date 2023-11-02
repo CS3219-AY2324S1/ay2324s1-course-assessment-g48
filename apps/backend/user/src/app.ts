@@ -14,12 +14,8 @@ const allowedOrigins = [
     'http://localhost:8001',
     'http://localhost:8002',
     'http://localhost:9000',
-    'http://leetpal.com',
-    'http://www.leetpal.com',
-    'http://34.120.70.36',
-    'http://34.120.70.36:3000',
-    'http://34.120.70.36:8000',
-    'http://34.120.70.36:8001'
+    "http://www.leetpal.com",
+    "https://www.leetpal.com",
 ];
 
 app.use(

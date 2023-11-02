@@ -3,7 +3,6 @@ import { DifficultyQueue } from "./queue/difficultyQueue";
 import { PORT } from "./utils/config";
 import express from "express";
 import http from "http";
-import cors from "cors";
 
 // const io = new Server(PORT, {});
 

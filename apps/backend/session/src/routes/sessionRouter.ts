@@ -14,9 +14,10 @@ export class SessionRouter {
       sessionController.createSessionHandler(req, res, next)
     );
 
-    this.router.get("/get-session/:sessionId", (req, res, next) =>
-      sessionController.getSession(req, res, next)
-    );
+    this.router.get("/get-session/:sessionId", (req, res, next) => {
+      console.log("get-session!!!!!!!!!", req.params.sessionId);
+      sessionController.getSession(req, res, next);
+    });
 
     this.router.post("/clear", (req, res, next) =>
       sessionController.clearAllSessions(req, res, next)

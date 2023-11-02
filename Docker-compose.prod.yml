@@ -101,11 +101,26 @@ services:
       dockerfile: Dockerfile.session.prod         # Path to the Dockerfile for the backend
     ports:
       - "8250:8250"                               # Map backend container's port 8250 to host's port 8250
-      - "8251:8251"                               # Map backend container's port 8251 to host's port 8251
     # volumes:
     #   - ./apps/backend/question:/app      # Mount the backend directory as a volume
     environment:
       - ./apps/backend/session/.env.prod
+    networks:
+      - peerprep-network
+
+  peerprep-history:
+    container_name: peerprep-history        
+    image: peerprep-history                 
+    restart: always
+    build:
+      context: ./apps/backend/history       
+      dockerfile: Dockerfile.history.dev    
+    ports:
+      - "8003:8003"                         
+    # volumes:
+    #   - ./apps/backend/question:/app 
+    environment:
+      - ./apps/backend/session/.env.dev
     networks:
       - peerprep-network
 

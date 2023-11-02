@@ -16,7 +16,6 @@ COPY .env.dev .env
 
 # Informs Docker that the container listens on the specified network ports at runtime.
 EXPOSE 8250
-EXPOSE 8251
 
 # Provides defaults for an executing container
 CMD ["yarn", "start"]

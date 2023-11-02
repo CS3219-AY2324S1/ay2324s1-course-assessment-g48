@@ -1,17 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: peerprep-session
+  name: peerprep-history
 spec:
   selector:
-    app: peerprep-session
+    app: peerprep-history
   ports:
   - protocol: TCP
-    name: port-8250
-    port: 8250
-  # - protocol: TCP
-  #   name: port-8251
-  #   port: 8251
+    port: 8003
+    targetPort: 8003
   type: ClusterIP
 
 ---
@@ -19,31 +16,31 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: session-deployment
+  name: history-deployment
 spec:
   selector:
     matchLabels:
-      app: peerprep-session
+      app: peerprep-history
   template:
     metadata:
       labels:
-        app: peerprep-session
+        app: peerprep-history
     spec:
       containers:
-      - name: peerprep-session
-        image: deployment87/dply87:peerprep-session-v1.1.0
+      - name: peerprep-history
+        image: deployment87/dply87:peerprep-history-v1.1.0
         resources:
           limits:
             memory: "256Mi"
             cpu: "500m"
         ports:
-        - containerPort: 8250
+        - containerPort: 8003
         livenessProbe:
           httpGet:
             path: /ping
-            port: 8250
+            port: 8003
         readinessProbe:
           httpGet:
             path: /ping
-            port: 8250
-        # - containerPort: 8251
+            port: 8003
+
