@@ -2,9 +2,7 @@ import { useState } from "react";
 import useInput from "../../../hook/useInput";
 import {
   Question,
-  TestCase,
   initialQuestion,
-  initialTestCase,
 } from "../../../database/question/entities/question.entity";
 import Modal from "../../Modal";
 import { useError } from "@/hook/ErrorContext";
@@ -29,25 +27,6 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
   const [newQuestion, setNewQuestion] = useState<Question>(initialQuestion);
   const { setError } = useError();
   const [blank, setBlank] = useState(true);
-  const [testCases, setTestCases] = useState<TestCase[]>([initialTestCase]);
-  const handleAddTestCase = () => {
-    // TODO: not sure why initialTestCase is mutated
-    setTestCases([...testCases, {
-      input: "",
-      output: "",
-    }]);
-  };
-  const handleInputChange = (index: number, inputValue: string) => {
-    const updatedTestCases = [...testCases];
-    updatedTestCases[index].input = inputValue;
-    setTestCases(updatedTestCases);
-  };
-
-  const handleOutputChange = (index: number, outputValue: string) => {
-    const updatedTestCases = [...testCases];
-    updatedTestCases[index].output = outputValue;
-    setTestCases(updatedTestCases);
-  };
 
   const {
     value,
@@ -60,13 +39,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
   const handleAddQuestion = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const updatedQuestion = {
-      ...newQuestion,
-      testcases: testCases,
-    };
-
-    setNewQuestion(updatedQuestion);
-    await onSave(updatedQuestion)
+    await onSave(newQuestion)
       .then(() => {
         setNewQuestion(initialQuestion);
         reset();
@@ -107,17 +80,14 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
             setNewQuestion={setNewQuestion}
           />
 
-          <StarterCodeInput 
+          <StarterCodeInput
             newQuestion={newQuestion}
             setNewQuestion={setNewQuestion}
           />
 
           <TestCasesInput
-            testcases={testCases}
-            setTestCases={setTestCases}
-            handleInputChange={handleInputChange}
-            handleOutputChange={handleOutputChange}
-            handleAddTestCase={handleAddTestCase}
+            newQuestion={newQuestion}
+            setNewQuestion={setNewQuestion}
             blank={blank}
             setBlank={setBlank}
           />

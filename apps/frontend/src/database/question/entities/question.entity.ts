@@ -20,7 +20,7 @@ export type TestCase = {
 export type StarterCode = {
   languageId: number;
   code: string;
-}
+};
 
 export const initialQuestion = {
   _id: "",
@@ -36,7 +36,7 @@ export const initialQuestion = {
   dateCreated: new Date(),
 };
 
-export const initialTestCase = {
+export const emptyTestCase = {
   input: "",
   output: "",
 };

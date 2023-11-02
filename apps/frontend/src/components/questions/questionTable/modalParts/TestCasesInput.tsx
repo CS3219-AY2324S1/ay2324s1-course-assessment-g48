@@ -1,38 +1,71 @@
 import {
+  Question,
   TestCase,
+  emptyTestCase,
 } from "@/database/question/entities/question.entity";
 import { useHorizontalScroll } from "@/hook/useHorizontalScroll";
 import { classNames } from "@/utils/classnames/classnames";
 import { Tab } from "@headlessui/react";
 import { PlusSmallIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 
 type TestCasesInputProps = {
-  testcases: TestCase[];
-  setTestCases: (testcases: TestCase[]) => void;
-  handleAddTestCase: () => void;
-  handleInputChange: (index: number, value: string) => void;
-  handleOutputChange: (index: number, value: string) => void;
+  newQuestion: Question;
+  setNewQuestion: (question: Question) => void;
   blank: boolean;
   setBlank: (blank: boolean) => void;
 };
 
 const TestCasesInput: React.FC<TestCasesInputProps> = ({
-  testcases,
-  setTestCases,
-  handleAddTestCase,
-  handleInputChange,
-  handleOutputChange,
+  newQuestion,
+  setNewQuestion,
   blank,
   setBlank,
 }) => {
+  const scrollRef = useHorizontalScroll();
+  const [currTestCases, setCurrTestCases] = useState<TestCase[]>([emptyTestCase]);
+
+  useEffect(() => {
+    setCurrTestCases(newQuestion.testcases.length === 0 ? [emptyTestCase] : newQuestion.testcases);
+  }, [newQuestion, setCurrTestCases]);
+
   useEffect(() => {
     setBlank(
-      testcases.filter((item) => item.input === "" || item.output === "")
+      currTestCases.filter((item) => item.input === "" || item.output === "")
         .length > 0
     );
-  }, [testcases, setBlank]);
-  const scrollRef = useHorizontalScroll();
+  }, [currTestCases, setBlank]);
+
+  const handleAddTestCase = () => {
+    // TODO: not sure why initialTestCase is mutated
+    setCurrTestCases([
+      ...currTestCases,
+      {
+        input: "",
+        output: "",
+      },
+    ]);
+  };
+  const handleInputChange = (index: number, inputValue: string) => {
+    const updatedTestCases = [...currTestCases];
+    updatedTestCases[index].input = inputValue;
+    setCurrTestCases(updatedTestCases);
+    setNewQuestion({
+      ...newQuestion,
+      testcases: updatedTestCases,
+    });
+  };
+
+  const handleOutputChange = (index: number, outputValue: string) => {
+    const updatedTestCases = [...currTestCases];
+    updatedTestCases[index].output = outputValue;
+    setCurrTestCases(updatedTestCases);
+    setNewQuestion({
+      ...newQuestion,
+      testcases: updatedTestCases,
+    });
+  };
+  
   return (
     <div className="mt-10">
       <div className="flex items-center justify-between">
@@ -54,8 +87,11 @@ const TestCasesInput: React.FC<TestCasesInputProps> = ({
       </div>
       <Tab.Group as="div" className="mt-2">
         <div className="border-b border-gray-200">
-          <Tab.List ref={scrollRef} className="-mb-px flex space-x-8 py-1 overflow-x-auto">
-            {testcases.map((testcase, index) => (
+          <Tab.List
+            ref={scrollRef}
+            className="-mb-px flex space-x-8 py-1 overflow-x-auto"
+          >
+            {currTestCases.map((testcase, index) => (
               <Tab
                 key={index}
                 className={({ selected }) =>
@@ -73,7 +109,7 @@ const TestCasesInput: React.FC<TestCasesInputProps> = ({
           </Tab.List>
         </div>
         <Tab.Panels as={Fragment}>
-          {testcases.map((testcase, index) => (
+          {currTestCases.map((testcase, index) => (
             <Tab.Panel key={index} className="space-y-5 px-4 pb-8 pt-5">
               <div>
                 <div className="flex items-center justify-between">
@@ -89,16 +125,16 @@ const TestCasesInput: React.FC<TestCasesInputProps> = ({
                     className="relative rounded-full bg-red-600 p-1 text-white hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2"
                     type="button"
                     onClick={() => {
-                      if (testcases.length === 1) {
-                        setTestCases([
+                      if (currTestCases.length === 1) {
+                        setCurrTestCases([
                           {
                             input: "",
                             output: "",
                           },
                         ]);
                       } else {
-                        setTestCases(
-                          testcases.filter((item) => item !== testcase)
+                        setCurrTestCases(
+                          currTestCases.filter((item) => item !== testcase)
                         );
                       }
                     }}
