@@ -21,6 +21,7 @@ const allowedOrigins = [
   'http://leetpal.com:8000',
   'http://leetpal.com:3000',
   'http://34.120.70.36',
+  "http://leetpal.com",
   "http://www.leetpal.com",
   "https://www.leetpal.com",
 ];

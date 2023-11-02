@@ -9,7 +9,23 @@ import http from "http";
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
-  path: "/queue", 
+  path: "/queue",
+  cors: {
+    origin: [
+      "http://localhost",
+      "http://localhost:80",
+      "http://localhost:3000",
+      "http://localhost:8000",
+      "http://localhost:8080",
+      "http://localhost:8001",
+      "http://localhost:8022",
+      "http://localhost:8500",
+      "http://localhost:9000",
+      "http://34.120.70.36",
+      "http://www.leetpal.com",
+      "https://www.leetpal.com",
+    ],
+  },
 });
 
 server.listen(PORT, () => {
@@ -28,7 +44,7 @@ enum Difficulty {
 
 io.on("connect", (socket) => {
   console.log(`Connecting to ${socket.id}`);
-    // socket.disconnect();
+  // socket.disconnect();
   socket.on("matching", (data, callback) => {
     console.log(`\n`);
     console.log(`Socket data: ${JSON.stringify(data)}`);
@@ -57,9 +73,9 @@ io.on("connect", (socket) => {
       console.log(`\n`);
       console.log(`Disconnected from ${data.user}`);
       console.log(`Initiating cleanup for ${data.user}`);
-      easyQueue.cleanup(data.user);
-      mediumQueue.cleanup(data.user);
-      hardQueue.cleanup(data.user);
+      easyQueue.cleanup(data.user.id);
+      mediumQueue.cleanup(data.user.id);
+      hardQueue.cleanup(data.user.id);
       socket.removeAllListeners();
       console.log(`Cleanup for ${data.user} complete`);
     });

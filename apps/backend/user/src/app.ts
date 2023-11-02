@@ -14,6 +14,7 @@ const allowedOrigins = [
     'http://localhost:8001',
     'http://localhost:8002',
     'http://localhost:9000',
+    "http://leetpal.com",
     "http://www.leetpal.com",
     "https://www.leetpal.com",
 ];

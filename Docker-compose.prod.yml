@@ -1,25 +1,25 @@
 version: '3'
 
 services:
-  rabbitmq3:
-    container_name: peerprep-rabbitmq
-    image: rabbitmq:3-management
-    environment:
-      - ./apps/backend/queue/.env
-    ports:
-      - '5672:5672'
-      - '15672:15672'
+  # rabbitmq3:
+  #   container_name: peerprep-rabbitmq
+  #   image: rabbitmq:3-management
+  #   environment:
+  #     - ./apps/backend/queue/.env
+  #   ports:
+  #     - '5672:5672'
+  #     - '15672:15672'
 
-  postgres:
-    image: postgres
-    container_name: peerprep-postgres
-    restart: always
-    env_file:
-      - ./apps/backend/user/.env
-    ports:
-      - "5432:5432"                               # Map postgres container's port 5432 to host's port 5432
-    networks:
-      - peerprep-network
+  # postgres:
+  #   image: postgres
+  #   container_name: peerprep-postgres
+  #   restart: always
+  #   env_file:
+  #     - ./apps/backend/user/.env
+  #   ports:
+  #     - "5432:5432"                               # Map postgres container's port 5432 to host's port 5432
+  #   networks:
+  #     - peerprep-network
 
   peerprep-frontend:
     container_name: peerprep-frontend
@@ -69,9 +69,6 @@ services:
     #   - ./apps/backend/user:/app          # Mount the backend directory as a volume
     environment:
       - ./apps/backend/user/.env.prod
-    depends_on:
-      postgres:                                   # Ensure that the backend service is started first
-        condition: service_started
     networks:
       - peerprep-network
 
@@ -88,9 +85,6 @@ services:
       - ./apps/backend/queue/.env.prod
     networks:
       - peerprep-network
-    depends_on:
-      rabbitmq3:
-        condition: service_started
         
   peerprep-session:
     container_name: peerprep-session              # Name of the container

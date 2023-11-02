@@ -5,7 +5,7 @@ IMAGE_NAMES=("peerprep-frontend" "peerprep-user" "peerprep-question" "peerprep-q
 # Define the Docker registry URL (e.g., Docker Hub or a private registry)
 DOCKER_REGISTRY="deployment87/dply87"
 # Define the tag for your Docker image
-IMAGE_TAG="v1.1.0"
+IMAGE_TAG="v1.0.0"
 # Define the path to your Docker Compose file for production
 DOCKER_COMPOSE_FILE="Docker-compose.prod.yml"
 
@@ -44,7 +44,7 @@ done
 
 echo -e "${GREEN}Images successful pushed to registry!${RESET}"
 
-gcloud container clusters get-credentials leetpal-cluster --region asia-southeast1 --project focal-elf-403008
+gcloud container clusters get-credentials leetpal --region asia-southeast1 --project focal-elf-403008
 
 cd ./k8s
 

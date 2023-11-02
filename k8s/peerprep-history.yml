@@ -28,7 +28,7 @@ spec:
     spec:
       containers:
       - name: peerprep-history
-        image: deployment87/dply87:peerprep-history-v1.1.0
+        image: deployment87/dply87:peerprep-history-v1.0.0
         resources:
           limits:
             memory: "256Mi"
