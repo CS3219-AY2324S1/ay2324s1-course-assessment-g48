@@ -5,7 +5,10 @@ import Split from "react-split";
 import EditorFooter from "./editorFooter/EditorFooter";
 import { useTheme } from "@/hook/ThemeContext";
 import { Editor } from "@monaco-editor/react";
-import { Question } from "@/database/question/entities/question.entity";
+import {
+  CodeType,
+  Question,
+} from "@/database/question/entities/question.entity";
 import axios from "axios";
 import { languageOptions } from "@/utils/constants/LanguageOptions";
 import { ToastContainer, toast } from "react-toastify";
@@ -20,7 +23,7 @@ type CodeEditorProps = {
     value?: string,
     event?: monaco.editor.IModelContentChangedEvent
   ) => void;
-  currCode?: string;
+  currSessionCode?: CodeType[];
   question: Question;
   initialLanguage?: Language;
   hasSession?: boolean;
@@ -28,46 +31,32 @@ type CodeEditorProps = {
 
 const CodeEditor: React.FC<CodeEditorProps> = ({
   onChangeCode,
-  currCode,
+  currSessionCode,
   question,
   initialLanguage,
   hasSession,
 }) => {
-  // TODO: make it dynamic
-  const starterCode = `/**
-* Definition for singly-linked list.
-* class ListNode {
-*     int val;
-*     ListNode next;
-*     ListNode(int x) {
-*         val = x;
-*         next = null;
-*     }
-* }
-*/
-class Solution {
-  hasCycle(head) { 
-    // Write your solution here
-  }
-};`;
-
-  // WIP formatStarterCode(starterCode, selectedLanguage)
-  function formatStarterCode(starterCode: string, language: string) {
-    const lang = findLanguage(language);
-  }
-
-  function findLanguage(language: string) {
-    return languageOptions.find((lang) => lang.label === language);
-  }
 
   const { isDarkMode } = useTheme();
-  const [code, changeCode] = useState(currCode ?? "");
-  const [customInput, setCustomInput] = useState(""); // todo: for console
-  const [outputDetails, setOutputDetails] = useState("");
-  const [processing, setProcessing] = useState(false);
+  // current language selected by user
   const [selectedLanguage, setSelectedLanguage] = useState(
     initialLanguage ?? languageOptions[0]
   ); // "javascript language"
+  // default code for the language selected by user
+  const starterCode = useMemo(() => question.starterCode.find(
+      (starterCode) => starterCode.languageId === selectedLanguage.id
+    )?.code ?? "", [question.starterCode, selectedLanguage.id]);
+  // current code on editor shown to user, formatted as string
+  const [displayCode, setDisplayCode] = useState<string>(
+    currSessionCode?.[0]?.code ?? starterCode
+  );
+  // keep track of the current codes for each language using an array of CodeType
+  const [codeArray, setCodeArray] = useState<CodeType[]>(
+    currSessionCode ?? [{ languageId: selectedLanguage.id, code: displayCode }]
+  );
+  const [customInput, setCustomInput] = useState(""); // todo: for console
+  const [outputDetails, setOutputDetails] = useState("");
+  const [processing, setProcessing] = useState(false);
 
   const enterPress = useKeyPress("Enter");
   const ctrlPress = useKeyPress("Control");
@@ -75,7 +64,31 @@ class Solution {
 
   if (!onChangeCode) {
     onChangeCode = (value?: string) => {
-      changeCode(value ?? "");
+      // find the corresponding language code in codeArray
+      const index = codeArray.findIndex(
+        (langCode) => langCode.languageId === selectedLanguage.id
+      );
+      if (index === -1) {
+        // take from starter code if not found, add to existing codeArray
+        console.log(`selectedLanguage ${selectedLanguage.id} not found.`);
+        setCodeArray([
+          ...codeArray,
+          {
+            languageId: selectedLanguage.id,
+            code:
+              question.starterCode.find(
+                (starterCode) => starterCode.languageId === selectedLanguage.id
+              )?.code ?? "",
+          },
+        ]);
+      } else {
+        // else just update code in codeArray
+        const updatedCodeArray = [...codeArray];
+        updatedCodeArray[index].code = value ?? "";
+        setCodeArray(updatedCodeArray);
+      }
+      // change display code as per normal
+      setDisplayCode(value ?? "");
     };
     // console.log("Using solo code editor. Current code:", code);
   }
@@ -86,7 +99,7 @@ class Solution {
     const formData = {
       language_id: selectedLanguage?.id,
       // encode source code in base64
-      source_code: btoa(code),
+      source_code: btoa(displayCode),
       stdin: btoa(customInput),
       expected_output: btoa(question.testcases[0].output), // hardcoded tc
     };
@@ -152,8 +165,23 @@ class Solution {
 
   // session live editor
   useEffect(() => {
-    changeCode(currCode ?? code);
-  }, [currCode, code]);
+    setCodeArray(currSessionCode ?? codeArray);
+    setDisplayCode(currSessionCode?.[0]?.code ?? displayCode);
+  }, [currSessionCode, codeArray, displayCode]);
+
+  useEffect(() => {
+    // switch display code when language is changed
+    // if user has not typed anything, switch to starter code
+    // if starter code is undefined, switch to empty string
+    setDisplayCode(
+      codeArray.find((langCode) => langCode.languageId == selectedLanguage.id)
+        ?.code ??
+        question.starterCode.find(
+          (starterCode) => starterCode.languageId === selectedLanguage.id
+        )?.code ??
+        ""
+    );
+  }, [codeArray, displayCode, selectedLanguage, question.starterCode]);
 
   // ctrl + enter => run
   useEffect(() => {
@@ -180,7 +208,7 @@ class Solution {
           <Editor
             onChange={onChangeCode}
             defaultValue={starterCode}
-            value={code}
+            value={displayCode}
             theme={isDarkMode ? "vs-dark" : "light"}
             language={selectedLanguage.value.toLowerCase()}
           />
@@ -201,7 +229,7 @@ class Solution {
         pauseOnHover
       />
       <EditorFooter
-        userCode={code}
+        userCode={displayCode}
         processing={processing}
         handleCompile={handleCompile}
         question={question}

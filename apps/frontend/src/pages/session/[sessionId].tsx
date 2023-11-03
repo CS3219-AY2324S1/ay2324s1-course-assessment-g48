@@ -9,7 +9,7 @@ export default function Session() {
   const { sessionUser } = useSessionUser();
   const [accessToken, setAccessToken] = useState(sessionUser.accessToken);
   const sessionID = useRouter().query.sessionId as string;
-  const questionId = "653befbb9797de9bd0b4ba92"; // hardcoded, to be changed
+  const questionId = "6543bccc951bbb058fd8c8ed"; // hardcoded, to be changed
   const { question } = useQuestionById(questionId, accessToken);
   const languageSelected = languageOptions[0]; // hardcoded, to be changed
 

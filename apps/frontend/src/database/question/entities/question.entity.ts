@@ -7,7 +7,7 @@ export type Question = {
   examples: string[];
   testcases: TestCase[];
   constraints: string;
-  starterCode: StarterCode[];
+  starterCode: CodeType[];
   followUp: string;
   dateCreated: Date;
 };
@@ -17,7 +17,7 @@ export type TestCase = {
   output: string;
 };
 
-export type StarterCode = {
+export type CodeType = {
   languageId: number;
   code: string;
 };

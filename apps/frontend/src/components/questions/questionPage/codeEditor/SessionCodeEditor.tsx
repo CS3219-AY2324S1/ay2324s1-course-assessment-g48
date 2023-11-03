@@ -15,8 +15,11 @@ type SessionCodeEditorProps = {
   initialLanguage: Language;
 };
 
-const SessionCodeEditor: React.FC<SessionCodeEditorProps> = ({ question, sessionId, initialLanguage }) => {
-  // TODO: Get sessionID here somehow? Not sure if this works
+const SessionCodeEditor: React.FC<SessionCodeEditorProps> = ({
+  question,
+  sessionId,
+  initialLanguage,
+}) => {
   const sessionID = sessionId as string;
   const router = useRouter();
 
@@ -42,7 +45,16 @@ const SessionCodeEditor: React.FC<SessionCodeEditorProps> = ({ question, session
     }
   }, [sessionID]);
 
+  console.log("Question", question)
+  const starterCode =
+    question.starterCode.find(
+      (starterCode) => starterCode.languageId === initialLanguage.id
+    )?.code ?? "";
+
   const [doc, changeDoc] = useDocument<Doc>(docUrl);
+  if (doc?.text === undefined) {
+    changeDoc((d) => (d.text = starterCode));
+  }
   useEffect(() => {
     console.log("doc", doc);
   }, [doc]);
@@ -61,7 +73,12 @@ const SessionCodeEditor: React.FC<SessionCodeEditorProps> = ({ question, session
   return (
     <CodeEditor
       question={question}
-      currCode={doc?.text}
+      currSessionCode={[
+        {
+          languageId: initialLanguage.id,
+          code: doc?.text ?? "",
+        },
+      ]}
       onChangeCode={increment}
       initialLanguage={initialLanguage}
       hasSession={true}

@@ -1,4 +1,7 @@
-import { Question, StarterCode } from "@/database/question/entities/question.entity";
+import {
+  Question,
+  CodeType,
+} from "@/database/question/entities/question.entity";
 import { useHorizontalScroll } from "@/hook/useHorizontalScroll";
 import { classNames } from "@/utils/classnames/classnames";
 import { languageOptions } from "@/utils/constants/LanguageOptions";
@@ -13,12 +16,16 @@ type StarterCodeInputProps = {
 
 const StarterCodeInput: React.FC<StarterCodeInputProps> = ({
   newQuestion,
-  setNewQuestion
+  setNewQuestion,
 }) => {
   const scrollRef = useHorizontalScroll();
-  const [currStarterCode, setCurrStarterCode] = React.useState<StarterCode[]>(newQuestion.starterCode);
+  const [currStarterCode, setCurrStarterCode] = React.useState<CodeType[]>(
+    newQuestion.starterCode
+  );
   const handleStarterCodeChange = (languageId: number, value: string) => {
-    const index = currStarterCode.findIndex((starterCode) => starterCode.languageId === languageId);
+    const index = currStarterCode.findIndex(
+      (starterCode) => starterCode.languageId === languageId
+    );
     if (index === -1) {
       console.log(`selectedLanguage ${languageId} not found.`);
       setCurrStarterCode([...currStarterCode, { languageId, code: value }]);
@@ -31,7 +38,7 @@ const StarterCodeInput: React.FC<StarterCodeInputProps> = ({
     setNewQuestion({
       ...newQuestion,
       starterCode: currStarterCode,
-    })
+    });
   };
   return (
     <div className="mt-10">
@@ -47,7 +54,10 @@ const StarterCodeInput: React.FC<StarterCodeInputProps> = ({
       </div>
       <Tab.Group as="div" className="mt-2">
         <div className="border-b border-gray-200">
-          <Tab.List ref={scrollRef} className="-mb-px flex space-x-8 py-1 overflow-x-auto">
+          <Tab.List
+            ref={scrollRef}
+            className="-mb-px flex space-x-8 py-1 overflow-x-auto"
+          >
             {languageOptions.map((language) => (
               <Tab
                 key={language.id}
@@ -81,9 +91,15 @@ const StarterCodeInput: React.FC<StarterCodeInputProps> = ({
                 </div>
                 <Editor
                   height="40vh"
-                  value={newQuestion.starterCode.find((starterCode) => starterCode.languageId === language.id)?.code}
+                  value={
+                    newQuestion.starterCode.find(
+                      (starterCode) => starterCode.languageId === language.id
+                    )?.code
+                  }
                   theme={"light"}
-                  onChange={(value) => handleStarterCodeChange(language.id, value!)}
+                  onChange={(value) =>
+                    handleStarterCodeChange(language.id, value!)
+                  }
                   language={language.value.toLowerCase()}
                 />
               </div>
