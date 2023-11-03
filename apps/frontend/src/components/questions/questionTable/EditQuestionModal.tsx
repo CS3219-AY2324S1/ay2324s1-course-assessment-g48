@@ -8,6 +8,7 @@ import ComplexityInput from "./modalParts/ComplexityInput";
 import CategoriesInput from "./modalParts/CategoriesInput";
 import TestCasesInput from "./modalParts/TestCasesInput";
 import StarterCodeInput from "./modalParts/StarterCodeInput";
+import ExamplesInput from "./modalParts/ExamplesInput";
 
 type EditQuestionModalProps = {
   onEditQuestion: Question;
@@ -60,6 +61,11 @@ const EditQuestionModal: React.FC<EditQuestionModalProps> = ({
             />
 
             <CategoriesInput
+              newQuestion={newQuestion}
+              setNewQuestion={setNewQuestion}
+            />
+
+            <ExamplesInput
               newQuestion={newQuestion}
               setNewQuestion={setNewQuestion}
             />
