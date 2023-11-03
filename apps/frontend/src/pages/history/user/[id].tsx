@@ -10,10 +10,12 @@ function HistoryPage() {
     const router = useRouter();
     const uid = Number(router.query.id);
   const [accessToken, setAccessToken] = useState(sessionUser.accessToken);
-  const { isLoading } = useHistories(uid, accessToken);
+  const [refreshToken, setRefreshToken] = useState(sessionUser.refreshToken);
+  const { isLoading } = useHistories(uid, accessToken, refreshToken);
 
   useEffect(() => {
     setAccessToken(sessionUser.accessToken);
+    setRefreshToken(sessionUser.refreshToken);
 
     const redirectUser = () => {
       if (uid !== sessionUser.id) {

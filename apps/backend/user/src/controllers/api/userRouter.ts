@@ -9,7 +9,7 @@ import {
 } from "../../database/user";
 import { OAuth, Role } from "@prisma/client";
 import logger from "../../utils/logger";
-import { signJwtAccessToken, verifyJwtToken } from "../../utils/jwt";
+import { getJwtErrorMessage, signJwtAccessToken, signJwtRefreshToken, verifyJwtAccessToken, verifyJwtRefreshToken } from "../../utils/jwt";
 
 export const userRouter = Router();
 
@@ -190,8 +190,9 @@ userRouter.get(
           // return user
           const { password: userPassword, ...userExcludePassword } = user;
           const accessToken = signJwtAccessToken(userExcludePassword);
-    
-          res.status(200).json({...userExcludePassword, accessToken});
+          const refreshToken = signJwtRefreshToken(userExcludePassword);
+
+          res.status(200).json({ ...userExcludePassword, accessToken, refreshToken });
           return;
         }
 
@@ -216,8 +217,8 @@ userRouter.get(
       }
       const { password: userPassword, ...userExcludePassword } = user;
       const accessToken = signJwtAccessToken(userExcludePassword);
-
-      res.status(200).json({...userExcludePassword, accessToken});
+      const refreshToken = signJwtRefreshToken(userExcludePassword);
+      res.status(200).json({ ...userExcludePassword, accessToken, refreshToken });
     } catch (error) {
       console.error("UserRouter login error:", error);
       next(error);
@@ -227,12 +228,32 @@ userRouter.get(
 
 userRouter.get("/verifyJwt", async (req: Request, res: Response) => {
   const accessToken = req.headers.authorization?.split(" ")[1];
-  const userPayload = verifyJwtToken(accessToken);
-  if (!accessToken || !userPayload) {
-    res.status(401).json({ error: "Invalid JWT token." });
+  try {
+    const userPayload = verifyJwtAccessToken(accessToken);
+    res.status(200).json(userPayload);
+  } catch (error) {
+    res.status(401).json({ error: getJwtErrorMessage(error) });
     return;
   }
-  res.status(200).json(userPayload);
+});
+
+userRouter.get("/refreshJwt", async (req: Request, res: Response) => {
+  const refreshToken = req.headers["refresh-token"] as string;
+  if (!refreshToken) {
+    res.status(401).json({ error: "Invalid access token. No refresh token provided." });
+    return;
+  }
+
+  const userPayload = verifyJwtRefreshToken(refreshToken);
+  if (!userPayload) {    
+    res.status(401).json({ error: "Invalid refresh token." });
+    return;
+  }
+  
+  delete userPayload.iat;
+  delete userPayload.exp;
+  const newAccessToken = signJwtAccessToken(userPayload);
+  res.status(200).json({ ...userPayload, accessToken: newAccessToken, refreshToken });
 });
 
 // Update a user
@@ -241,7 +262,7 @@ userRouter.put(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
-      
+
       const { email, username, password, oauth, role } = req.body;
       const cleanedEmail = email?.trim();
       const cleanedUsername = username?.trim();
@@ -296,7 +317,7 @@ userRouter.put(
           res.status(400).send({ error: "Your role cannot be blank." });
           return;
         }
-  
+
         if (!Object.values(Role).includes(cleanedRole as Role)) {
           res.status(400).send({ error: `Invalid role: ${cleanedRole}` });
           return;

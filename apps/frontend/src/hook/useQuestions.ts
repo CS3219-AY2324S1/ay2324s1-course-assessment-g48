@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { getAllQuestions } from "../database/question/questionService";
 import { Question } from "@/database/question/entities/question.entity";
+import { useSession } from "next-auth/react";
 
-function useQuestions(accessToken?: string | null) {
+function useQuestions(accessToken?: string | null, refreshToken?: string | null) {
+  const { data: session } = useSession();
   const [isLoading, setIsLoading] = useState(false);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [trigger, setTrigger] = useState(false);
@@ -14,8 +16,12 @@ function useQuestions(accessToken?: string | null) {
 
   useEffect(() => {
     setIsLoading(true);
-    if (accessToken === null) return;
-    getAllQuestions(accessToken).then((questions) => {
+    if (accessToken === null || refreshToken === null) return;
+    getAllQuestions(accessToken, refreshToken).then((questions) => {
+      if (questions.accessToken) {
+        session!.user!.accessToken = questions.accessToken;
+        console.log("Refresh accessToken", session);
+      }
       setQuestions(questions);
       setTotalQuestions(questions.length);
       setTimeout(() => {
@@ -25,7 +31,7 @@ function useQuestions(accessToken?: string | null) {
     }).catch((error) => {
     console.error(error);
     });
-  }, [accessToken, trigger]);
+  }, [accessToken, refreshToken, session, trigger]);
   return { questions, totalQuestions, setQuestions, isLoading, handleTrigger };
 }
 

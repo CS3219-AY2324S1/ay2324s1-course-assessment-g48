@@ -11,11 +11,13 @@ const HistoryQuestionPage: React.FC<HistoryQuestionPageProps> = () => {
   const qid = String(router.query.id).split("&");
   const { sessionUser } = useSessionUser();
   const [accessToken, setAccessToken] = useState(sessionUser.accessToken);
-  const { historyQuestion } = useHistoryQuestionById(qid[0], qid[1], accessToken);
+  const [refreshToken, setRefreshToken] = useState(sessionUser.refreshToken);
+  const { historyQuestion } = useHistoryQuestionById(qid[0], qid[1], accessToken, refreshToken);
     
 
   useEffect(() => {
     setAccessToken(sessionUser.accessToken);
+    setRefreshToken(sessionUser.refreshToken);
   }, [sessionUser]);
 
   return (

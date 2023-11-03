@@ -11,10 +11,12 @@ const QuestionPage: React.FC<QuestionPageProps> = () => {
   const qid = router.query.id;
   const { sessionUser } = useSessionUser();
   const [accessToken, setAccessToken] = useState(sessionUser.accessToken);
-  const { question } = useQuestionById(qid as string, accessToken);
+  const [refreshToken, setRefreshToken] = useState(sessionUser.refreshToken);
+  const { question } = useQuestionById(qid as string, accessToken, refreshToken);
 
   useEffect(() => {
     setAccessToken(sessionUser.accessToken);
+    setRefreshToken(sessionUser.refreshToken);
   }, [sessionUser]);
 
   if (question === null) {

@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useState, useMemo } from "react";
 import ViewQuestionModal from "./ViewQuestionModal";
 import {
   deleteQuestionById,
@@ -20,6 +20,7 @@ import QuestionPagination from "./QuestionPagination";
 import DeleteCfmModal from "./DeleteCfmModal";
 import { Category } from "@/utils/enums/Category";
 import QuestionSearchBar from "./QuestionSearchBar";
+import { useSession } from "next-auth/react";
 
 type QuestionTableProps = {
   setOpenAdd: (open: boolean) => void;
@@ -32,11 +33,13 @@ const QuestionTable: FC<QuestionTableProps> = ({
   openAdd,
   hidden,
 }) => {
-  const [questionsPerPage] = useState(10);
+  const questionsPerPage = useMemo(() => 10, []);
+  const {data: session} = useSession();
   const { sessionUser } = useSessionUser();
   const [userRole, setUserRole] = useState(sessionUser.role);
   const [accessToken, setAccessToken] = useState(sessionUser.accessToken);
-  const { questions, totalQuestions, handleTrigger } = useQuestions(accessToken);
+  const [refreshToken, setRefreshToken] = useState(sessionUser.refreshToken);
+  const { questions, totalQuestions, handleTrigger } = useQuestions(sessionUser.accessToken, sessionUser.refreshToken);
   const [searchResults, setSearchResults] = useState("");
   const [viewQuestion, setViewQuestion] = useState<Question>(initialQuestion);
   const [questionToEdit, setQuestionToEdit] =
@@ -76,6 +79,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
   useEffect(() => {
     setUserRole(sessionUser.role);
     setAccessToken(sessionUser.accessToken);
+    setRefreshToken(sessionUser.refreshToken);
   }, [sessionUser]);
 
   useEffect(() => {
@@ -93,10 +97,13 @@ const QuestionTable: FC<QuestionTableProps> = ({
 
   const handleSaveQuestion = async (newQuestion: Question) => {
     const questionToAdd = { ...newQuestion };
-    await postNewQuestion(accessToken!, questionToAdd)
-      .then(() => {
+    await postNewQuestion(accessToken!, refreshToken!, questionToAdd)
+      .then((data) => {
         handleTrigger();
-
+        if (data.accessToken) {
+          session!.user!.accessToken = data.accessToken;
+          console.log("Refresh accessToken", session);
+        }
         setOpenAdd(false);
       })
       .catch((e) => {
@@ -105,9 +112,13 @@ const QuestionTable: FC<QuestionTableProps> = ({
   };
 
   const handleDeleteQuestion = async (id: string) => {
-    await deleteQuestionById(id, accessToken!)
-      .then(() => {
+    await deleteQuestionById(id, accessToken!, refreshToken!)
+      .then((data) => {
         handleTrigger();
+        if (data.accessToken) {
+          session!.user!.accessToken = data.accessToken;
+          console.log("Refresh accessToken", session);
+        }
         setOpenDelCfm(false);
       })
       .catch((e) => {
@@ -116,9 +127,13 @@ const QuestionTable: FC<QuestionTableProps> = ({
   };
 
   const handleEditQuestion = async (editQuestion: Question) => {
-    await updateQuestionById(editQuestion._id, accessToken!, editQuestion)
-      .then(() => {
+    await updateQuestionById(editQuestion._id, accessToken!, refreshToken!, editQuestion)
+      .then((data) => {
         handleTrigger();
+        if (data.accessToken) {
+          session!.user!.accessToken = data.accessToken;
+          console.log("Refresh accessToken", session);
+        }
         setOpenEdit(false);
       })
       .catch((e) => {

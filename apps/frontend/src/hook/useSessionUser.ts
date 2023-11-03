@@ -41,6 +41,7 @@ function useSessionUser() {
         sessionUser: {
           ...sessionUser,
           accessToken: session?.user?.accessToken ?? undefined,
+          refreshToken: session?.user?.refreshToken ?? undefined,
         },
         setSessionUser,
       }
@@ -49,6 +50,7 @@ function useSessionUser() {
           ...sessionUser,
           role: Role.Unknown,
           accessToken: null,
+          refreshToken: null,
         },
         setSessionUser,
       };

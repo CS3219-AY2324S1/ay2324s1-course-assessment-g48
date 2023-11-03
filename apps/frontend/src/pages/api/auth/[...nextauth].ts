@@ -15,6 +15,7 @@ declare module "next-auth" {
     oauth?: OAuthType[];
     role?: Role;
     accessToken?: string;
+    refreshToken?: string;
   }
 }
 
@@ -83,6 +84,7 @@ export default NextAuth({
           user.oauth = findOAuthUser.oauth;
           user.role = findOAuthUser.role;
           user.accessToken = findOAuthUser.accessToken;
+          user.refreshToken = findOAuthUser.refreshToken;
         }
       }
       if (user) {

@@ -1,6 +1,7 @@
 import axios from "axios";
 import { History } from "./entities/history.entity";
 import Router from "next/router";
+import { axiosInstance } from "@/utils/axios/AxiosInstance";
 
 const BASE_URL = process.env.NEXT_PUBLIC_HISTORY_SERVICE + "/api/history";
 
@@ -8,13 +9,15 @@ const BASE_URL = process.env.NEXT_PUBLIC_HISTORY_SERVICE + "/api/history";
 export const postNewHistory = async(
     newHistory: History,
     accessToken?: string,
+    refreshToken?: string
 ) => {
     const config = {
         headers: {
             Authorization: `Bearer ${accessToken}`,
+            ['refresh-token']: refreshToken,
         },
     };
-    return await axios
+    return await axiosInstance
         .post(BASE_URL, {
             userIds: newHistory.userIds,
             sessionId: newHistory.sessionId,
@@ -33,13 +36,14 @@ export const postNewHistory = async(
 }
 
 // Get all history
-export const getAllHistory = async (accessToken?: string) => {
+export const getAllHistory = async (accessToken?: string, refreshToken?: string) => {
     const config = {
         headers: {
             Authorization: `Bearer ${accessToken}`,
+            ['refresh-token']: refreshToken,
         },
     };
-    return await axios
+    return await axiosInstance
         .get(BASE_URL, config)
         .then((response) => {
         return response.data;
@@ -54,14 +58,15 @@ export const getAllHistory = async (accessToken?: string) => {
 }
 
 // Get history by id
-export const getHistoryById = async (id: string, qid?: string, accessToken?: string) => {
+export const getHistoryById = async (id: string, qid?: string, accessToken?: string, refreshToken?: string) => {
     const config = {
         headers: {
             Authorization: `Bearer ${accessToken}`,
+            ['refresh-token']: refreshToken,
             questionid: qid,
         },
     };
-    return await axios
+    return await axiosInstance
         .get(BASE_URL + `/${id}`, config)
         .then((response) => {
             return response.data;
@@ -79,14 +84,16 @@ export const getHistoryById = async (id: string, qid?: string, accessToken?: str
 export const updateHistoryById = async (
     id: string,
     updatedHistory: History,
-    accessToken?: string
+    accessToken?: string,
+    refreshToken?: string
 ) => {
     const config = {
         headers: {
             Authorization: `Bearer ${accessToken}`,
+            ['refresh-token']: refreshToken,
         },
     };
-    return await axios
+    return await axiosInstance
         .put(BASE_URL + `/${id}`, {
             completed: updatedHistory.completed,
         }, config)
@@ -103,13 +110,14 @@ export const updateHistoryById = async (
 }
 
 // Get history by userId
-export const getHistoryByUserId = async (userId: number, accessToken?: string) => {
+export const getHistoryByUserId = async (userId: number, accessToken?: string, refreshToken?: string) => {
     const config = {
         headers: {
             Authorization: `Bearer ${accessToken}`,
+            ['refresh-token']: refreshToken,
         },
     };
-    return await axios
+    return await axiosInstance
         .get(BASE_URL + `/user/${userId}`, config)
         .then((response) => {
             return response.data;
@@ -124,13 +132,14 @@ export const getHistoryByUserId = async (userId: number, accessToken?: string) =
 }
 
 // Delete history by id
-export const deleteHistoryById = async (id: string, accessToken?: string) => {
+export const deleteHistoryById = async (id: string, accessToken?: string, refreshToken?: string) => {
     const config = {
         headers: {
             Authorization: `Bearer ${accessToken}`,
+            ['refresh-token']: refreshToken,
         },
     };
-    return await axios
+    return await axiosInstance
         .delete(BASE_URL + `/${id}`, config)
         .then((response) => {
             return response.data;
@@ -145,13 +154,14 @@ export const deleteHistoryById = async (id: string, accessToken?: string) => {
 }
 
 // Delete history by userId
-export const deleteHistoryByUserId = async (userId: string, accessToken?: string) => {
+export const deleteHistoryByUserId = async (userId: string, accessToken?: string, refreshToken?: string) => {
     const config = {
         headers: {
             Authorization: `Bearer ${accessToken}`,
+            ['refresh-token']: refreshToken,
         },
     };
-    return await axios
+    return await axiosInstance
         .delete(BASE_URL + `/user/${userId}`, config)
         .then((response) => {
             return response.data;
@@ -166,13 +176,14 @@ export const deleteHistoryByUserId = async (userId: string, accessToken?: string
 }
 
 // Get history by sessionId
-export const getHistoryBySessionId = async (sessionId: string, accessToken?: string) => {
+export const getHistoryBySessionId = async (sessionId: string, accessToken?: string, refreshToken?: string) => {
     const config = {
         headers: {
             Authorization: `Bearer ${accessToken}`,
+            ['refresh-token']: refreshToken,
         },
     };
-    return await axios
+    return await axiosInstance
         .get(BASE_URL + `/session/${sessionId}`, config)
         .then((response) => {
             return response.data;

@@ -13,11 +13,13 @@ const HistoryTable: React.FC<HistoryTableProps> = ({ hidden }) => {
   const { sessionUser } = useSessionUser();
   const [userRole, setUserRole] = useState(sessionUser.role);
   const [accessToken, setAccessToken] = useState(sessionUser.accessToken);
+  const [refreshToken, setRefreshToken] = useState(sessionUser.refreshToken);
   const router = useRouter();
 
   const { histories, totalHistories } = useHistories(
     sessionUser.id,
-    accessToken
+    accessToken,
+    refreshToken
   );
   const [historyPerPage, setHistoryPerPage] = useState(10);
 
@@ -30,8 +32,9 @@ const HistoryTable: React.FC<HistoryTableProps> = ({ hidden }) => {
   }
 
   useEffect(() => {
-    setAccessToken(sessionUser.accessToken);
     setUserRole(sessionUser.role);
+    setAccessToken(sessionUser.accessToken);
+    setRefreshToken(sessionUser.refreshToken);
   }, [sessionUser]);
 
   return (
@@ -67,9 +70,9 @@ const HistoryTable: React.FC<HistoryTableProps> = ({ hidden }) => {
 
         <tbody>
           {histories.map((history) =>
-            history.completed.map((question: CompletedQuestion, index) => (
+            history.completed.map((question: CompletedQuestion) => (
               <tr
-                key={index}
+                key={question._id}
                 className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
               >
                 <th scope="row" className="py-2 center">

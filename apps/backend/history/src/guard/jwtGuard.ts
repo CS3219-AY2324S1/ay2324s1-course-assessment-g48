@@ -1,7 +1,7 @@
 import axios, { AxiosError } from 'axios';
 import { Request, Response, NextFunction } from 'express';
+import { Role } from '../models/enum/Role';
 import { OAuthType } from '../models/enum/OAuthType';
-import { Role } from "../models/enum/Role";
 
 interface User {
   id: number;
@@ -25,30 +25,30 @@ function getAxiosErrorMessage(error: unknown) {
     }
     return error.response?.data?.error
   }
-  return error
+  return String(error)
 }
 
-const verifyJwtToken = async (token?: string) => {
+const verifyAccessToken = async (accessToken?: string) => {
   const response = await axios.get(process.env.USER_SERVICE_URL + "/api/users/verifyJwt", {
     headers: {
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${accessToken}`,
     },
   });
   return response.data;
 };
 
-
 export const jwtGuard = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   const accessToken = req.headers.authorization?.split(" ")[1];
   if (!accessToken) {
-    res.status(401).json({ error: "No JWT token was provided." });
+    res.status(401).json({ error: "No access token was provided." });
     return;
   }
-
+  
   try {
-    req.user = await verifyJwtToken(accessToken);
+    req.user = await verifyAccessToken(accessToken);
     next();
   } catch (error) {
-    res.status(401).json({ error: getAxiosErrorMessage(error) });
+    const errorMessage = getAxiosErrorMessage(error);
+    res.status(401).json({ error: errorMessage });
   }
 };
