@@ -1,6 +1,7 @@
 import { Question } from "@/database/question/entities/question.entity";
 import { Complexity } from "@/utils/enums/Complexity";
 import ReactMarkdown from "react-markdown";
+import remarkMath from "remark-math";
 
 type DescriptionContentProps = {
   question: Question;
@@ -23,31 +24,58 @@ const DescriptionContent: React.FC<DescriptionContentProps> = ({
     }
   }
   return (
-    <div className="flex px-0 py-4 overflow-y-auto bg-slate-50 dark:bg-gray-800 h-screen transition-all">
-      <div className="px-5">
-        <div className="w-full">
-          {/* Title */}
-          <div className="flex space-x-4">
-            <div className="flex-1 mr-2 text-lg dark:text-white font-medium">
-              {question.title}
+    <div className="flex px-0 py-4 overflow-y-auto bg-slate-50 dark:bg-gray-800 h-screen transition-all ">
+      <div className="px-5 w-full py-3">
+        {/* Title */}
+        <div className="flex space-x-4">
+          <div className="flex-1 mr-2 text-lg dark:text-white font-medium">
+            {question.title}
+          </div>
+        </div>
+
+        {/* Tags */}
+        <div className="flex items-center mt-3">
+          <div
+            className={`${getComplexityColor(
+              question.complexity as Complexity
+            )} inline-block rounded-[21px] bg-opacity-[.15] px-2.5 py-1 text-xs font-medium`}
+          >
+            {question.complexity}
+          </div>
+        </div>
+
+        {/* Problem Statement(paragraphs) */}
+        <div className="dark:text-white text-sm mt-3">
+          <ReactMarkdown remarkPlugins={[remarkMath]}>
+            {question.description}
+          </ReactMarkdown>
+        </div>
+
+        {question.examples.map((example, index) => (
+          <div key={index} className="">
+            <div className="dark:text-white font-bold mt-3">
+              Example {index + 1}:
+            </div>
+            <div key={index} className="dark:text-white text-sm mt-3">
+              <ReactMarkdown remarkPlugins={[remarkMath]}>
+                {question.examples[index]}
+              </ReactMarkdown>
             </div>
           </div>
+        ))}
 
-          {/* Tags */}
-          <div className="flex items-center mt-3">
-            <div
-              className={`${getComplexityColor(
-                question.complexity as Complexity
-              )} inline-block rounded-[21px] bg-opacity-[.15] px-2.5 py-1 text-xs font-medium`}
-            >
-              {question.complexity}
-            </div>
-          </div>
+        <div className="dark:text-white font-bold mt-3">Constraints:</div>
+        <div className="dark:text-white text-sm mt-3">
+          <ReactMarkdown remarkPlugins={[remarkMath]}>
+            {question.constraints}
+          </ReactMarkdown>
+        </div>
 
-          {/* Problem Statement(paragraphs) */}
-          <div className="dark:text-white text-sm">
-            <ReactMarkdown>{question.description}</ReactMarkdown>
-          </div>
+        <div className="dark:text-white font-bold mt-3">Follow-up:</div>
+        <div className="dark:text-white text-sm mt-3">
+          <ReactMarkdown remarkPlugins={[remarkMath]}>
+            {question.followUp}
+          </ReactMarkdown>
         </div>
       </div>
     </div>
