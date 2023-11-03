@@ -13,6 +13,8 @@ import ComplexityInput from "./modalParts/ComplexityInput";
 import CategoriesInput from "./modalParts/CategoriesInput";
 import StarterCodeInput from "./modalParts/StarterCodeInput";
 import ExamplesInput from "./modalParts/ExamplesInput";
+import FollowUpInput from "./modalParts/FollowUpInput";
+import ConstraintsInput from "./modalParts/ConstraintsInput";
 
 type AddQuestionModalProps = {
   onSave: (newQuestion: Question) => Promise<void>;
@@ -82,6 +84,16 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
           />
 
           <ExamplesInput
+            newQuestion={newQuestion}
+            setNewQuestion={setNewQuestion}
+          />
+
+          <ConstraintsInput
+            newQuestion={newQuestion}
+            setNewQuestion={setNewQuestion}
+          />
+
+          <FollowUpInput
             newQuestion={newQuestion}
             setNewQuestion={setNewQuestion}
           />
