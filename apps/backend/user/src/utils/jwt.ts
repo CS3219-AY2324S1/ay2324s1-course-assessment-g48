@@ -5,7 +5,7 @@ interface SignOptions {
 }
 
 const DEFAULT_ACCESS_TOKEN_SIGN_OPTIONS: SignOptions = {
-  expiresIn: "60s",
+  expiresIn: "15m",
 };
 
 const DEFAULT_REFRESH_TOKEN_SIGN_OPTIONS: SignOptions = {
