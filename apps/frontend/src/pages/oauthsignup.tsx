@@ -2,6 +2,7 @@ import Alert from "@/components/Alert";
 import FormInput from "@/components/forms/FormInput";
 import { User } from "@/database/user/entities/user.entity";
 import { createNewUser } from "@/database/user/userService";
+import { useError } from "@/hook/ErrorContext";
 import useSessionUser from "@/hook/useSessionUser";
 import { OAuthType } from "@/utils/enums/OAuthType";
 import { Role } from "@/utils/enums/Role";
@@ -15,8 +16,7 @@ import { useState } from "react";
 export default function OauthSignUp() {
   const { sessionUser } = useSessionUser();
   const [newUsername, setUsername] = useState(sessionUser.username);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [openAlert, setOpenAlert] = useState<boolean>(false);
+  const { setError } = useError();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") ?? "/";
   
@@ -27,7 +27,7 @@ export default function OauthSignUp() {
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     try {
-      const newUser: Omit<User, "id"|"password"> = {
+      const newUser: Omit<User, "id" | "password"> = {
         username: newUsername,
         email: email as string,
         oauth: [oauth as OAuthType],
@@ -36,11 +36,10 @@ export default function OauthSignUp() {
 
       const response = await createNewUser(newUser);
       if (response.error) {
-        setErrorMessage(response.error);
-        setOpenAlert(true);
-        setTimeout(() => {
-          setOpenAlert(false);
-        }, 3000);
+        setError({
+          type: 1,
+          message: response.error
+        });
         return;
       }
 
@@ -55,21 +54,17 @@ export default function OauthSignUp() {
 
       if (result?.error) {
         console.log(result?.error);
-        setErrorMessage("That email or username has already been taken.");
-        setOpenAlert(true);
-        setTimeout(() => {
-          setOpenAlert(false);
-        }, 3000);
+        setError({
+          type: 1,
+          message: "That email or username has already been taken."
+        });
       } else {
         router.push("/questions");
       }
     } catch (err) {
-      console.log(err || "Error undefined???");
-      setErrorMessage(err as string);
-      setOpenAlert(true);
-      setTimeout(() => {
-        setOpenAlert(false);
-      }, 3000);
+      console.log({
+        type: 1,
+        mesaage: err || "Error undefined???"});
     }
   };
   
@@ -116,7 +111,6 @@ export default function OauthSignUp() {
             </Link>
           </p>
       </div>
-      <Alert message={errorMessage} hidden={openAlert} setHide={setOpenAlert} />
     </>
   )
 }

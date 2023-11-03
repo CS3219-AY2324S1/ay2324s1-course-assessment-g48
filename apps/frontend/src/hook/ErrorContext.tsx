@@ -1,8 +1,13 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 
+export type Error = {
+  message: string;
+  type: number;
+};
+
 interface ErrorContextType {
-  error: string | null;
-  setError: (errorMessage: string) => void;
+  error: Error | null;
+  setError: (error: Error) => void;
   clearError: () => void;
 }
 
@@ -21,10 +26,10 @@ interface ErrorProviderProps {
 }
 
 export const ErrorProvider: React.FC<ErrorProviderProps> = ({ children }) => {
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<Error | null>(null);
 
-  const setErrorState = (errorMessage: string) => {
-    setError(errorMessage);
+  const setErrorState = (error: Error) => {
+    setError(error);
     // You can also log the error, send it to a server, etc.
   };
 
