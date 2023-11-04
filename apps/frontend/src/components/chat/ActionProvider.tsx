@@ -1,16 +1,6 @@
-import React from 'react';
+import React from "react";
 
 const ActionProvider = ({ createChatBotMessage, setState, children }: any) => {
-  const handleHello = () => {
-    const botMessage = createChatBotMessage('Hello. Nice to meet you.');
-
-    setState((prev) => ({
-      ...prev,
-      messages: [...prev.messages, botMessage],
-    }));
-  };
-
-
   const getChatState = () => {
     return new Promise((resolve) => {
       let currState: unknown = undefined;
@@ -34,7 +24,6 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: any) => {
       {React.Children.map(children, (child) => {
         return React.cloneElement(child, {
           actions: {
-            handleHello,
             getChatState,
           },
         });

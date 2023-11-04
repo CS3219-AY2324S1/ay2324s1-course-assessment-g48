@@ -5,6 +5,12 @@ import cors from "cors";
 import { MONGODB_URI, PORT } from "./utils/config.ts";
 import mongoose from "mongoose";
 
+const wss: WebSocketServer = new WebSocketServer({ noServer: true });
+const app = express();
+const server = app.listen(PORT);
+
+app.use(express.json());
+
 const allowedOrigins: string[] = [
   "http://localhost",
   "http://localhost:80",
@@ -20,11 +26,6 @@ const allowedOrigins: string[] = [
   "http://peerprep-frontend:3000",
 ];
 
-const wss: WebSocketServer = new WebSocketServer({ noServer: true });
-const app = express();
-const server = app.listen(PORT);
-
-app.use(express.json());
 app.use(
   cors({
     origin: (origin, callback) => {

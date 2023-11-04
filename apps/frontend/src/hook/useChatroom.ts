@@ -6,14 +6,18 @@ import {
   MouseEventHandler,
 } from "react";
 
-interface Message {
+export interface Message {
   id: string;
   uid: number;
   content: string;
   timestamp: Date;
 }
 
-export const useChatroom = (chatroomId: string) => {
+export const useChatroom = (
+  chatroomId: string,
+  userId: number,
+  callback: (message: Message) => void
+) => {
   const [messages, setMessages] = useState<Message[]>([]);
 
   useEffect(() => {
@@ -23,6 +27,9 @@ export const useChatroom = (chatroomId: string) => {
       chatroomSocket.on("receiveMessage", ({ messages }) => {
         console.log(messages);
         setMessages((pastMessages) => [...pastMessages, ...messages]);
+        messages.forEach((message: Message) => {
+          callback(message);
+        });
       });
       chatroomSocket.emit("connectToChatroom", { chatroomId });
 
@@ -36,7 +43,7 @@ export const useChatroom = (chatroomId: string) => {
 
   const handleSubmit = (message: string) => {
     chatroomSocket.emit("sendMessage", {
-      uid: 1,
+      uid: userId,
       content: message,
       timestamp: new Date(),
     });

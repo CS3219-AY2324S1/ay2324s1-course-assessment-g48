@@ -12,7 +12,7 @@ import { useTheme } from "@/hook/ThemeContext";
 import ChatValidator from "@/utils/chat/ChatValidator";
 import Avatar from "./Avatar";
 import ChatHeader from "./ChatHeader";
-import { useChatroom } from "@/hook/useChatroom";
+import { Message, useChatroom } from "@/hook/useChatroom";
 import useSessionUser from "@/hook/useSessionUser";
 
 const BotAvatar = () => <Avatar />;
@@ -37,8 +37,18 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ visible, chatroomId }) => {
 
   const testUser = "Person Name";
 
-  const { messages, handleSubmit } = useChatroom(chatroomId);
   const { sessionUser } = useSessionUser();
+
+  const createMessages = (message: Message) => {
+    sessionUser.id == message.uid
+      ? createClientMessage(message.content, {})
+      : createChatBotMessage(message.content, {});
+  };
+  const { messages, handleSubmit } = useChatroom(
+    chatroomId,
+    sessionUser.id,
+    createMessages
+  );
 
   const CustomConfig = {
     ...ChatConfig,
@@ -48,15 +58,18 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ visible, chatroomId }) => {
       botAvatar: BotAvatar,
     },
     state: {
-      handleSubmit: handleSubmit
+      handleSubmit: handleSubmit,
     },
   };
-
+  console.log(sessionUser.id);
+  console.log(messages);
   const iMessages = messages.map((message) =>
     sessionUser.id == message.uid
       ? createClientMessage(message.content, {})
       : createChatBotMessage(message.content, {})
   );
+
+  console.log(iMessages);
 
   if (!visible) {
     return <></>;

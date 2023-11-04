@@ -40,7 +40,7 @@ function useTimer() {
 
   const toggleTimer = (deadline: number) => {
     setIsRunning(true);
-    setCountDownDate(deadline+10);
+    setCountDownDate(deadline + 10);
     localStorage.setItem("isRunning", "true");
     localStorage.setItem("countDownDate", deadline.toString());
   };
