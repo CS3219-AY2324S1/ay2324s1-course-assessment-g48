@@ -16,7 +16,7 @@ export interface Message {
 export const useChatroom = (
   chatroomId: string,
   userId: number,
-  callback: (message: Message) => void
+  // callback: (message: Message) => void
 ) => {
   const [messages, setMessages] = useState<Message[]>([]);
 
@@ -27,9 +27,9 @@ export const useChatroom = (
       chatroomSocket.on("receiveMessage", ({ messages }) => {
         console.log(messages);
         setMessages((pastMessages) => [...pastMessages, ...messages]);
-        messages.forEach((message: Message) => {
-          callback(message);
-        });
+        // messages.forEach((message: Message) => {
+        //   callback(message);
+        // });
       });
       chatroomSocket.emit("connectToChatroom", { chatroomId });
 
