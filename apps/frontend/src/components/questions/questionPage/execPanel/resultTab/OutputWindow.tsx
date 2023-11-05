@@ -62,11 +62,11 @@ const OutputWindow: React.FC<OutputWindowProps> = ({
         <OutputBox
           title="Your input:"
           content={
-            outputDetails?.stdin !== undefined ? outputDetails.stdin : ""
+            outputDetails?.stdin !== undefined ? atob(outputDetails.stdin) : ""
           }
         />
-        <OutputBox title="Your Output:" content={getOutput()} />
         {/* Todo: Add the tcs themselves itself */}
+        <OutputBox title="Your Output:" content={getOutput()} />
         <OutputBox title="Expected Output:" content={expected_output} />
       </div>
     </>

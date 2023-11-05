@@ -3,14 +3,14 @@ import axios from "axios";
 
 export const codeExecutionRouter = Router();
 
-// Compiles a submission
+// Compiles a batch of submissions
 codeExecutionRouter.post("/compile", async (req: Request, res: Response, next: NextFunction) => {
-    const { language_id, source_code, stdin, expected_output } = req.body;
+    const { submissions } = req.body;
 
-    console.log("req.body: ", req.body)
+    // console.log("req.body: ", req.body)
     const options = {
         method: "POST",
-        url: process.env.RAPID_API_SUBMISSIONS_URL,
+        url: process.env.RAPID_API_SUBMISSIONS_URL + "/batch",
         params: { base64_encoded: "true", fields: "*" },
         headers: {
         "content-type": "application/json",
@@ -18,17 +18,14 @@ codeExecutionRouter.post("/compile", async (req: Request, res: Response, next: N
         "X-RapidAPI-Key": process.env.RAPID_API_KEY,
         },
         data: {
-            language_id,
-            source_code,
-            stdin,
-            expected_output
+            submissions
         },
     };
 
     try {
         const response = await axios.request(options);
-        const token = response.data.token;
-        res.json({ token });
+        console.log("res.json({ token }): ", response.data)
+        res.json( response.data );
     } catch (err) {
         res.status(500).json(err);
     }

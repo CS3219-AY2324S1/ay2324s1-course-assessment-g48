@@ -48,7 +48,7 @@ const nextConfig = {
     return [
       {
         source: "/api/codeExecution/:path*",
-        destination: "http://localhost:8420/api/codeExecution/:path*", // Proxy to Code Execution Service
+        destination: `${process.env.NEXT_PUBLIC_CS_SERVICE}/api/codeExecution/:path*`, // Proxy to Code Execution Service
       },
       // Add more rewrites for other services here
     ];

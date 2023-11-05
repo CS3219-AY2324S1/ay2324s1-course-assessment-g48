@@ -6,8 +6,8 @@ import { Question } from "@/database/question/entities/question.entity";
 
 type ExecPanelProps = {
   question: Question;
-  outputDetails: string;
-  selectedTestCaseChip: number | null;
+  outputDetails: string | object;
+  selectedTestCaseChip: number;
   handleTestCaseChipClick: (testNum: number) => void;
 };
 
@@ -36,7 +36,7 @@ const ExecPanel: React.FC<ExecPanelProps> = ({
       />
 
       {!isResultActive ? (
-        <TestCaseContent question={question} />
+        <TestCaseContent question={question} outputDetails={outputDetails} />
       ) : (
         <ResultContent
           outputDetails={outputDetails}

@@ -16,6 +16,7 @@ const ResultCaseContent: React.FC<ResultContentProps> = ({
   selectedTestCaseChip,
   handleTestCaseChipClick,
 }) => {
+  console.log("outputDetails in ResultContent", outputDetails);
   return (
     <>
       <div className="flex">
@@ -24,6 +25,7 @@ const ResultCaseContent: React.FC<ResultContentProps> = ({
             key={index + 1}
             testNum={index + 1}
             onClick={() => handleTestCaseChipClick(index + 1)}
+            outputDetails={outputDetails[index]}
           />
         ))}
       </div>
@@ -31,12 +33,14 @@ const ResultCaseContent: React.FC<ResultContentProps> = ({
         <div className="text-sm font-medium leading-5 dark:text-white">
           <div className="font-semibold mb-12">
             <OutputWindow
-              outputDetails={outputDetails}
+              outputDetails={outputDetails[selectedTestCaseChip - 1]}
               expected_output={
                 question.testcases[selectedTestCaseChip - 1].output
               }
             />
-            <OutputMetrics outputDetails={outputDetails} />
+            <OutputMetrics
+              outputDetails={outputDetails[selectedTestCaseChip - 1]}
+            />
           </div>
         </div>
       )}

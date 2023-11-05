@@ -48,8 +48,8 @@ class Solution {
 
   const { isDarkMode } = useTheme();
   const [code, changeCode] = useState(currCode ?? "");
-  const [customInput, setCustomInput] = useState(""); // todo: for console
-  const [outputDetails, setOutputDetails] = useState("");
+  const [customInput, setCustomInput] = useState(""); // todo: for console, user can input their own TC
+  const [outputDetails, setOutputDetails] = useState(new Array());
   const [processing, setProcessing] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState(
     languageOptions[0].label // "javascript language"
@@ -67,61 +67,89 @@ class Solution {
     // console.log("Using solo code editor. Current code:", code);
   }
 
+  const handleOutputDetails = (response: any, index: number) => {
+    setOutputDetails((prev) => {
+      const newOutputDetails = [...prev];
+      newOutputDetails[index] = response;
+      return newOutputDetails;
+    });
+  };
+
   const handleTestCaseChipClick = (testNum: number) => {
     setSelectedTestCaseChip(testNum);
   };
 
-  function findLangugage(language: string) {
+  const findLangugage = (language: string) => {
     return languageOptions.find((lang) => lang.label === language);
-  }
+  };
 
   const handleCompile = async () => {
     setProcessing(true);
     const language = findLangugage(selectedLanguage);
-    const formData = {
+
+    const submissions = question.testcases.map((testCase) => ({
       language_id: language?.id,
-      // encode source code in base64
       source_code: btoa(code),
-      stdin: btoa(customInput),
-      expected_output: btoa(
-        question.testcases[selectedTestCaseChip - 1].output
-      ),
+      stdin: btoa(testCase.input),
+      expected_output: btoa(testCase.output),
+    }));
+
+    const body = {
+      submissions: submissions,
     };
+
     try {
-      const response = await axios.post("/api/codeExecution/compile", formData);
-      const token = response.data.token;
-      checkStatus(token);
+      const response = await axios.post("/api/codeExecution/compile", body);
+      const tokens = response.data; // tokens becomes an array instead of objects
+      console.log("tokens", tokens);
+      let allSuccess = true;
+      for (let i = 0; i < tokens.length; i++) {
+        const success: boolean | undefined = await checkStatus(
+          tokens[i].token,
+          i
+        );
+        console.log("success", success);
+        if (!success) {
+          console.log("Not successful");
+          allSuccess = false;
+          break;
+        }
+      }
+      if (allSuccess) {
+        showSuccessToast(`Compiled Successfully!`);
+      }
     } catch (err) {
       setProcessing(false);
       console.log(err);
     }
   };
 
-  const checkStatus = async (token: string) => {
-    try {
-      const response = await axios.get(`/api/codeExecution/status/${token}`);
-      const statusId = response.data.status_id;
-      // Processed - we have a result
-      if (statusId === Status.InQueue || statusId === Status.Processing) {
-        // in queue(id: 1) or still processing (id: 2)
-        setTimeout(() => {
-          checkStatus(token);
-        }, 2000);
-        return;
-      } else {
+  const checkStatus = (token: string, index: number) => {
+    return new Promise<boolean>(async (resolve, reject) => {
+      try {
+        const response = await axios.get(`/api/codeExecution/status/${token}`);
+        const statusId = response.data.status_id;
+        // Processed - we have a result
+        if (statusId === Status.InQueue || statusId === Status.Processing) {
+          // in queue(id: 1) or still processing (id: 2)
+          setTimeout(() => {
+            resolve(checkStatus(token, index));
+          }, 2000);
+        } else {
+          setProcessing(false);
+          console.log(
+            "response.data outputdetails in checkStatus",
+            response.data
+          );
+          handleOutputDetails(response.data, index);
+          resolve(true);
+        }
+      } catch (err) {
         setProcessing(false);
-        console.log(
-          "response.data outputdetails in checkStatus",
-          response.data
-        );
-        setOutputDetails(response.data);
-        showSuccessToast(`Compiled Successfully!`);
-        return;
+        showErrorToast((err as Error).message);
+        resolve(false);
       }
-    } catch (err) {
-      setProcessing(false);
-      showErrorToast((err as Error).message);
-    }
+    });
   };
 
   const showSuccessToast = (msg: string) => {

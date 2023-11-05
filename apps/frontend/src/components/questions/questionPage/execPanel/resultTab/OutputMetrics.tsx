@@ -1,33 +1,51 @@
+import { useState } from "react";
+
 type OutputMetricsProps = {
   outputDetails: any;
 };
 
 const OutputMetrics: React.FC<OutputMetricsProps> = ({ outputDetails }) => {
-  function FormatRuntime(outputDetails: any) {
-    if (outputDetails !== "" && !undefined && !null) {
+  const [time, setTime] = useState("");
+  const [memory, setMemory] = useState("");
+
+  console.log("outputDetails in OutputMetrics", outputDetails);
+
+  function formatRuntime(outputDetails: any) {
+    if (
+      outputDetails !== "" &&
+      outputDetails !== undefined &&
+      outputDetails !== null
+    ) {
+      console.log("outputDetails", outputDetails);
       if (outputDetails.time < 1) {
-        outputDetails.time = Number(outputDetails.time) * 1000 + " ms";
+        setTime(Number(outputDetails.time) * 1000 + " ms");
       } else {
-        outputDetails.time = Number(outputDetails.time) + " s";
+        setTime((outputDetails.time = Number(outputDetails.time) + " s"));
       }
     }
 
     return outputDetails;
   }
 
-  function FormatSpace(outputDetails: any) {
-    if (outputDetails !== "" && !undefined && !null) {
+  function formatSpace(outputDetails: any) {
+    if (
+      outputDetails !== "" &&
+      outputDetails !== undefined &&
+      outputDetails !== null
+    ) {
+      console.log("outputDetails space", outputDetails);
       if (outputDetails.memory < 1000) {
-        outputDetails.memory = Number(outputDetails.memory) + " KB";
+        setMemory(Number(outputDetails.memory) + " KB");
       } else {
-        outputDetails.memory =
-          (Number(outputDetails.memory) / 1000).toFixed(1) + " MB";
+        setMemory((Number(outputDetails.memory) / 1000).toFixed(1) + " MB");
       }
     }
 
     return outputDetails;
   }
 
+  formatSpace(outputDetails);
+  formatRuntime(outputDetails);
   return (
     <>
       <p className="text-lg font-medium mt-4 dark:text-white">Output details</p>
@@ -40,15 +58,11 @@ const OutputMetrics: React.FC<OutputMetricsProps> = ({ outputDetails }) => {
         </p>
         <p className="text-sm">
           Memory:{" "}
-          <span className="font-semibold px-2 py-1 rounded-md">
-            {FormatSpace(outputDetails).memory}
-          </span>
+          <span className="font-semibold px-2 py-1 rounded-md">{memory}</span>
         </p>
         <p className="text-sm">
           Runtime:{" "}
-          <span className="font-semibold px-2 py-1 rounded-md">
-            {FormatRuntime(outputDetails).time}
-          </span>
+          <span className="font-semibold px-2 py-1 rounded-md">{time}</span>
         </p>
       </div>
     </>
