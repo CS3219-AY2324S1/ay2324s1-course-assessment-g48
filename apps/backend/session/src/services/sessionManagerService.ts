@@ -46,12 +46,19 @@ export class SessionManagerService {
     return crypto.randomBytes(16).toString("base64url");
   }
 
-  public getDoc(sessionID: string) {
+  public async getDoc(sessionID: string) {
     if (!this.sessionToUserMap.has(sessionID)) {
       console.log("panic");
       return;
     }
-    return this.sessionToUserMap.get(sessionID)?.docId;
+    const docId = this.sessionToUserMap.get(sessionID)?.docId;
+
+    if (docId == undefined) {
+      return docId;
+    }
+
+    await this.repo.handles[docId].whenReady();
+    return;
   }
 
   public clearAllSessions() {

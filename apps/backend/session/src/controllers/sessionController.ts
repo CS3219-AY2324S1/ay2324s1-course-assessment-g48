@@ -30,9 +30,9 @@ export class SessionController {
     res.status(200).json({ sessionId: sessionId.toString() });
   }
 
-  public getSession(req: Request, res: Response, next: NextFunction) {
+  public async getSession(req: Request, res: Response, next: NextFunction) {
     const sessionId = req.params.sessionId;
-    const docId = this.sessionManager.getDoc(sessionId);
+    const docId = await this.sessionManager.getDoc(sessionId);
 
     console.log(`getting session with SessionId of ${sessionId}`);
 
