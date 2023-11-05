@@ -1,3 +1,5 @@
 /node_modules
 # local env files
 .env
+.env.dev
+.env.prod

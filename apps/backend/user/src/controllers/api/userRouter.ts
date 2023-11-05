@@ -150,14 +150,14 @@ userRouter.post(
 );
 
 // Get user by username and password
-userRouter.get(
+userRouter.post(
   "/login",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const body = req.body;
       console.log("body:" , body);
       // TODO: hash the password
-      const { email, password, oauth } = body;
+      const { data : {email, password, oauth} } = body;
       console.log("Login Body: ", body)
       const cleanedEmail = email?.trim();
       console.log("Uncleaned Password: ", password);

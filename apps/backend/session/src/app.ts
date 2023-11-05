@@ -77,6 +77,8 @@ import express, { Express } from "express";
 import { SessionRouter } from "./routes/sessionRouter.ts";
 import cors from "cors";
 import { PORT, WEBSOCKET_PORT } from "./utils/config.ts";
+import test from "node:test";
+import { testRouter } from "./routes/testRouter.ts";
 
 class SessionServer {
   private wss: WebSocketServer;
@@ -85,7 +87,8 @@ class SessionServer {
 
   constructor() {
     this.wss = new WebSocketServer({ noServer: true });
-    const server = express().listen(PORT);
+    this.app = express();
+    const server = this.app.listen(8250);
 
     server.on("upgrade", (request, socket, head) => {
       this.wss.handleUpgrade(request, socket, head, (socket) => {
@@ -93,7 +96,6 @@ class SessionServer {
       });
     });
 
-    this.app = express();
     this.app.use(express.json());
     const allowedOrigins = [
       "http://localhost",
@@ -105,9 +107,10 @@ class SessionServer {
       "http://localhost:8022",
       "http://localhost:8500",
       "http://localhost:9000",
-      "http://peerprep-user:8001",
-      "http://peerprep-question:8000",
-      "http://peerprep-frontend:3000",
+      'http://34.120.70.36',
+      "http://leetpal.com",
+      "http://www.leetpal.com",
+      "https://www.leetpal.com",
     ];
 
     this.app.use(
@@ -127,7 +130,7 @@ class SessionServer {
     this.app.use("/session", (req, res, next) =>
       this.router.router(req, res, next)
     );
-    this.app.listen(WEBSOCKET_PORT);
+    this.app.use("/ping", testRouter);
   }
 }
 

@@ -19,10 +19,10 @@ export class DifficultyQueue {
   public async generateSession(user1: number, user2: number) {
     const sessionID = await axios
       .post(SESSION_URL, { users: [user1, user2] })
-      .then((response) => {
+      .then((response : any) => {
         return response.data.sessionId;
       })
-      .catch((error) => {
+      .catch((error : any) => {
         console.error(error);
       });
     return sessionID;
@@ -61,7 +61,7 @@ export class DifficultyQueue {
       //   console.log(`First user uid: ${firstUserUid}, second user uid: ${uid}`)
       const firstUserSocket = this.socketMap.get(firstUserUid);
       const secondUserSocket = this.socketMap.get(uid);
-      const randomSessionId = await this.generateSession(firstUserUid, uid);
+      const randomSessionId = await this.generateSession(firstUserUid, uid); //!!!!!!!!!!!!!!!CHANGE!!!!!!!!!!!!!!!!!!!!
       if (!firstUserSocket || !secondUserSocket) {
         throw new Error(
           "There was no socket associated with the firstUserSocket"
@@ -107,7 +107,7 @@ export class DifficultyQueue {
 
   private async connectToAmqp() {
     console.log("Connecting to RabbitMQ", process.env.RABBITMQ_URL);
-    const connection = await amqp.connect(process.env.RABBITMQ_URL || "amqp://localhost:5672");
+    const connection = await amqp.connect(process.env.RABBITMQ_URL || "amqp://peerprep-rabbitmq");
     const channel = await connection.createChannel();
 
     console.log(this.nameSpace)

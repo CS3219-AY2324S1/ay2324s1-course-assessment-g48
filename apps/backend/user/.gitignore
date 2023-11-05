@@ -2,4 +2,5 @@
 /prisma/migrations
 # local env files
 .env
-.env.*
+.env.prod
+.env.dev

@@ -21,6 +21,7 @@ const SessionCodeEditor: React.FC<SessionCodeEditorProps> = ({ sessionId, questi
   const [docUrl, setDocUrl] = useState<AutomergeUrl>();
 
   useEffect(() => {
+    console.log("sessionID here", sessionID);
     if (sessionID) {
       axios
         .get(
@@ -30,20 +31,20 @@ const SessionCodeEditor: React.FC<SessionCodeEditorProps> = ({ sessionId, questi
           console.log(res.data.docId);
           console.log("docId received");
           setDocUrl(res.data.docId);
-        }).catch((err) => {
+        })
+        .catch((err) => {
           console.log(err);
           if (err.response.status == 404) {
             router.push("/404");
           }
-        })
+        });
     }
   }, [sessionID]);
 
   const [doc, changeDoc] = useDocument<Doc>(docUrl);
   useEffect(() => {
     console.log("doc", doc);
-  }
-  , [doc]);
+  }, [doc]);
 
   const increment = (
     value?: string,

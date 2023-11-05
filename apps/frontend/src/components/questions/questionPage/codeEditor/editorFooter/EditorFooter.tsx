@@ -33,7 +33,7 @@ const EditorFooter: React.FC<EditorFooterProps> = ({
             processing={processing}
             handleCompile={handleCompile}
           />
-          <Submit userCode={ userCode} />
+          <Submit userCode={userCode} processing={processing} />
         </div>
       </div>
     </div>

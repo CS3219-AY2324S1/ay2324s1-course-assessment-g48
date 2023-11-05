@@ -1,8 +1,15 @@
 import { Server } from "socket.io";
 import { DifficultyQueue } from "./queue/difficultyQueue";
 import { PORT } from "./utils/config";
+import express from "express";
+import http from "http";
 
-const io = new Server(PORT, {
+// const io = new Server(PORT, {});
+
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+  path: "/queue",
   cors: {
     origin: [
       "http://localhost",
@@ -14,11 +21,19 @@ const io = new Server(PORT, {
       "http://localhost:8022",
       "http://localhost:8500",
       "http://localhost:9000",
-      "http://peerprep-user:8001",  
-      "http://peerprep-question:8000",
-      "http://peerprep-frontend:3000",
+      "http://34.120.70.36",
+      "http://www.leetpal.com",
+      "https://www.leetpal.com",
     ],
   },
+});
+
+server.listen(PORT, () => {
+  console.log("Queue Server is listening on port 8002");
+});
+
+app.get("/ping", (req, res) => {
+  res.status(200).json({ message: "pong" });
 });
 
 enum Difficulty {

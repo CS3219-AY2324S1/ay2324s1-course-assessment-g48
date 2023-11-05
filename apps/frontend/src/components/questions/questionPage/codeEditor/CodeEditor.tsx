@@ -11,6 +11,11 @@ import { languageOptions } from "@/utils/constants/LanguageOptions";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import monaco from "monaco-editor";
+import useKeyPress from "@/hook/useKeyPress";
+
+/*
+WIP
+*/
 
 type CodeEditorProps = {
   onChangeCode?: (
@@ -52,6 +57,9 @@ class Solution {
   const [selectedLanguage, setSelectedLanguage] = useState(
     languageOptions[0].label
   );
+
+  const enterPress = useKeyPress("Enter");
+  const ctrlPress = useKeyPress("Control");
 
   if (!onChangeCode) {
     console.log("individual code editor")
@@ -159,6 +167,7 @@ class Solution {
   };
 
 
+  // session live editor
   useEffect(() => {
     changeCode(currCode ?? code);
   }, [currCode, code]);
@@ -189,6 +198,7 @@ class Solution {
           {/* Exec Panel can still be abstracted to QuestionWorkspace -> future enhancement */}
           <ExecPanel question={question} outputDetails={outputDetails} />
         </Split>
+        {/* Gotta check whether toastcontainer actually works... */}
         <ToastContainer
           position="top-right"
           autoClose={2000}
