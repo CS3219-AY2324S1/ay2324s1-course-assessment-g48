@@ -57,7 +57,6 @@ const OutputWindow: React.FC<OutputWindowProps> = ({
   console.log();
   return (
     <>
-      <p className="text-lg font-medium mt-4 dark:text-white">OutputWindow:</p>
       <div className="space-y-4">
         <OutputBox
           title="Your input:"
