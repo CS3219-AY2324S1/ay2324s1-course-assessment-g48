@@ -48,7 +48,7 @@ const OutputMetrics: React.FC<OutputMetricsProps> = ({ outputDetails }) => {
   formatRuntime(outputDetails);
   return (
     <>
-      <div className="w-full cursor-text rounded-lg border px-3 py-[10px] bg-slate-100 dark:bg-neutral-700 border-transparent dark:text-white mt-2 transition-all">
+      <div className="w-5/6 cursor-text rounded-lg border px-3 py-[10px] bg-slate-100 dark:bg-neutral-700 border-transparent dark:text-white mt-2 transition-all">
         <p className="text-sm">
           Status:{" "}
           <span className="font-semibold px-2 py-1 rounded-md">
