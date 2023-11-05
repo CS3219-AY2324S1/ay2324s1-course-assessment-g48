@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useState, useMemo } from "react";
 import ViewQuestionModal from "./ViewQuestionModal";
 import {
   deleteQuestionById,
@@ -12,9 +12,15 @@ import { Complexity } from "@/utils/enums/Complexity";
 import useSessionUser from "@/hook/useSessionUser";
 import { Role } from "@/utils/enums/Role";
 import { useRouter } from "next/router";
-import { Question } from "@/database/question/entities/question.entity";
+import {
+  Question,
+  initialQuestion,
+} from "@/database/question/entities/question.entity";
 import QuestionPagination from "./QuestionPagination";
 import DeleteCfmModal from "./DeleteCfmModal";
+import { Category } from "@/utils/enums/Category";
+import QuestionSearchBar from "./QuestionSearchBar";
+import { useSession } from "next-auth/react";
 
 type QuestionTableProps = {
   setOpenAdd: (open: boolean) => void;
@@ -27,81 +33,92 @@ const QuestionTable: FC<QuestionTableProps> = ({
   openAdd,
   hidden,
 }) => {
-  const [questionsPerPage, setQuestionsPerPage] = useState(10);
+  const questionsPerPage = useMemo(() => 10, []);
+  const {data: session} = useSession();
   const { sessionUser } = useSessionUser();
   const [userRole, setUserRole] = useState(sessionUser.role);
-  const { questions, totalQuestions, handleTrigger } = useQuestions(userRole);
-  const [viewQuestion, setViewQuestion] = useState<Question>({
-    _id: "",
-    title: "",
-    description: "",
-    categories: [],
-    complexity: "",
-    testcases: [],
-    constraints: "",
-    followUp: "",
-    starterCode: "",
-    dateCreated: new Date(),
-  });
-  const [questionToEdit, setQuestionToEdit] = useState<Question>({
-    _id: "",
-    title: "",
-    description: "",
-    categories: [],
-    complexity: "",
-    testcases: [],
-    constraints: "",
-    followUp: "",
-    starterCode: "",
-    dateCreated: new Date(),
-  });
-  const [questionToDelete, setQuestionToDelete] = useState<Question>({
-    _id: "",
-    title: "",
-    description: "",
-    categories: [],
-    complexity: "",
-    testcases: [],
-    constraints: "",
-    followUp: "",
-    starterCode: "",
-    dateCreated: new Date(),
-  });
+  const [accessToken, setAccessToken] = useState(sessionUser.accessToken);
+  const [refreshToken, setRefreshToken] = useState(sessionUser.refreshToken);
+  const { questions, totalQuestions, handleTrigger } = useQuestions(sessionUser.accessToken, sessionUser.refreshToken);
+  const [searchResults, setSearchResults] = useState("");
+  const [viewQuestion, setViewQuestion] = useState<Question>(initialQuestion);
+  const [questionToEdit, setQuestionToEdit] =
+    useState<Question>(initialQuestion);
+  const [questionToDelete, setQuestionToDelete] =
+    useState<Question>(initialQuestion);
 
   const [openEdit, setOpenEdit] = useState(false);
   const [openView, setOpenView] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [openDelCfm, setOpenDelCfm] = useState(false);
+  const [filteredQuestions, setFilteredQuestions] = useState(questions);
   const router = useRouter();
   const numberOfPages = Math.ceil(totalQuestions / questionsPerPage);
   const indexOfLastRecord = currentPage * questionsPerPage;
   const indexOfFirstRecord = indexOfLastRecord - questionsPerPage;
-  const currentQuestions = questions.slice(
+  const currentQuestions = filteredQuestions.slice(
     indexOfFirstRecord,
     indexOfLastRecord
   );
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedDifficulty, setSelectedDifficulty] = useState("");
+
+  const handleCategoryChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setSelectedCategory(event.target.value);
+    console.log(event.target.value);
+  };
+
+  const handleDifficultyChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setSelectedDifficulty(event.target.value);
+  };
 
   useEffect(() => {
     setUserRole(sessionUser.role);
+    setAccessToken(sessionUser.accessToken);
+    setRefreshToken(sessionUser.refreshToken);
   }, [sessionUser]);
+
+  useEffect(() => {
+    setFilteredQuestions(
+      questions.filter(
+        (question) =>
+          (question.categories.includes(selectedCategory) ||
+            selectedCategory === "") &&
+          (question.complexity.includes(selectedDifficulty) ||
+            selectedDifficulty === "") &&
+          question.title.toLowerCase().includes(searchResults.toLowerCase())
+      )
+    );
+  }, [selectedCategory, selectedDifficulty, questions, searchResults]);
 
   const handleSaveQuestion = async (newQuestion: Question) => {
     const questionToAdd = { ...newQuestion };
-    await postNewQuestion(questionToAdd, userRole!)
-      .then(() => {
+    await postNewQuestion(accessToken!, refreshToken!, questionToAdd)
+      .then((data) => {
         handleTrigger();
-
+        if (data.accessToken) {
+          session!.user!.accessToken = data.accessToken;
+          console.log("Refresh accessToken", session);
+        }
         setOpenAdd(false);
       })
       .catch((e) => {
-        throw new String(e);
+        throw String(e);
       });
   };
 
   const handleDeleteQuestion = async (id: string) => {
-    await deleteQuestionById(id, userRole!)
-      .then(() => {
+    await deleteQuestionById(id, accessToken!, refreshToken!)
+      .then((data) => {
         handleTrigger();
+        if (data.accessToken) {
+          session!.user!.accessToken = data.accessToken;
+          console.log("Refresh accessToken", session);
+        }
         setOpenDelCfm(false);
       })
       .catch((e) => {
@@ -110,9 +127,13 @@ const QuestionTable: FC<QuestionTableProps> = ({
   };
 
   const handleEditQuestion = async (editQuestion: Question) => {
-    await updateQuestionById(editQuestion._id, editQuestion, userRole!)
-      .then(() => {
+    await updateQuestionById(editQuestion._id, accessToken!, refreshToken!, editQuestion)
+      .then((data) => {
         handleTrigger();
+        if (data.accessToken) {
+          session!.user!.accessToken = data.accessToken;
+          console.log("Refresh accessToken", session);
+        }
         setOpenEdit(false);
       })
       .catch((e) => {
@@ -131,9 +152,49 @@ const QuestionTable: FC<QuestionTableProps> = ({
 
   return (
     <>
-      <div className="overflow-auto shadow-md sm:rounded-lg">
+      <div className="flex items-center mb-4 space-x-4 justify-between">
+        <div className="flex items-center space-x-4">
+          <div className="relative">
+            <select
+              id="categoryDropdown"
+              className="border rounded-md px-4 py-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm text-sm w-36 appearance-none"
+              onChange={handleCategoryChange}
+              value={selectedCategory}
+            >
+              <option value="">All Categories</option>
+              {Object.values(Category).map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="relative">
+            <select
+              id="difficultyDropdown"
+              className="border rounded-md px-4 py-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm text-sm w-36 appearance-none"
+              onChange={handleDifficultyChange}
+              value={selectedDifficulty}
+            >
+              <option value="">All Difficulties</option>
+              {Object.values(Complexity).map((difficulty) => (
+                <option key={difficulty} value={difficulty}>
+                  {difficulty}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <QuestionSearchBar
+          questions={filteredQuestions}
+          setSearch={setSearchResults}
+        />
+      </div>
+
+      <div className="overflow-x-auto shadow-md rounded-lg">
         <table
-          className="relative text-sm text-left text-gray-500 dark:text-gray-400 w-full"
+          className=" relative text-sm text-left text-gray-500 dark:text-gray-400 w-full"
           hidden={hidden}
         >
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -220,7 +281,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
                       <button
                         className="bg-red-600 hover:bg-red-800 text-white font-bold py-2 px-4 rounded-full"
                         onClick={() => {
-                          setOpenDelCfm(true)
+                          setOpenDelCfm(true);
                           setQuestionToDelete(question);
                         }}
                       >
@@ -233,17 +294,18 @@ const QuestionTable: FC<QuestionTableProps> = ({
             ))}
           </tbody>
         </table>
-        <QuestionPagination
-          hidden={hidden}
-          totalQuestionsNum={totalQuestions}
-          questionsPerPage={questionsPerPage}
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-          numberOfPages={numberOfPages}
-          indexOfFirstRecord={indexOfFirstRecord}
-          indexOfLastRecord={indexOfLastRecord}
-        />
       </div>
+      <QuestionPagination
+        hidden={hidden}
+        totalQuestionsNum={filteredQuestions.length}
+        questionsPerPage={questionsPerPage}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        numberOfPages={numberOfPages}
+        indexOfFirstRecord={indexOfFirstRecord}
+        indexOfLastRecord={indexOfLastRecord}
+      />
+
       <AddQuestionModal
         onSave={handleSaveQuestion}
         setOpen={setOpenAdd}

@@ -1,31 +1,26 @@
-import axios from "axios";
 import { Question } from "./entities/question.entity";
-import { Role } from "@/utils/enums/Role";
 import Router from "next/router";
+import { axiosInstance } from "@/utils/axios/AxiosInstance";
 
 const BASE_URL = process.env.NEXT_PUBLIC_QUESTION_SERVICE + "/api/question";
 
 export const postNewQuestion = async (
+  accessToken: string,
+  refreshToken: string,
   newQuestion: Question,
-  userRole: Role
 ) => {
   const config = {
     headers: {
-      role: userRole,
+      Authorization: `Bearer ${accessToken}`,
+      ['refresh-token']: refreshToken,
     },
   };
-  return await axios
-    .post(BASE_URL, {
-      title: newQuestion.title,
-      description: newQuestion.description,
-      categories: newQuestion.categories,
-      complexity: newQuestion.complexity,
-      testcases: newQuestion.testcases,
-      constraints: newQuestion.constraints,
-      followUp: newQuestion.followUp,
-      starterCode: newQuestion.starterCode,
-      dateCreated: newQuestion.dateCreated,
-    }, config)
+  return await axiosInstance
+    .post(
+      BASE_URL,
+      newQuestion,
+      config
+    )
     .then((response) => {
       return response.data;
     })
@@ -38,18 +33,19 @@ export const postNewQuestion = async (
     });
 };
 
-export const getAllQuestions = async (userRole?: Role) => {
+export const getAllQuestions = async (accessToken?: string, refreshToken?: string) => {
   const config = {
     headers: {
-      role: userRole,
+      Authorization: `Bearer ${accessToken}`,
+      ['refresh-token']: refreshToken,
     },
   };
-  return await axios
+  return await axiosInstance
     .get(BASE_URL, config)
     .then((response) => {
       return response.data;
     })
-    .catch((error) => {
+    .catch(async (error) => {
       if (error.response.status === 401) {
         Router.push("/401");
       }
@@ -58,13 +54,14 @@ export const getAllQuestions = async (userRole?: Role) => {
     });
 };
 
-export const getQuestionById = async (id: string, userRole?: Role) => {
+export const getQuestionById = async (id: string, accessToken?: string, refreshToken?: string) => {
   const config = {
     headers: {
-      role: userRole,
+      Authorization: `Bearer ${accessToken}`,
+      ['refresh-token']: refreshToken,
     },
   };
-  return await axios
+  return await axiosInstance
     .get(BASE_URL + "/" + id, config)
     .then((response) => {
       return response.data;
@@ -86,13 +83,14 @@ export const getQuestionById = async (id: string, userRole?: Role) => {
     });
 };
 
-export const deleteQuestionById = async (id: string, userRole: Role) => {
+export const deleteQuestionById = async (id: string, accessToken:string, refreshToken: string) => {
   const config = {
     headers: {
-      role: userRole,
+      Authorization: `Bearer ${accessToken}`,
+      ['refresh-token']: refreshToken,
     },
   };
-  return await axios
+  return await axiosInstance
     .delete(BASE_URL + "/" + id, config)
     .then((response) => {
       return response.data;
@@ -116,28 +114,26 @@ export const deleteQuestionById = async (id: string, userRole: Role) => {
 
 export const updateQuestionById = async (
   id: string,
+  accessToken: string,
+  refreshToken: string,
   updatedQuestion: Partial<Question>,
-  userRole: Role
 ) => {
   const config = {
     headers: {
-      role: userRole,
+      Authorization: `Bearer ${accessToken}`,
+      ['refresh-token']: refreshToken,
     },
   };
-  return await axios.put(BASE_URL + "/" + id, {
-    title: updatedQuestion.title,
-    description: updatedQuestion.description,
-    categories: updatedQuestion.categories,
-    complexity: updatedQuestion.complexity,
-    testcases: updatedQuestion.testcases,
-    constraints: updatedQuestion.constraints,
-    followUp: updatedQuestion.followUp,
-    starterCode: updatedQuestion.starterCode,
-  }, config)
-  .then((response) => {
-    return response.data;
-  })
-  .catch((error) => {
+  return await axiosInstance
+    .put(
+      BASE_URL + "/" + id,
+      updatedQuestion,
+      config
+    )
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
       if (error.response) {
         if (error.response.status === 401) {
           Router.push("/401");

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { PlusIcon, ArrowPathIcon } from "@heroicons/react/20/solid";
+import { PlusIcon } from "@heroicons/react/20/solid";
 import useQuestions from "@/hook/useQuestions";
 import LoadingModal from "@/components/LoadingModal";
 import useSessionUser from "@/hook/useSessionUser";
@@ -10,15 +10,20 @@ export default function QuestionsRepo() {
   const [openAdd, setOpenAdd] = useState(false);
   const { sessionUser } = useSessionUser();
   const [userRole, setUserRole] = useState(sessionUser.role);
-  const { isLoading } = useQuestions(userRole);
+  const [accessToken, setAccessToken] = useState(sessionUser.accessToken);
+  const [refreshToken, setRefreshToken] = useState(sessionUser.refreshToken);
+  const { isLoading } = useQuestions(accessToken, refreshToken);
 
   useEffect(() => {
     setUserRole(sessionUser.role);
+    setAccessToken(sessionUser.accessToken);
+    setRefreshToken(sessionUser.refreshToken);
   }, [sessionUser]);
 
   return (
     <div className="grid place-content-center dark:bg-gray-900">
       <LoadingModal isLoading={isLoading} />
+
       <div className="p-4 rounded-lg w-screen xl:px-60 lg:px-40">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl dark:text-white my-4" hidden={isLoading}>
@@ -26,7 +31,7 @@ export default function QuestionsRepo() {
           </h1>
           {userRole === Role.Admin && (
             <span className="sm:ml-3 space-x-2" hidden={isLoading}>
-              <button
+              {/* <button
                 type="button"
                 className="inline-flex items-center rounded-md bg-purple-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-purple-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
@@ -35,7 +40,7 @@ export default function QuestionsRepo() {
                   aria-hidden="true"
                 />
                 Update
-              </button>
+              </button> */}
               <button
                 type="button"
                 className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
@@ -50,6 +55,7 @@ export default function QuestionsRepo() {
             </span>
           )}
         </div>
+
         <QuestionTable
           setOpenAdd={setOpenAdd}
           openAdd={openAdd}

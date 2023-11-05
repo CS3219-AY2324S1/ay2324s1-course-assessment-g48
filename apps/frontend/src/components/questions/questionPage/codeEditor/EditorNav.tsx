@@ -3,17 +3,27 @@ import {
   ArrowsPointingOutIcon,
   Cog6ToothIcon,
 } from "@heroicons/react/24/outline";
-import { Language } from "@/utils/enums/Language";
+import { languageOptions } from "@/utils/constants/LanguageOptions";
+import { Language } from "@/utils/class/Language";
 
-const EditorNav = () => {
+type EditorNavProps = {
+  selectedLanguage: Language;
+  setSelectedLanguage: (language: Language) => void;
+  hasSession: boolean;
+};
+
+const EditorNav: React.FC<EditorNavProps> = ({
+  selectedLanguage,
+  setSelectedLanguage,
+  hasSession
+}) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState("JavaScript");
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
-  const selectLanguage = (language:Language) => {
+  const selectLanguage = (language: Language) => {
     setSelectedLanguage(language);
     setIsDropdownOpen(false); // Close the dropdown after selecting an option
   };
@@ -23,19 +33,20 @@ const EditorNav = () => {
       <div className="flex items-center dark:text-white">
         <button className="languageBtn ml-2" onClick={toggleDropdown}>
           <div className="flex items-center px-1">
-            <div className="text-xs text-label-2 dark:text-white">
-              {selectedLanguage}
+            <div className="text-xs text-label-2 dark:text-white group">
+              {selectedLanguage.label}
+              {hasSession && <div className="languageTooltip">Language cannot be changed after matching.</div>}
             </div>
           </div>
-          {isDropdownOpen && (
+          {isDropdownOpen && !hasSession && (
             <ul className="dropdown-list absolute top-8 left-2 mt-2 py-2 px-4 border border-gray-300 rounded-md bg-white dark:bg-gray-950 z-10 h-1/3 overflow-y-auto">
-              {Object.values(Language).map((language) => (
+              {Object.values(languageOptions).map((language) => (
                 <li
-                  key={language}
+                  key={language.id}
                   className="cursor-pointer hover:bg-gray-200 p-2 text-xs rounded-md"
                   onClick={() => selectLanguage(language)}
                 >
-                  {language}
+                  {language.label}
                 </li>
               ))}
             </ul>

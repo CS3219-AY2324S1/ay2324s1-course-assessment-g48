@@ -1,16 +1,30 @@
 import React from "react";
 
 import CodeEditor from "./CodeEditor";
+import { Language } from "@/utils/class/Language";
+import { CodeType, Question } from "@/database/question/entities/question.entity";
 
 type SessionCodeEditorProps = {
-  onChangeCode?: (value: any, event: any) => void;
-  currCode?: string;
+  question: Question;
+  onChangeCode?: (value: string) => void;
+  currSessionCode?: CodeType[];
+  initialLanguage?: Language;
 };
 
 const SessionCodeEditor: React.FC<SessionCodeEditorProps> = ({
-  currCode,
+  question,
+  currSessionCode,
   onChangeCode,
+  initialLanguage,
 }) => {
-  return <CodeEditor currCode={currCode} onChangeCode={onChangeCode} />;
+  return (
+    <CodeEditor
+      question={question}
+      currSessionCode={currSessionCode}
+      onChangeCode={onChangeCode}
+      initialLanguage={initialLanguage}
+      hasSession={true}
+    />
+  );
 };
 export default SessionCodeEditor;

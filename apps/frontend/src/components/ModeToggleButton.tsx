@@ -1,9 +1,7 @@
 import { useTheme } from "@/hook/ThemeContext";
 import { MoonIcon, SunIcon } from "@heroicons/react/24/outline";
 
-type ModeToggleButtonProps = {};
-
-const ModeToggleButton: React.FC<ModeToggleButtonProps> = () => {
+const ModeToggleButton: React.FC = () => {
     const { isDarkMode, toggleTheme } = useTheme();
 
 

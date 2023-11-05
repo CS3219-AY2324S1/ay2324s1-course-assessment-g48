@@ -17,6 +17,10 @@ body {
     @apply relative rounded px-3 font-medium items-center transition-all focus:outline-none inline-flex ml-auto p-1 mr-2 hover:bg-slate-300 dark:hover:bg-gray-800;
   }
 
+  .languageTooltip {
+    @apply absolute w-auto p-2 text-sm m-2 min-w-max left-0 top-5 z-10 rounded-md shadow-md bg-slate-100 dark:text-gray-800 dark:bg-gray-200 origin-center scale-0 transition-all duration-100 ease-linear group-hover:scale-100;
+  }
+
   .btnTooltip {
     @apply absolute w-auto p-2 text-sm m-2 min-w-max translate-x-3 right-0 top-5 z-10 rounded-md shadow-md bg-slate-100 dark:text-gray-800 dark:bg-gray-200 origin-center scale-0 transition-all duration-100 ease-linear group-hover:scale-100;
   }
@@ -140,7 +144,8 @@ body {
 }
 
 ::-webkit-scrollbar {
-  width: 0.5rem;
+  height: 0.5rem; /* height of the horizontal scrollbar */
+  width: 0.5rem; /* width of the vertical scrollbar */
 }
 
 ::-webkit-scrollbar-track {
@@ -149,6 +154,13 @@ body {
 
 ::-webkit-scrollbar-thumb {
   background: #4d4d4d;
+  border-radius: 10px;
+}
+
+/** horizontal scrollbar **/
+
+::-webkit-scrollbar-thumb:horizontal{
+  background: rgb(79 70 229);
 }
 
 /* Chat Window */
@@ -245,4 +257,12 @@ body {
 
 .scrollbar-hidden::-webkit-scrollbar-thumb {
   background-color: transparent;
+}
+
+/* SearchComponent.css */
+.truncate-input {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%; /* Ensure the input doesn't exceed its parent's width */
 }

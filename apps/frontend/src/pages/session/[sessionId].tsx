@@ -1,22 +1,26 @@
 import { useRouter } from "next/router";
-import SessionQuestionWorkspace from "@/components/questions/questionPage/SessionQuestionWorkspace";
 import useQuestionById from "@/hook/useQuestionById";
 import { useEffect, useState } from "react";
 import useSessionUser from "@/hook/useSessionUser";
 import { AutoDraft, BasicStorage, ChatProvider, Conversation, ConversationId, ConversationRole, IStorage, Participant, Presence, TypingUsersList, UpdateState, UserStatus } from "@chatscope/use-chat";
 import { nanoid } from "nanoid";
 import { ExampleChatService } from "@/utils/chat/ExampleChatService";
+import { languageOptions } from "@/utils/constants/LanguageOptions";
+import QuestionWorkspace from "@/components/questions/questionPage/QuestionWorkspace";
 
 export default function Session() {
   const { sessionUser } = useSessionUser();
-  const [userRole, setUserRole] = useState(sessionUser.role);
+  const [accessToken, setAccessToken] = useState(sessionUser.accessToken);
+  const [refreshToken, setRefreshToken] = useState(sessionUser.refreshToken);
   const sessionID = useRouter().query.sessionId as string;
-  const questionId = "653befbb9797de9bd0b4ba92"; // hardcoded, to be changed
-  const { question } = useQuestionById(questionId, userRole);
+  const questionId = "6544a293176b84aafd37817a"; // hardcoded, to be changed
+  const { question } = useQuestionById(questionId, accessToken, refreshToken);
+  const languageSelected = languageOptions[0]; // hardcoded, to be changed
 
   useEffect(() => {
-    // console.log(sessionID);
-    setUserRole(sessionUser.role);
+    console.log(sessionID)
+    setAccessToken(sessionUser.accessToken);
+    setRefreshToken(sessionUser.refreshToken);
   }, [sessionUser]);
 
   // const { messages, handleSubmit } = useChatroom(
@@ -108,7 +112,7 @@ export default function Session() {
       }}>
       <div>
         {question && (
-          <SessionQuestionWorkspace question={question} sessionId={sessionID} />
+          <QuestionWorkspace question={question} sessionId={sessionID} initialLanguage={languageSelected} />
         )}
       </div>
     </ChatProvider>
