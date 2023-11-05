@@ -2,7 +2,21 @@
 // However, this is good start point to make your own implementation.
 // Using this service it's possible to connects two or more chats in the same application for a demonstration purposes
 
-import { ChatEvent, MessageEvent, ChatEventHandler, ChatEventType, ChatMessage, IChatService, IStorage, MessageContentType, MessageDirection, SendMessageServiceParams, SendTypingServiceParams, UpdateState, UserTypingEvent } from "@chatscope/use-chat";
+import {
+  ChatEvent,
+  MessageEvent,
+  ChatEventHandler,
+  ChatEventType,
+  ChatMessage,
+  IChatService,
+  IStorage,
+  MessageContentType,
+  MessageDirection,
+  SendMessageServiceParams,
+  SendTypingServiceParams,
+  UpdateState,
+  UserTypingEvent,
+} from "@chatscope/use-chat";
 
 type EventHandlers = {
   onMessage: ChatEventHandler<
@@ -46,7 +60,11 @@ export class ExampleChatService implements IChatService {
     onUserTyping: () => {},
   };
 
-  constructor(storage: IStorage, update: UpdateState, handleSubmit?: (message: string) => void) {
+  constructor(
+    storage: IStorage,
+    update: UpdateState,
+    handleSubmit?: (message: string) => void
+  ) {
     this.storage = storage;
     this.updateState = update;
     this.handleSubmit = handleSubmit;
@@ -55,7 +73,7 @@ export class ExampleChatService implements IChatService {
     // It allows you to simulate sending and receiving data from the server.
     // In a real application, instead of adding a listener to the window,
     // you will implement here receiving data from your chat server.
-    
+
     window.addEventListener("chat-protocol", (evt: Event) => {
       const event = evt as CustomEvent;
 
@@ -65,7 +83,8 @@ export class ExampleChatService implements IChatService {
       } = event;
 
       if (type === "message") {
-        const message = detail.message as ChatMessage<MessageContentType.TextHtml>;
+        const message =
+          detail.message as ChatMessage<MessageContentType.TextHtml>;
 
         message.direction = MessageDirection.Incoming;
         const { conversationId } = detail;
@@ -115,6 +134,7 @@ export class ExampleChatService implements IChatService {
     // They are received in the callback assigned in the constructor.
     // In a real application, instead of dispatching the event here,
     // you will implement sending messages to your chat server.
+    console.log("HIIII");
     const messageEvent = new CustomEvent("chat-protocol", {
       detail: {
         type: "message",

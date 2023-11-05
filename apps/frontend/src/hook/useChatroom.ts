@@ -13,11 +13,7 @@ export interface Message {
   timestamp: Date;
 }
 
-export const useChatroom = (
-  chatroomId: string,
-  userId: number,
-  // callback: (message: Message) => void
-) => {
+export const useChatroom = (chatroomId: string, userId: number) => {
   const [messages, setMessages] = useState<Message[]>([]);
 
   useEffect(() => {
