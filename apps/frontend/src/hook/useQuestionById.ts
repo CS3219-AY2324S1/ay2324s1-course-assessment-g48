@@ -31,7 +31,7 @@ function useQuestionById(qid: string, accessToken?: string | null, refreshToken?
       }
     }
     fetchData();
-  }, [qid, accessToken, refreshToken]);
+  }, [qid, accessToken, refreshToken, session]);
 
   return !isLoading
   ? { question, isLoading, error }
