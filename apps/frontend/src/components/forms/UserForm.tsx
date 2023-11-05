@@ -21,16 +21,17 @@ import { useError } from "@/hook/ErrorContext";
 
 interface UserFormProps {
   formType: string;
+  currPassword?: string;
 }
 
-const UserForm: React.FC<UserFormProps> = ({ formType }) => {
+const UserForm: React.FC<UserFormProps> = ({ formType, currPassword }) => {
   const { status, update } = useSession();
   const { sessionUser } = useSessionUser();
   const { setError } = useError();
   const [newId, setNewId] = useState(sessionUser.id);
   const [newUsername, setNewUsername] = useState(sessionUser.username);
   const [newEmail, setNewEmail] = useState(sessionUser.email);
-  const [newPassword, setNewPassword] = useState(sessionUser.password);
+  const [newPassword, setNewPassword] = useState(currPassword ?? sessionUser.password);
 
   const [openAuthInfo, setOpenAuthInfo] = useState(false);
   const [authProvider, setAuthProvider] = useState(

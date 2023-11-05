@@ -9,7 +9,8 @@ import React, { useEffect, useState } from "react";
 type profileProps = {};
 
 const Profile: React.FC<profileProps> = () => {
-  const { sessionUser, setSessionUser } = useSessionUser();
+  const { sessionUser } = useSessionUser();
+  const [currPassword, setCurrPassword] = useState(sessionUser.password);
   const [accessToken, setAccessToken] = useState(sessionUser.accessToken);
 
   useEffect(() => {
@@ -19,10 +20,10 @@ const Profile: React.FC<profileProps> = () => {
   useEffect(() => {
     const getUser = async () => {
       const user = await getUserById(sessionUser.id);
-      setSessionUser(user);
+      setCurrPassword(user.password);
     };
     getUser();
-  }, []); 
+  }, [sessionUser.id]); 
 
   if (!accessToken) {
     return <LoadingModal isLoading={true} />;
@@ -43,7 +44,7 @@ const Profile: React.FC<profileProps> = () => {
       </div>
 
       <div className="mt-5 sm:mx-auto sm:w-full sm:max-w-sm">
-        <UserForm formType={UserManagement.Profile} />
+        <UserForm formType={UserManagement.Profile} currPassword={currPassword} />
       </div>
     </div>
   );
