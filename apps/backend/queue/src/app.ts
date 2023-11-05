@@ -22,6 +22,7 @@ const io = new Server(server, {
       "http://localhost:8500",
       "http://localhost:9000",
       "http://34.120.70.36",
+      "http://leetpal.com",
       "http://www.leetpal.com",
       "https://www.leetpal.com",
     ],
