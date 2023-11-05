@@ -12,6 +12,7 @@ import { useRouter } from "next/router";
 import { useError } from "@/hook/ErrorContext";
 import { Role } from "@/utils/enums/Role";
 import LoadingModal from "@/components/LoadingModal";
+import useNotification from "@/hook/useNotfication";
 type matchingProps = {};
 
 const MatchingPage: React.FC<matchingProps> = () => {
@@ -25,6 +26,7 @@ const MatchingPage: React.FC<matchingProps> = () => {
   const [disableBtnCancel, setDisableBtnCancel] = useState(true);
   const {  setError, clearError } = useError();
   const [peer, setPeer] = useState<User | null>(null);
+  const { addNotification } = useNotification();
   const router = useRouter();
 
   const handleMatchConnection: FormEventHandler = (e) => {
@@ -94,6 +96,7 @@ const MatchingPage: React.FC<matchingProps> = () => {
         console.log(err);
       });
     setIsMatching(MatchedState.MATCHED);
+    addNotification("Match Successfully", "You have been matched with a peer!")
     setError({
       type: 4,
       message: "Matched with a peer!"});

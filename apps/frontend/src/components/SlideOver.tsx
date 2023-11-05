@@ -11,7 +11,7 @@ type SlideOverProps = {
 const SlideOver:React.FC<SlideOverProps> = (
     {open, setOpen}
 ) => {
-  const {notifications} = useNotification()
+  const { notifications } = useNotification()
     return (
         <Transition.Root show={open} as={Fragment}>
           <Dialog as="div" className="relative z-30" onClose={setOpen}>

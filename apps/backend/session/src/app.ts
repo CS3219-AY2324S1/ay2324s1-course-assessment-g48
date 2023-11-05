@@ -76,6 +76,7 @@ import { WebSocketServer } from "ws";
 import express, { Express } from "express";
 import { SessionRouter } from "./routes/sessionRouter.ts";
 import cors from "cors";
+import { PORT, WEBSOCKET_PORT } from "./utils/config.ts";
 
 class SessionServer {
   private wss: WebSocketServer;
@@ -84,7 +85,7 @@ class SessionServer {
 
   constructor() {
     this.wss = new WebSocketServer({ noServer: true });
-    const server = express().listen(8250);
+    const server = express().listen(PORT);
 
     server.on("upgrade", (request, socket, head) => {
       this.wss.handleUpgrade(request, socket, head, (socket) => {
@@ -126,7 +127,7 @@ class SessionServer {
     this.app.use("/session", (req, res, next) =>
       this.router.router(req, res, next)
     );
-    this.app.listen(8251);
+    this.app.listen(WEBSOCKET_PORT);
   }
 }
 

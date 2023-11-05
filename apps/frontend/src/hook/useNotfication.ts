@@ -1,26 +1,52 @@
 import { useEffect, useState } from "react";
 
 export type Notification = {
-    id: number;
-    title: string;
-    description: string;
-    read: boolean;
-}
+  title: string;
+  description: string;
+  read: boolean;
+};
 
 function useNotification() {
-  const [notifications, setNotifications] = useState<Notification[]>([{id:1, title: "Test1", description: "Nice", read: false}, {id:2, title: "Test2", description: "Nice", read: false}]);
+  const [notifications, setNotifications] = useState<Notification[]>(() => {
+    const savedNotifications = localStorage.getItem("notifications");
+    return savedNotifications ? JSON.parse(savedNotifications) : [];
+  });
+  const [numberOfUnreadNotifications, setNumberOfUnreadNotifications] = useState(0);
 
-  const addNotification = (newNotification: Notification) => {
+  const addNotification = (title: string, description: string) => {
+    const newNotification = {
+      title: title,
+      description: description,
+      read: false,
+    };
     setNotifications([...notifications, newNotification]);
-  }
+    setNumberOfUnreadNotifications((prevCount) => prevCount + 1);
+  };
 
-  const numberOfUnreadNotifications = () => {
-    return notifications.filter((notification) => !notification.read).length;
-  }
+  const markNotificationAsRead = (index: number) => {
+    const newNotifications = [...notifications];
+    newNotifications[index].read = true;
+    setNotifications(newNotifications);
+    setNumberOfUnreadNotifications((prevCount) => prevCount - 1);
+  };
 
-  
+  const markAllNotificationsAsRead = () => {
+    const newNotifications = [...notifications];
+    newNotifications.forEach((notification) => (notification.read = true));
+    setNotifications(newNotifications);
+  };
 
-  return { notifications, addNotification, numberOfUnreadNotifications };
+  useEffect(() => {
+    localStorage.setItem("notifications", JSON.stringify(notifications));
+  }, [notifications]);
+
+  return {
+    notifications,
+    addNotification,
+    numberOfUnreadNotifications,
+    markNotificationAsRead,
+    markAllNotificationsAsRead,
+  };
 }
 
 export default useNotification;

@@ -131,9 +131,9 @@ const Navbar: React.FC<NavbarProps> = ({
                       <span className="sr-only">View notifications</span>
                       <div className="flex">
                         <BellIcon className="h-6 w-6" aria-hidden="true" />
-                        {numberOfUnreadNotifications() > 0 ? (
+                        {numberOfUnreadNotifications > 0 ? (
                           <span className="notification-counter">
-                            {numberOfUnreadNotifications()}
+                            {numberOfUnreadNotifications}
                           </span>
                         ) : (
                           <></>

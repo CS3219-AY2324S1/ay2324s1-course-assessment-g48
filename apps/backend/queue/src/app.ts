@@ -66,13 +66,13 @@ io.on("connect", (socket) => {
     // console.log(`SocketMap: [${JSON.stringify(queue.socketMap)}]`)
     socket.on("disconnect", () => {
       console.log(`\n`);
-      console.log(`Disconnected from ${data.user}`);
-      console.log(`Initiating cleanup for ${data.user}`);
+      console.log(`Disconnected from ${data.user.id}`);
+      console.log(`Initiating cleanup for ${data.user.id}`);
       easyQueue.cleanup(data.user.id);
       mediumQueue.cleanup(data.user.id);
       hardQueue.cleanup(data.user.id);
       socket.removeAllListeners();
-      console.log(`Cleanup for ${data.user} complete`);
+      console.log(`Cleanup for ${data.use.idr} complete`);
     });
 
     console.log("Attempting to match users");
@@ -83,7 +83,7 @@ io.on("connect", (socket) => {
         console.log(`\n`);
         socket.emit("timeout");
         console.log(
-          `Disconnecting from ${data.user} due to 30s passing and no match was found.`
+          `Disconnecting from ${data.user.id} due to 30s passing and no match was found.`
         );
         socket.disconnect();
       }
