@@ -4,12 +4,10 @@ import { SessionRouter } from "./routes/sessionRouter.ts";
 import cors from "cors";
 import { MONGODB_URI, PORT } from "./utils/config.ts";
 import mongoose from "mongoose";
-import { testRouter } from "./routes/testRouter.ts";
-import http from "http";
 
 const wss: WebSocketServer = new WebSocketServer({ noServer: true });
 const app = express();
-const server = http.createServer(app);
+const server = app.listen(PORT);
 
 app.use(express.json());
 
@@ -23,9 +21,9 @@ const allowedOrigins: string[] = [
   "http://localhost:8022",
   "http://localhost:8500",
   "http://localhost:9000",
-  "http://leetpal.com",
-  "http://www.leetpal.com",
-  "https://www.leetpal.com",
+  "http://peerprep-user:8001",
+  "http://peerprep-question:8000",
+  "http://peerprep-frontend:3000",
 ];
 
 app.use(
@@ -41,13 +39,8 @@ app.use(
     exposedHeaders: ["set-cookie"],
   })
 );
-server.listen(PORT, () => {
-  console.log("Session Server is listening on port 8250");
-});
-
 const sessionRouter = new SessionRouter(wss);
 app.use("/session", (req, res, next) => sessionRouter.router(req, res, next));
-app.use("/ping", testRouter);
 
 server.on("upgrade", (request, socket, head) => {
   //   console.log(request);
