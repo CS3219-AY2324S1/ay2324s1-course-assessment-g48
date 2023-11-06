@@ -21,16 +21,17 @@ import { useError } from "@/hook/ErrorContext";
 
 interface UserFormProps {
   formType: string;
+  currPassword?: string;
 }
 
-const UserForm: React.FC<UserFormProps> = ({ formType }) => {
+const UserForm: React.FC<UserFormProps> = ({ formType, currPassword }) => {
   const { status, update } = useSession();
   const { sessionUser } = useSessionUser();
   const { setError } = useError();
   const [newId, setNewId] = useState(sessionUser.id);
-  const [newUsername, setUsername] = useState(sessionUser.username);
-  const [newEmail, setEmail] = useState(sessionUser.email);
-  const [newPassword, setPassword] = useState(sessionUser.password);
+  const [newUsername, setNewUsername] = useState(sessionUser.username);
+  const [newEmail, setNewEmail] = useState(sessionUser.email);
+  const [newPassword, setNewPassword] = useState(currPassword ?? sessionUser.password);
 
   const [openAuthInfo, setOpenAuthInfo] = useState(false);
   const [authProvider, setAuthProvider] = useState(
@@ -42,13 +43,6 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
 
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") ?? "/";
-
-  useEffect(() => {
-    setNewId(sessionUser.id);
-    setUsername(sessionUser.username);
-    setEmail(sessionUser.email);
-    setPassword(sessionUser.password);
-  }, [sessionUser]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -203,7 +197,7 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
               type="text"
               label="Username"
               value={newUsername!}
-              onChange={setUsername}
+              onChange={setNewUsername}
             />
           </div>
         )}
@@ -219,7 +213,7 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
               sessionUser.oauth !== undefined &&
               sessionUser.oauth.length !== 0
             }
-            onChange={setEmail}
+            onChange={setNewEmail}
           />
         </div>
         <div>
@@ -228,7 +222,7 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
             label="Password"
             value={newPassword!}
             autoComplete="current-password"
-            onChange={setPassword}
+            onChange={setNewPassword}
           />
         </div>
         {formType === UserManagement.Profile &&

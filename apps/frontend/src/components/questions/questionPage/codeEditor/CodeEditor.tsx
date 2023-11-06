@@ -14,14 +14,12 @@ import { languageOptions } from "@/utils/constants/LanguageOptions";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import useKeyPress from "@/hook/useKeyPress";
-import monaco from "monaco-editor";
 import { Language } from "@/utils/class/Language";
 import { Status } from "@/utils/enums/Status";
 
 type CodeEditorProps = {
   onChangeCode?: (
-    value?: string,
-    event?: monaco.editor.IModelContentChangedEvent
+    value: string,
   ) => void;
   currSessionCode?: CodeType[];
   question: Question;

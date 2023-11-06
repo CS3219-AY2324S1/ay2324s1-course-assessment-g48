@@ -1,27 +1,52 @@
 import { Server } from "socket.io";
 import { MONGODB_URI, PORT } from "./utils/config";
-import Chatroom from "./model/Chatroom";
 import mongoose from "mongoose";
-import { ChatroomService } from "./services/ChatroomService";
+import express, { json } from "express";
+import MessageController from "./controllers/messageController";
+import { chatroomRouter } from "./routes/chatroomRouter";
+import cors from "cors";
 
-const io = new Server(PORT, {});
-
-const chatroomService = new ChatroomService();
-
-io.on("connect", (socket) => {
-  socket.on("connectToChatroom", async ({ chatroomId }) => {
-    socket.join(chatroomId);
-    const messages = await chatroomService.getMessages(chatroomId);
-    console.log(messages);
-    socket.emit("receiveMessage", { messages });
-    socket.on("sendMessage", (message) => {
-      console.log(message);
-      chatroomService.appendMessages(chatroomId, [message]);
-      io.to(chatroomId).emit("receiveMessage", { messages: [message] });
-    });
-  });
-  socket.emit("connected");
+const app = express();
+const io = new Server(app.listen(PORT), {
+  cors: {
+    origin: "*",
+  },
 });
+
+const messageController = new MessageController(io);
+
+io.on("connect", (socket) => messageController.handleConnection(socket));
+app.use(json());
+app.use(chatroomRouter);
+
+const allowedOrigins: string[] = [
+  "http://localhost",
+  "http://localhost:80",
+  "http://localhost:3000",
+  "http://localhost:8000",
+  "http://localhost:8080",
+  "http://localhost:8001",
+  "http://localhost:8022",
+  "http://localhost:8500",
+  "http://localhost:9000",
+  "http://peerprep-user:8001",
+  "http://peerprep-question:8000",
+  "http://peerprep-frontend:3000",
+];
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+    exposedHeaders: ["set-cookie"],
+  })
+);
 
 mongoose
   .connect(MONGODB_URI || "")
@@ -32,10 +57,10 @@ mongoose
     console.log("error connection to MongoDB:", error.message);
   });
 
-// const chatroom = new Chatroom({
-//   messages: [{ timestamp: new Date(), uid: 1, content: "HELLO" }],
-//   users: [],
-// });
-// console.log(chatroom);
-// chatroom.save();
-// console.log(`added ${JSON.stringify(chatroom)}`);
+process.on("SIGINT", () => {
+  console.log("Process is terminating. Closing all WebSockets.");
+  mongoose.disconnect();
+  io.fetchSockets().then((sockets) =>
+    sockets.forEach((socket) => socket.disconnect())
+  );
+});
