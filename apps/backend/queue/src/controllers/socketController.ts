@@ -11,9 +11,11 @@ class SocketController {
   }
 
   handleConnection(socket: Socket) {
+    socket.emit("connected", () => console.log("Socket connected"));
     socket.on("matching", (data) => {
       console.log(`\n`);
       console.log(`Socket data: ${JSON.stringify(data)}`);
+      socket.emit("matching")
       const difficulty = data.difficulty;
       const uid = data.user.id;
       this.queueService.checkAndReleaseOtherConnections(uid);
@@ -31,8 +33,6 @@ class SocketController {
         }
       }, 30000);
     });
-
-    socket.emit("connected");
   }
 
   handleDisconnect(socket: Socket, uid: number) {

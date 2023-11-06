@@ -70,12 +70,22 @@ const UserForm: React.FC<UserFormProps> = ({ formType, currPassword }) => {
       });
       if (result?.error) {
         console.log("Something wrong" , result.error);
-        setError("Invalid email or password.");
+        setError({
+          type: 1,
+          message: "Invalid email or password."
+        });
       } else {
+        setError({
+          type: 4,
+          message: "Account login successfully!"
+        })
         router.push("/questions");
       }
     } catch (err) {
-      setError(err as string);
+      setError({
+        type: 1,
+        message: err as string
+      });
       console.error(err);
     }
   };
@@ -94,7 +104,11 @@ const UserForm: React.FC<UserFormProps> = ({ formType, currPassword }) => {
 
       const response = await createNewUser(newUser);
       if (response.error) {
-        setError(response.error);
+        setError(
+          {
+            type: 1,
+            message: response.error
+          });
         return;
       }
 
@@ -109,13 +123,24 @@ const UserForm: React.FC<UserFormProps> = ({ formType, currPassword }) => {
 
       if (result?.error) {
         console.log(result?.error);
-        setError("That email or username has already been taken.");
+        setError(
+          {
+            type: 1,
+            message: "That email or username has already been taken."
+          });
       } else {
+        setError({
+          type: 4,
+          message: "Account login successfully!"
+        })
         router.push("/questions");
       }
     } catch (err) {
       console.log(err || "Error undefined???");
-      setError(err as string);
+      setError({
+        type: 1,
+        message: err as string
+      });
     }
   };
 
@@ -134,8 +159,16 @@ const UserForm: React.FC<UserFormProps> = ({ formType, currPassword }) => {
 
       const response = await updateUserById(newId, newUser);
       if (response.error) {
-        setError(response.error);
+        setError({
+          type: 1,
+          message: response.error
+        });
         return;
+      } else {
+        setError({
+          type: 4,
+          message: "Profile updated successfully!"
+        });
       }
 
       if (sessionUser) {
@@ -147,7 +180,11 @@ const UserForm: React.FC<UserFormProps> = ({ formType, currPassword }) => {
       update({ user: sessionUser });
       router.push("/profile");
     } catch (err) {
-      setError(err as string);
+      setError(
+        {
+          type: 1,
+          message: err as string
+        });
       console.error(err);
     }
   };
@@ -156,8 +193,16 @@ const UserForm: React.FC<UserFormProps> = ({ formType, currPassword }) => {
     e.preventDefault();
     const response = await deleteUserById(Number(newId));
     if (response.error) {
-      setError(response.error);
+      setError({
+        type: 1,
+        message: response.error
+      });
       return;
+    } else {
+      setError({
+        type: 4,
+        message: "Profile deleted successfully!"
+      });
     }
     signOut({callbackUrl: "/"});
   };
@@ -170,8 +215,9 @@ const UserForm: React.FC<UserFormProps> = ({ formType, currPassword }) => {
     const newOAuth = sessionUser.oauth?.filter((oauth) => oauth !== provider);
     if (newOAuth == undefined || newOAuth.length == 0) {
       if (newPassword == undefined || newPassword.trim().length == 0) {
-        setError(
-          "You must enter a password in order to unlink your last linked account."
+        setError({
+          type: 1,
+          message: "You must enter a password in order to unlink your last linked account."}
         );
         return;
       }
@@ -276,7 +322,7 @@ const UserForm: React.FC<UserFormProps> = ({ formType, currPassword }) => {
         setOpen={setOpenAuthInfo}
         open={openAuthInfo}
         provider={authProvider}
-        setErrorMessage={setError}
+        setError={setError}
         newUser={updateAuthUser}
         />
     </>

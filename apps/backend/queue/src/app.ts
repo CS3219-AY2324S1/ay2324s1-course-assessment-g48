@@ -6,9 +6,11 @@ import PingRouter from "./routes/pingRouter";
 import SocketController from "./controllers/socketController";
 import cors from "cors";
 
+
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
+  path: "/queue",
   cors: {
     origin: "*",
   },

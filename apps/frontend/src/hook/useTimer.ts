@@ -46,11 +46,11 @@ function useTimer() {
   };
 
   const reset = () => {
-    setCountDown(0);
-    setIsRunning(false);
-    localStorage.removeItem("countDownDate");
-    localStorage.setItem("isRunning", "false");
-  };
+  setCountDown(30 * 1000); // 30 seconds in milliseconds
+  setIsRunning(false);
+  localStorage.removeItem("countDownDate");
+  localStorage.setItem("isRunning", "false");
+};
 
   return {
     days,

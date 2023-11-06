@@ -33,11 +33,13 @@ const EditQuestionModal: React.FC<EditQuestionModalProps> = ({
 
     await onUpdate(newQuestion)
       .then(() => {
-        setError("");
         setOpen(false);
       })
       .catch((e) => {
-        setError(e);
+        setError({
+          type: 1,
+          message: e
+        });
       });
   };
 
@@ -101,7 +103,6 @@ const EditQuestionModal: React.FC<EditQuestionModalProps> = ({
             className="text-sm font-semibold leading-6 text-gray-900"
             onClick={() => {
               setOpen(false);
-              setError("");
             }}
           >
             Cancel

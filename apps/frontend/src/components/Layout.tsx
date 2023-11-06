@@ -49,7 +49,7 @@ const Layout = ({ children }: PropsWithChildren) => {
       </div>
       <SlideOver open={openSlideOver} setOpen={setOpenSlideOver} />
       {error && (
-        <Alert message={error} hidden={openAlert} setHide={setOpenAlert} />
+        <Alert error={ error} hidden={openAlert} setHide={setOpenAlert} />
       )}
     </>
   );

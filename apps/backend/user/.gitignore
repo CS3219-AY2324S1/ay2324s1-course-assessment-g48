@@ -2,10 +2,11 @@
 /prisma/migrations
 # local env files
 .env
-.env.*
 
 # npm
 package-lock.json
 
 # yarn
 yarn-error.log
+.env.prod
+.env.dev

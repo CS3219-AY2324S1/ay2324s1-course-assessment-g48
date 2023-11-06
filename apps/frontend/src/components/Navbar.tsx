@@ -128,9 +128,9 @@ const Navbar: React.FC<NavbarProps> = ({
                       <span className="sr-only">View notifications</span>
                       <div className="flex">
                         <BellIcon className="h-6 w-6" aria-hidden="true" />
-                        {numberOfUnreadNotifications() > 0 ? (
+                        {numberOfUnreadNotifications > 0 ? (
                           <span className="notification-counter">
-                            {numberOfUnreadNotifications()}
+                            {numberOfUnreadNotifications}
                           </span>
                         ) : (
                           <></>
@@ -139,7 +139,7 @@ const Navbar: React.FC<NavbarProps> = ({
                     </button>
 
                     {/* Profile dropdown */}
-                    <Menu as="div" className="relative ml-3">
+                    <Menu as="div" className="relative ml-3 navbar-menu">
                       <div>
                         <Menu.Button className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                           <span className="absolute -inset-1.5" />

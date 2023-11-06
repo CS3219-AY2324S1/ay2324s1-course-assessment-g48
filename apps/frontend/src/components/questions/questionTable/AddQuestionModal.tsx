@@ -49,7 +49,10 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
         setOpen(false);
       })
       .catch((e) => {
-        setError(e);
+        setError({
+          type: 1,
+          message:e
+        });
       });
   };
 
