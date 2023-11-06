@@ -1,8 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import EditorNav from "./EditorNav";
-import ExecPanel from "../execPanel/ExecPanel";
 import Split from "react-split";
-import EditorFooter from "../execPanel/editorFooter/EditorFooter";
 import { useTheme } from "@/hook/ThemeContext";
 import { Editor } from "@monaco-editor/react";
 import { Question } from "@/database/question/entities/question.entity";
@@ -13,6 +11,8 @@ import "react-toastify/dist/ReactToastify.css";
 import useKeyPress from "@/hook/useKeyPress";
 import monaco from "monaco-editor";
 import { Status } from "@/utils/enums/Status";
+import ExecPanel from "./execPanel/ExecPanel";
+import EditorFooter from "./execPanel/editorFooter/EditorFooter";
 
 type CodeEditorProps = {
   onChangeCode?: (
@@ -29,23 +29,6 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   question,
 }) => {
   // TODO: make it dynamic
-  const starterCode = `/**
-* Definition for singly-linked list.
-* class ListNode {
-*     int val;
-*     ListNode next;
-*     ListNode(int x) {
-*         val = x;
-*         next = null;
-*     }
-* }
-*/
-class Solution {
-  hasCycle(head) { 
-    // Write your solution here
-  }
-};`;
-
   const { isDarkMode } = useTheme();
   const [code, changeCode] = useState(currCode ?? "");
   const [customInput, setCustomInput] = useState(""); // todo: for console, user can input their own TC
@@ -54,6 +37,7 @@ class Solution {
   const [selectedLanguage, setSelectedLanguage] = useState(
     languageOptions[0].label // "javascript language"
   );
+  const [starterCode, setStarterCode] = useState<string | undefined>(""); // might be redundant
   const [selectedTestCaseChip, setSelectedTestCaseChip] = useState<number>(1);
 
   const enterPress = useKeyPress("Enter");
@@ -79,13 +63,13 @@ class Solution {
     setSelectedTestCaseChip(testNum);
   };
 
-  const findLangugage = (language: string) => {
+  const findLanguage = (language: string) => {
     return languageOptions.find((lang) => lang.label === language);
   };
 
   const handleCompile = async () => {
     setProcessing(true);
-    const language = findLangugage(selectedLanguage);
+    const language = findLanguage(selectedLanguage);
 
     const submissions = question.testcases.map((testCase) => ({
       language_id: language?.id,
@@ -188,6 +172,11 @@ class Solution {
       handleCompile();
     }
   }, [ctrlPress, enterPress]);
+
+  useEffect(() => {
+    console.log(selectedLanguage);
+    setStarterCode(findLanguage(selectedLanguage)?.starterCode);
+  }, [selectedLanguage]);
 
   return (
     <>
