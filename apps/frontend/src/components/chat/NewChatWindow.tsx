@@ -11,16 +11,7 @@ import {
   ConversationHeader,
   MessageGroup,
 } from "@chatscope/chat-ui-kit-react";
-import {
-  useChat,
-  ChatMessage,
-  MessageContentType,
-  MessageDirection,
-  MessageStatus,
-  MessageContent,
-  TextContent,
-  User,
-} from "@chatscope/use-chat";
+
 import { Message as MessageEntity, useChatroom } from "@/hook/useChatroom";
 import useSessionUser from "@/hook/useSessionUser";
 

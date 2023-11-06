@@ -17,7 +17,7 @@ export const useChatroom = (chatroomId: string, userId: number) => {
   const [messages, setMessages] = useState<Message[]>([]);
 
   useEffect(() => {
-    if (chatroomId.length != 0) {
+    if (chatroomId && chatroomId.length != 0) {
       setMessages([]);
       chatroomSocket.connect();
       chatroomSocket.on("receiveMessage", ({ messages }) => {
