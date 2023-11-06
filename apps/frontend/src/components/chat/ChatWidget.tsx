@@ -2,30 +2,13 @@ import React, { useEffect, useRef } from "react";
 import { nanoid } from "nanoid";
 import { ChatBubbleOvalLeftEllipsisIcon } from "@heroicons/react/24/outline";
 import NewChatWindow from "./NewChatWindow";
-import {
-  BasicStorage,
-  ChatProvider,
-  AutoDraft,
-  IStorage,
-  UpdateState,
-  Presence,
-  UserStatus,
-  Conversation,
-  Participant,
-  ConversationRole,
-  TypingUsersList,
-  ConversationId,
-} from "@chatscope/use-chat";
-import { ExampleChatService } from "@/utils/chat/ExampleChatService";
-import useSessionUser from "@/hook/useSessionUser";
-import { Message } from "@/hook/useChatroom";
 
+import useSessionUser from "@/hook/useSessionUser";
 type ChatWidgetProps = {
   chatroomId?: string;
-  messages: Message[];
 };
 
-const ChatWidget: React.FC<ChatWidgetProps> = ({ chatroomId, messages }) => {
+const ChatWidget: React.FC<ChatWidgetProps> = ({ chatroomId }) => {
   const ref = useRef<HTMLDivElement>(null);
   const [showChatWindow, setShowChatWindow] = React.useState(false);
   const { sessionUser } = useSessionUser();
@@ -48,6 +31,7 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({ chatroomId, messages }) => {
         <NewChatWindow
           visible={showChatWindow}
           chatUser={String(sessionUser.id)}
+          chatroomId={chatroomId}
         />
       </div>
       <div className="absolute bottom-16 right-10 z-10 group">

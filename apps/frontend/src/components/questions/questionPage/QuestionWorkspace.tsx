@@ -18,7 +18,7 @@ type QuestionWorkspaceProps = {
   doc?: Doc;
   initialLanguage?: Language;
   increment: (value: string) => void;
-  messages: Message[];
+  chatroomId: string;
 };
 
 const QuestionWorkspace: React.FC<QuestionWorkspaceProps> = ({
@@ -26,7 +26,7 @@ const QuestionWorkspace: React.FC<QuestionWorkspaceProps> = ({
   doc,
   initialLanguage,
   increment,
-  messages,
+  chatroomId,
 }) => {
   return (
     <>
@@ -48,7 +48,7 @@ const QuestionWorkspace: React.FC<QuestionWorkspaceProps> = ({
           <CodeEditor question={question} />
         )}
       </Split>
-      {doc && <ChatWidget messages={messages} />}
+      {doc && <ChatWidget chatroomId={chatroomId} />}
     </>
   );
 };

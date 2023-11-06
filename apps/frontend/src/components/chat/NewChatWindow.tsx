@@ -21,80 +21,27 @@ import {
   TextContent,
   User,
 } from "@chatscope/use-chat";
+import { Message as MessageEntity, useChatroom } from "@/hook/useChatroom";
+import useSessionUser from "@/hook/useSessionUser";
 
 type NewChatWindowProps = {
   visible: boolean;
   chatUser: string;
+  messages: MessageEntity[];
+  chatroomId: string;
 };
 
-const NewChatWindow: React.FC<NewChatWindowProps> = ({ visible, chatUser }) => {
+const NewChatWindow: React.FC<NewChatWindowProps> = ({
+  visible,
+  chatUser,
+  chatroomId,
+}) => {
   const opacity = "opacity-100";
   const zIndex = "z-20";
   const { isDarkMode } = useTheme();
   const chatTheme = isDarkMode ? "dark-chat" : "";
-
-  const {
-    currentMessages,
-    conversations,
-    activeConversation,
-    setActiveConversation,
-    sendMessage,
-    getUser,
-    currentMessage,
-    setCurrentMessage,
-    sendTyping,
-    setCurrentUser,
-  } = useChat();
-
-  //   useEffect(() => {
-  //     setCurrentUser(chatUser);
-  //   }, [chatUser, setCurrentUser]);
-
-  if (!activeConversation && conversations.length > 0) {
-    console.log(conversations[0].id);
-    setActiveConversation(conversations[0].id);
-    console.log(activeConversation);
-  }
-
-  const [currentUserName] = useMemo(() => {
-    if (activeConversation) {
-      const participant =
-        activeConversation.participants.length > 0
-          ? activeConversation.participants[0]
-          : undefined;
-
-      if (participant) {
-        const user = getUser(participant.id);
-        if (user) {
-          return [user.username];
-        }
-      }
-    }
-    return [undefined, undefined];
-  }, [activeConversation, getUser]);
-
-  const getTypingIndicator = useCallback(() => {
-    if (activeConversation) {
-      const typingUsers = activeConversation.typingUsers;
-
-      if (typingUsers.length > 0) {
-        const typingUserId = typingUsers.items[0].userId;
-
-        // Check if typing user participates in the conversation
-        if (activeConversation.participantExists(typingUserId)) {
-          const typingUser = getUser(typingUserId);
-
-          if (typingUser) {
-            return (
-              <TypingIndicator content={`${typingUser.username} is typing`} />
-            );
-          }
-        }
-      }
-    }
-
-    return undefined;
-  }, [activeConversation, getUser]);
+  const { sessionUser } = useSessionUser();
+  const { messages } = useChatroom(chatroomId, sessionUser.id);
 
   const handleChange = (value: string) => {
     // Send typing indicator to the active conversation
@@ -102,15 +49,6 @@ const NewChatWindow: React.FC<NewChatWindowProps> = ({ visible, chatUser }) => {
     // because sendTyping method can throttle sending this event
     // So typing event will not be send to often to the server
     setCurrentMessage(value);
-    if (activeConversation) {
-      sendTyping({
-        conversationId: activeConversation?.id,
-        isTyping: true,
-        userId: chatUser,
-        content: value, // Note! Most often you don't want to send what the user types, as this can violate his privacy!
-        throttle: true,
-      });
-    }
   };
 
   const handleSend = (text: string) => {
@@ -139,39 +77,29 @@ const NewChatWindow: React.FC<NewChatWindowProps> = ({ visible, chatUser }) => {
 
   return (
     <div className={`chatWindow ${zIndex} ${opacity} ${chatTheme}`}>
-      <MainContainer responsive>
-        <ChatContainer>
-          <ConversationHeader>
-            <ConversationHeader.Content userName={currentUserName} />
-          </ConversationHeader>
-          <MessageList typingIndicator={getTypingIndicator()}>
-            {currentMessages.map((g) => (
-              <MessageGroup key={g.id} direction={g.direction}>
-                <MessageGroup.Messages>
-                  {g.messages.map((m: ChatMessage<MessageContentType>) => (
-                    <Message
-                      key={m.id}
-                      model={{
-                        type: "html",
-                        payload: m.content,
-                        direction: m.direction,
-                        position: "normal",
-                      }}
-                    />
-                  ))}
-                </MessageGroup.Messages>
-              </MessageGroup>
-            ))}
-          </MessageList>
-          <MessageInput
-            value={currentMessage}
-            onChange={handleChange}
-            onSend={handleSend}
-            attachButton={false}
-            placeholder="Type message here"
-          />
-        </ChatContainer>
-      </MainContainer>
+      <div style={{ position: "relative", height: "500px" }}>
+        <MainContainer>
+          <ChatContainer>
+            <MessageList>
+              {messages.map((message) => (
+                <Message
+                  model={{
+                    message: message.content,
+                    sender: message.id,
+                    direction: 1,
+                    position: 1,
+                  }}
+                />
+              ))}
+            </MessageList>
+            <MessageInput
+              onChange={handleChange}
+              placeholder="Type message here"
+            />
+          </ChatContainer>
+        </MainContainer>
+      </div>
+      ;
     </div>
   );
 };
