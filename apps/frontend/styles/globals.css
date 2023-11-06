@@ -1,0 +1,268 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+@layer components {
+
+  .languageBtn {
+    @apply flex cursor-pointer items-center rounded focus:outline-none bg-slate-100 hover:bg-slate-200 dark:bg-gray-600 dark:hover:bg-gray-700 px-2 py-1.5 font-medium;
+  }
+  .preferenceBtn {
+    @apply relative rounded px-3 font-medium items-center transition-all focus:outline-none inline-flex ml-auto p-1 mr-2 hover:bg-slate-300 dark:hover:bg-gray-800;
+  }
+
+  .languageTooltip {
+    @apply absolute w-auto p-2 text-sm m-2 min-w-max left-0 top-5 z-10 rounded-md shadow-md bg-slate-100 dark:text-gray-800 dark:bg-gray-200 origin-center scale-0 transition-all duration-100 ease-linear group-hover:scale-100;
+  }
+
+  .btnTooltip {
+    @apply absolute w-auto p-2 text-sm m-2 min-w-max translate-x-3 right-0 top-5 z-10 rounded-md shadow-md bg-slate-100 dark:text-gray-800 dark:bg-gray-200 origin-center scale-0 transition-all duration-100 ease-linear group-hover:scale-100;
+  }
+
+  .chatWindow {
+    @apply fixed bottom-16 right-10 w-1/4 h-1/2 min-w-fit min-h-fit dark:bg-slate-800 bg-white rounded-lg border-2 border-blue-500 overflow-hidden shadow-xl transition-all duration-300;
+  }
+}
+
+.loading-spinner {
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top: 4px solid #3498db;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+}
+
+.markdown-content img {
+  max-width: 100%; /* Limit the maximum width of images to 100% of their container */
+  height: auto; /* Automatically adjust the height to maintain aspect ratio */
+}
+
+.loader {
+  width: 48px;
+  height: 48px;
+  border: 5px solid #fff;
+  border-bottom-color: #ff3d00;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
+/* styles.css */
+.loading-modal {
+  position: fixed;
+  top: 1;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+/* notification counter*/
+.notification-counter{
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 15px;
+  height: 15px;
+  background-color: #ff3d00;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+  color: #fff;
+  font-weight: 600;
+}
+
+
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.center {
+  text-align: center;
+}
+
+/* Question Page */
+.split {
+  display: flex;
+}
+
+.gutter {
+  background-color: #202020;
+  background-repeat: no-repeat;
+  background-position: 50%;
+}
+
+.gutter:hover {
+  background-color: #142197;
+}
+
+.gutter.gutter-horizontal {
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==');
+  cursor: col-resize;
+}
+
+.gutter.gutter-vertical {
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAFAQMAAABo7865AAAABlBMVEVHcEzMzMzyAv2sAAAAAXRSTlMAQObYZgAAABBJREFUeF5jOAMEEAIEEFwAn3kMwcB6I2AAAAAASUVORK5CYII=');
+  cursor: row-resize;
+}
+
+
+/* Dark mode styles */
+.vs-dark>.overflow-guard>.margin,
+.vs-dark>.monaco-editor-background {
+  background-color: rgb(38 38 38) !important;
+}
+
+.cm-focused {
+  outline: none !important;
+}
+
+::-webkit-scrollbar {
+  height: 0.5rem; /* height of the horizontal scrollbar */
+  width: 0.5rem; /* width of the vertical scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #4d4d4d;
+  border-radius: 10px;
+}
+
+/** horizontal scrollbar **/
+
+::-webkit-scrollbar-thumb:horizontal{
+  background: rgb(79 70 229);
+}
+
+/* Chat Window */
+.react-chatbot-kit-chat-container {
+  width: 100% !important;
+  height: 50vh;
+}
+
+.react-chatbot-kit-chat-inner-container {
+  height: 100% !important;
+}
+
+.react-chatbot-kit-chat-message-container {
+  height: calc(100% - 48.5px) !important;
+}
+
+.react-chatbot-kit-chat-bot-container {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #3d4e8d;
+  margin-right: 12.5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.react-chatbot-kit-chat-bot-message {
+  margin-left: 0 !important;
+  width: fit-content !important;
+}
+
+.react-chatbot-kit-chat-btn-send {
+  width: 13% !important;
+}
+
+.react-chatbot-kit-chat-btn-send:hover {
+  background-color: rgb(59 130 246) !important;
+}
+
+/* Dark Mode */
+.dark-chat .react-chatbot-kit-chat-header {
+  background-color: #020617 !important;
+  color: white;
+}
+
+.dark-chat .react-chatbot-kit-chat-message-container {
+  background-color: #383838 !important;
+}
+
+.dark-chat .react-chatbot-kit-chat-bot-message {
+  background-color: rgb(30 58 138) !important;
+}
+
+.dark-chat .react-chatbot-kit-chat-bot-message-arrow {
+  border-right: 8px solid rgb(30 58 138) !important;
+}
+
+.dark-chat .react-chatbot-kit-user-chat-message {
+  background-color: rgb(59 130 246) !important;
+  color:white;
+}
+
+.dark-chat .react-chatbot-kit-user-chat-message-arrow {
+  border-left: 8px solid rgb(59 130 246) !important;
+}
+
+.dark-chat .react-chatbot-kit-chat-input{
+  background-color: #383838 !important;
+  color: white;
+}
+
+.dark-chat .react-chatbot-kit-chat-input::placeholder{
+  color: rgb(175, 175, 175);
+}
+
+.category-container {
+   /* Align it to center */
+  column-count: 2; /* Set the number of columns you desire */
+  column-gap: 20px; /* Set the gap between columns */
+  max-height: 400px; /* Set the maximum height of the container */
+}
+
+.scrollbar-hidden {
+  /* Hide scrollbar for webkit browsers */
+  scrollbar-width: none;
+  scrollbar-color: transparent transparent;
+}
+
+/* For Firefox */
+.scrollbar-hidden::-webkit-scrollbar {
+  width: 0.5em;
+}
+
+.scrollbar-hidden::-webkit-scrollbar-thumb {
+  background-color: transparent;
+}
+
+/* SearchComponent.css */
+.truncate-input {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%; /* Ensure the input doesn't exceed its parent's width */
+}
