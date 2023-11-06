@@ -42,6 +42,17 @@ const nextConfig = {
       },
     ];
   },
+  // This function is used in Next.js to specify
+  // custom routing behavior, such as setting up a proxy.
+  async rewrites() {
+    return [
+      {
+        source: "/api/codeExecution/:path*",
+        destination: "http://localhost:8420/api/codeExecution/:path*", // Proxy to Code Execution Service
+      },
+      // Add more rewrites for other services here
+    ];
+  },
 };
 
 module.exports = nextConfig;

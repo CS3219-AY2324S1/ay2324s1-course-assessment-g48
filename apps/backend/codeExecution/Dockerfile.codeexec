@@ -1,0 +1,20 @@
+# Use the official Node.js 16 image as a parent image
+FROM node:18
+
+# Using echo to print a message during image build
+RUN echo "Building Code Execution Service Image..."
+
+# Set the working directory in the container to /app
+WORKDIR /app
+
+# Copy all files from your host to your image filesystem at /app
+COPY . .
+
+# Install all dependencies in the package.json
+RUN yarn install
+
+# Informs Docker that the container listens on the specified network ports at runtime.
+EXPOSE 8420
+
+# Provides defaults for an executing container
+CMD ["yarn", "start"]

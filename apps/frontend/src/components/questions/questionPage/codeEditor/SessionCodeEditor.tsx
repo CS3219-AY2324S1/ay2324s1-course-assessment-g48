@@ -5,15 +5,23 @@ import { useDocument } from "@automerge/automerge-repo-react-hooks";
 import { Doc } from "@/utils/doc";
 import CodeEditor from "./CodeEditor";
 import { useRouter } from "next/router";
+import { Question } from "@/database/question/entities/question.entity";
+import { Language } from "@/utils/class/Language";
+import monaco from "monaco-editor";
 
 type SessionCodeEditorProps = {
+  question: Question;
   sessionId: string;
+  initialLanguage: Language;
 };
 
-const SessionCodeEditor: React.FC<SessionCodeEditorProps> = ({ sessionId }) => {
-  // TODO: Get sessionID here somehow? Not sure if this works
+const SessionCodeEditor: React.FC<SessionCodeEditorProps> = ({
+  question,
+  sessionId,
+  initialLanguage,
+}) => {
   const sessionID = sessionId as string;
-  const router = useRouter()
+  const router = useRouter();
 
   const [docUrl, setDocUrl] = useState<AutomergeUrl>();
 
@@ -27,26 +35,54 @@ const SessionCodeEditor: React.FC<SessionCodeEditorProps> = ({ sessionId }) => {
           console.log(res.data.docId);
           console.log("docId received");
           setDocUrl(res.data.docId);
-        }).catch((err) => {
+        })
+        .catch((err) => {
           console.log(err);
           if (err.response.status == 404) {
             router.push("/404");
           }
-        })
+        });
     }
   }, [sessionID]);
 
+  console.log("Question", question)
+  const starterCode =
+    question.starterCode.find(
+      (starterCode) => starterCode.languageId === initialLanguage.id
+    )?.code ?? "";
+
   const [doc, changeDoc] = useDocument<Doc>(docUrl);
+  if (doc?.text === undefined) {
+    changeDoc((d) => (d.text = starterCode));
+  }
   useEffect(() => {
     console.log("doc", doc);
-  }
-  , [doc]);
+  }, [doc]);
 
-  const increment = (value: any, event: any) => {
-    console.log("reflecting changes in code editor through changeDoc...");
-    changeDoc((d) => (d.text = value));
+  const increment = (
+    value?: string,
+    event?: monaco.editor.IModelContentChangedEvent
+  ) => {
+    console.log(
+      "reflecting changes in code editor through changeDoc...",
+      event
+    );
+    changeDoc((d) => (d.text = value ?? ""));
   };
 
-  return <CodeEditor currCode={doc?.text} onChangeCode={increment} />;
+  return (
+    <CodeEditor
+      question={question}
+      currSessionCode={[
+        {
+          languageId: initialLanguage.id,
+          code: doc?.text ?? "",
+        },
+      ]}
+      onChangeCode={increment}
+      initialLanguage={initialLanguage}
+      hasSession={true}
+    />
+  );
 };
 export default SessionCodeEditor;

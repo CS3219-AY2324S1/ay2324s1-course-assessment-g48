@@ -8,7 +8,7 @@ import Alert from "./Alert";
 
 const Layout = ({ children }: PropsWithChildren) => {
   const { data: session, status } = useSession();
-  const { error, setError, clearError } = useError();
+  const { error, clearError } = useError();
   const [openAlert, setOpenAlert] = useState(false);
   const [openSlideOver, setOpenSlideOver] = useState(false);
 
@@ -32,7 +32,7 @@ const Layout = ({ children }: PropsWithChildren) => {
 
   return (
     <>
-      <div className="dark:bg-gray-900 min-h-screen pb-10 shadow-md overflow-auto">
+      <div className="dark:bg-gray-900 min-h-screen shadow-md overflow-auto">
         <>
           <div className="fixed w-screen divide-y top-0 z-20">
             <Navbar
