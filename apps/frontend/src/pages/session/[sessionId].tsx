@@ -2,28 +2,84 @@ import { useRouter } from "next/router";
 import useQuestionById from "@/hook/useQuestionById";
 import { useEffect, useState } from "react";
 import useSessionUser from "@/hook/useSessionUser";
-import QuestionWorkspace from "@/components/questions/questionPage/QuestionWorkspace";
+import {
+  AutoDraft,
+  BasicStorage,
+  ChatProvider,
+  Conversation,
+  ConversationId,
+  ConversationRole,
+  IStorage,
+  Participant,
+  Presence,
+  TypingUsersList,
+  UpdateState,
+  User,
+  UserStatus,
+} from "@chatscope/use-chat";
+import { nanoid } from "nanoid";
+import { ExampleChatService } from "@/utils/chat/ExampleChatService";
 import { languageOptions } from "@/utils/constants/LanguageOptions";
+import QuestionWorkspace from "@/components/questions/questionPage/QuestionWorkspace";
+import { AutomergeUrl } from "@automerge/automerge-repo";
+import { useDocument } from "@automerge/automerge-repo-react-hooks";
+import { Doc } from "@automerge/automerge/next";
+import axios from "axios";
+import { getUserById } from "@/database/user/userService";
+import { Message, useChatroom } from "@/hook/useChatroom";
 
 export default function Session() {
+  const router = useRouter();
+
   const { sessionUser } = useSessionUser();
-  const [accessToken, setAccessToken] = useState(sessionUser.accessToken);
-  const [refreshToken, setRefreshToken] = useState(sessionUser.refreshToken);
+
   const sessionID = useRouter().query.sessionId as string;
-  const questionId = "6543bccc951bbb058fd8c8ed"; // hardcoded, to be changed
-  const { question } = useQuestionById(questionId, accessToken, refreshToken);
+  const questionId = "6544a293176b84aafd37817a"; // hardcoded, to be changed
+  const { question } = useQuestionById(
+    questionId,
+    sessionUser.accessToken,
+    sessionUser.refreshToken
+  );
   const languageSelected = languageOptions[0]; // hardcoded, to be changed
+  //   const [chatUsers, setChatUsers] = useState<number[]>([]);
+  const [docUrl, setDocUrl] = useState<AutomergeUrl>();
+  const [doc, changeDoc] = useDocument<Doc>(docUrl);
+  const [chatroomId, setChatroomId] = useState<string>("");
+  let increment: (value: string) => void = (value: string) => {
+    console.log("reflecting changes in code editor through changeDoc...");
+    changeDoc((d) => (d.text = value));
+  };
 
   useEffect(() => {
-    console.log(sessionID)
-    setAccessToken(sessionUser.accessToken);
-    setRefreshToken(sessionUser.refreshToken);
-  }, [sessionUser]);
+    if (sessionID) {
+      axios
+        .get(
+          `${process.env.NEXT_PUBLIC_SESSION_URL}/session/get-session/${sessionID}`
+        )
+        .then((res) => {
+          console.log(res.data.docId);
+          console.log(res.data.chatroomId);
+          console.log("docId received");
+          setDocUrl(res.data.docId);
+          setChatroomId(res.data.chatroomId);
+        })
+        .catch((err) => {
+          console.log(err);
+          router.push("/404");
+        });
+    }
+  }, [sessionID]);
 
   return (
     <div>
       {question && (
-        <QuestionWorkspace question={question} sessionId={sessionID} initialLanguage={languageSelected} />
+        <QuestionWorkspace
+          question={question}
+          doc={doc}
+          increment={increment}
+          initialLanguage={languageSelected}
+          chatroomId={chatroomId}
+        />
       )}
     </div>
   );
