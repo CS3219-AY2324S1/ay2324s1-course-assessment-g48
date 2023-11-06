@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "concurrently --prefix-colors red,green,yellow,blue,magenta,cyan,white,#FFC0CB --prefix \"{time}-{name}\" --timings --handle-input --kill-others-on-fail --n question,queue,session,user,frontend,history,chat,codeExecution \"yarn --cwd ./apps/backend/question run dev\" \"yarn --cwd ./apps/backend/queue run dev\" \"yarn --cwd ./apps/backend/session run dev\" \"yarn --cwd ./apps/backend/user run dev\" \"yarn --cwd ./apps/frontend run dev\" \"yarn --cwd ./apps/backend/history run dev\" \"yarn --cwd ./apps/backend/chat run dev\" \"yarn --cwd ./apps/backend/codeExecution run dev\"",
-    "install-all": "cd ./apps/frontend && yarn install && cd ../backend/user && yarn install && cd ../chat && yarn install && cd ../history && yarn install && cd ../question && yarn install && cd ../queue && yarn install && cd ../user && yarn install",
+    "install-all": "cd ./apps/frontend && yarn install && cd ../backend/user && yarn install && cd ../chat && yarn install && cd ../history && yarn install && cd ../question && yarn install && cd ../queue && yarn install && cd ../user && yarn install && cd ../history && yarn install && cd ../codeExecution && yarn install && cd ../chat && yarn install",
     "get-all-env": "./collect-env.sh"
   },
   "author": "",
