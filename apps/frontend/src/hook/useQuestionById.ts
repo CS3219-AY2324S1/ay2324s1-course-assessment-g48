@@ -2,20 +2,28 @@ import { Question } from "@/database/question/entities/question.entity";
 import { getQuestionById } from "@/database/question/questionService";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
+import { useError } from "./ErrorContext";
 
-function useQuestionById(qid: string, accessToken?: string | null, refreshToken?: string | null) {
+function useQuestionById(
+  qid: string,
+  accessToken?: string | null,
+  refreshToken?: string | null
+) {
   const { data: session } = useSession();
   const [isLoading, setIsLoading] = useState(true);
   const [question, setQuestion] = useState<Question | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const { setError, clearError } = useError();
 
   useEffect(() => {
     async function fetchData() {
       if (!qid) {
-        setError("No question id provided");
+        setError({
+          type: 1,
+          message: "No question id provided",
+        });
         setIsLoading(false);
       }
-      setError(null);
+      clearError();
       if (accessToken === null || refreshToken == null) return;
       try {
         const data = await getQuestionById(qid, accessToken, refreshToken);
@@ -26,7 +34,10 @@ function useQuestionById(qid: string, accessToken?: string | null, refreshToken?
         setQuestion(data);
         setIsLoading(false);
       } catch (error) {
-        setError(`Error fetching question:, ${error}`);
+        setError({
+          type: 1,
+          message: `Error fetching question:, ${error}`,
+        });
         setIsLoading(false);
       }
     }
@@ -34,12 +45,11 @@ function useQuestionById(qid: string, accessToken?: string | null, refreshToken?
   }, [qid, accessToken, refreshToken, session]);
 
   return !isLoading
-  ? { question, isLoading, error }
-  : {
-      question: undefined,
-      isLoading,
-      error
-    };
+    ? { question, isLoading }
+    : {
+        question: undefined,
+        isLoading,
+      };
 }
 
 export default useQuestionById;

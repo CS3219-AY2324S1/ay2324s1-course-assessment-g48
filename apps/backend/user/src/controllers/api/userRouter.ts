@@ -151,7 +151,7 @@ userRouter.post(
 );
 
 // Get user by username and password
-userRouter.get(
+userRouter.post(
   "/login",
   async (req: Request, res: Response, next: NextFunction) => {
     try {

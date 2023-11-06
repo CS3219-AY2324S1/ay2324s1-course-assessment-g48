@@ -4,6 +4,8 @@ import * as logger from "./utils/logger";
 import * as config from "./utils/config";
 import { historyRouter } from "./controllers/api/historyRouter";
 import cors from "cors";
+import test from "node:test";
+import { testRouter } from "./controllers/api/testRouter";
 
 export const app = express();
 const allowedOrigins = [
@@ -17,9 +19,9 @@ const allowedOrigins = [
   "http://localhost:8420",
   "http://localhost:8500",
   "http://localhost:9000",
-  "http://peerprep-user:8001",
-  "http://peerprep-question:8000",
-  "http://peerprep-frontend:3000",
+  "http://leetpal.com",
+  "http://www.leetpal.com",
+  "https://www.leetpal.com",
 ];
 
 app.use(
@@ -50,3 +52,4 @@ mongoose
 app.use(express.json());
 
 app.use("/api/history", historyRouter);
+app.use("/ping", testRouter);

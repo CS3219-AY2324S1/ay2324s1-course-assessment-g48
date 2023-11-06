@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: peerprep-frontend
+  # annotations:
+  #   cloud.google.com/network-tier: Standard
+spec:
+  selector:
+    app: peerprep-frontend
+  ports:
+  - protocol: TCP
+    port: 3000
+    targetPort: 3000
+  type: ClusterIP
+  # type: LoadBalancer
+  # loadBalancerIP: 35.213.159.158
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deployment
+spec:
+  selector:
+    matchLabels:
+      app: peerprep-frontend
+  template:
+    metadata:
+      labels:
+        app: peerprep-frontend
+    spec:
+      containers:
+      - name: peerprep-frontend
+        image: deployment87/dply87:peerprep-frontend-v1.0.1
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 3000
