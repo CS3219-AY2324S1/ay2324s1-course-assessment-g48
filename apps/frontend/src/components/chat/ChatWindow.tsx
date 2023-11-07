@@ -1,5 +1,5 @@
 import { useTheme } from "@/hook/ThemeContext";
-import React, { useCallback, useEffect, useMemo } from "react";
+import React from "react";
 import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
 import {
   MainContainer,
@@ -7,33 +7,26 @@ import {
   MessageList,
   Message,
   MessageInput,
-  TypingIndicator,
-  ConversationHeader,
-  MessageGroup,
 } from "@chatscope/chat-ui-kit-react";
 
-import { Message as MessageEntity, useChatroom } from "@/hook/useChatroom";
-import useSessionUser from "@/hook/useSessionUser";
-import { MessageDirection } from "@chatscope/use-chat";
+import { useChatroom } from "@/hook/useChatroom";
 
-type NewChatWindowProps = {
+type ChatWindowProps = {
   visible: boolean;
-  chatUser: string;
-  messages: MessageEntity[];
+  chatUserId: number;
   chatroomId: string;
 };
 
-const NewChatWindow: React.FC<NewChatWindowProps> = ({
+const ChatWindow: React.FC<ChatWindowProps> = ({
   visible,
-  chatUser,
+  chatUserId,
   chatroomId,
 }) => {
   const opacity = "opacity-100";
   const zIndex = "z-20";
   const { isDarkMode } = useTheme();
   const chatTheme = isDarkMode ? "dark-chat" : "";
-  const { sessionUser } = useSessionUser();
-  const { messages, handleSubmit } = useChatroom(chatroomId, sessionUser.id);
+  const { messages, handleSubmit } = useChatroom(chatroomId, chatUserId);
 
   const handleSend = (text: string) => {
     handleSubmit(text);
@@ -45,7 +38,7 @@ const NewChatWindow: React.FC<NewChatWindowProps> = ({
 
   return (
     <div className={`chatWindow ${zIndex} ${opacity} ${chatTheme}`}>
-      <MainContainer>
+      <MainContainer responsive>
         <ChatContainer>
           <MessageList>
             {messages.map((message) => (
@@ -53,16 +46,18 @@ const NewChatWindow: React.FC<NewChatWindowProps> = ({
                 key={message.id}
                 model={{
                   message: message.content,
-                  sender: message.id,
-                  direction: sessionUser.id === message.uid ? MessageDirection.Outgoing : MessageDirection.Incoming,
+                  sender: String(message.uid),
+                  direction: chatUserId === message.uid ? "outgoing" : "incoming",
                   position: 1,
                 }}
               />
             ))}
           </MessageList>
           <MessageInput
-            //   onChange={handleChange}
             onSend={handleSend}
+            attachButton={false}
+            autoFocus={true}
+            fancyScroll={true}
             placeholder="Type message here"
           />
         </ChatContainer>
@@ -70,4 +65,4 @@ const NewChatWindow: React.FC<NewChatWindowProps> = ({
     </div>
   );
 };
-export default NewChatWindow;
+export default ChatWindow;

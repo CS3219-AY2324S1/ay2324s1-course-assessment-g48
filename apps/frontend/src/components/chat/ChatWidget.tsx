@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from "react";
-import { nanoid } from "nanoid";
 import { ChatBubbleOvalLeftEllipsisIcon } from "@heroicons/react/24/outline";
-import NewChatWindow from "./NewChatWindow";
+import ChatWindow from "./ChatWindow";
 
 import useSessionUser from "@/hook/useSessionUser";
 type ChatWidgetProps = {
@@ -28,10 +27,10 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({ chatroomId }) => {
   return (
     <>
       <div ref={ref}>
-        <NewChatWindow
+        <ChatWindow
           visible={showChatWindow}
-          chatUser={String(sessionUser.id)}
-          chatroomId={chatroomId}
+          chatUserId={sessionUser.id}
+          chatroomId={chatroomId!}
         />
       </div>
       <div className="absolute bottom-16 right-10 z-10 group">
