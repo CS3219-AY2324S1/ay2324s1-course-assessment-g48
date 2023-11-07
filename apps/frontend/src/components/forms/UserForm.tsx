@@ -21,16 +21,17 @@ import { useError } from "@/hook/ErrorContext";
 
 interface UserFormProps {
   formType: string;
+  currPassword?: string;
 }
 
-const UserForm: React.FC<UserFormProps> = ({ formType }) => {
+const UserForm: React.FC<UserFormProps> = ({ formType, currPassword }) => {
   const { status, update } = useSession();
   const { sessionUser } = useSessionUser();
   const { setError } = useError();
   const [newId, setNewId] = useState(sessionUser.id);
-  const [newUsername, setUsername] = useState(sessionUser.username);
-  const [newEmail, setEmail] = useState(sessionUser.email);
-  const [newPassword, setPassword] = useState(sessionUser.password);
+  const [newUsername, setNewUsername] = useState(sessionUser.username);
+  const [newEmail, setNewEmail] = useState(sessionUser.email);
+  const [newPassword, setNewPassword] = useState(currPassword ?? sessionUser.password);
 
   const [openAuthInfo, setOpenAuthInfo] = useState(false);
   const [authProvider, setAuthProvider] = useState(
@@ -42,13 +43,6 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
 
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") ?? "/";
-
-  useEffect(() => {
-    setNewId(sessionUser.id);
-    setUsername(sessionUser.username);
-    setEmail(sessionUser.email);
-    setPassword(sessionUser.password);
-  }, [sessionUser]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -76,12 +70,22 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
       });
       if (result?.error) {
         console.log("Something wrong" , result.error);
-        setError("Invalid email or password.");
+        setError({
+          type: 1,
+          message: "Invalid email or password."
+        });
       } else {
+        setError({
+          type: 4,
+          message: "Account login successfully!"
+        })
         router.push("/questions");
       }
     } catch (err) {
-      setError(err as string);
+      setError({
+        type: 1,
+        message: err as string
+      });
       console.error(err);
     }
   };
@@ -100,7 +104,11 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
 
       const response = await createNewUser(newUser);
       if (response.error) {
-        setError(response.error);
+        setError(
+          {
+            type: 1,
+            message: response.error
+          });
         return;
       }
 
@@ -115,13 +123,24 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
 
       if (result?.error) {
         console.log(result?.error);
-        setError("That email or username has already been taken.");
+        setError(
+          {
+            type: 1,
+            message: "That email or username has already been taken."
+          });
       } else {
+        setError({
+          type: 4,
+          message: "Account login successfully!"
+        })
         router.push("/questions");
       }
     } catch (err) {
       console.log(err || "Error undefined???");
-      setError(err as string);
+      setError({
+        type: 1,
+        message: err as string
+      });
     }
   };
 
@@ -140,8 +159,16 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
 
       const response = await updateUserById(newId, newUser);
       if (response.error) {
-        setError(response.error);
+        setError({
+          type: 1,
+          message: response.error
+        });
         return;
+      } else {
+        setError({
+          type: 4,
+          message: "Profile updated successfully!"
+        });
       }
 
       if (sessionUser) {
@@ -153,7 +180,11 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
       update({ user: sessionUser });
       router.push("/profile");
     } catch (err) {
-      setError(err as string);
+      setError(
+        {
+          type: 1,
+          message: err as string
+        });
       console.error(err);
     }
   };
@@ -162,8 +193,16 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
     e.preventDefault();
     const response = await deleteUserById(Number(newId));
     if (response.error) {
-      setError(response.error);
+      setError({
+        type: 1,
+        message: response.error
+      });
       return;
+    } else {
+      setError({
+        type: 4,
+        message: "Profile deleted successfully!"
+      });
     }
     signOut({callbackUrl: "/"});
   };
@@ -176,8 +215,9 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
     const newOAuth = sessionUser.oauth?.filter((oauth) => oauth !== provider);
     if (newOAuth == undefined || newOAuth.length == 0) {
       if (newPassword == undefined || newPassword.trim().length == 0) {
-        setError(
-          "You must enter a password in order to unlink your last linked account."
+        setError({
+          type: 1,
+          message: "You must enter a password in order to unlink your last linked account."}
         );
         return;
       }
@@ -203,7 +243,7 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
               type="text"
               label="Username"
               value={newUsername!}
-              onChange={setUsername}
+              onChange={setNewUsername}
             />
           </div>
         )}
@@ -219,7 +259,7 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
               sessionUser.oauth !== undefined &&
               sessionUser.oauth.length !== 0
             }
-            onChange={setEmail}
+            onChange={setNewEmail}
           />
         </div>
         <div>
@@ -228,7 +268,7 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
             label="Password"
             value={newPassword!}
             autoComplete="current-password"
-            onChange={setPassword}
+            onChange={setNewPassword}
           />
         </div>
         {formType === UserManagement.Profile &&
@@ -282,7 +322,7 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
         setOpen={setOpenAuthInfo}
         open={openAuthInfo}
         provider={authProvider}
-        setErrorMessage={setError}
+        setError={setError}
         newUser={updateAuthUser}
         />
     </>

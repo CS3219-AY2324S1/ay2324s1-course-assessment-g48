@@ -1,70 +1,62 @@
 import { Server } from "socket.io";
-import { DifficultyQueue } from "./queue/difficultyQueue";
 import { PORT } from "./utils/config";
+import express from "express";
+import http from "http";
+import PingRouter from "./routes/pingRouter";
+import SocketController from "./controllers/socketController";
+import cors from "cors";
 
-const io = new Server(PORT, {});
 
-enum Difficulty {
-  EASY = "Easy",
-  MEDIUM = "Medium",
-  HARD = "Hard",
-}
-
-io.on("connect", (socket) => {
-
-  //   socket.disconnect();
-  socket.on("matching", (data, callback) => {
-    console.log(`\n`);
-    console.log(`Socket data: ${JSON.stringify(data)}`);
-    const difficulty = data.difficulty;
-    let queue: DifficultyQueue;
-    switch (difficulty) {
-      case Difficulty.EASY:
-        queue = easyQueue;
-        break;
-      case Difficulty.MEDIUM:
-        queue = mediumQueue;
-        break;
-      case Difficulty.HARD:
-        queue = hardQueue;
-        break;
-      default:
-        throw new Error();
-    }
-
-    for (const queue of queues) {
-      queue.checkAndReleaseOtherConnection(data.user.id);
-    }
-
-    // console.log(`SocketMap: [${JSON.stringify(queue.socketMap)}]`)
-    socket.on("disconnect", () => {
-      console.log(`\n`);
-      console.log(`Disconnected from ${data.user}`);
-      console.log(`Initiating cleanup for ${data.user}`);
-      easyQueue.cleanup(data.user);
-      mediumQueue.cleanup(data.user);
-      hardQueue.cleanup(data.user);
-      socket.removeAllListeners();
-      console.log(`Cleanup for ${data.user} complete`);
-    });
-    queue.attemptToMatchUsers(data.user.id, socket);
-    setTimeout(() => {
-      if (!socket.disconnected) {
-        console.log(`\n`);
-        socket.emit("timeout");
-        console.log(
-          `Disconnecting from ${data.user} due to 30s passing and no match was found.`
-        );
-        socket.disconnect();
-      }
-    }, 30000);
-  });
-
-  socket.emit("connected");
-  //   console.log("Received connection from frontend");
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+  path: "/queue",
+  cors: {
+    origin: "*",
+  },
 });
 
-const easyQueue = new DifficultyQueue(Difficulty.EASY);
-const mediumQueue = new DifficultyQueue(Difficulty.MEDIUM);
-const hardQueue = new DifficultyQueue(Difficulty.HARD);
-const queues: DifficultyQueue[] = [easyQueue, mediumQueue, hardQueue];
+const allowedOrigins = [
+  "http://localhost",
+  "http://localhost:80",
+  "http://localhost:3000",
+  "http://localhost:8000",
+  "http://localhost:8080",
+  "http://localhost:8001",
+  "http://localhost:8022",
+  "http://localhost:8500",
+  "http://localhost:9000",
+  "http://peerprep-user:8001",
+  "http://peerprep-question:8000",
+  "http://peerprep-frontend:3000",
+];
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+    exposedHeaders: ["set-cookie"],
+  })
+);
+
+server.listen(PORT, () => {
+  console.log("Queue Server is listening on port 8002");
+});
+
+app.use("/ping", new PingRouter().routes());
+
+const socketController = new SocketController(io);
+
+io.on("connect", (socket) => socketController.handleConnection(socket));
+
+process.on("SIGINT", () => {
+  console.log("Process is terminating. Closing all WebSockets.");
+
+  socketController.onExit().then(() => process.exit(0));
+});

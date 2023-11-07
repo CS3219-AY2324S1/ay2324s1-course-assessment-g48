@@ -7,7 +7,7 @@ export const codeExecutionRouter = Router();
 codeExecutionRouter.post("/compile", async (req: Request, res: Response, next: NextFunction) => {
     const { submissions } = req.body;
 
-    // console.log("req.body: ", req.body)
+    console.log("req.body: ", req.body)
     const options = {
         method: "POST",
         url: process.env.RAPID_API_SUBMISSIONS_URL + "/batch",

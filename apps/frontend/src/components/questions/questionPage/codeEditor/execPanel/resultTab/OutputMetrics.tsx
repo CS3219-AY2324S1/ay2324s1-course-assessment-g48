@@ -8,7 +8,7 @@ const OutputMetrics: React.FC<OutputMetricsProps> = ({ outputDetails }) => {
   const [time, setTime] = useState("");
   const [memory, setMemory] = useState("");
 
-  console.log("outputDetails in OutputMetrics", outputDetails);
+  // console.log("outputDetails in OutputMetrics", outputDetails);
 
   useEffect(() => {
     formatSpace(outputDetails);

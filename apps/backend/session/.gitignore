@@ -1,3 +1,10 @@
 /node_modules
 .env
-.env.*
+
+# npm
+package-lock.json
+
+# yarn
+yarn-error.log
+.env.prod
+.env.dev

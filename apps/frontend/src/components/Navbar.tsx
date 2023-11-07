@@ -15,7 +15,6 @@ const navigation = [
   { name: "Question", href: "/questions", current: false },
   { name: "Matching", href: "/matching", current: false },
   { name: "History", href: "/history/user", current: false },
-  { name: "Chat", href: "/chat", current: false },
 ];
 
 // function classNames(...classes: string[]) {
@@ -129,9 +128,9 @@ const Navbar: React.FC<NavbarProps> = ({
                       <span className="sr-only">View notifications</span>
                       <div className="flex">
                         <BellIcon className="h-6 w-6" aria-hidden="true" />
-                        {numberOfUnreadNotifications() > 0 ? (
+                        {numberOfUnreadNotifications > 0 ? (
                           <span className="notification-counter">
-                            {numberOfUnreadNotifications()}
+                            {numberOfUnreadNotifications}
                           </span>
                         ) : (
                           <></>
@@ -140,7 +139,7 @@ const Navbar: React.FC<NavbarProps> = ({
                     </button>
 
                     {/* Profile dropdown */}
-                    <Menu as="div" className="relative ml-3">
+                    <Menu as="div" className="relative ml-3 navbar-menu">
                       <div>
                         <Menu.Button className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                           <span className="absolute -inset-1.5" />
@@ -175,19 +174,6 @@ const Navbar: React.FC<NavbarProps> = ({
                                 )}
                               >
                                 Your Profile
-                              </a>
-                            )}
-                          </Menu.Item>
-                          <Menu.Item>
-                            {({ active }) => (
-                              <a
-                                onClick={() => router.push("/settings")}
-                                className={classNames(
-                                  active ? "bg-gray-100" : "",
-                                  "block px-4 py-2 text-sm text-gray-700"
-                                )}
-                              >
-                                Settings
                               </a>
                             )}
                           </Menu.Item>

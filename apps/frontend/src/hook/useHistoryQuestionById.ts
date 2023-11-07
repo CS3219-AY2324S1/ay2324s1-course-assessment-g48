@@ -1,33 +1,41 @@
 import { CompletedQuestion } from "@/database/history/entities/history.entity";
 import { getHistoryById } from "@/database/history/historyService";
-import { Role } from "@/utils/enums/Role";
+import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
+import { useError } from "./ErrorContext";
 
-function useHistoryQuestionById(hid: string, qid: string, userRole?: Role) {
+function useHistoryQuestionById(hid: string, qid: string, accessToken?: string | null, refreshToken?: string | null) {
+  const {data: session} = useSession();
   const [isLoading, setIsLoading] = useState(false);
   const [historyQuestion, setHistoryQuestion] = useState<CompletedQuestion | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const { setError, clearError } = useError();
 
   useEffect(() => {
     async function fetchData() {
       if (hid) {
         setIsLoading(true);
-        setError(null);
-        if (userRole === Role.Unknown) return;
+        clearError()
+        if (accessToken === null || refreshToken === null) return;
         try {
-          const data = await getHistoryById(hid, qid, userRole);
+          const data = await getHistoryById(hid, qid, accessToken, refreshToken);
+          if (data.accessToken) {
+            session!.user!.accessToken = data.accessToken;
+            console.log("Refresh accessToken", session);
+        }
           setHistoryQuestion(data);
           setIsLoading(false);
         } catch (error) {
-          setError(`Error fetching question:, ${error}`);
+          setError({
+            type: 1,
+            message: `Error fetching question:, ${error}`});
           setIsLoading(false);
         }
       }
     }
     fetchData();
-  }, [hid, userRole]);
+  }, [hid, qid, accessToken, refreshToken, session]);
 
-  return { historyQuestion, isLoading, error };
+  return { historyQuestion, isLoading };
 }
 
 export default useHistoryQuestionById;

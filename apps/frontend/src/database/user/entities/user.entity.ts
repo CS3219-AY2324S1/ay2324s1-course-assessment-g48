@@ -8,6 +8,8 @@ export type User = {
   password?: string;
   oauth?: OAuthType[];
   role?: Role;
+  accessToken?: string;
+  refreshToken?: string;
 };
 
 export type CreateUserDto = Omit<User, "id">;

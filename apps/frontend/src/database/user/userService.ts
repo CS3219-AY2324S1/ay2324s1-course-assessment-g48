@@ -48,7 +48,7 @@ export const login = async ({
     return undefined;
   }
   try {
-    const res = await axios.get(BASE_URL + "/login", {
+    const res = await axios.post(BASE_URL + "/login", {
       data:  { email, password, oauth } ,
     });
     return res.data;

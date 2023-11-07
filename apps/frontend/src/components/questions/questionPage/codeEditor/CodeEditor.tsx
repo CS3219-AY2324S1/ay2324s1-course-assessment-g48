@@ -3,64 +3,91 @@ import EditorNav from "./EditorNav";
 import Split from "react-split";
 import { useTheme } from "@/hook/ThemeContext";
 import { Editor } from "@monaco-editor/react";
-import { Question } from "@/database/question/entities/question.entity";
+import {
+  CodeType,
+  Question,
+} from "@/database/question/entities/question.entity";
 import axios from "axios";
 import { languageOptions } from "@/utils/constants/LanguageOptions";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import useKeyPress from "@/hook/useKeyPress";
-import monaco from "monaco-editor";
+import { Language } from "@/utils/class/Language";
 import { Status } from "@/utils/enums/Status";
 import ExecPanel from "./execPanel/ExecPanel";
 import EditorFooter from "./execPanel/editorFooter/EditorFooter";
 
 type CodeEditorProps = {
-  onChangeCode?: (
-    value?: string,
-    event?: monaco.editor.IModelContentChangedEvent
-  ) => void;
-  currCode?: string;
+  onChangeCode?: (value: string | undefined) => void;
+  currSessionCode?: CodeType[];
   question: Question;
+  initialLanguage?: Language;
+  hasSession?: boolean;
 };
 
 const CodeEditor: React.FC<CodeEditorProps> = ({
   onChangeCode,
-  currCode,
+  currSessionCode,
   question,
+  initialLanguage,
+  hasSession,
 }) => {
-  // TODO: make it dynamic
   const { isDarkMode } = useTheme();
-  const [code, changeCode] = useState(currCode ?? "");
-  const [outputDetails, setOutputDetails] = useState(new Array());
-  const [processing, setProcessing] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState(
-    languageOptions[0].label // "javascript language"
+  // current language selected by user
+  const [selectedLanguage, setSelectedLanguage] = useState<Language>(
+    initialLanguage ?? languageOptions[31]
+  ); // "javascript language"
+  // default code for the language selected by user
+  const starterCode = useMemo(
+    () =>
+      question.starterCode.find(
+        (starterCode) => starterCode.languageId === selectedLanguage.id
+      )?.code ?? "",
+    [question.starterCode, selectedLanguage.id]
   );
-  // const [starterCode, setStarterCode] = useState<string | undefined>(""); // might be redundant
-  const [selectedTestCaseChip, setSelectedTestCaseChip] = useState<number>(1);
+  // current code on editor shown to user, formatted as string
+  const [displayCode, setDisplayCode] = useState<string>(
+    currSessionCode?.[0]?.code ?? starterCode
+  );
+  // keep track of the current codes for each language using an array of CodeType
+  const [codeArray, setCodeArray] = useState<CodeType[]>(
+    currSessionCode ?? [{ languageId: selectedLanguage.id, code: displayCode }]
+  );
+  const [outputDetails, setOutputDetails] = useState(
+    new Array(question.testcases.length)
+  );
+  const [processing, setProcessing] = useState(false);
 
   const enterPress = useKeyPress("Enter");
   const ctrlPress = useKeyPress("Control");
   const memoizedOutputDetails = useMemo(() => outputDetails, [outputDetails]);
-  const starterCode = `/**
-  * Definition for singly-linked list.
-  * class ListNode {
-  *     int val;
-  *     ListNode next;
-  *     ListNode(int x) {
-  *         val = x;
-  *         next = null;
-  *     }
-  * }
-  */
-  class Solution {
-    hasCycle(head) { 
-      // Write your solution here
-    }
-  };`;
   if (!onChangeCode) {
     onChangeCode = (value?: string) => {
-      changeCode(value ?? "");
+      // find the corresponding language code in codeArray
+      const index = codeArray.findIndex(
+        (langCode) => langCode.languageId === selectedLanguage.id
+      );
+      if (index === -1) {
+        // take from starter code if not found, add to existing codeArray
+        console.log(`selectedLanguage ${selectedLanguage.id} not found.`);
+        setCodeArray([
+          ...codeArray,
+          {
+            languageId: selectedLanguage.id,
+            code:
+              question.starterCode.find(
+                (starterCode) => starterCode.languageId === selectedLanguage.id
+              )?.code ?? "",
+          },
+        ]);
+      } else {
+        // else just update code in codeArray
+        const updatedCodeArray = [...codeArray];
+        updatedCodeArray[index].code = value ?? "";
+        setCodeArray(updatedCodeArray);
+      }
+      // change display code as per normal
+      setDisplayCode(value ?? "");
     };
     // console.log("Using solo code editor. Current code:", code);
   }
@@ -73,21 +100,24 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
     });
   };
 
-  const handleTestCaseChipClick = (testNum: number) => {
-    setSelectedTestCaseChip(testNum);
-  };
-
-  const findLanguage = (language: string) => {
-    return languageOptions.find((lang) => lang.label === language);
-  };
+  // const findLanguage = (language: Language) => {
+  //   return languageOptions.find((lang) => lang.label === language.label);
+  // };
 
   const handleCompile = async () => {
     setProcessing(true);
-    const language = findLanguage(selectedLanguage);
+    // const language = findLanguage(selectedLanguage);
+    const language = selectedLanguage;
 
+    question.testcases.forEach((testCase) => {
+      console.log("testcase", testCase);
+      console.log("testcase base64 Input is:", btoa(testCase.input));
+      console.log("testcase ExpectedOutput is:", btoa(testCase.output));
+      console.log("testcase base64 ExpectedOutput is:", btoa(testCase.output));
+    });
     const submissions = question.testcases.map((testCase) => ({
-      language_id: language?.id,
-      source_code: btoa(code),
+      language_id: language.id,
+      source_code: btoa(displayCode),
       stdin: btoa(testCase.input),
       expected_output: btoa(testCase.output),
     }));
@@ -121,10 +151,15 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   };
 
   const checkStatus = (token: string, index: number) => {
+    // eslint-disable-next-line no-async-promise-executor
     return new Promise<boolean>(async (resolve, reject) => {
       try {
         const response = await axios.get(`/api/codeExecution/status/${token}`);
         const statusId = response.data.status_id;
+        console.log(
+          "response.data outputdetails in checkStatus",
+          response.data
+        );
         // Processed - we have a result
         if (statusId === Status.InQueue || statusId === Status.Processing) {
           // in queue(id: 1) or still processing (id: 2)
@@ -133,10 +168,6 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
           }, 2000);
         } else if (statusId === Status.Accepted) {
           setProcessing(false);
-          console.log(
-            "response.data outputdetails in checkStatus",
-            response.data
-          );
           handleOutputDetails(response.data, index);
           resolve(true);
         } else {
@@ -177,8 +208,23 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
 
   // session live editor
   useEffect(() => {
-    changeCode(currCode ?? code);
-  }, [currCode, code]);
+    setCodeArray(currSessionCode ?? codeArray);
+    setDisplayCode(currSessionCode?.[0]?.code ?? displayCode);
+  }, [currSessionCode, codeArray, displayCode]);
+
+  useEffect(() => {
+    // switch display code when language is changed
+    // if user has not typed anything, switch to starter code
+    // if starter code is undefined, switch to empty string
+    setDisplayCode(
+      codeArray.find((langCode) => langCode.languageId == selectedLanguage.id)
+        ?.code ??
+        question.starterCode.find(
+          (starterCode) => starterCode.languageId === selectedLanguage.id
+        )?.code ??
+        ""
+    );
+  }, [codeArray, displayCode, selectedLanguage, question.starterCode]);
 
   // ctrl + enter => run
   useEffect(() => {
@@ -190,53 +236,53 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   }, [ctrlPress, enterPress]);
 
   return (
-    <>
-      <div className="flex flex-col h-full dark:bg-gray-800 relative overflow-hidden">
-        <EditorNav
-          selectedLanguage={selectedLanguage}
-          setSelectedLanguage={setSelectedLanguage}
-        />
-        <Split
-          className="flex-col split h-[calc(100vh-120px)]"
-          direction="vertical"
-          sizes={[60, 40]}
-        >
-          <div className="w-full overflow-auto dark:bg-neutral-800">
-            <Editor
-              height="100%"
-              onChange={onChangeCode}
-              defaultValue={starterCode}
-              value={code}
-              theme={isDarkMode ? "vs-dark" : "light"}
-              defaultLanguage="javascript"
-            />
-          </div>
-          <ExecPanel
-            question={question}
-            outputDetails={memoizedOutputDetails}
-            selectedTestCaseChip={selectedTestCaseChip}
-            handleTestCaseChipClick={handleTestCaseChipClick}
+    <div className="flex flex-col h-full dark:bg-gray-800 relative overflow-hidden">
+      <EditorNav
+        selectedLanguage={selectedLanguage}
+        setSelectedLanguage={setSelectedLanguage}
+        hasSession={hasSession!}
+      />
+      <Split
+        className="flex-col split h-[calc(100vh-120px)] w-full"
+        direction="vertical"
+        sizes={[60, 40]}
+      >
+        <div className="w-full overflow-auto dark:bg-neutral-800">
+          <Editor
+            onChange={onChangeCode}
+            defaultValue={starterCode}
+            value={displayCode}
+            theme={isDarkMode ? "vs-dark" : "light"}
+            language={selectedLanguage.value.toLowerCase()}
           />
-        </Split>
-        <ToastContainer
-          position="top-right"
-          autoClose={2000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-        />
-        <EditorFooter
-          userCode={code}
-          processing={processing}
-          handleCompile={handleCompile}
-          question={question}
-        />
-      </div>
-    </>
+        </div>
+        {/* Exec Panel can still be abstracted to QuestionWorkspace -> future enhancement */}
+        <ExecPanel question={question} outputDetails={memoizedOutputDetails} />
+      </Split>
+      {/* Gotta check whether toastcontainer actually works... */}
+      <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
+      <EditorFooter
+        userCode={displayCode}
+        processing={processing}
+        handleCompile={handleCompile}
+        question={question}
+      />
+    </div>
   );
 };
+
+CodeEditor.defaultProps = {
+  hasSession: false,
+};
+
 export default CodeEditor;

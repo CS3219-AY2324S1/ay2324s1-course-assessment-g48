@@ -6,15 +6,15 @@ import TestCaseChip from "../testCaseTab/TestCaseChip";
 type ResultContentProps = {
   outputDetails: any;
   question: Question;
-  selectedTestCaseChip: number;
-  handleTestCaseChipClick: (testNum: number) => void;
+  selectedTestCase: number;
+  handleSelectedTestCase: (testNum: number) => void;
 };
 
 const ResultCaseContent: React.FC<ResultContentProps> = ({
   outputDetails,
   question,
-  selectedTestCaseChip,
-  handleTestCaseChipClick,
+  selectedTestCase,
+  handleSelectedTestCase,
 }) => {
   return (
     <>
@@ -23,22 +23,20 @@ const ResultCaseContent: React.FC<ResultContentProps> = ({
           <TestCaseChip
             key={index + 1}
             testNum={index + 1}
-            onClick={() => handleTestCaseChipClick(index + 1)}
+            onClick={() => handleSelectedTestCase(index + 1)}
             outputDetails={outputDetails[index]}
           />
         ))}
       </div>
-      {selectedTestCaseChip !== null && (
+      {selectedTestCase !== null && (
         <div className="text-sm font-medium leading-5 dark:text-white">
           <div className="font-semibold mb-12">
             <OutputWindow
-              outputDetails={outputDetails[selectedTestCaseChip - 1]}
-              expected_output={
-                question.testcases[selectedTestCaseChip - 1].output
-              }
+              outputDetails={outputDetails[selectedTestCase - 1]}
+              expected_output={question.testcases[selectedTestCase - 1].output}
             />
             <OutputMetrics
-              outputDetails={outputDetails[selectedTestCaseChip - 1]}
+              outputDetails={outputDetails[selectedTestCase - 1]}
             />
           </div>
         </div>

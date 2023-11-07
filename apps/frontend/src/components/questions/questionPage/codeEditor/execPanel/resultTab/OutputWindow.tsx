@@ -33,7 +33,9 @@ const OutputWindow: React.FC<OutputWindowProps> = ({
       // wrong answer (id: 4)
       return (
         <pre className="px-2 py-1 font-normal text-xs text-red-500">
-          {`Wrong Answer`}
+          {atob(outputDetails.stdout) !== null
+            ? `${atob(outputDetails.stdout)}`
+            : "wrong answer"}
         </pre>
       );
     } else if (statusId === Status.TimeLimitExceeded) {

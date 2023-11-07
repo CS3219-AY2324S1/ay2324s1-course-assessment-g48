@@ -1,0 +1,6 @@
+# Exclude build artifacts and temporary files
+**/node_modules
+**/.npm
+**/.yarn
+**/.git
+**/.idea

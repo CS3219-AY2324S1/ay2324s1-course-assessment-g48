@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: peerprep-history
+spec:
+  selector:
+    app: peerprep-history
+  ports:
+  - protocol: TCP
+    port: 8003
+    targetPort: 8003
+  type: ClusterIP
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: history-deployment
+spec:
+  selector:
+    matchLabels:
+      app: peerprep-history
+  template:
+    metadata:
+      labels:
+        app: peerprep-history
+    spec:
+      containers:
+      - name: peerprep-history
+        image: deployment87/dply87:peerprep-history-v1.0.0
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 8003
+        livenessProbe:
+          httpGet:
+            path: /ping
+            port: 8003
+        readinessProbe:
+          httpGet:
+            path: /ping
+            port: 8003
+

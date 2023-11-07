@@ -35,7 +35,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <div>
       <Head>
-        <title>PeerPrep</title>
+        <title>LeetPal</title>
         <meta
           name="viewport"
           content="width=device-width, initial-scale=1.0"

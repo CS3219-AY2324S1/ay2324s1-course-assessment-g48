@@ -1,79 +1,91 @@
 import { Socket } from "socket.io";
-import { produceMessage } from "../producer";
 import amqp from "amqplib";
 import axios from "axios";
 import { SESSION_URL } from "../utils/config";
+import Producer from "../message-queue/Producer";
+import Consumer from "../message-queue/Consumer";
 
 export class DifficultyQueue {
   waitList: number[];
   socketMap: Map<number, Socket>;
   nameSpace: string;
+  producer: Producer;
+  consumer: Consumer;
+
   constructor(nameSpace: string) {
     this.nameSpace = nameSpace;
     this.waitList = [];
     this.socketMap = new Map();
-    this.connectToAmqp();
-  }
-
-  public async generateSession(user1: number, user2: number) {
-    const sessionID = await axios
-      .post(SESSION_URL, { users: [user1, user2] })
-      .then((response) => {
-        return response.data.sessionId;
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-    return sessionID;
-  }
-
-  public isThereWaitingUser() {
-    console.log("Checking if there is a waiting user");
-    return this.waitList.length > 0;
+    this.producer = new Producer(nameSpace);
+    this.consumer = new Consumer(nameSpace, (uid) => this.matchUsers(uid));
   }
 
   public attemptToMatchUsers(uid: number, socket: Socket) {
-    // console.log("Matching users");
-    // console.log(`UID: ${uid}`);
-
     this.socketMap.set(uid, socket);
-    produceMessage(this.nameSpace, String(uid));
+    this.producer.produceMessage(String(uid));
   }
 
   public checkAndReleaseOtherConnection(uid: number) {
     if (this.socketMap.get(uid)) {
-      //   console.log("This user already exists");
       this.socketMap.get(uid)?.emit("other-connection");
       this.cleanup(uid);
-    } else {
-      //   console.log(this.waitList)
-      //   console.log(`${this.nameSpace} queue does not have ${uid}`)
     }
   }
 
   public async matchUsers(uid: number) {
+    console.log(this.waitList);
     if (this.isThereWaitingUser()) {
       const firstUserUid = this.waitList.shift();
-      if (firstUserUid === undefined) {
-        throw new Error("For some reason there is no UID in the waiting list");
-      }
-      //   console.log(`First user uid: ${firstUserUid}, second user uid: ${uid}`)
-      const firstUserSocket = this.socketMap.get(firstUserUid);
       const secondUserSocket = this.socketMap.get(uid);
-      const randomSessionId = await this.generateSession(firstUserUid, uid);
-      if (!firstUserSocket || !secondUserSocket) {
-        throw new Error(
-          "There was no socket associated with the firstUserSocket"
+
+      if (firstUserUid === undefined) {
+        secondUserSocket?.emit(
+          "error",
+          "For some reason there is no UID in the waiting list"
         );
+        this.cleanup(uid);
+        return;
+      }
+
+      const firstUserSocket = this.socketMap.get(firstUserUid);
+
+      const randomSessionId = await this.generateSession(firstUserUid, uid);
+
+      if (!randomSessionId) {
+        secondUserSocket?.emit(
+          "error",
+          "Something went wrong when creating your session."
+        );
+        firstUserSocket?.emit(
+          "error",
+          "Something went wrong when creating your session."
+        );
+        this.cleanup(uid);
+        this.cleanup(firstUserUid);
+        return;
+      }
+
+      if (!firstUserSocket || !secondUserSocket) {
+        secondUserSocket &&
+          secondUserSocket?.emit(
+            "error",
+            "There was no socket associated with the first user"
+          );
+        firstUserSocket &&
+          firstUserSocket?.emit(
+            "error",
+            "There was no socket associated with the second user"
+          );
+        this.cleanup(uid);
+        this.cleanup(firstUserUid);
+        return;
       }
       firstUserSocket.emit("matched", {
         peerId: uid,
-        err: "",
         sessionId: randomSessionId,
       });
       secondUserSocket.emit("matched", {
         peerId: firstUserUid,
-        err: "",
         sessionId: randomSessionId,
       });
       console.log(
@@ -90,38 +102,36 @@ export class DifficultyQueue {
     }
   }
 
-  public removeFromSocketMap(...uids: number[]) {
+  public cleanup(uid: number) {
+    this.removeFromSocketMap(uid);
+    this.waitList = this.waitList.filter((num) => num != uid);
+  }
+
+  public onExit() {
+    this.producer.close();
+  }
+
+  private async generateSession(user1: number, user2: number) {
+    const sessionID = await axios
+      .post(SESSION_URL, { users: [user1, user2] })
+      .then((response) => {
+        return response.data.sessionId;
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    return sessionID;
+  }
+
+  private removeFromSocketMap(...uids: number[]) {
     for (const uid of uids) {
       this.socketMap.get(uid)?.removeAllListeners();
       this.socketMap.delete(uid);
     }
   }
 
-  public cleanup(uid: number) {
-    this.removeFromSocketMap(uid);
-    this.waitList = this.waitList.filter((num) => num != uid);
-  }
-
-  private async connectToAmqp() {
-    console.log("Connecting to RabbitMQ", process.env.RABBITMQ_URL);
-    const connection = await amqp.connect(process.env.RABBITMQ_URL || "amqp://localhost:5672");
-    const channel = await connection.createChannel();
-
-    await channel.assertQueue(this.nameSpace, { durable: true });
-
-    channel.consume(this.nameSpace, async (message) => {
-      if (message != null) {
-        // console.log(
-        //   `Consumer: Received message from ${
-        //     this.nameSpace
-        //   }: ${message.content.toString()}`
-        // );
-        //   console.log(difficultyQueue);
-        await this.matchUsers(Number(message.content.toString()));
-        channel.ack(message);
-        //   console.log(JSON.stringify(difficultyQueue));
-        //   console.log(difficultyQueue.socketMap);
-      }
-    });
+  private isThereWaitingUser() {
+    console.log("Checking if there is a waiting user");
+    return this.waitList.length > 0;
   }
 }
