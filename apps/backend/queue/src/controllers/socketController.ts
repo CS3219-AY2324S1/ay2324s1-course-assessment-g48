@@ -21,6 +21,7 @@ class SocketController {
       this.queueService.checkAndReleaseOtherConnections(uid);
 
       socket.on("disconnect", () => this.handleDisconnect(socket, uid));
+      socket.emit("matching");
       this.queueService.attemptToMatchUsers(nameSpace, data.user.id, socket);
       setTimeout(() => {
         if (!socket.disconnected) {
