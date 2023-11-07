@@ -21,6 +21,7 @@ class QueueService {
   }
 
   public attemptToMatchUsers(nameSpace: string, uid: number, socket: Socket) {
+    console.log(nameSpace);
     const queue = this.getQueue(nameSpace);
     queue?.attemptToMatchUsers(uid, socket);
   }

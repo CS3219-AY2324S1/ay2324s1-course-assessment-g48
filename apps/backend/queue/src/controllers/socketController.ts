@@ -14,9 +14,9 @@ class SocketController {
     socket.emit("connected", () => console.log("Socket connected"));
     socket.on("matching", (data) => {
       console.log(`\n`);
-      console.log(`Socket data: ${JSON.stringify(data)}`);
-      socket.emit("matching");
-      const nameSpace = data.difficulty;
+      //   console.log(`Socket data: ${JSON.stringify(data)}`);
+      socket.emit(`Attempting to match user: ${data.uid} `);
+      const nameSpace = data.nameSpace;
       const uid = data.user.id;
       this.queueService.checkAndReleaseOtherConnections(uid);
 

@@ -38,7 +38,8 @@ export class Queue {
     if (this.isThereWaitingUser()) {
       const firstUserUid = this.waitList.shift();
       const secondUserSocket = this.socketMap.get(uid);
-
+      console.log(`First user: ${firstUserUid}`);
+      console.log(`Second user: ${uid}`);
       if (firstUserUid === undefined) {
         secondUserSocket?.emit(
           "error",
@@ -51,8 +52,10 @@ export class Queue {
       const firstUserSocket = this.socketMap.get(firstUserUid);
 
       const randomSessionId = await this.generateSession(firstUserUid, uid);
+      console.log(`This is the random sessionId: ${randomSessionId}`);
 
       if (!randomSessionId) {
+        console.log("Something went wrong when creating your session.");
         secondUserSocket?.emit(
           "error",
           "Something went wrong when creating your session."
@@ -116,11 +119,13 @@ export class Queue {
     const sessionID = await axios
       .post(SESSION_URL, { users: [user1, user2] })
       .then((response) => {
+        console.log(response);
         return response.data.sessionId;
       })
       .catch((error) => {
         console.error(error);
       });
+    console.log(sessionID);
     return sessionID;
   }
 

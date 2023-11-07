@@ -27,10 +27,9 @@ const server = http.createServer(app);
 const io = new Server(server, {
   path: "/queue",
   cors: {
-    origin: allowedOrigins
+    origin: allowedOrigins,
   },
 });
-
 
 app.use(
   cors({
@@ -55,6 +54,8 @@ app.use("/ping", new PingRouter().routes());
 const socketController = new SocketController(io);
 
 io.on("connect", (socket) => socketController.handleConnection(socket));
+
+io.disconnectSockets(true);
 
 process.on("SIGINT", () => {
   console.log("Process is terminating. Closing all WebSockets.");
