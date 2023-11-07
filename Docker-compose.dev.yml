@@ -5,7 +5,7 @@ services:
     container_name: peerprep-rabbitmq
     image: rabbitmq:3-management
     environment:
-      - ./apps/backend/queue/.env
+      - ./apps/backend/queue/.env.dev
     ports:
       - '5672:5672'
       - '15672:15672'
@@ -20,7 +20,7 @@ services:
     container_name: peerprep-postgres
     restart: always
     env_file:
-      - ./apps/backend/user/.env
+      - ./apps/backend/user/.env.dev
     ports:
       - "5432:5432"                         # Map postgres container's port 5432 to host's port 5432
     networks:

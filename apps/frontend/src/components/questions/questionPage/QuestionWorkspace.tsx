@@ -1,24 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Split from "react-split";
-import DescriptionPanel from "./descriptionPanel/DescriptionPanel";
 import { Question } from "@/database/question/entities/question.entity";
 import CodeEditor from "./codeEditor/CodeEditor";
 import ChatWidget from "@/components/chat/ChatWidget";
+import DescriptionPanel from "./codeEditor/descriptionPanel/DescriptionPanel";
 import SessionCodeEditor from "./codeEditor/SessionCodeEditor";
 import { Language } from "@/utils/class/Language";
-import { useRouter } from "next/router";
-import { AutomergeUrl } from "@automerge/automerge-repo";
-import { useDocument } from "@automerge/automerge-repo-react-hooks";
 import { Doc } from "@automerge/automerge/next";
-import axios from "axios";
-import { Message } from "@/hook/useChatroom";
 
 type QuestionWorkspaceProps = {
   question: Question;
-  doc?: Doc;
+  doc?: Doc<any>;
   initialLanguage?: Language;
-  increment: (value: string) => void;
-  chatroomId: string;
+  increment?: (value: string) => void;
+  chatroomId?: string;
 };
 
 const QuestionWorkspace: React.FC<QuestionWorkspaceProps> = ({
@@ -41,7 +36,7 @@ const QuestionWorkspace: React.FC<QuestionWorkspaceProps> = ({
                 code: doc?.text ?? "",
               },
             ]}
-            onChangeCode={increment!}
+            onChangeCode={increment}
             initialLanguage={initialLanguage}
           />
         ) : (

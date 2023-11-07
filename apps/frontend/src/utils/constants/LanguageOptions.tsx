@@ -102,7 +102,6 @@ export const languageOptions: Language[] = [
     label: "Java (OpenJDK 13.0.1)",
     value: "java",
   },
-
   {
     id: 78,
     label: "Kotlin (1.3.70)",
@@ -113,7 +112,6 @@ export const languageOptions: Language[] = [
     label: "Lua (5.3.5)",
     value: "lua",
   },
-
   {
     id: 79,
     label: "Objective-C (Clang 7.0.1)",

@@ -24,18 +24,37 @@ questionRouter.get("/", jwtGuard, async (req: AuthenticatedRequest, res: Respons
 questionRouter.get("/leetcode", async (req: Request, res: Response) => {
   // Remember to login before invoking this function as you need permisssions (command: firebase login)
   // SERVER IS DOWN
-  axios
-    .get(
+  try {
+    const response = await axios.get(
       "https://asia-southeast1-cs3219-398215.cloudfunctions.net/leetcodeQuestionsFetch"
-    )
-    .then((response) => {
-      // Handle the data from the serverless function
-      console.log(response.data);
-    })
-    .catch((error) => {
-      // Handle errors
-      console.error("Error fetching data:", error);
-    });
+    );
+    const transformData = response.data.map((question: any) => ({
+      id: question.question_id.toString(),
+      title: question.question_title,
+      description: "Please go to https://leetcode.com/problems/" + question.question__title_slug + "/description/ for the description.",
+      categories: [],
+      complexity: (() => {
+        switch (question.difficulty) {
+          case 1:
+            return "Easy";
+          case 2:
+            return "Medium";
+          case 3:
+            return "Hard";
+          default:
+            return "";
+        }
+      })(),
+      constraints: "",
+      followUp: "",
+      starterCode: "",
+      testcases: [{ input: "", output: "" }],
+      dateCreated: new Date()
+    }));
+    res.status(200).json(transformData);
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
 });
 
 // Fetches individual question by id
