@@ -2,31 +2,12 @@ import { useRouter } from "next/router";
 import useQuestionById from "@/hook/useQuestionById";
 import { useEffect, useState } from "react";
 import useSessionUser from "@/hook/useSessionUser";
-import {
-  AutoDraft,
-  BasicStorage,
-  ChatProvider,
-  Conversation,
-  ConversationId,
-  ConversationRole,
-  IStorage,
-  Participant,
-  Presence,
-  TypingUsersList,
-  UpdateState,
-  User,
-  UserStatus,
-} from "@chatscope/use-chat";
-import { nanoid } from "nanoid";
-import { ExampleChatService } from "@/utils/chat/ExampleChatService";
 import { languageOptions } from "@/utils/constants/LanguageOptions";
 import QuestionWorkspace from "@/components/questions/questionPage/QuestionWorkspace";
 import { AutomergeUrl } from "@automerge/automerge-repo";
 import { useDocument } from "@automerge/automerge-repo-react-hooks";
 import { Doc } from "@automerge/automerge/next";
 import axios from "axios";
-import { getUserById } from "@/database/user/userService";
-import { Message, useChatroom } from "@/hook/useChatroom";
 
 export default function Session() {
   const router = useRouter();
@@ -41,7 +22,6 @@ export default function Session() {
     sessionUser.refreshToken
   );
   const languageSelected = languageOptions[0]; // hardcoded, to be changed
-  //   const [chatUsers, setChatUsers] = useState<number[]>([]);
   const [docUrl, setDocUrl] = useState<AutomergeUrl>();
   const [doc, changeDoc] = useDocument<Doc>(docUrl);
   const [chatroomId, setChatroomId] = useState<string>("");
