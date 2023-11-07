@@ -2,7 +2,6 @@ import { PropsWithChildren, useEffect, useState } from "react";
 import Navbar from "./Navbar";
 import { useSession } from "next-auth/react";
 import LoadingModal from "./LoadingModal";
-import SlideOver from "./SlideOver";
 import { useError } from "@/hook/ErrorContext";
 import Alert from "./Alert";
 
@@ -10,7 +9,6 @@ const Layout = ({ children }: PropsWithChildren) => {
   const { data: session, status } = useSession();
   const { error, clearError } = useError();
   const [openAlert, setOpenAlert] = useState(false);
-  const [openSlideOver, setOpenSlideOver] = useState(false);
 
   const isLoading = status === "loading";
 
@@ -37,8 +35,6 @@ const Layout = ({ children }: PropsWithChildren) => {
           <div className="fixed w-screen divide-y top-0 z-20">
             <Navbar
               session={session}
-              setSlideOver={setOpenSlideOver}
-              openSlideOver={openSlideOver}
             />
             <div className="border-t divider-neutral-500 over"></div>
           </div>
@@ -47,7 +43,6 @@ const Layout = ({ children }: PropsWithChildren) => {
           </div>
         </>
       </div>
-      <SlideOver open={openSlideOver} setOpen={setOpenSlideOver} />
       {error && (
         <Alert error={ error} hidden={openAlert} setHide={setOpenAlert} />
       )}

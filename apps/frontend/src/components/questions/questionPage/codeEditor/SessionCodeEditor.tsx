@@ -21,7 +21,7 @@ const SessionCodeEditor: React.FC<SessionCodeEditorProps> = ({
     <CodeEditor
       question={question}
       currSessionCode={currSessionCode}
-      onChangeCode={onChangeCode}
+      onChangeCode={(value: string | undefined) => onChangeCode?.(value ?? '')}
       initialLanguage={initialLanguage}
       hasSession={true}
     />

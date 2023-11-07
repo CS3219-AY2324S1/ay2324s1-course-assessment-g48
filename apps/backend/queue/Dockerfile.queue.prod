@@ -15,7 +15,7 @@ COPY . .
 COPY .env.prod .env
 
 # Informs Docker that the container listens on the specified network ports at runtime.
-EXPOSE 8002
+EXPOSE 8080
 
 # Provides defaults for an executing container
 CMD ["yarn", "start"]

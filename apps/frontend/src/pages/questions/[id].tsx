@@ -18,8 +18,7 @@ const QuestionPage: React.FC<QuestionPageProps> = () => {
     setAccessToken(sessionUser.accessToken);
     setRefreshToken(sessionUser.refreshToken);
   }, [sessionUser]);
-
-  if (question === null) {
+  if (!sessionUser.role) {
     router.push("/404");
   }
   

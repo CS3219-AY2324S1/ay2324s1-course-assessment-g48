@@ -2,7 +2,8 @@
 import dotEnv from "dotenv";
 dotEnv.config();
 
-export const PORT = Number(process.env.PORT);
+export const SESSION_PORT = Number(process.env.SESSION_PORT);
+export const WS_PORT = Number(process.env.WS_PORT);
 export const CHAT_URL = String(process.env.CHAT_URL);
 export const MONGODB_URI =
   process.env.NODE_ENV === "test"

@@ -74,10 +74,11 @@ export class SessionManagerService {
       const code = session?.code;
       const handle = this.createDoc(code);
       // console.info("handle", handle);
-
-      // blocks until doc is ready
+  
+      // Wait for the document to be ready before accessing it
       await handle.whenReady();
       this.sessionToUserMap.set(sessionId, {
+        
         users: session.users,
         docId: handle.url,
         chatroomId: session.chatroomId,

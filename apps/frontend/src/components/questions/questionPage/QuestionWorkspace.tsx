@@ -12,8 +12,8 @@ type QuestionWorkspaceProps = {
   question: Question;
   doc?: Doc<any>;
   initialLanguage?: Language;
-  increment: (value: string) => void;
-  chatroomId: string;
+  increment?: (value: string) => void;
+  chatroomId?: string;
 };
 
 const QuestionWorkspace: React.FC<QuestionWorkspaceProps> = ({
