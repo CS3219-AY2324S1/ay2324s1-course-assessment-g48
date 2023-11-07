@@ -40,7 +40,11 @@ spec:
           httpGet:
             path: /ping
             port: 8002
+          initialDelaySeconds: 10
+          timeoutSeconds: 10
         readinessProbe:
           httpGet:
             path: /ping
             port: 8002
+          initialDelaySeconds: 10
+          timeoutSeconds: 10

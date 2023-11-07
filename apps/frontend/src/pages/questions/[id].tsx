@@ -16,7 +16,7 @@ const QuestionPage: React.FC<QuestionPageProps> = () => {
   useEffect(() => {
     setUserRole(sessionUser.role);
   }, [sessionUser]);
-  if (!question) {
+  if (!sessionUser.role) {
     router.push("/404");
   }
 

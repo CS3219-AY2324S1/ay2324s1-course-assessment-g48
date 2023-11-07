@@ -75,14 +75,17 @@ export class SessionManagerService {
       const code = session?.code;
       const handle = this.createDoc(code);
       // console.info("handle", handle);
-
-      // blocks until doc is ready
-      await handle.whenReady();
-      this.sessionToUserMap.set(sessionId, {
-        users: session.users,
-        docId: handle.url,
-        chatroomId: session.chatroomId,
-      });
+  
+      // Wait for the document to be ready before accessing it
+      if (handle.isReady()) {
+        this.sessionToUserMap.set(sessionId, {
+          users: session.users,
+          docId: handle.url,
+          chatroomId: session.chatroomId,
+        });
+      } else {
+        console.error("Document is not ready.");
+      }
     }
     return this.sessionToUserMap.get(sessionId);
   }

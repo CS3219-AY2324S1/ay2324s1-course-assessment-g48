@@ -39,11 +39,11 @@ spec:
           httpGet:
             path: /ping
             port: 8000
-          initialDelaySeconds: 5
-          timeoutSeconds: 2
+          initialDelaySeconds: 10
+          timeoutSeconds: 10
         readinessProbe:
-          httpGet:
+          httpGet:  
             path: /ping
             port: 8000
-          initialDelaySeconds: 5
-          timeoutSeconds: 2
+          initialDelaySeconds: 10
+          timeoutSeconds: 10
