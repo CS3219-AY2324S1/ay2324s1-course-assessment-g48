@@ -31,7 +31,6 @@ class QueueService {
   }
 
   public checkAndReleaseOtherConnections(uid: number) {
-    console.log(`These are the queues: ${Object.values(this.queues)}`);
     for (const queue of this.queues.values()) {
       queue.checkAndReleaseOtherConnection(uid);
     }
