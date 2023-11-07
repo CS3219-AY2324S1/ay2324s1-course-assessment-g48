@@ -1,23 +1,24 @@
 import { Socket } from "socket.io";
-import amqp from "amqplib";
 import axios from "axios";
 import { SESSION_URL } from "../utils/config";
 import Producer from "../message-queue/Producer";
 import Consumer from "../message-queue/Consumer";
 
-export class DifficultyQueue {
+export class Queue {
   waitList: number[];
   socketMap: Map<number, Socket>;
   nameSpace: string;
   producer: Producer;
   consumer: Consumer;
+  next?: Queue;
 
-  constructor(nameSpace: string) {
+  constructor(nameSpace: string, nextQueue?: Queue) {
     this.nameSpace = nameSpace;
     this.waitList = [];
     this.socketMap = new Map();
     this.producer = new Producer(nameSpace);
     this.consumer = new Consumer(nameSpace, (uid) => this.matchUsers(uid));
+    this.next = nextQueue;
   }
 
   public attemptToMatchUsers(uid: number, socket: Socket) {
