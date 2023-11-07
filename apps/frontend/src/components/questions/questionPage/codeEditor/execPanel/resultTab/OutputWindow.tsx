@@ -3,9 +3,13 @@ import OutputBox from "./OutputBox";
 
 type OutputWindowProps = {
   outputDetails: any;
+  expected_output: string;
 };
 
-const OutputWindow: React.FC<OutputWindowProps> = ({ outputDetails }) => {
+const OutputWindow: React.FC<OutputWindowProps> = ({
+  outputDetails,
+  expected_output,
+}) => {
   const getOutput = () => {
     let statusId = outputDetails?.status?.id;
 
@@ -29,7 +33,9 @@ const OutputWindow: React.FC<OutputWindowProps> = ({ outputDetails }) => {
       // wrong answer (id: 4)
       return (
         <pre className="px-2 py-1 font-normal text-xs text-red-500">
-          {`Wrong Answer`}
+          {atob(outputDetails.stdout) !== null
+            ? `${atob(outputDetails.stdout)}`
+            : "wrong answer"}
         </pre>
       );
     } else if (statusId === Status.TimeLimitExceeded) {
@@ -53,23 +59,15 @@ const OutputWindow: React.FC<OutputWindowProps> = ({ outputDetails }) => {
   console.log();
   return (
     <>
-      <p className="text-lg font-medium mt-4 dark:text-white">OutputWindow:</p>
-      <div className="space-y-4">
+      <div className="mb-8">
         <OutputBox
           title="Your input:"
           content={
-            outputDetails?.input !== undefined ? outputDetails.input : ""
+            outputDetails?.stdin !== undefined ? atob(outputDetails.stdin) : ""
           }
         />
         <OutputBox title="Your Output:" content={getOutput()} />
-        <OutputBox
-          title="Expected Output:"
-          content={
-            outputDetails?.expected_output !== undefined
-              ? `${atob(outputDetails.expected_output)}`
-              : ""
-          }
-        />
+        <OutputBox title="Expected Output:" content={expected_output} />
       </div>
     </>
   );

@@ -1,8 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import EditorNav from "./EditorNav";
-import ExecPanel from "../execPanel/ExecPanel";
 import Split from "react-split";
-import EditorFooter from "./editorFooter/EditorFooter";
 import { useTheme } from "@/hook/ThemeContext";
 import { Editor } from "@monaco-editor/react";
 import {
@@ -16,11 +14,11 @@ import "react-toastify/dist/ReactToastify.css";
 import useKeyPress from "@/hook/useKeyPress";
 import { Language } from "@/utils/class/Language";
 import { Status } from "@/utils/enums/Status";
+import ExecPanel from "./execPanel/ExecPanel";
+import EditorFooter from "./execPanel/editorFooter/EditorFooter";
 
 type CodeEditorProps = {
-  onChangeCode?: (
-    value: string,
-  ) => void;
+  onChangeCode?: (value: string | undefined) => void;
   currSessionCode?: CodeType[];
   question: Question;
   initialLanguage?: Language;
@@ -34,16 +32,19 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   initialLanguage,
   hasSession,
 }) => {
-
   const { isDarkMode } = useTheme();
   // current language selected by user
-  const [selectedLanguage, setSelectedLanguage] = useState(
-    initialLanguage ?? languageOptions[0]
+  const [selectedLanguage, setSelectedLanguage] = useState<Language>(
+    initialLanguage ?? languageOptions[31]
   ); // "javascript language"
   // default code for the language selected by user
-  const starterCode = useMemo(() => question.starterCode.find(
-      (starterCode) => starterCode.languageId === selectedLanguage.id
-    )?.code ?? "", [question.starterCode, selectedLanguage.id]);
+  const starterCode = useMemo(
+    () =>
+      question.starterCode.find(
+        (starterCode) => starterCode.languageId === selectedLanguage.id
+      )?.code ?? "",
+    [question.starterCode, selectedLanguage.id]
+  );
   // current code on editor shown to user, formatted as string
   const [displayCode, setDisplayCode] = useState<string>(
     currSessionCode?.[0]?.code ?? starterCode
@@ -52,14 +53,14 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   const [codeArray, setCodeArray] = useState<CodeType[]>(
     currSessionCode ?? [{ languageId: selectedLanguage.id, code: displayCode }]
   );
-  const [customInput, setCustomInput] = useState(""); // todo: for console
-  const [outputDetails, setOutputDetails] = useState("");
+  const [outputDetails, setOutputDetails] = useState(
+    new Array(question.testcases.length)
+  );
   const [processing, setProcessing] = useState(false);
 
   const enterPress = useKeyPress("Enter");
   const ctrlPress = useKeyPress("Control");
   const memoizedOutputDetails = useMemo(() => outputDetails, [outputDetails]);
-
   if (!onChangeCode) {
     onChangeCode = (value?: string) => {
       // find the corresponding language code in codeArray
@@ -91,51 +92,95 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
     // console.log("Using solo code editor. Current code:", code);
   }
 
+  const handleOutputDetails = (response: any, index: number) => {
+    setOutputDetails((prev) => {
+      const newOutputDetails = [...prev];
+      newOutputDetails[index] = response;
+      return newOutputDetails;
+    });
+  };
+
+  // const findLanguage = (language: Language) => {
+  //   return languageOptions.find((lang) => lang.label === language.label);
+  // };
+
   const handleCompile = async () => {
     setProcessing(true);
-    console.log("tc output", question.testcases[0].output);
-    const formData = {
-      language_id: selectedLanguage?.id,
-      // encode source code in base64
+    // const language = findLanguage(selectedLanguage);
+    const language = selectedLanguage;
+
+    question.testcases.forEach((testCase) => {
+      console.log("testcase", testCase);
+      console.log("testcase base64 Input is:", btoa(testCase.input));
+      console.log("testcase ExpectedOutput is:", btoa(testCase.output));
+      console.log("testcase base64 ExpectedOutput is:", btoa(testCase.output));
+    });
+    const submissions = question.testcases.map((testCase) => ({
+      language_id: language.id,
       source_code: btoa(displayCode),
-      stdin: btoa(customInput),
-      expected_output: btoa(question.testcases[0].output), // hardcoded tc
+      stdin: btoa(testCase.input),
+      expected_output: btoa(testCase.output),
+    }));
+    const body = {
+      submissions: submissions,
     };
+
     try {
-      const response = await axios.post("/api/codeExecution/compile", formData);
-      const token = response.data.token;
-      checkStatus(token);
+      const response = await axios.post("/api/codeExecution/compile", body);
+      const tokens = response.data; // tokens becomes an array instead of objects
+      let allSuccess = true;
+      for (let i = 0; i < tokens.length; i++) {
+        const success: boolean | undefined = await checkStatus(
+          tokens[i].token,
+          i
+        );
+        console.log("success", success);
+        if (!success) {
+          allSuccess = false;
+        }
+      }
+      if (allSuccess) {
+        showSuccessToast(`Compiled Successfully!`);
+      } else {
+        showErrorToast("A testcase failed, please try again!");
+      }
     } catch (err) {
       setProcessing(false);
       console.log(err);
     }
   };
 
-  const checkStatus = async (token: string) => {
-    try {
-      const response = await axios.get(`/api/codeExecution/status/${token}`);
-      const statusId = response.data.status_id;
-      // Processed - we have a result
-      if (statusId === Status.InQueue || statusId === Status.Processing) {
-        // in queue(id: 1) or still processing (id: 2)
-        setTimeout(() => {
-          checkStatus(token);
-        }, 2000);
-        return;
-      } else {
-        setProcessing(false);
+  const checkStatus = (token: string, index: number) => {
+    // eslint-disable-next-line no-async-promise-executor
+    return new Promise<boolean>(async (resolve, reject) => {
+      try {
+        const response = await axios.get(`/api/codeExecution/status/${token}`);
+        const statusId = response.data.status_id;
         console.log(
-          "response.data output details in checkStatus",
+          "response.data outputdetails in checkStatus",
           response.data
         );
-        setOutputDetails(response.data);
-        showSuccessToast(`Compiled Successfully!`);
-        return;
+        // Processed - we have a result
+        if (statusId === Status.InQueue || statusId === Status.Processing) {
+          // in queue(id: 1) or still processing (id: 2)
+          setTimeout(() => {
+            resolve(checkStatus(token, index));
+          }, 2000);
+        } else if (statusId === Status.Accepted) {
+          setProcessing(false);
+          handleOutputDetails(response.data, index);
+          resolve(true);
+        } else {
+          setProcessing(false);
+          handleOutputDetails(response.data, index);
+          resolve(false);
+        }
+      } catch (err) {
+        setProcessing(false);
+        showErrorToast((err as Error).message);
+        resolve(false);
       }
-    } catch (err) {
-      setProcessing(false);
-      showErrorToast((err as Error).message);
-    }
+    });
   };
 
   const showSuccessToast = (msg: string) => {

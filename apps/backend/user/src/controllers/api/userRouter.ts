@@ -9,7 +9,13 @@ import {
 } from "../../database/user";
 import { OAuth, Role } from "@prisma/client";
 import logger from "../../utils/logger";
-import { getJwtErrorMessage, signJwtAccessToken, signJwtRefreshToken, verifyJwtAccessToken, verifyJwtRefreshToken } from "../../utils/jwt";
+import {
+  getJwtErrorMessage,
+  signJwtAccessToken,
+  signJwtRefreshToken,
+  verifyJwtAccessToken,
+  verifyJwtRefreshToken,
+} from "../../utils/jwt";
 
 export const userRouter = Router();
 
@@ -156,11 +162,15 @@ userRouter.post(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const body = req.body;
-      console.log("body:", body);
+      console.log("req body at login:", body);
       // TODO: hash the password
-      const { email, password, oauth } = body;
-      console.log("Login Body: ", body);
+      const {
+        data: { email, password, oauth },
+      } = body;
+      console.log("oauth:", oauth);
+      console.log("Login Body.data: ", body.data);
       const cleanedEmail = email?.trim();
+      console.log("cleanedEmail: ", cleanedEmail);
       console.log("Uncleaned Password: ", password);
       const cleanedPassword = password?.trim();
       console.log("Cleaned Password: ", cleanedPassword);
@@ -178,6 +188,7 @@ userRouter.post(
       }
 
       if (oauth !== undefined) {
+        console.log("oauth is defined");
         if (Object.values(OAuthType).includes(oauth as OAuthType)) {
           // update user's oauth if user does not have specific auth
           if (!user.oauth.includes(oauth)) {
@@ -189,10 +200,15 @@ userRouter.post(
 
           // return user
           const { password: userPassword, ...userExcludePassword } = user;
+          console.log("userExcludePassword: ", userExcludePassword);
           const accessToken = signJwtAccessToken(userExcludePassword);
+          console.log("accessToken: ", accessToken);
           const refreshToken = signJwtRefreshToken(userExcludePassword);
+          console.log("refreshToken: ", refreshToken);
 
-          res.status(200).json({ ...userExcludePassword, accessToken, refreshToken });
+          res
+            .status(200)
+            .json({ ...userExcludePassword, accessToken, refreshToken });
           return;
         }
 
@@ -218,7 +234,9 @@ userRouter.post(
       const { password: userPassword, ...userExcludePassword } = user;
       const accessToken = signJwtAccessToken(userExcludePassword);
       const refreshToken = signJwtRefreshToken(userExcludePassword);
-      res.status(200).json({ ...userExcludePassword, accessToken, refreshToken });
+      res
+        .status(200)
+        .json({ ...userExcludePassword, accessToken, refreshToken });
     } catch (error) {
       console.error("UserRouter login error:", error);
       next(error);
@@ -240,20 +258,24 @@ userRouter.get("/verifyJwt", async (req: Request, res: Response) => {
 userRouter.get("/refreshJwt", async (req: Request, res: Response) => {
   const refreshToken = req.headers["refresh-token"] as string;
   if (!refreshToken) {
-    res.status(401).json({ error: "Invalid access token. No refresh token provided." });
+    res
+      .status(401)
+      .json({ error: "Invalid access token. No refresh token provided." });
     return;
   }
 
   const userPayload = verifyJwtRefreshToken(refreshToken);
-  if (!userPayload) {    
+  if (!userPayload) {
     res.status(401).json({ error: "Invalid refresh token." });
     return;
   }
-  
+
   delete userPayload.iat;
   delete userPayload.exp;
   const newAccessToken = signJwtAccessToken(userPayload);
-  res.status(200).json({ ...userPayload, accessToken: newAccessToken, refreshToken });
+  res
+    .status(200)
+    .json({ ...userPayload, accessToken: newAccessToken, refreshToken });
 });
 
 // Update a user
