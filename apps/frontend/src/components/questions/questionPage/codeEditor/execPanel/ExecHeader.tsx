@@ -1,12 +1,12 @@
 type ExecHeaderProps = {
   handleResultClick: () => void;
-  handleTestCaseClick: () => void;
+  handleTestCasesClick: () => void;
   isResultActive: boolean;
 };
 
 const ExecHeader: React.FC<ExecHeaderProps> = ({
   handleResultClick,
-  handleTestCaseClick,
+  handleTestCasesClick: handleTestCaseClick,
   isResultActive,
 }) => {
   return (

@@ -5,14 +5,14 @@ import { useState } from "react";
 
 type TestCaseContentProps = {
   question: Question;
+  outputDetails: any;
   // handleTestCaseChipClick: (resultNum: number) => void;
   // selectedTestCaseChip: number | null;
 };
 
 const TestCaseContent: React.FC<TestCaseContentProps> = ({
   question,
-  // handleTestCaseChipClick,
-  // selectedTestCaseChip,
+  outputDetails,
 }) => {
   const [selectedTestCaseChip, setSelectedTestCaseChip] = useState<
     number | null
@@ -24,11 +24,13 @@ const TestCaseContent: React.FC<TestCaseContentProps> = ({
   return (
     <>
       <div className="flex">
+        {/* should outputdetails be removed?... */}
         {question.testcases.map((testcase, index) => (
           <TestCaseChip
             key={index + 1}
             testNum={index + 1}
             onClick={() => handleTestCaseChipClick(index + 1)}
+            outputDetails={outputDetails}
           />
         ))}
       </div>

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import Split from "react-split";
-import DescriptionPanel from "./descriptionPanel/DescriptionPanel";
 import { Question } from "@/database/question/entities/question.entity";
 import CodeEditor from "./codeEditor/CodeEditor";
 import ChatWidget from "@/components/chat/ChatWidget";
+import DescriptionPanel from "./codeEditor/descriptionPanel/DescriptionPanel";
 import SessionCodeEditor from "./codeEditor/SessionCodeEditor";
 import { Language } from "@/utils/class/Language";
 import { useRouter } from "next/router";
@@ -15,7 +15,7 @@ import { Message } from "@/hook/useChatroom";
 
 type QuestionWorkspaceProps = {
   question: Question;
-  doc?: Doc;
+  doc?: Doc<any>;
   initialLanguage?: Language;
   increment: (value: string) => void;
   chatroomId: string;
