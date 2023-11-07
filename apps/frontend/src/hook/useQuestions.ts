@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { getAllQuestions } from "../database/question/questionService";
 import { Question } from "@/database/question/entities/question.entity";
-import { Role } from "@/utils/enums/Role";
+import { useSession } from "next-auth/react";
 
-function useQuestions(userRole?: Role) {
+function useQuestions(accessToken?: string | null, refreshToken?: string | null) {
+  const { data: session } = useSession();
   const [isLoading, setIsLoading] = useState(false);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [trigger, setTrigger] = useState(false);
@@ -15,8 +16,12 @@ function useQuestions(userRole?: Role) {
 
   useEffect(() => {
     setIsLoading(true);
-    if (userRole === Role.Unknown) return;
-    getAllQuestions(userRole).then((questions) => {
+    if (accessToken === null || refreshToken === null) return;
+    getAllQuestions(accessToken, refreshToken).then((questions) => {
+      if (questions.accessToken) {
+        session!.user!.accessToken = questions.accessToken;
+        console.log("Refresh accessToken", session);
+      }
       setQuestions(questions);
       setTotalQuestions(questions.length);
       setTimeout(() => {
@@ -26,8 +31,7 @@ function useQuestions(userRole?: Role) {
     }).catch((error) => {
     console.error(error);
     });
-  }, [trigger, userRole]);
-
+  }, [accessToken, refreshToken, session, trigger]);
   return { questions, totalQuestions, setQuestions, isLoading, handleTrigger };
 }
 

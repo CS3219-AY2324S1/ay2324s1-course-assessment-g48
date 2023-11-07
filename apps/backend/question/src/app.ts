@@ -13,7 +13,7 @@ const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:8000',
   'http://localhost:8001',
-  'http://localhost:8002',
+  'http://localhost:8080',
   'http://localhost:8080',
   'http://leetpal.com',
   'http://leetpal.com:3000',
@@ -28,17 +28,17 @@ const allowedOrigins = [
 
 app.use(
   cors({
-      origin: function (origin, callback) {
-          if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-              callback(null, true)
-          } else {
-              callback(new Error('Not allowed by CORS'))
-          }
-      },
-      credentials: true,
-      exposedHeaders: ['set-cookie'],
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+    exposedHeaders: ["set-cookie"],
   })
-)
+);
 
 logger.info("Question service connecting to", config.MONGODB_URI);
 
@@ -48,7 +48,10 @@ mongoose
     logger.info("Question service connected to MongoDB");
   })
   .catch((error) => {
-    logger.error("Question service error connection to MongoDB:", error.message);
+    logger.error(
+      "Question service error connection to MongoDB:",
+      error.message
+    );
   });
 
 app.use(express.json());

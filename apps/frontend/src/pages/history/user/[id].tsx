@@ -9,20 +9,22 @@ function HistoryPage() {
   const { sessionUser } = useSessionUser();
     const router = useRouter();
     const uid = Number(router.query.id);
-  const [userRole, setUserRole] = useState(sessionUser.role);
-  const { isLoading } = useHistories(uid, userRole);
-
-  const redirectUser = () => {
-    if (uid !== sessionUser.id) {
-      console.log("sessionUser.id: ", sessionUser.id);
-      router.push(`/history/user/${sessionUser.id}`);
-    }
-  }
+  const [accessToken, setAccessToken] = useState(sessionUser.accessToken);
+  const [refreshToken, setRefreshToken] = useState(sessionUser.refreshToken);
+  const { isLoading } = useHistories(uid, accessToken, refreshToken);
 
   useEffect(() => {
-    setUserRole(sessionUser.role);
+    setAccessToken(sessionUser.accessToken);
+    setRefreshToken(sessionUser.refreshToken);
+
+    const redirectUser = () => {
+      if (uid !== sessionUser.id) {
+        console.log("sessionUser.id: ", sessionUser.id);
+        router.push(`/history/user/${sessionUser.id}`);
+      }
+    }
     return () => redirectUser();
-  }, [sessionUser]);
+  }, [router, sessionUser, uid]);
 
   return (
     <div className="grid place-content-center dark:bg-gray-900">

@@ -1,5 +1,4 @@
 import { ChevronDoubleUpIcon } from "@heroicons/react/24/outline";
-import Run from "./Run";
 import Submit from "./Submit";
 import { Question } from "@/database/question/entities/question.entity";
 
@@ -28,12 +27,11 @@ const EditorFooter: React.FC<EditorFooterProps> = ({
         </div>
 
         <div className="flex ml-auto items-center space-x-4">
-          <Run
+          <Submit
             userCode={userCode}
             processing={processing}
             handleCompile={handleCompile}
           />
-          <Submit userCode={userCode} processing={processing} />
         </div>
       </div>
     </div>

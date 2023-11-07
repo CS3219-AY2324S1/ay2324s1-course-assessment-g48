@@ -9,7 +9,7 @@ function useSessionUser() {
     id: -1,
     username: "",
     email: "",
-    password: ""
+    password: "",
   });
   const [isLoading, setIsLoading] = useState(true);
 
@@ -36,10 +36,24 @@ function useSessionUser() {
       clearInterval(checkSession);
     };
   }, [session]);
-  return !isLoading ? { sessionUser, setSessionUser } : {sessionUser: { 
-    ...sessionUser,
-    role: Role.Unknown 
-  }, setSessionUser: setSessionUser};
+  return !isLoading
+    ? {
+        sessionUser: {
+          ...sessionUser,
+          accessToken: session?.user?.accessToken ?? undefined,
+          refreshToken: session?.user?.refreshToken ?? undefined,
+        },
+        setSessionUser,
+      }
+    : {
+        sessionUser: {
+          ...sessionUser,
+          role: Role.Unknown,
+          accessToken: null,
+          refreshToken: null,
+        },
+        setSessionUser,
+      };
 }
 
 export default useSessionUser;

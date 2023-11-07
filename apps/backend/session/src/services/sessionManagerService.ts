@@ -20,8 +20,7 @@ export class SessionManagerService {
   }
 
   public async createNewSession(user1: number, user2: number) {
-    console.log(`Creating a new session for ${user1} and ${user2}`);
-    const chatroomId = "123123" // await this.createNewChatroom([user1, user2]);
+    const chatroomId = await this.createNewChatroom([user1, user2]);
     const newSession = new SessionModel({
       users: [user1, user2],
       chatroomId,
@@ -77,15 +76,13 @@ export class SessionManagerService {
       // console.info("handle", handle);
   
       // Wait for the document to be ready before accessing it
-      if (handle.isReady()) {
-        this.sessionToUserMap.set(sessionId, {
-          users: session.users,
-          docId: handle.url,
-          chatroomId: session.chatroomId,
-        });
-      } else {
-        console.error("Document is not ready.");
-      }
+      await handle.whenReady();
+      this.sessionToUserMap.set(sessionId, {
+        
+        users: session.users,
+        docId: handle.url,
+        chatroomId: session.chatroomId,
+      });
     }
     return this.sessionToUserMap.get(sessionId);
   }

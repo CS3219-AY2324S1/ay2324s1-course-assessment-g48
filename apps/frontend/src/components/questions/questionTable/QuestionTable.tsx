@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useState, useMemo } from "react";
 import ViewQuestionModal from "./ViewQuestionModal";
 import {
   deleteQuestionById,
@@ -12,11 +12,15 @@ import { Complexity } from "@/utils/enums/Complexity";
 import useSessionUser from "@/hook/useSessionUser";
 import { Role } from "@/utils/enums/Role";
 import { useRouter } from "next/router";
-import { Question } from "@/database/question/entities/question.entity";
+import {
+  Question,
+  initialQuestion,
+} from "@/database/question/entities/question.entity";
 import QuestionPagination from "./QuestionPagination";
 import DeleteCfmModal from "./DeleteCfmModal";
 import { Category } from "@/utils/enums/Category";
 import QuestionSearchBar from "./QuestionSearchBar";
+import { useSession } from "next-auth/react";
 
 type QuestionTableProps = {
   setOpenAdd: (open: boolean) => void;
@@ -29,47 +33,19 @@ const QuestionTable: FC<QuestionTableProps> = ({
   openAdd,
   hidden,
 }) => {
-  const [questionsPerPage, setQuestionsPerPage] = useState(10);
+  const questionsPerPage = useMemo(() => 10, []);
+  const {data: session} = useSession();
   const { sessionUser } = useSessionUser();
   const [userRole, setUserRole] = useState(sessionUser.role);
-  const { questions, totalQuestions, handleTrigger } = useQuestions(userRole);
+  const [accessToken, setAccessToken] = useState(sessionUser.accessToken);
+  const [refreshToken, setRefreshToken] = useState(sessionUser.refreshToken);
+  const { questions, totalQuestions, handleTrigger } = useQuestions(sessionUser.accessToken, sessionUser.refreshToken);
   const [searchResults, setSearchResults] = useState("");
-  const [viewQuestion, setViewQuestion] = useState<Question>({
-    _id: "",
-    title: "",
-    description: "",
-    categories: [],
-    complexity: "",
-    testcases: [],
-    constraints: "",
-    followUp: "",
-    starterCode: "",
-    dateCreated: new Date(),
-  });
-  const [questionToEdit, setQuestionToEdit] = useState<Question>({
-    _id: "",
-    title: "",
-    description: "",
-    categories: [],
-    complexity: "",
-    testcases: [],
-    constraints: "",
-    followUp: "",
-    starterCode: "",
-    dateCreated: new Date(),
-  });
-  const [questionToDelete, setQuestionToDelete] = useState<Question>({
-    _id: "",
-    title: "",
-    description: "",
-    categories: [],
-    complexity: "",
-    testcases: [],
-    constraints: "",
-    followUp: "",
-    starterCode: "",
-    dateCreated: new Date(),
-  });
+  const [viewQuestion, setViewQuestion] = useState<Question>(initialQuestion);
+  const [questionToEdit, setQuestionToEdit] =
+    useState<Question>(initialQuestion);
+  const [questionToDelete, setQuestionToDelete] =
+    useState<Question>(initialQuestion);
 
   const [openEdit, setOpenEdit] = useState(false);
   const [openView, setOpenView] = useState(false);
@@ -84,26 +60,28 @@ const QuestionTable: FC<QuestionTableProps> = ({
     indexOfFirstRecord,
     indexOfLastRecord
   );
-    const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedDifficulty, setSelectedDifficulty] = useState("");
 
-    const handleCategoryChange = (
-      event: React.ChangeEvent<HTMLSelectElement>
-    ) => {
-      setSelectedCategory(event.target.value);
-      console.log(event.target.value);
-    };
+  const handleCategoryChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setSelectedCategory(event.target.value);
+    console.log(event.target.value);
+  };
 
-    const handleDifficultyChange = (
-      event: React.ChangeEvent<HTMLSelectElement>
-    ) => {
-      setSelectedDifficulty(event.target.value);
-    };
+  const handleDifficultyChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setSelectedDifficulty(event.target.value);
+  };
 
-    useEffect(() => {
-      setUserRole(sessionUser.role);
-    }, [sessionUser]);
-  
+  useEffect(() => {
+    setUserRole(sessionUser.role);
+    setAccessToken(sessionUser.accessToken);
+    setRefreshToken(sessionUser.refreshToken);
+  }, [sessionUser]);
+
   useEffect(() => {
     setFilteredQuestions(
       questions.filter(
@@ -111,7 +89,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
           (question.categories.includes(selectedCategory) ||
             selectedCategory === "") &&
           (question.complexity.includes(selectedDifficulty) ||
-            selectedDifficulty === "") && 
+            selectedDifficulty === "") &&
           question.title.toLowerCase().includes(searchResults.toLowerCase())
       )
     );
@@ -119,21 +97,28 @@ const QuestionTable: FC<QuestionTableProps> = ({
 
   const handleSaveQuestion = async (newQuestion: Question) => {
     const questionToAdd = { ...newQuestion };
-    await postNewQuestion(questionToAdd, userRole!)
-      .then(() => {
+    await postNewQuestion(accessToken!, refreshToken!, questionToAdd)
+      .then((data) => {
         handleTrigger();
-
+        if (data.accessToken) {
+          session!.user!.accessToken = data.accessToken;
+          console.log("Refresh accessToken", session);
+        }
         setOpenAdd(false);
       })
       .catch((e) => {
-        throw new String(e);
+        throw String(e);
       });
   };
 
   const handleDeleteQuestion = async (id: string) => {
-    await deleteQuestionById(id, userRole!)
-      .then(() => {
+    await deleteQuestionById(id, accessToken!, refreshToken!)
+      .then((data) => {
         handleTrigger();
+        if (data.accessToken) {
+          session!.user!.accessToken = data.accessToken;
+          console.log("Refresh accessToken", session);
+        }
         setOpenDelCfm(false);
       })
       .catch((e) => {
@@ -142,9 +127,13 @@ const QuestionTable: FC<QuestionTableProps> = ({
   };
 
   const handleEditQuestion = async (editQuestion: Question) => {
-    await updateQuestionById(editQuestion._id, editQuestion, userRole!)
-      .then(() => {
+    await updateQuestionById(editQuestion._id, accessToken!, refreshToken!, editQuestion)
+      .then((data) => {
         handleTrigger();
+        if (data.accessToken) {
+          session!.user!.accessToken = data.accessToken;
+          console.log("Refresh accessToken", session);
+        }
         setOpenEdit(false);
       })
       .catch((e) => {
@@ -197,7 +186,10 @@ const QuestionTable: FC<QuestionTableProps> = ({
             </select>
           </div>
         </div>
-        <QuestionSearchBar questions={filteredQuestions} setSearch={setSearchResults} />
+        <QuestionSearchBar
+          questions={filteredQuestions}
+          setSearch={setSearchResults}
+        />
       </div>
 
       <div className="overflow-x-auto shadow-md rounded-lg">

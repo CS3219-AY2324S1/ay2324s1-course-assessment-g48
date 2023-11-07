@@ -36,6 +36,7 @@
     "dotenv": "^16.3.1",
     "firebase-functions": "^4.4.1",
     "http": "^0.0.1-security",
+    "mongodb": "^6.2.0",
     "mongoose": "^8.0.0",
     "ws": "^8.14.2"
   },

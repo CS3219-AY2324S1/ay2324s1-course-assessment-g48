@@ -91,7 +91,7 @@ services:
       context: ./apps/backend/queue             # Build context is the path to the backend directory
       dockerfile: Dockerfile.queue.dev          # Path to the Dockerfile for the backend
     ports:
-      - "8002:8002"                             # Map backend container's port 8002 to host's port 8002
+      - "8080:8080"                             # Map backend container's port 8080 to host's port 8080
     environment:
       - ./apps/backend/queue/.env.dev
     networks:

@@ -34,9 +34,6 @@ spec:
       - name: peerprep-session
         image: deployment87/dply87:peerprep-session-v1.0.16
         resources:
-          requests:
-            memory: "64Mi"
-            cpu: "250m"
           limits:
             memory: "512Mi"
             cpu: "500m"
@@ -47,7 +44,7 @@ spec:
           httpGet:
             path: /ping
             port: 8250
-          initialDelaySeconds: 60
+          initialDelaySeconds: 180
           timeoutSeconds: 10
         livenessProbe:
           httpGet:
@@ -58,9 +55,6 @@ spec:
       - name: health-check-sidecar
         image: busybox
         resources:
-          requests:
-            memory: "64Mi"
-            cpu: "250m"
           limits:
             memory: "256Mi"
             cpu: "500m"

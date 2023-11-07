@@ -46,7 +46,7 @@ spec:
           service:
             name: peerprep-queue
             port:
-              number: 8002
+              number: 8080
       - pathType: Prefix
         path: /api/history
         backend:

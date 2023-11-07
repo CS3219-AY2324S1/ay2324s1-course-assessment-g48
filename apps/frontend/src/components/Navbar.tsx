@@ -1,11 +1,7 @@
 import { Fragment } from "react";
 import Image from "next/image";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
-import {
-  Bars3Icon,
-  BellIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
+import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { signOut } from "next-auth/react";
 import { Session } from "next-auth";
 import { useRouter } from "next/router";
@@ -13,6 +9,7 @@ import ModeToggleButton from "./ModeToggleButton";
 import Link from "next/link";
 import Stopwatch from "./Stopwatch";
 import useNotification from "@/hook/useNotfication";
+import { classNames } from "@/utils/classnames/classnames";
 
 const navigation = [
   { name: "Question", href: "/questions", current: false },
@@ -20,9 +17,9 @@ const navigation = [
   { name: "History", href: "/history/user", current: false },
 ];
 
-function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(" ");
-}
+// function classNames(...classes: string[]) {
+//   return classes.filter(Boolean).join(" ");
+// }
 
 type NavbarProps = {
   session: Session | null;
@@ -37,10 +34,10 @@ const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const router = useRouter();
   const currentPath = router.pathname;
-  const isQuestionPage = currentPath === '/questions/[id]'
-  const {numberOfUnreadNotifications} = useNotification()
+  const isQuestionPage = currentPath === "/questions/[id]";
+  const { numberOfUnreadNotifications } = useNotification();
   function handleSignOutClick() {
-    signOut({callbackUrl: '/'});
+    signOut({ callbackUrl: "/" });
   }
 
   return (
@@ -131,9 +128,9 @@ const Navbar: React.FC<NavbarProps> = ({
                       <span className="sr-only">View notifications</span>
                       <div className="flex">
                         <BellIcon className="h-6 w-6" aria-hidden="true" />
-                        {numberOfUnreadNotifications() > 0 ? (
+                        {numberOfUnreadNotifications > 0 ? (
                           <span className="notification-counter">
-                            {numberOfUnreadNotifications()}
+                            {numberOfUnreadNotifications}
                           </span>
                         ) : (
                           <></>

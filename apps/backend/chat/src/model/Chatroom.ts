@@ -2,7 +2,6 @@ import mongoose, { Document, Schema } from "mongoose";
 import { messageSchema, Message } from "./Message";
 
 interface Chatroom extends Document {
-  id: string;
   users: number[];
   messages: Message[];
 }

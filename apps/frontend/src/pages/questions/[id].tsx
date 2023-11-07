@@ -10,22 +10,20 @@ const QuestionPage: React.FC<QuestionPageProps> = () => {
   const router = useRouter();
   const qid = router.query.id;
   const { sessionUser } = useSessionUser();
-  const [userRole, setUserRole] = useState(sessionUser.role);
-  const { question } = useQuestionById(qid as string, userRole);
+  const [accessToken, setAccessToken] = useState(sessionUser.accessToken);
+  const [refreshToken, setRefreshToken] = useState(sessionUser.refreshToken);
+  const { question } = useQuestionById(qid as string, accessToken, refreshToken);
 
   useEffect(() => {
-    setUserRole(sessionUser.role);
+    setAccessToken(sessionUser.accessToken);
+    setRefreshToken(sessionUser.refreshToken);
   }, [sessionUser]);
   if (!sessionUser.role) {
     router.push("/404");
   }
-
-  console.log("live question: ", question);
-
-  return (
-    <div className="flex h-[calc(100vh-60px)]">
-      {question && <QuestionWorkspace question={question} />}
-    </div>
-  );
-};
+  
+  return <div className='flex'>
+    {question && <QuestionWorkspace question={question} />}
+  </div>
+}
 export default QuestionPage;

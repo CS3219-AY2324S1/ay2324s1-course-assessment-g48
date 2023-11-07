@@ -1,7 +1,6 @@
 import { getUserById } from "@/database/user/userService";
 import { matchingSocket } from "@/utils/socket/socket";
 import React, { FormEventHandler, useEffect, useState } from "react";
-import { Language } from "@/utils/enums/Language";
 import { Complexity } from "@/utils/enums/Complexity";
 import { MatchedState } from "@/utils/enums/MatchingState";
 import Countdown from "@/components/Countdown";
@@ -12,6 +11,8 @@ import { useRouter } from "next/router";
 import { useError } from "@/hook/ErrorContext";
 import { Role } from "@/utils/enums/Role";
 import LoadingModal from "@/components/LoadingModal";
+import { languageOptions } from "@/utils/constants/LanguageOptions";
+import useNotification from "@/hook/useNotfication";
 type matchingProps = {};
 
 const MatchingPage: React.FC<matchingProps> = () => {
@@ -19,18 +20,18 @@ const MatchingPage: React.FC<matchingProps> = () => {
   const [isMatching, setIsMatching] = useState<number>(
     isRunning ? MatchedState.MATCHING : MatchedState.NOT_MATCHING
   );
-  const [difficulty, setDifficulty] = useState<string>(Complexity.Easy);
+  const [difficulty, setDifficulty] = useState<Complexity>(Complexity.Easy);
   const { sessionUser } = useSessionUser();
   const [userRole, setUserRole] = useState(sessionUser.role);
   const [disableBtnCancel, setDisableBtnCancel] = useState(true);
   const {  setError, clearError } = useError();
   const [peer, setPeer] = useState<User | null>(null);
+  const { addNotification } = useNotification();
   const router = useRouter();
 
   const handleMatchConnection: FormEventHandler = (e) => {
     e.preventDefault();
     console.log(difficulty);
-    
     if (isMatching == MatchedState.MATCHING) {
       setToNotMatchingState();
       return;
@@ -48,6 +49,7 @@ const MatchingPage: React.FC<matchingProps> = () => {
   const setToMatchingState = () => {
     // Set the state of the page to looking for match.
     clearError();
+    setDisableBtnCancel(true);
     matchingSocket.connect();
     matchingSocket.on("connected", () => {
       console. log("connected with backend")
@@ -94,6 +96,7 @@ const MatchingPage: React.FC<matchingProps> = () => {
         console.log(err);
       });
     setIsMatching(MatchedState.MATCHED);
+    addNotification("Match Successfully", "You have been matched with a peer!")
     setError({
       type: 4,
       message: "Matched with a peer!"});
@@ -155,8 +158,8 @@ const MatchingPage: React.FC<matchingProps> = () => {
                 name="language"
                 className="block w-full rounded-md border-0 px-3.5 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 dark:bg-gray-200 dark:text-gray-800"
               >
-                {Object.values(Language).map((languageOption) => (
-                  <option key={languageOption}>{languageOption}</option>
+                {languageOptions.map((languageOption, index) => (
+                  <option key={index}>{languageOption.label}</option>
                 ))}
               </select>
             </div>
@@ -175,7 +178,7 @@ const MatchingPage: React.FC<matchingProps> = () => {
                 className="block w-full rounded-md border-0 px-3.5 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 dark:bg-gray-200 dark:text-gray-800"
                 value={difficulty}
                 onChange={(e) => {
-                  setDifficulty(e.target.value);
+                  setDifficulty(e.target.value as Complexity);
                   clearError();
                 }}
               >
@@ -226,50 +229,5 @@ const MatchingPage: React.FC<matchingProps> = () => {
     </>
   );
 
-  // return (
-  //   <div className="grid place-content-center text-white">
-  //     {/* <input onChange={(e) => setDifficulty(e.target.value)}></input> */}
-  //     <div className="mt-6 space-y-6">
-  //       {Object.values(Difficulty).map((complexityOption) => (
-  //         <div className="flex items-center gap-x-3" key={complexityOption}>
-  //           <input
-  //             id={`complexity${complexityOption}`}
-  //             name="complexity"
-  //             value={complexityOption}
-  //             type="radio"
-  //             className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
-  //             onChange={() => {
-  //               setDifficulty(complexityOption);
-  //               setErr("");
-  //             }}
-  //             disabled={isMatching !== MatchedState.NOT_MATCHING}
-  //           />
-  //           <label
-  //             htmlFor={`complexity${complexityOption}`}
-  //             className="block text-sm font-medium leading-6 text-white"
-  //           >
-  //             {complexityOption}
-  //           </label>
-  //         </div>
-  //       ))}
-  //     </div>
-  //     <button className="bg-orange-700" onClick={handleMatchConnection}>
-  //       {isMatching === MatchedState.NOT_MATCHING
-  //         ? "Match"
-  //         : isMatching === MatchedState.MATCHING
-  //         ? "Matching"
-  //         : "Matched"}
-  //     </button>
-  //     {/* <button
-  //       onClick={() => {
-  //         socket?.emit("matching", { difficulty: "hard" });
-  //       }}
-  //     >
-  //       Match
-  //     </button> */}
-  //     <button onClick={setToNotMatchingState}>Cancel</button>
-  //     {err != "" ? <div>{err}</div> : <></>}
-  //   </div>
-  // );
 };
 export default MatchingPage;

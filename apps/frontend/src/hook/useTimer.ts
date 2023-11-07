@@ -18,7 +18,7 @@ function useTimer() {
     const interval = setInterval(() => {
       setCountDown(initialCountDown);
       initialCountDown -= 1000;
-      if (initialCountDown < 1 ) {
+      if (initialCountDown < 1) {
         setIsRunning(false);
         clearInterval(interval);
       }
@@ -40,7 +40,7 @@ function useTimer() {
 
   const toggleTimer = (deadline: number) => {
     setIsRunning(true);
-    setCountDownDate(deadline+10);
+    setCountDownDate(deadline + 10);
     localStorage.setItem("isRunning", "true");
     localStorage.setItem("countDownDate", deadline.toString());
   };
