@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type OutputMetricsProps = {
   outputDetails: any;
@@ -10,13 +10,17 @@ const OutputMetrics: React.FC<OutputMetricsProps> = ({ outputDetails }) => {
 
   console.log("outputDetails in OutputMetrics", outputDetails);
 
+  useEffect(() => {
+    formatSpace(outputDetails);
+    formatRuntime(outputDetails);
+  }, [outputDetails]);
+
   function formatRuntime(outputDetails: any) {
     if (
       outputDetails !== "" &&
       outputDetails !== undefined &&
       outputDetails !== null
     ) {
-      console.log("outputDetails", outputDetails);
       if (outputDetails.time < 1) {
         setTime(Number(outputDetails.time) * 1000 + " ms");
       } else {
@@ -33,7 +37,6 @@ const OutputMetrics: React.FC<OutputMetricsProps> = ({ outputDetails }) => {
       outputDetails !== undefined &&
       outputDetails !== null
     ) {
-      console.log("outputDetails space", outputDetails);
       if (outputDetails.memory < 1000) {
         setMemory(Number(outputDetails.memory) + " KB");
       } else {
@@ -44,8 +47,6 @@ const OutputMetrics: React.FC<OutputMetricsProps> = ({ outputDetails }) => {
     return outputDetails;
   }
 
-  formatSpace(outputDetails);
-  formatRuntime(outputDetails);
   return (
     <>
       <div className="w-5/6 cursor-text rounded-lg border px-3 py-[10px] bg-slate-100 dark:bg-neutral-700 border-transparent dark:text-white mt-2 transition-all">

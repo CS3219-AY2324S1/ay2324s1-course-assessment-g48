@@ -31,7 +31,6 @@ const EditorNav: React.FC<EditorNavProps> = ({
         <button className="languageBtn ml-2" onClick={toggleDropdown}>
           <div className="flex items-center px-1">
             <div className="text-xs text-label-2 dark:text-white">
-              {/* Todo: change to label */}
               {selectedLanguage}
             </div>
           </div>

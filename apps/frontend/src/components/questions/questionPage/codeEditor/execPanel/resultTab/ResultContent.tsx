@@ -16,7 +16,6 @@ const ResultCaseContent: React.FC<ResultContentProps> = ({
   selectedTestCaseChip,
   handleTestCaseChipClick,
 }) => {
-  console.log("outputDetails in ResultContent", outputDetails);
   return (
     <>
       <div className="flex">

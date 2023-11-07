@@ -31,19 +31,33 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   // TODO: make it dynamic
   const { isDarkMode } = useTheme();
   const [code, changeCode] = useState(currCode ?? "");
-  const [customInput, setCustomInput] = useState(""); // todo: for console, user can input their own TC
   const [outputDetails, setOutputDetails] = useState(new Array());
   const [processing, setProcessing] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState(
     languageOptions[0].label // "javascript language"
   );
-  const [starterCode, setStarterCode] = useState<string | undefined>(""); // might be redundant
+  // const [starterCode, setStarterCode] = useState<string | undefined>(""); // might be redundant
   const [selectedTestCaseChip, setSelectedTestCaseChip] = useState<number>(1);
 
   const enterPress = useKeyPress("Enter");
   const ctrlPress = useKeyPress("Control");
   const memoizedOutputDetails = useMemo(() => outputDetails, [outputDetails]);
-
+  const starterCode = `/**
+  * Definition for singly-linked list.
+  * class ListNode {
+  *     int val;
+  *     ListNode next;
+  *     ListNode(int x) {
+  *         val = x;
+  *         next = null;
+  *     }
+  * }
+  */
+  class Solution {
+    hasCycle(head) { 
+      // Write your solution here
+    }
+  };`;
   if (!onChangeCode) {
     onChangeCode = (value?: string) => {
       changeCode(value ?? "");
@@ -77,7 +91,6 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
       stdin: btoa(testCase.input),
       expected_output: btoa(testCase.output),
     }));
-
     const body = {
       submissions: submissions,
     };
@@ -85,7 +98,6 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
     try {
       const response = await axios.post("/api/codeExecution/compile", body);
       const tokens = response.data; // tokens becomes an array instead of objects
-      console.log("tokens", tokens);
       let allSuccess = true;
       for (let i = 0; i < tokens.length; i++) {
         const success: boolean | undefined = await checkStatus(
@@ -94,13 +106,13 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
         );
         console.log("success", success);
         if (!success) {
-          console.log("Not successful");
           allSuccess = false;
-          break;
         }
       }
       if (allSuccess) {
         showSuccessToast(`Compiled Successfully!`);
+      } else {
+        showErrorToast("A testcase failed, please try again!");
       }
     } catch (err) {
       setProcessing(false);
@@ -119,7 +131,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
           setTimeout(() => {
             resolve(checkStatus(token, index));
           }, 2000);
-        } else {
+        } else if (statusId === Status.Accepted) {
           setProcessing(false);
           console.log(
             "response.data outputdetails in checkStatus",
@@ -127,6 +139,10 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
           );
           handleOutputDetails(response.data, index);
           resolve(true);
+        } else {
+          setProcessing(false);
+          handleOutputDetails(response.data, index);
+          resolve(false);
         }
       } catch (err) {
         setProcessing(false);
@@ -172,11 +188,6 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
       handleCompile();
     }
   }, [ctrlPress, enterPress]);
-
-  useEffect(() => {
-    console.log(selectedLanguage);
-    setStarterCode(findLanguage(selectedLanguage)?.starterCode);
-  }, [selectedLanguage]);
 
   return (
     <>
