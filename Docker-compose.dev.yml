@@ -5,7 +5,7 @@ services:
     container_name: peerprep-rabbitmq
     image: rabbitmq:3-management
     environment:
-      - ./apps/backend/queue/.env
+      - ./apps/backend/queue/.env.dev
     ports:
       - '5672:5672'
       - '15672:15672'
@@ -20,7 +20,7 @@ services:
     container_name: peerprep-postgres
     restart: always
     env_file:
-      - ./apps/backend/user/.env
+      - ./apps/backend/user/.env.dev
     ports:
       - "5432:5432"                         # Map postgres container's port 5432 to host's port 5432
     networks:
@@ -91,7 +91,7 @@ services:
       context: ./apps/backend/queue             # Build context is the path to the backend directory
       dockerfile: Dockerfile.queue.dev          # Path to the Dockerfile for the backend
     ports:
-      - "8002:8002"                             # Map backend container's port 8002 to host's port 8002
+      - "8080:8080"                             # Map backend container's port 8080 to host's port 8080
     environment:
       - ./apps/backend/queue/.env.dev
     networks:
@@ -109,6 +109,7 @@ services:
       dockerfile: Dockerfile.session.dev    
     ports:
       - "8250:8250"                                             
+      - "8251:8251"                                             
     # volumes:
     #   - ./apps/backend/question:/app      
     environment:

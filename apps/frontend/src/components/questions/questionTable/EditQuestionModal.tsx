@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  Question,
-} from "@/database/question/entities/question.entity";
+import { Question } from "@/database/question/entities/question.entity";
 import Modal from "@/components/Modal";
 import DescriptionInput from "./modalParts/DescriptionInput";
 import ComplexityInput from "./modalParts/ComplexityInput";
@@ -11,6 +9,7 @@ import StarterCodeInput from "./modalParts/StarterCodeInput";
 import ExamplesInput from "./modalParts/ExamplesInput";
 import ConstraintsInput from "./modalParts/ConstraintsInput";
 import FollowUpInput from "./modalParts/FollowUpInput";
+import { useError } from "@/hook/ErrorContext";
 
 type EditQuestionModalProps = {
   onEditQuestion: Question;
@@ -26,7 +25,7 @@ const EditQuestionModal: React.FC<EditQuestionModalProps> = ({
   open,
 }) => {
   const [newQuestion, setNewQuestion] = useState<Question>(onEditQuestion);
-  const [, setError] = useState<string>("");
+  const { setError } = useError();
   const [blank, setBlank] = useState(true);
   const handleEditQuestion = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -38,7 +37,7 @@ const EditQuestionModal: React.FC<EditQuestionModalProps> = ({
       .catch((e) => {
         setError({
           type: 1,
-          message: e
+          message: e,
         });
       });
   };

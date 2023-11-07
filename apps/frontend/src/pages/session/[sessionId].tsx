@@ -23,11 +23,11 @@ export default function Session() {
   );
   const languageSelected = languageOptions[0]; // hardcoded, to be changed
   const [docUrl, setDocUrl] = useState<AutomergeUrl>();
-  const [doc, changeDoc] = useDocument<Doc>(docUrl);
+  const [doc, changeDoc] = useDocument<Doc<any>>(docUrl);
   const [chatroomId, setChatroomId] = useState<string>("");
   let increment: (value: string) => void = (value: string) => {
     console.log("reflecting changes in code editor through changeDoc...");
-    changeDoc((d) => (d.text = value));
+    changeDoc((d : any) => (d.text = value));
   };
 
   useEffect(() => {

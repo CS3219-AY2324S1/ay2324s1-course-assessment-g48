@@ -1,6 +1,6 @@
 import React from "react";
 import Split from "react-split";
-import DescriptionPanel from "./descriptionPanel/DescriptionPanel";
+import DescriptionPanel from "./codeEditor/descriptionPanel/DescriptionPanel";
 import { Question } from "@/database/question/entities/question.entity";
 import SessionCodeEditor from "./codeEditor/SessionCodeEditor";
 import ChatWidget from "@/components/chat/ChatWidget";
@@ -18,7 +18,7 @@ const SessionQuestionWorkspace: React.FC<SessionQuestionWorkspaceProps> = ({
     <>
       <Split className="split flex-1">
         <DescriptionPanel question={question} />
-        <SessionCodeEditor question={question} sessionId={sessionId} />
+        <SessionCodeEditor question={question}/>
       </Split>
       <ChatWidget />
     </>

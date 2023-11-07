@@ -9,7 +9,7 @@ spec:
     app: peerprep-queue
   ports:
   - protocol: TCP
-    port: 8002
+    port: 8080
   type: ClusterIP
 
 ---
@@ -29,18 +29,22 @@ spec:
     spec:
       containers:
       - name: peerprep-question
-        image: deployment87/dply87:peerprep-queue-v1.0.0
+        image: deployment87/dply87:peerprep-queue-v1.0.4
         resources:
           limits:
             memory: "256Mi"
             cpu: "500m"
         ports:
-        - containerPort: 8002
+        - containerPort: 8080
         livenessProbe:
           httpGet:
             path: /ping
-            port: 8002
+            port: 8080
+          initialDelaySeconds: 10
+          timeoutSeconds: 10
         readinessProbe:
           httpGet:
             path: /ping
-            port: 8002
+            port: 8080
+          initialDelaySeconds: 10
+          timeoutSeconds: 10
