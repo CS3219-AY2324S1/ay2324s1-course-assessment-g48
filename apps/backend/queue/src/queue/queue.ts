@@ -27,6 +27,7 @@ export class Queue {
   }
 
   public checkAndReleaseOtherConnection(uid: number) {
+    console.log(`Attempting to release ${uid} from ${this.nameSpace}`);
     if (this.socketMap.get(uid)) {
       this.socketMap.get(uid)?.emit("other-connection");
       this.cleanup(uid);
@@ -119,13 +120,11 @@ export class Queue {
     const sessionID = await axios
       .post(SESSION_URL, { users: [user1, user2] })
       .then((response) => {
-        console.log(response);
         return response.data.sessionId;
       })
       .catch((error) => {
         console.error(error);
       });
-    console.log(sessionID);
     return sessionID;
   }
 
