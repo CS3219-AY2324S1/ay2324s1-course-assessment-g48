@@ -28,7 +28,7 @@ class QueueService {
   }
 
   public checkAndReleaseOtherConnections(uid: number) {
-    for (const queue of Object.values(this.queues)) {
+    for (const queue of this.queues.values()) {
       queue.checkAndReleaseOtherConnection(uid);
     }
   }
