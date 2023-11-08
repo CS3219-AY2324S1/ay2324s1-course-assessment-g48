@@ -6,16 +6,16 @@ import {
   findOneUser,
   getAllUsers,
   updateUser,
-} from "../../database/user";
+} from "../database/user";
 import { OAuth, Role } from "@prisma/client";
-import logger from "../../utils/logger";
+import logger from "../utils/logger";
 import {
   getJwtErrorMessage,
   signJwtAccessToken,
   signJwtRefreshToken,
   verifyJwtAccessToken,
   verifyJwtRefreshToken,
-} from "../../utils/jwt";
+} from "../utils/jwt";
 
 export const userRouter = Router();
 

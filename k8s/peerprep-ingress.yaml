@@ -5,8 +5,8 @@ metadata:
   annotations:
     # kubernetes.io/ingress.class: nginx
     kubernetes.io/ingress.global-static-ip-name: leetpal-lb
-    networking.gke.io/managed-certificates: managed-cert
-    networking.gke.io/v1beta1.FrontendConfig: "http-to-https"
+    # networking.gke.io/managed-certificates: managed-cert
+    # networking.gke.io/v1beta1.FrontendConfig: "http-to-https"
     # nginx.org/websocket-services: "peerprep-queue, peerprep-session"
     # nginx.ingress.kubernetes.io/upgrade-websocket: "true"
 spec:

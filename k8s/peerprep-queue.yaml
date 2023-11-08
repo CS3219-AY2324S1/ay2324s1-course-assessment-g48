@@ -29,7 +29,7 @@ spec:
     spec:
       containers:
       - name: peerprep-question
-        image: deployment87/dply87:peerprep-queue-v1.0.4
+        image: deployment87/dply87:peerprep-queue-v1.1.1
         resources:
           limits:
             memory: "256Mi"

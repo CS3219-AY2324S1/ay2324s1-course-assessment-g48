@@ -28,7 +28,7 @@ spec:
     spec:
       containers:
       - name: peerprep-user
-        image: deployment87/dply87:peerprep-user-v1.0.4
+        image: deployment87/dply87:peerprep-user-v1.1.0
         resources:
           limits:
             memory: "256Mi"
@@ -39,13 +39,13 @@ spec:
           httpGet:
             path: /ping
             port: 8001
-          initialDelaySeconds: 5
-          timeoutSeconds: 2
+          initialDelaySeconds: 10
+          timeoutSeconds: 10
         readinessProbe:
           httpGet:
             path: /ping
             port: 8001
-          initialDelaySeconds: 5
-          timeoutSeconds: 2
+          initialDelaySeconds: 10
+          timeoutSeconds: 10
       # dnsPolicy: ClusterFirst
 
