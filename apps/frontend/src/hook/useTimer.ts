@@ -2,12 +2,12 @@ import { useEffect, useState } from "react";
 
 function useTimer() {
   const [countDownDate, setCountDownDate] = useState(
-    localStorage.getItem("countDownDate")
-      ? parseInt(localStorage.getItem("countDownDate") ?? "0")
+    sessionStorage.getItem("countDownDate")
+      ? parseInt(sessionStorage.getItem("countDownDate") ?? "0")
       : 10 + new Date().getTime()
   );
   const [isRunning, setIsRunning] = useState(
-    localStorage.getItem("isRunning") === "true" ? true : false
+    sessionStorage.getItem("isRunning") === "true" ? true : false
   );
 
   useEffect(() => {
@@ -41,15 +41,15 @@ function useTimer() {
   const toggleTimer = (deadline: number) => {
     setIsRunning(true);
     setCountDownDate(deadline + 10);
-    localStorage.setItem("isRunning", "true");
-    localStorage.setItem("countDownDate", deadline.toString());
+    sessionStorage.setItem("isRunning", "true");
+    sessionStorage.setItem("countDownDate", deadline.toString());
   };
 
   const reset = () => {
   setCountDown(30 * 1000); // 30 seconds in milliseconds
   setIsRunning(false);
-  localStorage.removeItem("countDownDate");
-  localStorage.setItem("isRunning", "false");
+  sessionStorage.removeItem("countDownDate");
+  sessionStorage.setItem("isRunning", "false");
 };
 
   return {
