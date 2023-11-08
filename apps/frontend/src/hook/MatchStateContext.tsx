@@ -15,6 +15,7 @@ import { getUserById } from "@/database/user/userService";
 import { Complexity } from "@/utils/enums/Complexity";
 import { useRouter } from "next/router";
 import { useTimer } from "./timerContext";
+import { languageOptions } from "@/utils/constants/LanguageOptions";
 
 type MatchStateContextType = {
   matchState: MatchedState;
@@ -27,6 +28,8 @@ type MatchStateContextType = {
   difficulty: Complexity;
   setDifficulty: React.Dispatch<React.SetStateAction<Complexity>>;
   seconds: number;
+  language: string;
+  setLanguage: React.Dispatch<React.SetStateAction<string>>;
 };
 
 const MatchStateContext = createContext<MatchStateContextType | undefined>(
@@ -56,6 +59,7 @@ export const MatchStateProvider: React.FC<MatchStateProviderProps> = ({
   const { setError, clearError } = useError();
   const [disableBtnCancel, setDisableBtnCancel] = useState(true);
   const [difficulty, setDifficulty] = useState<Complexity>(Complexity.Easy);
+  const [language, setLanguage] = useState<string>(languageOptions[0].label);
   const { sessionUser } = useSessionUser();
   const router = useRouter();
 
@@ -86,7 +90,10 @@ export const MatchStateProvider: React.FC<MatchStateProviderProps> = ({
     });
 
     console.log("set matching", matchingSocket);
-    matchingSocket.emit("matching", { difficulty, user: sessionUser });
+    matchingSocket.emit("matching", {
+      nameSpace: difficulty + "/" + language,
+      user: sessionUser,
+    });
     matchingSocket.on("matching", () => {
       console.log("emitted");
       setMatchState(MatchedState.MATCHING);
@@ -112,7 +119,7 @@ export const MatchStateProvider: React.FC<MatchStateProviderProps> = ({
     getUserById(data.peerId)
       .then((peer) => {
         setPeer(peer);
-        console.log("pic", peer)
+        console.log("pic", peer);
       })
       .catch((err) => {
         console.log(err);
@@ -148,7 +155,6 @@ export const MatchStateProvider: React.FC<MatchStateProviderProps> = ({
     };
   }, [isRunning, matchState]);
 
-
   return (
     <MatchStateContext.Provider
       value={{
@@ -162,6 +168,8 @@ export const MatchStateProvider: React.FC<MatchStateProviderProps> = ({
         difficulty,
         setDifficulty,
         seconds,
+        language,
+        setLanguage,
       }}
     >
       {children}

@@ -13,7 +13,8 @@ export const createNewUser = async (newUser: CreateUserDto) => {
         username: newUser.username,
         password: newUser.password,
         oauth: newUser.oauth,
-        role: newUser.role
+        role: newUser.role,
+        image: newUser.image
       })
       .then((response) => {
         return response.data;
