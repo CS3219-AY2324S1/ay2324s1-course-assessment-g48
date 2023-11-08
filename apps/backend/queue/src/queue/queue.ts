@@ -1,23 +1,24 @@
 import { Socket } from "socket.io";
-import amqp from "amqplib";
 import axios from "axios";
 import { SESSION_URL } from "../utils/config";
 import Producer from "../message-queue/Producer";
 import Consumer from "../message-queue/Consumer";
 
-export class DifficultyQueue {
+export class Queue {
   waitList: number[];
   socketMap: Map<number, Socket>;
   nameSpace: string;
   producer: Producer;
   consumer: Consumer;
+  next?: Queue;
 
-  constructor(nameSpace: string) {
+  constructor(nameSpace: string, nextQueue?: Queue) {
     this.nameSpace = nameSpace;
     this.waitList = [];
     this.socketMap = new Map();
     this.producer = new Producer(nameSpace);
     this.consumer = new Consumer(nameSpace, (uid) => this.matchUsers(uid));
+    this.next = nextQueue;
   }
 
   public attemptToMatchUsers(uid: number, socket: Socket) {
@@ -26,6 +27,7 @@ export class DifficultyQueue {
   }
 
   public checkAndReleaseOtherConnection(uid: number) {
+    console.log(`Attempting to release ${uid} from ${this.nameSpace}`);
     if (this.socketMap.get(uid)) {
       this.socketMap.get(uid)?.emit("other-connection");
       this.cleanup(uid);
@@ -37,7 +39,8 @@ export class DifficultyQueue {
     if (this.isThereWaitingUser()) {
       const firstUserUid = this.waitList.shift();
       const secondUserSocket = this.socketMap.get(uid);
-
+      console.log(`First user: ${firstUserUid}`);
+      console.log(`Second user: ${uid}`);
       if (firstUserUid === undefined) {
         secondUserSocket?.emit(
           "error",
@@ -50,8 +53,10 @@ export class DifficultyQueue {
       const firstUserSocket = this.socketMap.get(firstUserUid);
 
       const randomSessionId = await this.generateSession(firstUserUid, uid);
+      console.log(`This is the random sessionId: ${randomSessionId}`);
 
       if (!randomSessionId) {
+        console.log("Something went wrong when creating your session.");
         secondUserSocket?.emit(
           "error",
           "Something went wrong when creating your session."
