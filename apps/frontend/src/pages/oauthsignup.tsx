@@ -14,8 +14,7 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 
 export default function OauthSignUp() {
-  const { sessionUser } = useSessionUser();
-  const [newUsername, setUsername] = useState(sessionUser.username);
+  const [newUsername, setNewUsername] = useState("");
   const { setError } = useError();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") ?? "/";
@@ -23,6 +22,7 @@ export default function OauthSignUp() {
   const router = useRouter();
   const email = router.query.email!;
   const oauth = router.query.oauth;
+  const image = router.query.image;
 
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
@@ -30,6 +30,7 @@ export default function OauthSignUp() {
       const newUser: Omit<User, "id" | "password"> = {
         username: newUsername,
         email: email as string,
+        image: image as string,
         oauth: [oauth as OAuthType],
         role: Role.Normal,
       };
@@ -69,7 +70,6 @@ export default function OauthSignUp() {
   };
   
   return (
-    <>
       <div className="flex h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="lg:mx-auto lg:w-full lg:max-w-lg">
 
@@ -89,7 +89,7 @@ export default function OauthSignUp() {
               type="text"
               label="Username"
               value={newUsername!}
-              onChange={setUsername}
+              onChange={setNewUsername}
             />
           </div>
           <button
@@ -111,6 +111,5 @@ export default function OauthSignUp() {
             </Link>
           </p>
       </div>
-    </>
   )
 }

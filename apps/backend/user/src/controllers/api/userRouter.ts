@@ -25,11 +25,12 @@ userRouter.post(
   "/",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { email, username, password, oauth, role } = req.body;
+      const { email, username, password, oauth, role, image } = req.body;
       const cleanedEmail = email?.trim();
       const cleanedUsername = username?.trim();
       const cleanedPassword = password?.trim();
       const cleanedRole = role?.trim();
+      const cleanedImage = image?.trim();
 
       if (!cleanedEmail?.length) {
         res.status(400).send({ error: "Your email cannot be blank." });
@@ -105,6 +106,7 @@ userRouter.post(
         password: hashedPassword,
         oauth: cleanedOauth,
         role: cleanedRole as Role,
+        image: cleanedImage,
       };
 
       const newUser = await createUser(cleanedUserData);
@@ -239,11 +241,12 @@ userRouter.put(
     try {
       const { id } = req.params;
 
-      const { email, username, password, oauth, role } = req.body;
+      const { email, username, password, oauth, role, image } = req.body;
       const cleanedEmail = email?.trim();
       const cleanedUsername = username?.trim();
       const cleanedPassword = password?.trim();
       const cleanedRole = role?.trim();
+      const cleanedImage = image?.trim();
       let cleanedOauth: OAuth[] | undefined = undefined;
 
       if (cleanedEmail !== undefined) {
@@ -326,6 +329,7 @@ userRouter.put(
         password: hashedPassword,
         oauth: cleanedOauth,
         role: cleanedRole as Role,
+        image: cleanedImage,
       });
 
       res.json(updatedUser);
@@ -367,7 +371,7 @@ userRouter.get(
       const { id } = req.params;
       const user = await findOneUser(
         { id: Number(id) },
-        { email: true, username: true }
+        { email: true, username: true, image:true }
       );
       if (!user) {
         res.status(404).json({

@@ -13,7 +13,8 @@ export const createNewUser = async (newUser: CreateUserDto) => {
         username: newUser.username,
         password: newUser.password,
         oauth: newUser.oauth,
-        role: newUser.role
+        role: newUser.role,
+        image: newUser.image
       })
       .then((response) => {
         return response.data;
@@ -78,6 +79,7 @@ export const updateUserById = async (
       password: updatedUser.password,
       oauth: updatedUser.oauth,
       role: updatedUser.role,
+      image: updatedUser.image,
     });
     return response.data;
   } catch (e: any) {

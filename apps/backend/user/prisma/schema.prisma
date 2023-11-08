@@ -18,6 +18,7 @@ model User {
   password String?
   oauth OAuth[]
   role Role
+  image String?
   //   posts   Post[]
   //   profile Profile?
 }
