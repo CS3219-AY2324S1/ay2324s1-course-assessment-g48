@@ -32,25 +32,21 @@ userRouter.post(
       const cleanedRole = role?.trim();
 
       if (!cleanedEmail?.length) {
-        console.log("Email cannot be blank");
         res.status(400).send({ error: "Your email cannot be blank." });
         return;
       }
 
       if (!cleanedUsername?.length) {
-        console.log("Username cannot be blank");
         res.status(400).send({ error: "Your username cannot be blank." });
         return;
       }
 
       if (oauth === undefined && !cleanedPassword?.length) {
-        console.log("Password cannot be blank");
         res.status(400).send({ error: "Your password cannot be blank." });
         return;
       }
 
       if (!cleanedRole?.length) {
-        console.log("Role cannot be blank");
         res.status(400).send({ error: "Your role cannot be blank." });
         return;
       }
@@ -63,7 +59,6 @@ userRouter.post(
 
       const hasSameEmailUser = await findOneUser({ email: cleanedEmail });
       if (hasSameEmailUser) {
-        console.log("Email already in use");
         res.status(400).send({ error: "That email is already in use." });
         return;
       }
@@ -72,7 +67,6 @@ userRouter.post(
         username: cleanedUsername,
       });
       if (hasSameUsernameUser) {
-        console.log("Username already in use");
         res.status(400).send({ error: "That username is already in use." });
         return;
       }
@@ -113,9 +107,7 @@ userRouter.post(
         role: cleanedRole as Role,
       };
 
-      console.log("Creating new user at userRouter", cleanedUserData);
       const newUser = await createUser(cleanedUserData);
-      console.log("Created New user: ", newUser);
       res.status(201).json(newUser);
     } catch (error) {
       console.error(error);
@@ -141,25 +133,16 @@ userRouter.post(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const body = req.body;
-      console.log("req body at login:", body);
-      // TODO: hash the password
       const {
         data: { email, password, oauth },
       } = body;
-      console.log("oauth:", oauth);
-      console.log("Login Body.data: ", body.data);
       const cleanedEmail = email?.trim();
-      console.log("cleanedEmail: ", cleanedEmail);
-      console.log("Uncleaned Password: ", password);
       const cleanedPassword = password?.trim();
-      console.log("Cleaned Password: ", cleanedPassword);
       const user = await findOneUser({
         email: cleanedEmail,
       });
-      console.log("User: ", user);
 
       if (!user) {
-        console.log("User not found");
         res.status(404).json({
           error: `404: Email ${cleanedEmail} was not found, please sign up for a new account.`,
         });
@@ -167,7 +150,6 @@ userRouter.post(
       }
 
       if (oauth !== undefined) {
-        console.log("oauth is defined");
         if (Object.values(OAuthType).includes(oauth as OAuthType)) {
           // update user's oauth if user does not have specific auth
           if (!user.oauth.includes(oauth)) {
@@ -179,11 +161,8 @@ userRouter.post(
 
           // return user
           const { password: userPassword, ...userExcludePassword } = user;
-          console.log("userExcludePassword: ", userExcludePassword);
           const accessToken = signJwtAccessToken(userExcludePassword);
-          console.log("accessToken: ", accessToken);
           const refreshToken = signJwtRefreshToken(userExcludePassword);
-          console.log("refreshToken: ", refreshToken);
 
           res
             .status(200)
@@ -192,7 +171,6 @@ userRouter.post(
         }
 
         // oauth provided but not in enum
-        console.log(`Invalid OAuth request: ${oauth}`);
         res.status(401).json({
           error: `401: ${oauth} is not supported by PeerPrep.`,
         });
