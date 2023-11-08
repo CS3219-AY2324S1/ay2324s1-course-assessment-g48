@@ -31,6 +31,10 @@ export default function Session() {
   };
 
   useEffect(() => {
+    console.log(doc?.loggedInUsers);
+  }, [doc?.loggedInUsers.length]);
+
+  useEffect(() => {
     if (sessionID) {
       axios
         .get(
@@ -53,8 +57,9 @@ export default function Session() {
     }
 
     return () => {
+      console.log("Filtering doc");
       changeDoc((d: any) =>
-        d.loggedInUsers.filter((id: any) => id == sessionUser.id)
+        d.loggedInUsers.filter((id: any) => id != sessionUser.id)
       );
     };
   }, [sessionID]);
