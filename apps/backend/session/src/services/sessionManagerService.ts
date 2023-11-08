@@ -5,7 +5,7 @@ import { CHAT_URL } from "../utils/config.ts";
 import SessionModel from "../model/Session.ts";
 import mongoose from "mongoose";
 
-export type Doc = { text: string };
+export type Doc = { text: string; loggedInUsers: number[] };
 
 export class SessionManagerService {
   private sessionToUserMap: Map<
@@ -53,7 +53,10 @@ export class SessionManagerService {
   private createDoc(pastCode?: string) {
     const doc = this.repo.create<Doc>();
     //TODO: Load original document from database.
-    doc.change((d) => (d.text = pastCode ?? ""));
+    doc.change((d) => {
+      d.loggedInUsers = [];
+      d.text = pastCode ?? "";
+    });
     return doc;
   }
 
@@ -74,11 +77,10 @@ export class SessionManagerService {
       const code = session?.code;
       const handle = this.createDoc(code);
       // console.info("handle", handle);
-  
+
       // Wait for the document to be ready before accessing it
       await handle.whenReady();
       this.sessionToUserMap.set(sessionId, {
-        
         users: session.users,
         docId: handle.url,
         chatroomId: session.chatroomId,

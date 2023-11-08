@@ -27,7 +27,7 @@ export default function Session() {
   const [chatroomId, setChatroomId] = useState<string>("");
   let increment: (value: string) => void = (value: string) => {
     console.log("reflecting changes in code editor through changeDoc...");
-    changeDoc((d : any) => (d.text = value));
+    changeDoc((d: any) => (d.text = value));
   };
 
   useEffect(() => {
@@ -42,6 +42,9 @@ export default function Session() {
           console.log("docId received");
           setDocUrl(res.data.docId);
           setChatroomId(res.data.chatroomId);
+          changeDoc((d: any) => d.loggedInUsers.push(sessionUser.id));
+          console.log(doc);
+          console.log(`Users: ${doc?.loggedInUsers}`);
         })
         .catch((err) => {
           console.log(err);
