@@ -16,6 +16,7 @@ import {
   verifyJwtAccessToken,
   verifyJwtRefreshToken,
 } from "../../utils/jwt";
+import bcrypt from "bcrypt";
 
 export const userRouter = Router();
 
@@ -25,12 +26,10 @@ userRouter.post(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { email, username, password, oauth, role } = req.body;
-      console.log("body:", req.body);
       const cleanedEmail = email?.trim();
       const cleanedUsername = username?.trim();
       const cleanedPassword = password?.trim();
       const cleanedRole = role?.trim();
-      console.log("Post Body: ", req.body);
 
       if (!cleanedEmail?.length) {
         console.log("Email cannot be blank");
@@ -78,7 +77,6 @@ userRouter.post(
         return;
       }
 
-      console.log("Still going 1");
 
       const cleanedOauth: OAuth[] = [];
       const invalidOauth: string[] = [];
@@ -92,7 +90,6 @@ userRouter.post(
         }
       }
 
-      console.log("Still going 2");
 
       if (invalidOauth.length !== 0) {
         logger.info(
@@ -100,11 +97,18 @@ userRouter.post(
         );
       }
 
+      let hashedPassword = null;
+      if (cleanedPassword !== undefined) {
+        const saltRounds = 10;
+        hashedPassword = await bcrypt.hash(cleanedPassword, saltRounds);
+      }
+
+      
       const cleanedUserData = {
         id: -1, // not used, placeholder id
         email: cleanedEmail,
         username: cleanedUsername,
-        password: cleanedPassword,
+        password: hashedPassword,
         oauth: cleanedOauth,
         role: cleanedRole as Role,
       };
@@ -130,31 +134,6 @@ userRouter.get("/", async (req: Request, res: Response, next: NextFunction) => {
     next(error);
   }
 });
-
-// Dummy
-userRouter.get(
-  "/test",
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      res.json({ user: "test" });
-    } catch (error) {
-      console.error(error);
-      next(error);
-    }
-  }
-);
-
-userRouter.post(
-  "/test",
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      res.json({ user: "test" });
-    } catch (error) {
-      console.error(error);
-      next(error);
-    }
-  }
-);
 
 // Get user by username and password
 userRouter.post(
@@ -220,14 +199,11 @@ userRouter.post(
         return;
       }
 
-      if (user?.password !== cleanedPassword) {
+      const isCorrectPassword = await bcrypt.compare(user?.password!, cleanedPassword);
+
+      if (isCorrectPassword) {
         res.status(401).json({
-          error:
-            "401: Incorrect password, please try again. Password should be " +
-            user?.password +
-            " but is " +
-            cleanedPassword +
-            ".",
+          error: "401: Incorrect password, please try again."
         });
         return;
       }
@@ -363,10 +339,13 @@ userRouter.put(
         }
       }
 
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash(cleanedPassword, saltRounds);
+
       const updatedUser = await updateUser(parseInt(id), {
         email: cleanedEmail,
         username: cleanedUsername,
-        password: cleanedPassword,
+        password: hashedPassword,
         oauth: cleanedOauth,
         role: cleanedRole as Role,
       });
@@ -410,7 +389,7 @@ userRouter.get(
       const { id } = req.params;
       const user = await findOneUser(
         { id: Number(id) },
-        { email: true, username: true, password: true }
+        { email: true, username: true }
       );
       if (!user) {
         res.status(404).json({
