@@ -78,6 +78,7 @@ export const updateUserById = async (
       password: updatedUser.password,
       oauth: updatedUser.oauth,
       role: updatedUser.role,
+      image: updatedUser.image,
     });
     return response.data;
   } catch (e: any) {

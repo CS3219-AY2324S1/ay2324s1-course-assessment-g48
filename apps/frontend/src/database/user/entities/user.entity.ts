@@ -6,6 +6,7 @@ export type User = {
   username?: string;
   email?: string;
   password?: string;
+  image?: string;
   oauth?: OAuthType[];
   role?: Role;
   accessToken?: string;
