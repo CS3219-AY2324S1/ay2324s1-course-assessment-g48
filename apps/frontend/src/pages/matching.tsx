@@ -151,9 +151,10 @@ const MatchingPage: React.FC<matchingProps> = () => {
             </label>
             <div className="relative mt-2.5">
               <select
+                disabled={isMatching !== MatchedState.NOT_MATCHING}
                 id="language"
                 name="language"
-                className="block w-full rounded-md border-0 px-3.5 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 dark:bg-gray-200 dark:text-gray-800"
+                className="block w-full rounded-md border-0 px-3.5 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 dark:bg-gray-200 dark:text-gray-800 disabled:bg-gray-300 dark:disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
                 {languageOptions.map((languageOption, index) => (
                   <option key={index}>{languageOption.label}</option>
@@ -172,7 +173,8 @@ const MatchingPage: React.FC<matchingProps> = () => {
               <select
                 id="difficulty"
                 name="difficulty"
-                className="block w-full rounded-md border-0 px-3.5 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 dark:bg-gray-200 dark:text-gray-800"
+                disabled={isMatching !== MatchedState.NOT_MATCHING}
+                className="block w-full rounded-md border-0 px-3.5 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 dark:bg-gray-200 dark:text-gray-800 disabled:bg-gray-300 dark:disabled:bg-gray-400 disabled:cursor-not-allowed"
                 value={difficulty}
                 onChange={(e) => {
                   setDifficulty(e.target.value as Complexity);
