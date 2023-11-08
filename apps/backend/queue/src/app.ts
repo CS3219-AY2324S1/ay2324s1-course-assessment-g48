@@ -6,16 +6,6 @@ import PingRouter from "./routes/pingRouter";
 import SocketController from "./controllers/socketController";
 import cors from "cors";
 
-
-const app = express();
-const server = http.createServer(app);
-const io = new Server(server, {
-  path: "/queue",
-  cors: {
-    origin: "*",
-  },
-});
-
 const allowedOrigins = [
   "http://localhost",
   "http://localhost:80",
@@ -26,10 +16,20 @@ const allowedOrigins = [
   "http://localhost:8022",
   "http://localhost:8500",
   "http://localhost:9000",
-  "http://peerprep-user:8001",
-  "http://peerprep-question:8000",
-  "http://peerprep-frontend:3000",
+  "http://34.120.70.36",
+  "http://leetpal.com",
+  "http://www.leetpal.com",
+  "https://www.leetpal.com",
 ];
+
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+  path: "/queue",
+  cors: {
+    origin: allowedOrigins,
+  },
+});
 
 app.use(
   cors({
@@ -46,7 +46,7 @@ app.use(
 );
 
 server.listen(PORT, () => {
-  console.log("Queue Server is listening on port 8002");
+  console.log("Queue Server is listening on port 8080");
 });
 
 app.use("/ping", new PingRouter().routes());
@@ -54,6 +54,8 @@ app.use("/ping", new PingRouter().routes());
 const socketController = new SocketController(io);
 
 io.on("connect", (socket) => socketController.handleConnection(socket));
+
+io.disconnectSockets(true);
 
 process.on("SIGINT", () => {
   console.log("Process is terminating. Closing all WebSockets.");

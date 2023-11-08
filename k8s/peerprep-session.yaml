@@ -6,16 +6,17 @@ spec:
   selector:
     app: peerprep-session
   ports:
-  - protocol: TCP
-    name: port-8250
-    port: 8250
-  # - protocol: TCP
-  #   name: port-8251
-  #   port: 8251
+    - protocol: TCP
+      name: ws-port
+      port: 8250
+      targetPort: 8250
+    - protocol: TCP
+      name: http-port
+      port: 8251
+      targetPort: 8251
   type: ClusterIP
 
 ---
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -31,19 +32,30 @@ spec:
     spec:
       containers:
       - name: peerprep-session
-        image: deployment87/dply87:peerprep-session-v1.0.0
+        image: deployment87/dply87:peerprep-session-v1.0.16
         resources:
           limits:
-            memory: "256Mi"
+            memory: "512Mi"
             cpu: "500m"
         ports:
         - containerPort: 8250
-        livenessProbe:
-          httpGet:
-            path: /ping
-            port: 8250
+        - containerPort: 8251
         readinessProbe:
           httpGet:
             path: /ping
             port: 8250
-        # - containerPort: 8251
+          initialDelaySeconds: 180
+          timeoutSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /ping
+            port: 8250
+          initialDelaySeconds: 180
+          timeoutSeconds: 10
+      - name: health-check-sidecar
+        image: busybox
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+        command: ["/bin/sh", "-c", "while true; do sleep 5; wget -q --spider http://peerprep-session:8251/ping || exit 1; done"]

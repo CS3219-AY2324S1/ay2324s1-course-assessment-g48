@@ -71,12 +71,16 @@ const DescriptionContent: React.FC<DescriptionContentProps> = ({
           </ReactMarkdown>
         </div>
 
-        <div className="dark:text-white font-bold mt-3">Follow-up:</div>
-        <div className="dark:text-white text-sm mt-3">
-          <ReactMarkdown remarkPlugins={[remarkMath]}>
-            {question.followUp}
-          </ReactMarkdown>
-        </div>
+        {question.followUp !== "" && (
+          <>
+            <div className="dark:text-white font-bold mt-3">Follow-up:</div>
+            <div className="dark:text-white text-sm mt-3">
+              <ReactMarkdown remarkPlugins={[remarkMath]}>
+                {question.followUp}
+              </ReactMarkdown>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

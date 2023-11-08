@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import Image from "next/image";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
@@ -8,8 +8,9 @@ import { useRouter } from "next/router";
 import ModeToggleButton from "./ModeToggleButton";
 import Link from "next/link";
 import Stopwatch from "./Stopwatch";
-import useNotification from "@/hook/useNotfication";
 import { classNames } from "@/utils/classnames/classnames";
+import { useMatchState } from "@/hook/MatchStateContext";
+import { MatchedState } from "@/utils/enums/MatchingState";
 
 const navigation = [
   { name: "Question", href: "/questions", current: false },
@@ -23,22 +24,25 @@ const navigation = [
 
 type NavbarProps = {
   session: Session | null;
-  openSlideOver: boolean;
-  setSlideOver: (value: boolean) => void;
 };
 
-const Navbar: React.FC<NavbarProps> = ({
-  session,
-  // openSlideOver,
-  setSlideOver,
-}) => {
+const Navbar: React.FC<NavbarProps> = ({ session }) => {
   const router = useRouter();
   const currentPath = router.pathname;
   const isQuestionPage = currentPath === "/questions/[id]";
-  const { numberOfUnreadNotifications } = useNotification();
   function handleSignOutClick() {
     signOut({ callbackUrl: "/" });
   }
+  const { matchState, peer } = useMatchState();
+  const [isTooltipVisible, setTooltipVisible] = useState(false);
+
+  const handleMouseEnter = () => {
+    setTooltipVisible(true);
+  };
+
+  const handleMouseLeave = () => {
+    setTooltipVisible(false);
+  };
 
   return (
     <Disclosure as="nav" className="bg-gray-900 ">
@@ -117,26 +121,33 @@ const Navbar: React.FC<NavbarProps> = ({
                   </div>
 
                   <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 space-x-2">
+                    <div className="tooltip-container">
+                      {matchState===MatchedState.MATCHED && peer ? (
+                        <div className="flex">
+                          <div
+                            className="rounded-full transition duration-300 ease-in-out"
+                            onMouseEnter={handleMouseEnter}
+                            onMouseLeave={handleMouseLeave}
+                          >
+                            <Image
+                              width="30"
+                              height="30"
+                              src={peer.image ?? "/avatar.svg"}
+                              alt={peer.image ?? "/avatar.svg"}
+                            />
+                          </div>
+                        </div>
+                      ) : (
+                        <></>
+                      )}
+                      {isTooltipVisible && peer && (
+                        <div className="tooltip">
+                          {peer.username}
+                        </div>
+                      )}
+                    </div>
                     {isQuestionPage && <Stopwatch />}
                     <ModeToggleButton />
-                    <button
-                      type="button"
-                      className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                      onClick={() => setSlideOver(true)}
-                    >
-                      <span className="absolute -inset-1.5" />
-                      <span className="sr-only">View notifications</span>
-                      <div className="flex">
-                        <BellIcon className="h-6 w-6" aria-hidden="true" />
-                        {numberOfUnreadNotifications > 0 ? (
-                          <span className="notification-counter">
-                            {numberOfUnreadNotifications}
-                          </span>
-                        ) : (
-                          <></>
-                        )}
-                      </div>
-                    </button>
 
                     {/* Profile dropdown */}
                     <Menu as="div" className="relative ml-3 navbar-menu">

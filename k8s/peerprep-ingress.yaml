@@ -3,10 +3,12 @@ kind: Ingress
 metadata:
   name: peerprep-ingress
   annotations:
-    # ingressClassName: nginx
+    # kubernetes.io/ingress.class: nginx
     kubernetes.io/ingress.global-static-ip-name: leetpal-lb
     networking.gke.io/managed-certificates: managed-cert
-    # networking.gke.io/v1beta1.FrontendConfig: "http-to-https"
+    networking.gke.io/v1beta1.FrontendConfig: "http-to-https"
+    # nginx.org/websocket-services: "peerprep-queue, peerprep-session"
+    # nginx.ingress.kubernetes.io/upgrade-websocket: "true"
 spec:
   defaultBackend:
     service:
@@ -44,7 +46,7 @@ spec:
           service:
             name: peerprep-queue
             port:
-              number: 8002
+              number: 8080
       - pathType: Prefix
         path: /api/history
         backend:
@@ -53,9 +55,16 @@ spec:
             port:
               number: 8003
       - pathType: Prefix
-        path: /session
+        path: /ws
         backend:
           service:
             name: peerprep-session
             port:
               number: 8250
+      - pathType: Prefix
+        path: /session
+        backend:
+          service:
+            name: peerprep-session
+            port:
+              number: 8251

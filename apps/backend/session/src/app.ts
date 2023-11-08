@@ -1,13 +1,35 @@
 import { WebSocketServer } from "ws";
-import express, { Express } from "express";
+import express from "express";
 import { SessionRouter } from "./routes/sessionRouter.ts";
 import cors from "cors";
-import { MONGODB_URI, PORT } from "./utils/config.ts";
+import { SESSION_PORT, MONGODB_URI, WS_PORT } from "./utils/config.ts";
 import mongoose from "mongoose";
+import { testRouter } from "./routes/testRouter.ts";
+import http from "http";
 
-const wss: WebSocketServer = new WebSocketServer({ noServer: true });
 const app = express();
-const server = app.listen(PORT);
+
+// Separate WebSocket server
+const wsServer = http.createServer((req, res) => {
+  // Handle HTTP requests specifically for the ping endpoint
+  if (req.url === "/ping") {
+    res.writeHead(200, { "Content-Type": "text/plain" });
+    res.end("pong");
+  }
+  // Other non-WebSocket requests can be handled here or returned as not found, etc.
+});
+const wss = new WebSocketServer({ server: wsServer, path: "/ws" });
+
+wsServer.listen(WS_PORT, () => {
+  console.log(`WebSocket Server is listening on port ${WS_PORT}`);
+});
+
+// Express HTTP server
+const httpServer = http.createServer(app);
+
+httpServer.listen(SESSION_PORT, () => {
+  console.log(`HTTP Server is listening on port ${SESSION_PORT}`);
+});
 
 app.use(express.json());
 
@@ -21,15 +43,15 @@ const allowedOrigins: string[] = [
   "http://localhost:8022",
   "http://localhost:8500",
   "http://localhost:9000",
-  "http://peerprep-user:8001",
-  "http://peerprep-question:8000",
-  "http://peerprep-frontend:3000",
+  "http://leetpal.com",
+  "http://www.leetpal.com",
+  "https://www.leetpal.com",
 ];
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
         callback(new Error("Not allowed by CORS"));
@@ -39,16 +61,12 @@ app.use(
     exposedHeaders: ["set-cookie"],
   })
 );
+
 const sessionRouter = new SessionRouter(wss);
-app.use("/session", (req, res, next) => sessionRouter.router(req, res, next));
+app.use("/session", sessionRouter.router);
+app.use("/ping", testRouter);
 
-server.on("upgrade", (request, socket, head) => {
-  //   console.log(request);
-  wss.handleUpgrade(request, socket, head, (socket) => {
-    wss.emit("connection", socket, request);
-  });
-});
-
+// MongoDB connection
 mongoose
   .connect(MONGODB_URI || "")
   .then(() => {
@@ -57,4 +75,5 @@ mongoose
   .catch((error) => {
     console.log("error connection to MongoDB:", error.message);
   });
+
 mongoose.set("debug", true);

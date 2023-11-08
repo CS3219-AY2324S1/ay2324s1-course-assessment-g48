@@ -20,7 +20,7 @@ export class SessionManagerService {
   }
 
   public async createNewSession(user1: number, user2: number) {
-    const chatroomId = await this.createNewChatroom([user1, user2]);
+    const chatroomId =  "123" // await this.createNewChatroom([user1, user2]);
     const newSession = new SessionModel({
       users: [user1, user2],
       chatroomId,
@@ -30,9 +30,6 @@ export class SessionManagerService {
       .save()
       .then((session) => console.log(session))
       .catch((error) => console.error("Error saving session:", error));
-
-    const oldSession = await SessionModel.findById("6542486b7c5540233cc698ae");
-    console.log(oldSession);
 
     const sessionId = newSession._id.toString();
     const handle = this.getDoc(sessionId);
@@ -74,10 +71,11 @@ export class SessionManagerService {
       const code = session?.code;
       const handle = this.createDoc(code);
       // console.info("handle", handle);
-
-      // blocks until doc is ready
+  
+      // Wait for the document to be ready before accessing it
       await handle.whenReady();
       this.sessionToUserMap.set(sessionId, {
+        
         users: session.users,
         docId: handle.url,
         chatroomId: session.chatroomId,

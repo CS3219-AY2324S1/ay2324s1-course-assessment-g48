@@ -172,77 +172,37 @@ body {
 }
 
 /* Chat Window */
-.react-chatbot-kit-chat-container {
-  width: 100% !important;
-  height: 50vh;
-}
-
-.react-chatbot-kit-chat-inner-container {
-  height: 100% !important;
-}
-
-.react-chatbot-kit-chat-message-container {
-  height: calc(100% - 48.5px) !important;
-}
-
-.react-chatbot-kit-chat-bot-container {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: #3d4e8d;
-  margin-right: 12.5px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.react-chatbot-kit-chat-bot-message {
-  margin-left: 0 !important;
-  width: fit-content !important;
-}
-
-.react-chatbot-kit-chat-btn-send {
-  width: 13% !important;
-}
-
-.react-chatbot-kit-chat-btn-send:hover {
-  background-color: rgb(59 130 246) !important;
-}
-
 /* Dark Mode */
-.dark-chat .react-chatbot-kit-chat-header {
-  background-color: #020617 !important;
+.dark-chat .cs-message-list, .dark-chat .cs-message-input {
+  background-color: #252525 !important;
+}
+
+.dark-chat .cs-message-input {
+  border-top: 1px solid #ffffff !important;
+}
+
+.dark-chat .cs-message.cs-message--incoming.cs-message--first .cs-message__content {
+  background-color: #383838 !important;
   color: white;
 }
 
-.dark-chat .react-chatbot-kit-chat-message-container {
-  background-color: #383838 !important;
-}
-
-.dark-chat .react-chatbot-kit-chat-bot-message {
-  background-color: rgb(30 58 138) !important;
-}
-
-.dark-chat .react-chatbot-kit-chat-bot-message-arrow {
-  border-right: 8px solid rgb(30 58 138) !important;
-}
-
-.dark-chat .react-chatbot-kit-user-chat-message {
+.dark-chat .cs-message.cs-message--outgoing.cs-message--first .cs-message__content {
   background-color: rgb(59 130 246) !important;
   color:white;
 }
 
-.dark-chat .react-chatbot-kit-user-chat-message-arrow {
-  border-left: 8px solid rgb(59 130 246) !important;
-}
-
-.dark-chat .react-chatbot-kit-chat-input{
+.dark-chat .cs-message-input__content-editor-wrapper, .dark-chat .cs-message-input__content-editor {
   background-color: #383838 !important;
   color: white;
 }
 
-.dark-chat .react-chatbot-kit-chat-input::placeholder{
+.dark-chat .cs-message-input__content-editor[data-placeholder]:empty:before {
   color: rgb(175, 175, 175);
+}
+
+.dark-chat .cs-button--send {
+  color: rgb(59 130 246);
+  filter: brightness(1.75);
 }
 
 .category-container {
@@ -273,4 +233,31 @@ body {
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: 100%; /* Ensure the input doesn't exceed its parent's width */
+}
+
+/* Add this CSS to your stylesheet */
+.tooltip-container {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip {
+  visibility: hidden;
+  width: 200px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 8px;
+  padding: 8px;
+  position: absolute;
+  bottom: -60px; /* Position the tooltip below the image */
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.tooltip-container:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
 }

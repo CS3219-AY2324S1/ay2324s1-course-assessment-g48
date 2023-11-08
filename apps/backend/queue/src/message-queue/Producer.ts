@@ -12,7 +12,7 @@ class Producer {
   async init() {
     //TODO: Remove hardcoded IP
     this.connection = await amqp.connect(
-      process.env.RABBITMQ_URL || "amqp://192.168.50.185:5672"
+      process.env.RABBITMQ_URL || "amqp://172.32.249.58:5672"
     );
     this.channel = await this.connection.createChannel();
   }

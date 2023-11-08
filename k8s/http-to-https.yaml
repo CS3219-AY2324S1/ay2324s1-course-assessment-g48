@@ -4,4 +4,4 @@ metadata:
   name: http-to-https
 spec:
   redirectToHttps:
-    enabled: true
+    enabled: false
