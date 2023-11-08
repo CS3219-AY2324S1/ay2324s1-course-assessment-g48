@@ -24,12 +24,13 @@ userRouter.post(
   "/",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { email, username, password, oauth, role } = req.body;
+      const { email, username, password, oauth, role, image } = req.body;
       console.log("body:", req.body);
       const cleanedEmail = email?.trim();
       const cleanedUsername = username?.trim();
       const cleanedPassword = password?.trim();
       const cleanedRole = role?.trim();
+      const cleanedImage = image?.trim();
       console.log("Post Body: ", req.body);
 
       if (!cleanedEmail?.length) {
@@ -107,6 +108,7 @@ userRouter.post(
         password: cleanedPassword,
         oauth: cleanedOauth,
         role: cleanedRole as Role,
+        image: cleanedImage,
       };
 
       console.log("Creating new user at userRouter", cleanedUserData);
@@ -285,11 +287,12 @@ userRouter.put(
     try {
       const { id } = req.params;
 
-      const { email, username, password, oauth, role } = req.body;
+      const { email, username, password, oauth, role, image } = req.body;
       const cleanedEmail = email?.trim();
       const cleanedUsername = username?.trim();
       const cleanedPassword = password?.trim();
       const cleanedRole = role?.trim();
+      const cleanedImage = image?.trim();
       let cleanedOauth: OAuth[] | undefined = undefined;
 
       if (cleanedEmail !== undefined) {
@@ -369,6 +372,7 @@ userRouter.put(
         password: cleanedPassword,
         oauth: cleanedOauth,
         role: cleanedRole as Role,
+        image: cleanedImage,
       });
 
       res.json(updatedUser);

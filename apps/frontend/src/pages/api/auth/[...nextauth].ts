@@ -14,6 +14,7 @@ declare module "next-auth" {
     password?: string;
     oauth?: OAuthType[];
     role?: Role;
+    image?: string;
     accessToken?: string;
     refreshToken?: string;
   }
@@ -52,6 +53,7 @@ export default NextAuth({
             findOAuthUser.oauth.push(account.provider as OAuthType);
             const response = await updateUserById(findOAuthUser.id, {
               oauth: findOAuthUser.oauth,
+              image: user.image,
             });
             if (response.error) {
               return `/error?message=${response.error}&errorKey=${ErrorKey.OAuthSigninError}`;
