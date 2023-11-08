@@ -108,10 +108,11 @@ export const MatchStateProvider: React.FC<MatchStateProviderProps> = ({
     disconnectSocket();
     reset();
     console.log(data.sessionId);
-    console.log(data.peerId);
+    console.log("peer id", data.peerId);
     getUserById(data.peerId)
       .then((peer) => {
         setPeer(peer);
+        console.log("pic", peer)
       })
       .catch((err) => {
         console.log(err);

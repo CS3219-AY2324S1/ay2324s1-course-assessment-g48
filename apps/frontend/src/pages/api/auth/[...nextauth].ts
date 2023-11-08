@@ -46,6 +46,9 @@ export default NextAuth({
         console.log("findOAuthUser:" , findOAuthUser)
 
         if (findOAuthUser) {
+          updateUserById(findOAuthUser.id, {
+            image: findOAuthUser.image
+          })
           // if existing user is signing in with a new oauth
           if (!findOAuthUser.oauth?.includes(account.provider as OAuthType)) {
             // initialise empty oauth if existing user has no oauth previously

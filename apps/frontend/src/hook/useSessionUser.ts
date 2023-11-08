@@ -2,7 +2,6 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { User } from "@/database/user/entities/user.entity";
 import { Role } from "@/utils/enums/Role";
-import { updateUserById } from "@/database/user/userService";
 
 function useSessionUser() {
   const { data: session } = useSession();
@@ -21,9 +20,7 @@ function useSessionUser() {
       if (session) {
         setSessionUser((prevUser) => ({
           ...prevUser,
-          ...updateUserById(session?.user?.id, {
-        image: session?.user?.image,
-      })
+          ...session?.user,
         }));
         console.log("session", session);
         clearInterval(checkSession);
