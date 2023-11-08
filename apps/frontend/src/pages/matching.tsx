@@ -23,7 +23,7 @@ const MatchingPage: React.FC<matchingProps> = () => {
   const { sessionUser } = useSessionUser();
   const [userRole, setUserRole] = useState(sessionUser.role);
   const [disableBtnCancel, setDisableBtnCancel] = useState(true);
-  const {  setError, clearError } = useError();
+  const { setError, clearError } = useError();
   const [peer, setPeer] = useState<User | null>(null);
   const router = useRouter();
 
@@ -50,34 +50,35 @@ const MatchingPage: React.FC<matchingProps> = () => {
     setDisableBtnCancel(true);
     matchingSocket.connect();
     matchingSocket.on("connected", () => {
-      console. log("connected with backend")
-    })
-    
+      console.log("connected with backend");
+    });
+
     matchingSocket.on("matched", setToMatchedState);
     matchingSocket.on("other-connection", () => {
       setToNotMatchingState();
       setError({
         type: 1,
-        message: "This account has attempted to match from another location."});
+        message: "This account has attempted to match from another location.",
+      });
       disconnectSocket();
     });
 
-      console.log("set matching", matchingSocket)
-      matchingSocket.emit("matching", { difficulty, user: sessionUser });
-      matchingSocket.on("matching", () => { 
-        console.log("emitted");
-        setIsMatching(MatchedState.MATCHING);
-        toggleTimer(new Date().getTime() + 30000);
-      })
-      
-      matchingSocket.on("timeout", () => {
-        setToNotMatchingState();
-        setError({
-          type: 1,
-          message: "Timed out, try again."});
-        disconnectSocket();
+    console.log("set matching", matchingSocket);
+    matchingSocket.emit("matching", { difficulty, user: sessionUser });
+    matchingSocket.on("matching", () => {
+      console.log("emitted");
+      setIsMatching(MatchedState.MATCHING);
+      toggleTimer(new Date().getTime() + 30000);
+    });
+
+    matchingSocket.on("timeout", () => {
+      setToNotMatchingState();
+      setError({
+        type: 1,
+        message: "Timed out, try again.",
       });
-  
+      disconnectSocket();
+    });
   };
 
   const setToMatchedState = (data: any) => {
@@ -96,7 +97,8 @@ const MatchingPage: React.FC<matchingProps> = () => {
     setIsMatching(MatchedState.MATCHED);
     setError({
       type: 4,
-      message: "Matched with a peer!"});
+      message: "Matched with a peer!",
+    });
     router.push(`/session/${data.sessionId}`);
   };
 
@@ -116,10 +118,11 @@ const MatchingPage: React.FC<matchingProps> = () => {
         setToNotMatchingState();
         setError({
           type: 1,
-          message: "Timed out, try again."});
+          message: "Timed out, try again.",
+        });
         disconnectSocket();
       });
-    }
+    };
   }, [isRunning, isMatching]);
 
   useEffect(() => {
@@ -227,6 +230,5 @@ const MatchingPage: React.FC<matchingProps> = () => {
       </form>
     </>
   );
-
 };
 export default MatchingPage;

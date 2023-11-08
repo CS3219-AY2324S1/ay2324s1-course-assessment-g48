@@ -51,8 +51,14 @@ export default function Session() {
           router.push("/404");
         });
     }
-  }, [sessionID]);
 
+    return () => {
+      changeDoc((d: any) =>
+        d.loggedInUsers.filter((id: any) => id == sessionUser.id)
+      );
+    };
+  }, [sessionID]);
+  console.log(`Users: ${doc?.loggedInUsers}`);
   return (
     <div>
       {question && (
