@@ -65,7 +65,7 @@ export default NextAuth({
           return true;
         }
 
-        return `/oauthsignup?email=${user.email}&oauth=${account.provider as OAuthType}`
+        return `/oauthsignup?email=${user.email}&oauth=${account.provider as OAuthType}&image=${user.image}`
       } catch (error) {
         console.error(error);
         return true;
