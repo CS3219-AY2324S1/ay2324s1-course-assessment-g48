@@ -25,7 +25,9 @@ const MatchingPage: React.FC<matchingProps> = () => {
   const [disableBtnCancel, setDisableBtnCancel] = useState(true);
   const { setError, clearError } = useError();
   const [peer, setPeer] = useState<User | null>(null);
+  //   const { addNotification } = useNotification();
   const router = useRouter();
+  const [language, setLanguage] = useState<string>(languageOptions[0].label);
 
   const handleMatchConnection: FormEventHandler = (e) => {
     e.preventDefault();
@@ -64,10 +66,11 @@ const MatchingPage: React.FC<matchingProps> = () => {
     });
 
     console.log("set matching", matchingSocket);
-    matchingSocket.emit("matching", { difficulty, user: sessionUser });
+
     matchingSocket.on("matching", () => {
       console.log("emitted");
       setIsMatching(MatchedState.MATCHING);
+      console.log(`isRunning: ${isRunning}`);
       toggleTimer(new Date().getTime() + 30000);
     });
 
@@ -78,6 +81,19 @@ const MatchingPage: React.FC<matchingProps> = () => {
         message: "Timed out, try again.",
       });
       disconnectSocket();
+    });
+
+    matchingSocket.on("error", (data) => {
+      setToNotMatchingState();
+      setError({
+        type: 1,
+        message: data,
+      });
+    });
+
+    matchingSocket.emit("matching", {
+      nameSpace: `${difficulty}/${language}`,
+      user: sessionUser,
     });
   };
 
@@ -95,6 +111,7 @@ const MatchingPage: React.FC<matchingProps> = () => {
         console.log(err);
       });
     setIsMatching(MatchedState.MATCHED);
+    // addNotification("Match Successfully", "You have been matched with a peer!");
     setError({
       type: 4,
       message: "Matched with a peer!",
@@ -157,7 +174,11 @@ const MatchingPage: React.FC<matchingProps> = () => {
                 disabled={isMatching !== MatchedState.NOT_MATCHING}
                 id="language"
                 name="language"
-                className="block w-full rounded-md border-0 px-3.5 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 dark:bg-gray-200 dark:text-gray-800 disabled:bg-gray-300 dark:disabled:bg-gray-400 disabled:cursor-not-allowed"
+                className="block w-full rounded-md border-0 px-3.5 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 dark:bg-gray-200 dark:text-gray-800"
+                onChange={(e) => {
+                  console.log(language);
+                  setLanguage(e.target.value);
+                }}
               >
                 {languageOptions.map((languageOption, index) => (
                   <option key={index}>{languageOption.label}</option>

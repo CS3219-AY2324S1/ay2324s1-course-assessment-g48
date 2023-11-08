@@ -1,30 +1,33 @@
 import { Socket } from "socket.io";
 import { Difficulty } from "../enum/Difficulty";
-import { DifficultyQueue } from "../queue/difficultyQueue";
-import axios from "axios";
-import { SESSION_URL } from "../utils/config";
+import { Queue } from "../queue/queue";
+import { ProgrammingLanguages } from "../enum/ProgrammingLanguages";
 
 class QueueService {
-  queues: Map<Difficulty, DifficultyQueue>;
+  queues: Map<string, Queue>;
 
   constructor() {
     this.queues = new Map();
-    this.queues.set(Difficulty.EASY, new DifficultyQueue(Difficulty.EASY));
-    this.queues.set(Difficulty.MEDIUM, new DifficultyQueue(Difficulty.MEDIUM));
-    this.queues.set(Difficulty.HARD, new DifficultyQueue(Difficulty.HARD));
+    this.queues.set(Difficulty.EASY, new Queue(Difficulty.EASY));
+    this.queues.set(Difficulty.MEDIUM, new Queue(Difficulty.MEDIUM));
+    this.queues.set(Difficulty.HARD, new Queue(Difficulty.HARD));
+
+    for (const diff of Object.values(Difficulty)) {
+      for (const language of Object.values(ProgrammingLanguages)) {
+        const nameSpace = diff + "/" + language;
+        this.queues.set(nameSpace, new Queue(nameSpace, this.queues.get(diff)));
+      }
+    }
   }
 
-  public attemptToMatchUsers(
-    difficulty: Difficulty,
-    uid: number,
-    socket: Socket
-  ) {
-    const queue = this.getQueue(difficulty);
+  public attemptToMatchUsers(nameSpace: string, uid: number, socket: Socket) {
+    console.log(nameSpace);
+    const queue = this.getQueue(nameSpace);
     queue?.attemptToMatchUsers(uid, socket);
   }
 
-  private getQueue(difficulty: Difficulty) {
-    return this.queues.get(difficulty);
+  private getQueue(nameSpace: string) {
+    return this.queues.get(nameSpace);
   }
 
   public checkAndReleaseOtherConnections(uid: number) {
@@ -37,7 +40,7 @@ class QueueService {
     console.log(`\n`);
     console.log(`Disconnected from uid: ${uid}`);
     console.log(`Initiating cleanup for uid: ${uid}`);
-    this.queues.forEach((queue: DifficultyQueue) => {
+    this.queues.forEach((queue: Queue) => {
       queue.cleanup(uid);
     });
 
@@ -45,7 +48,7 @@ class QueueService {
   }
 
   public onExit() {
-    this.queues.forEach((queue: DifficultyQueue) => queue.onExit());
+    this.queues.forEach((queue: Queue) => queue.onExit());
   }
 }
 

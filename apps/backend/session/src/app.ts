@@ -1,24 +1,24 @@
-import { WebSocketServer } from 'ws';
-import express from 'express';
-import { SessionRouter } from './routes/sessionRouter.ts';
-import cors from 'cors';
-import { SESSION_PORT, MONGODB_URI, WS_PORT } from './utils/config.ts';
-import mongoose from 'mongoose';
-import { testRouter } from './routes/testRouter.ts';
-import http from 'http';
+import { WebSocketServer } from "ws";
+import express from "express";
+import { SessionRouter } from "./routes/sessionRouter.ts";
+import cors from "cors";
+import { SESSION_PORT, MONGODB_URI, WS_PORT } from "./utils/config.ts";
+import mongoose from "mongoose";
+import { testRouter } from "./routes/testRouter.ts";
+import http from "http";
 
 const app = express();
 
 // Separate WebSocket server
 const wsServer = http.createServer((req, res) => {
   // Handle HTTP requests specifically for the ping endpoint
-  if (req.url === '/ping') {
-    res.writeHead(200, { 'Content-Type': 'text/plain' });
-    res.end('pong');
+  if (req.url === "/ping") {
+    res.writeHead(200, { "Content-Type": "text/plain" });
+    res.end("pong");
   }
   // Other non-WebSocket requests can be handled here or returned as not found, etc.
 });
-const wss = new WebSocketServer({ server: wsServer, path: '/ws' });
+const wss = new WebSocketServer({ server: wsServer, path: "/ws" });
 
 wsServer.listen(WS_PORT, () => {
   console.log(`WebSocket Server is listening on port ${WS_PORT}`);
@@ -54,26 +54,26 @@ app.use(
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
-        callback(new Error('Not allowed by CORS'));
+        callback(new Error("Not allowed by CORS"));
       }
     },
     credentials: true,
-    exposedHeaders: ['set-cookie'],
+    exposedHeaders: ["set-cookie"],
   })
 );
 
 const sessionRouter = new SessionRouter(wss);
-app.use('/session', sessionRouter.router);
-app.use('/ping', testRouter);
+app.use("/session", sessionRouter.router);
+app.use("/ping", testRouter);
 
 // MongoDB connection
 mongoose
-  .connect(MONGODB_URI || '')
+  .connect(MONGODB_URI || "")
   .then(() => {
-    console.log('Session connected to MongoDB');
+    console.log("Session connected to MongoDB");
   })
   .catch((error) => {
-    console.log('error connection to MongoDB:', error.message);
+    console.log("error connection to MongoDB:", error.message);
   });
 
-mongoose.set('debug', true);
+mongoose.set("debug", true);
