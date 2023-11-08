@@ -22,7 +22,7 @@ const Layout = ({ children }: PropsWithChildren) => {
         }, 300);
       }, 3000);
     }
-  }, [error, clearError]);
+  }, [error]);
 
   if (isLoading) {
     return <LoadingModal isLoading={isLoading} />;

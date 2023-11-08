@@ -20,6 +20,7 @@ export async function createUser(data: User) {
       password: data.password ?? undefined,
       oauth: data.oauth,
       role: data.role,
+      image: data.image,
     },
   });
 }

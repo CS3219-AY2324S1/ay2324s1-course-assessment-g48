@@ -33,10 +33,11 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   hasSession,
 }) => {
   const { isDarkMode } = useTheme();
+  const defaultLanguage : Language|undefined = languageOptions.find((lang) => lang.id === 71)
   // current language selected by user
   const [selectedLanguage, setSelectedLanguage] = useState<Language>(
-    initialLanguage ?? languageOptions[31]
-  ); // "javascript language"
+    initialLanguage ?? defaultLanguage!
+  ); // "python language"
   // default code for the language selected by user
   const starterCode = useMemo(
     () =>
