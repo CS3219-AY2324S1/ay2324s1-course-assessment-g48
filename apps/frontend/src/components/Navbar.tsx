@@ -10,6 +10,7 @@ import Link from "next/link";
 import Stopwatch from "./Stopwatch";
 import { classNames } from "@/utils/classnames/classnames";
 import { useMatchState } from "@/hook/MatchStateContext";
+import { MatchedState } from "@/utils/enums/MatchingState";
 
 const navigation = [
   { name: "Question", href: "/questions", current: false },
@@ -32,7 +33,7 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
   function handleSignOutClick() {
     signOut({ callbackUrl: "/" });
   }
-  const { peer } = useMatchState();
+  const { matchState, peer } = useMatchState();
   const [isTooltipVisible, setTooltipVisible] = useState(false);
 
   const handleMouseEnter = () => {
@@ -121,7 +122,7 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
 
                   <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 space-x-2">
                     <div className="tooltip-container">
-                      {peer ? (
+                      {matchState===MatchedState.MATCHED && peer ? (
                         <div className="flex">
                           <div
                             className="rounded-full transition duration-300 ease-in-out"

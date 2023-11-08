@@ -53,7 +53,17 @@ export const MatchStateProvider: React.FC<MatchStateProviderProps> = ({
 }) => {
   const { toggleTimer, seconds, reset, isRunning } = useTimer();
   const [matchState, setMatchState] = useState<MatchedState>(() => {
-    return isRunning ? MatchedState.MATCHING : MatchedState.NOT_MATCHING;
+    if (typeof window !== "undefined") {
+      console.log(123);
+      const savedState = localStorage.getItem("matchState");
+      return savedState
+        ? JSON.parse(savedState)
+        : isRunning
+        ? MatchedState.MATCHING
+        : MatchedState.NOT_MATCHING;
+    } else {
+      return isRunning ? MatchedState.MATCHING : MatchedState.NOT_MATCHING;
+    }
   });
   const [peer, setPeer] = useState<User | null>(null);
   const { setError, clearError } = useError();
@@ -70,6 +80,12 @@ export const MatchStateProvider: React.FC<MatchStateProviderProps> = ({
     setMatchState(MatchedState.NOT_MATCHING);
   };
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("matchState", JSON.stringify(matchState));
+    }
+  }, [matchState]); // This effect runs whenever `matchState` changes
+  
   const setToMatchingState = () => {
     // Set the state of the page to looking for match.
     clearError();
