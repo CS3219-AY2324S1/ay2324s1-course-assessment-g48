@@ -7,7 +7,6 @@ import React, {
   useEffect,
 } from "react";
 import { MatchedState } from "@/utils/enums/MatchingState";
-import useTimer from "./useTimer";
 import { User } from "@/database/user/entities/user.entity";
 import { useError } from "./ErrorContext";
 import { matchingSocket } from "@/utils/socket/socket";
@@ -15,6 +14,7 @@ import useSessionUser from "./useSessionUser";
 import { getUserById } from "@/database/user/userService";
 import { Complexity } from "@/utils/enums/Complexity";
 import { useRouter } from "next/router";
+import { useTimer } from "./timerContext";
 
 type MatchStateContextType = {
   matchState: MatchedState;
@@ -50,11 +50,6 @@ export const MatchStateProvider: React.FC<MatchStateProviderProps> = ({
 }) => {
   const { toggleTimer, seconds, reset, isRunning } = useTimer();
   const [matchState, setMatchState] = useState<MatchedState>(() => {
-    if (typeof sessionStorage !== "undefined") {
-      // Check if sessionStorage is available before accessing it.
-      return Number(sessionStorage.getItem("matchState"));
-    }
-    // If sessionStorage is not available, default to false (light mode).
     return isRunning ? MatchedState.MATCHING : MatchedState.NOT_MATCHING;
   });
   const [peer, setPeer] = useState<User | null>(null);
@@ -152,12 +147,6 @@ export const MatchStateProvider: React.FC<MatchStateProviderProps> = ({
     };
   }, [isRunning, matchState]);
 
-  useEffect(() => {
-    if (typeof sessionStorage !== "undefined") {
-      // Check if sessionStorage is available before accessing it.
-      sessionStorage.setItem("matchState", String(matchState));
-    }
-  }, [matchState]);
 
   return (
     <MatchStateContext.Provider

@@ -34,6 +34,8 @@ export default function OauthSignUp() {
         role: Role.Normal,
       };
 
+      console.log("picture", sessionUser);
+
       const response = await createNewUser(newUser);
       if (response.error) {
         setError({

@@ -9,6 +9,7 @@ import ModeToggleButton from "./ModeToggleButton";
 import Link from "next/link";
 import Stopwatch from "./Stopwatch";
 import { classNames } from "@/utils/classnames/classnames";
+import { useMatchState } from "@/hook/MatchStateContext";
 
 const navigation = [
   { name: "Question", href: "/questions", current: false },
@@ -33,6 +34,7 @@ const Navbar: React.FC<NavbarProps> = ({
   function handleSignOutClick() {
     signOut({ callbackUrl: "/" });
   }
+  const { peer } = useMatchState();
 
   return (
     <Disclosure as="nav" className="bg-gray-900 ">
@@ -113,6 +115,22 @@ const Navbar: React.FC<NavbarProps> = ({
                   <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 space-x-2">
                     {isQuestionPage && <Stopwatch />}
                     <ModeToggleButton />
+
+                    {/* {peer ? (
+                      <div>
+                        <span className="absolute -inset-1.5" />
+                        <span className="sr-only">View notifications</span>
+                        <div className="flex">
+                          <Image
+                            className="rounded-full transition duration-300 ease-in-out"
+                            width="30"
+                            height="30"
+                            src={peer.image ?? "/avatar.svg"}
+                            alt="/avatar.svg"
+                          />
+                        </div>
+                      </div>
+                    ): <></>} */}
 
                     {/* Profile dropdown */}
                     <Menu as="div" className="relative ml-3 navbar-menu">

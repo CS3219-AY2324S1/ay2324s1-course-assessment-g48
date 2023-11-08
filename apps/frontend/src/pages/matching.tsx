@@ -4,7 +4,6 @@ import React, { FormEventHandler, useEffect, useState } from "react";
 import { Complexity } from "@/utils/enums/Complexity";
 import { MatchedState } from "@/utils/enums/MatchingState";
 import Countdown from "@/components/Countdown";
-import useTimer from "@/hook/useTimer";
 import useSessionUser from "@/hook/useSessionUser";
 import { User } from "@/database/user/entities/user.entity";
 import { useRouter } from "next/router";
