@@ -14,7 +14,7 @@ type matchingProps = {};
 const MatchingPage: React.FC<matchingProps> = () => {
   const { sessionUser } = useSessionUser();
   const [userRole, setUserRole] = useState(sessionUser.role);
-  const {  clearError } = useError();
+  const { clearError } = useError();
   const router = useRouter();
   const {
     matchState,
@@ -27,18 +27,17 @@ const MatchingPage: React.FC<matchingProps> = () => {
     setDifficulty,
     seconds,
     language,
-    setLanguage
+    setLanguage,
   } = useMatchState();
 
-const handleMatchConnection: FormEventHandler = (e) => {
-  e.preventDefault();
-  console.log(difficulty);
-  if (matchState == MatchedState.MATCHING) {
-    setToNotMatchingState();
-    return;
-  }
-  setToMatchingState();
-};
+  const handleMatchConnection: FormEventHandler = (e) => {
+    e.preventDefault();
+    if (matchState == MatchedState.MATCHING) {
+      setToNotMatchingState();
+      return;
+    }
+    setToMatchingState();
+  };
 
   useEffect(() => {
     setUserRole(sessionUser.role);
@@ -79,7 +78,9 @@ const handleMatchConnection: FormEventHandler = (e) => {
                 }}
               >
                 {languageOptions
-                  .filter((language) => [63, 54, 62, 71, 74].includes(language.id))
+                  .filter((language) =>
+                    [63, 54, 62, 71, 74].includes(language.id)
+                  )
                   .map((languageOption, index) => (
                     <option key={index}>{languageOption.label}</option>
                   ))}

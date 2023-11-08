@@ -28,14 +28,16 @@ export default function Session() {
   let increment: (value: string) => void = (value: string) => {
     console.log("reflecting changes in code editor through changeDoc...");
     changeDoc((d: any) => (d.text = value));
+    console.log(doc);
   };
 
   useEffect(() => {
     console.log(doc?.loggedInUsers);
+    console.log(doc);
   }, [doc?.loggedInUsers.length]);
 
   useEffect(() => {
-    if (sessionID) {
+    if (sessionID && sessionUser) {
       axios
         .get(
           `${process.env.NEXT_PUBLIC_SESSION_URL}/session/get-session/${sessionID}`
