@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import useInput from "../../../hook/useInput";
 import {
   Question,
@@ -51,87 +51,128 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
       .catch((e) => {
         setError({
           type: 1,
-          message:e
+          message: e,
         });
       });
   };
 
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleOutsideModalClick(event: MouseEvent) {
+      if (ref.current && !ref.current.contains(event.target as Node)) {
+        setNewQuestion({
+          _id: "",
+          title: "",
+          description: "",
+          categories: [],
+          complexity: "",
+          examples: [],
+          testcases: [],
+          constraints: "",
+          followUp: "",
+          starterCode: [],
+          dateCreated: new Date(),
+        });
+      }
+    }
+    document.addEventListener("mousedown", handleOutsideModalClick);
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideModalClick);
+    };
+  }, [ref]);
+
   return (
     <Modal title="Add Question" setOpen={setOpen} open={open}>
       <form onSubmit={handleAddQuestion}>
-        <div className="space-y-12">
-          <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-            <TitleInput
-              hasError={hasError}
-              value={value}
-              valueChangeHandler={valueChangeHandler}
-              inputBlurHandler={inputBlurHandler}
+        <div ref={ref}>
+          <div className="space-y-12">
+            <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+              <TitleInput
+                hasError={hasError}
+                value={value}
+                valueChangeHandler={valueChangeHandler}
+                inputBlurHandler={inputBlurHandler}
+                newQuestion={newQuestion}
+                setNewQuestion={setNewQuestion}
+              />
+
+              <DescriptionInput
+                newQuestion={newQuestion}
+                setNewQuestion={setNewQuestion}
+              />
+            </div>
+
+            <ComplexityInput
               newQuestion={newQuestion}
               setNewQuestion={setNewQuestion}
             />
 
-            <DescriptionInput
+            <CategoriesInput
               newQuestion={newQuestion}
               setNewQuestion={setNewQuestion}
+            />
+
+            <ExamplesInput
+              newQuestion={newQuestion}
+              setNewQuestion={setNewQuestion}
+            />
+
+            <ConstraintsInput
+              newQuestion={newQuestion}
+              setNewQuestion={setNewQuestion}
+            />
+
+            <FollowUpInput
+              newQuestion={newQuestion}
+              setNewQuestion={setNewQuestion}
+            />
+
+            <StarterCodeInput
+              newQuestion={newQuestion}
+              setNewQuestion={setNewQuestion}
+            />
+
+            <TestCasesInput
+              newQuestion={newQuestion}
+              setNewQuestion={setNewQuestion}
+              blank={blank}
+              setBlank={setBlank}
             />
           </div>
-
-          <ComplexityInput
-            newQuestion={newQuestion}
-            setNewQuestion={setNewQuestion}
-          />
-
-          <CategoriesInput
-            newQuestion={newQuestion}
-            setNewQuestion={setNewQuestion}
-          />
-
-          <ExamplesInput
-            newQuestion={newQuestion}
-            setNewQuestion={setNewQuestion}
-          />
-
-          <ConstraintsInput
-            newQuestion={newQuestion}
-            setNewQuestion={setNewQuestion}
-          />
-
-          <FollowUpInput
-            newQuestion={newQuestion}
-            setNewQuestion={setNewQuestion}
-          />
-
-          <StarterCodeInput
-            newQuestion={newQuestion}
-            setNewQuestion={setNewQuestion}
-          />
-
-          <TestCasesInput
-            newQuestion={newQuestion}
-            setNewQuestion={setNewQuestion}
-            blank={blank}
-            setBlank={setBlank}
-          />
-        </div>
-        <div className="border-b border-gray-900/10 pb-12" />
-        <div className="mt-6 flex items-center justify-end gap-x-6">
-          <button
-            type="button"
-            className="text-sm font-semibold leading-6 text-gray-900"
-            onClick={() => {
-              setOpen(false);
-              reset();
-            }}
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            disabled={!valueIsValid || blank}
-            className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-          >
-            Add
-          </button>
+          <div className="border-b border-gray-900/10 pb-12" />
+          <div className="mt-6 flex items-center justify-end gap-x-6">
+            <button
+              type="button"
+              className="text-sm font-semibold leading-6 text-gray-900"
+              onClick={() => {
+                setOpen(false);
+                setNewQuestion({
+                  _id: "",
+                  title: "",
+                  description: "",
+                  categories: [],
+                  complexity: "",
+                  examples: [],
+                  testcases: [],
+                  constraints: "",
+                  followUp: "",
+                  starterCode: [],
+                  dateCreated: new Date(),
+                });
+                reset();
+              }}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={!valueIsValid || blank}
+              className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            >
+              Add
+            </button>
+          </div>
         </div>
       </form>
     </Modal>

@@ -5,11 +5,9 @@ import {
   postNewQuestion,
   updateQuestionById,
 } from "@/database/question/questionService";
-import useQuestions from "@/hook/useQuestions";
 import AddQuestionModal from "./AddQuestionModal";
 import EditQuestionModal from "./EditQuestionModal";
 import { Complexity } from "@/utils/enums/Complexity";
-import useSessionUser from "@/hook/useSessionUser";
 import { Role } from "@/utils/enums/Role";
 import { useRouter } from "next/router";
 import {
@@ -26,20 +24,27 @@ type QuestionTableProps = {
   setOpenAdd: (open: boolean) => void;
   openAdd: boolean;
   hidden?: boolean;
+  userRole?: Role;
+  accessToken?: string | null;
+  refreshToken?: string | null;
+  questions: Question[];
+  totalQuestions: number;
+  handleTrigger: () => void;
 };
 
 const QuestionTable: FC<QuestionTableProps> = ({
   setOpenAdd,
   openAdd,
   hidden,
+  userRole,
+  accessToken,
+  refreshToken,
+  questions,
+  totalQuestions,
+  handleTrigger,
 }) => {
   const questionsPerPage = useMemo(() => 10, []);
-  const {data: session} = useSession();
-  const { sessionUser } = useSessionUser();
-  const [userRole, setUserRole] = useState(sessionUser.role);
-  const [accessToken, setAccessToken] = useState(sessionUser.accessToken);
-  const [refreshToken, setRefreshToken] = useState(sessionUser.refreshToken);
-  const { questions, totalQuestions, handleTrigger } = useQuestions(sessionUser.accessToken, sessionUser.refreshToken);
+  const { data: session } = useSession();
   const [searchResults, setSearchResults] = useState("");
   const [viewQuestion, setViewQuestion] = useState<Question>(initialQuestion);
   const [questionToEdit, setQuestionToEdit] =
@@ -81,12 +86,6 @@ const QuestionTable: FC<QuestionTableProps> = ({
   ) => {
     setSelectedDifficulty(event.target.value);
   };
-
-  useEffect(() => {
-    setUserRole(sessionUser.role);
-    setAccessToken(sessionUser.accessToken);
-    setRefreshToken(sessionUser.refreshToken);
-  }, [sessionUser]);
 
   useEffect(() => {
     setFilteredQuestions(
@@ -133,7 +132,12 @@ const QuestionTable: FC<QuestionTableProps> = ({
   };
 
   const handleEditQuestion = async (editQuestion: Question) => {
-    await updateQuestionById(editQuestion._id, accessToken!, refreshToken!, editQuestion)
+    await updateQuestionById(
+      editQuestion._id,
+      accessToken!,
+      refreshToken!,
+      editQuestion
+    )
       .then((data) => {
         handleTrigger();
         if (data.accessToken) {
@@ -198,7 +202,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
         />
       </div>
 
-      <div className="overflow-x-auto shadow-md rounded-lg h-[calc(100vh-270px)]">
+      <div className="overflow-x-auto shadow-md rounded-lg h-[calc(100vh-270px)] dark:bg-gray-800">
         <table
           className="relative text-sm text-left text-gray-500 dark:text-gray-400 w-full"
           hidden={hidden}
@@ -250,7 +254,9 @@ const QuestionTable: FC<QuestionTableProps> = ({
                 </td>
                 <td className="px-6 py-4">{question.categories.join(", ")}</td>
                 <td
-                  className={`px-6 py-4 ${complexityClass[question.complexity as Complexity] || ''}`}
+                  className={`px-6 py-4 ${
+                    complexityClass[question.complexity as Complexity] || ""
+                  }`}
                 >
                   {question.complexity}
                 </td>

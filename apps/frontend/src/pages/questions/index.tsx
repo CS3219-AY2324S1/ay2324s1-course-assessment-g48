@@ -12,7 +12,10 @@ export default function QuestionsRepo() {
   const [userRole, setUserRole] = useState(sessionUser.role);
   const [accessToken, setAccessToken] = useState(sessionUser.accessToken);
   const [refreshToken, setRefreshToken] = useState(sessionUser.refreshToken);
-  const { isLoading } = useQuestions(accessToken, refreshToken);
+  const { isLoading, questions, totalQuestions, handleTrigger } = useQuestions(
+    accessToken,
+    refreshToken
+  );
 
   useEffect(() => {
     setUserRole(sessionUser.role);
@@ -60,6 +63,12 @@ export default function QuestionsRepo() {
           setOpenAdd={setOpenAdd}
           openAdd={openAdd}
           hidden={isLoading}
+          userRole={userRole}
+          accessToken={accessToken}
+          refreshToken={refreshToken}
+          questions={questions}
+          totalQuestions={totalQuestions}
+          handleTrigger={handleTrigger}
         />
       </div>
     </div>

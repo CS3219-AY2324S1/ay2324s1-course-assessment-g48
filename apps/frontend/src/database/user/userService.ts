@@ -34,7 +34,6 @@ export const getUserById = async (id: number) => {
   return response.data;
 };
 
-// TODO: Hash the password
 export const login = async ({
   email,
   password,
@@ -50,7 +49,7 @@ export const login = async ({
   }
   try {
     const res = await axios.post(BASE_URL + "/login", {
-      data:  { email, password, oauth } ,
+      data: { email, password, oauth } ,
     });
     return res.data;
   } catch (e: any) {
