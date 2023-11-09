@@ -65,4 +65,23 @@ export class SessionController {
     console.log("Saving to database");
     await this.sessionManager.saveToDatabase();
   }
+
+  public async handleGetSessionsForUser(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    console.log(req.params.user);
+    const uid = Number(req.params.user);
+    if (!uid) {
+      return res.status(500).json({ err: "UID passed in was not valid." });
+    }
+    const sessions = await this.sessionManager.getAllSessionsForUser(uid);
+    if (!sessions) {
+      return res.status(500).json({
+        err: "Something went wrong when searching for the sessions for this user.",
+      });
+    }
+    return res.status(200).json({ sessions });
+  }
 }
