@@ -7,7 +7,7 @@ import { classNames } from "@/utils/classnames/classnames";
 import { languageOptions } from "@/utils/constants/LanguageOptions";
 import { Tab } from "@headlessui/react";
 import { Editor } from "@monaco-editor/react";
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
 
 type StarterCodeInputProps = {
   newQuestion: Question;
@@ -22,6 +22,14 @@ const StarterCodeInput: React.FC<StarterCodeInputProps> = ({
   const [currStarterCode, setCurrStarterCode] = React.useState<CodeType[]>(
     newQuestion.starterCode
   );
+
+  useEffect(() => {
+    setNewQuestion({
+      ...newQuestion,
+      starterCode: currStarterCode,
+    });
+  }, [currStarterCode]);
+
   const handleStarterCodeChange = (languageId: number, value: string) => {
     const index = currStarterCode.findIndex(
       (starterCode) => starterCode.languageId === languageId
@@ -34,11 +42,6 @@ const StarterCodeInput: React.FC<StarterCodeInputProps> = ({
       updatedStarterCodes[index].code = value;
       setCurrStarterCode(updatedStarterCodes);
     }
-
-    setNewQuestion({
-      ...newQuestion,
-      starterCode: currStarterCode,
-    });
   };
   return (
     <div className="mt-10">

@@ -10,7 +10,10 @@ class Consumer {
   }
 
   private async connectToAmqp() {
-    console.log("Connecting to RabbitMQ", process.env.RABBITMQ_URL);
+    console.log(
+      `${this.queue} is connecting to RabbitMQ`,
+      process.env.RABBITMQ_URL
+    );
     const connection = await amqp.connect(
       process.env.RABBITMQ_URL || "amqp://localhost:5672"
     );

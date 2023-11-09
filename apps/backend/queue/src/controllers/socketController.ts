@@ -14,14 +14,15 @@ class SocketController {
     socket.emit("connected", () => console.log("Socket connected"));
     socket.on("matching", (data) => {
       console.log(`\n`);
-      console.log(`Socket data: ${JSON.stringify(data)}`);
-      socket.emit("matching")
-      const difficulty = data.difficulty;
+      //   console.log(`Socket data: ${JSON.stringify(data)}`);
+      socket.emit(`Attempting to match user: ${data.uid} `);
+      const nameSpace = data.nameSpace;
       const uid = data.user.id;
       this.queueService.checkAndReleaseOtherConnections(uid);
 
       socket.on("disconnect", () => this.handleDisconnect(socket, uid));
-      this.queueService.attemptToMatchUsers(difficulty, data.user.id, socket);
+      socket.emit("matching");
+      this.queueService.attemptToMatchUsers(nameSpace, data.user.id, socket);
       setTimeout(() => {
         if (!socket.disconnected) {
           console.log(`\n`);

@@ -31,7 +31,9 @@ const UserForm: React.FC<UserFormProps> = ({ formType, currPassword }) => {
   const [newId, setNewId] = useState(sessionUser.id);
   const [newUsername, setNewUsername] = useState(sessionUser.username);
   const [newEmail, setNewEmail] = useState(sessionUser.email);
-  const [newPassword, setNewPassword] = useState(currPassword ?? sessionUser.password);
+  const [newPassword, setNewPassword] = useState(
+    currPassword ?? sessionUser.password
+  );
 
   const [openAuthInfo, setOpenAuthInfo] = useState(false);
   const [authProvider, setAuthProvider] = useState(
@@ -43,6 +45,10 @@ const UserForm: React.FC<UserFormProps> = ({ formType, currPassword }) => {
 
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") ?? "/";
+  const hasOAuth =
+    status === "authenticated" &&
+    sessionUser.oauth !== undefined &&
+    sessionUser.oauth.length !== 0;
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -69,22 +75,22 @@ const UserForm: React.FC<UserFormProps> = ({ formType, currPassword }) => {
         callbackUrl,
       });
       if (result?.error) {
-        console.log("Something wrong" , result.error);
+        console.log("Something wrong", result.error);
         setError({
           type: 1,
-          message: "Invalid email or password."
+          message: "Invalid email or password.",
         });
       } else {
         setError({
           type: 4,
-          message: "Account login successfully!"
-        })
+          message: "Account login successfully!",
+        });
         router.push("/questions");
       }
     } catch (err) {
       setError({
         type: 1,
-        message: err as string
+        message: err as string,
       });
       console.error(err);
     }
@@ -104,11 +110,10 @@ const UserForm: React.FC<UserFormProps> = ({ formType, currPassword }) => {
 
       const response = await createNewUser(newUser);
       if (response.error) {
-        setError(
-          {
-            type: 1,
-            message: response.error
-          });
+        setError({
+          type: 1,
+          message: response.error,
+        });
         return;
       }
 
@@ -123,23 +128,22 @@ const UserForm: React.FC<UserFormProps> = ({ formType, currPassword }) => {
 
       if (result?.error) {
         console.log(result?.error);
-        setError(
-          {
-            type: 1,
-            message: "That email or username has already been taken."
-          });
+        setError({
+          type: 1,
+          message: "That email or username has already been taken.",
+        });
       } else {
         setError({
           type: 4,
-          message: "Account login successfully!"
-        })
+          message: "Account login successfully!",
+        });
         router.push("/questions");
       }
     } catch (err) {
       console.log(err || "Error undefined???");
       setError({
         type: 1,
-        message: err as string
+        message: err as string,
       });
     }
   };
@@ -161,13 +165,13 @@ const UserForm: React.FC<UserFormProps> = ({ formType, currPassword }) => {
       if (response.error) {
         setError({
           type: 1,
-          message: response.error
+          message: response.error,
         });
         return;
       } else {
         setError({
           type: 4,
-          message: "Profile updated successfully!"
+          message: "Profile updated successfully!",
         });
       }
 
@@ -180,11 +184,10 @@ const UserForm: React.FC<UserFormProps> = ({ formType, currPassword }) => {
       update({ user: sessionUser });
       router.push("/profile");
     } catch (err) {
-      setError(
-        {
-          type: 1,
-          message: err as string
-        });
+      setError({
+        type: 1,
+        message: err as string,
+      });
       console.error(err);
     }
   };
@@ -195,16 +198,16 @@ const UserForm: React.FC<UserFormProps> = ({ formType, currPassword }) => {
     if (response.error) {
       setError({
         type: 1,
-        message: response.error
+        message: response.error,
       });
       return;
     } else {
       setError({
         type: 4,
-        message: "Profile deleted successfully!"
+        message: "Profile deleted successfully!",
       });
     }
-    signOut({callbackUrl: "/"});
+    signOut({ callbackUrl: "/" });
   };
 
   const handleUnlinkOAuth = async (
@@ -217,8 +220,9 @@ const UserForm: React.FC<UserFormProps> = ({ formType, currPassword }) => {
       if (newPassword == undefined || newPassword.trim().length == 0) {
         setError({
           type: 1,
-          message: "You must enter a password in order to unlink your last linked account."}
-        );
+          message:
+            "Please enter a password before unlinking your last 3rd party account.",
+        });
         return;
       }
     }
@@ -243,6 +247,7 @@ const UserForm: React.FC<UserFormProps> = ({ formType, currPassword }) => {
               type="text"
               label="Username"
               value={newUsername!}
+              placeholder="Enter username"
               onChange={setNewUsername}
             />
           </div>
@@ -253,12 +258,9 @@ const UserForm: React.FC<UserFormProps> = ({ formType, currPassword }) => {
             type="email"
             label="Email address"
             value={newEmail!}
+            placeholder="Enter email"
             autoComplete="email"
-            disabled={
-              status === "authenticated" &&
-              sessionUser.oauth !== undefined &&
-              sessionUser.oauth.length !== 0
-            }
+            disabled={hasOAuth}
             onChange={setNewEmail}
           />
         </div>
@@ -267,13 +269,16 @@ const UserForm: React.FC<UserFormProps> = ({ formType, currPassword }) => {
             type="password"
             label="Password"
             value={newPassword!}
+            placeholder={
+              formType === UserManagement.Profile
+                ? "Enter new password"
+                : "Enter password"
+            }
             autoComplete="current-password"
             onChange={setNewPassword}
           />
         </div>
-        {formType === UserManagement.Profile &&
-          sessionUser.oauth !== undefined &&
-          sessionUser.oauth.length !== 0 && (
+        {formType === UserManagement.Profile && hasOAuth && (
             <div className="flex flex-col items-center space-y-4">
               <p className="block text-sm font-medium leading-6 text-gray-900 dark:text-white">
                 Linked accounts:
@@ -291,6 +296,9 @@ const UserForm: React.FC<UserFormProps> = ({ formType, currPassword }) => {
                   />
                 ))}
               </div>
+              <p className="block text-xs leading-6 text-gray-900 dark:text-white">
+                Click on an icon to unlink account
+              </p>
             </div>
           )}
         <div className="flex flex-col text-center justify-center items-center d-flex space-y-6">
@@ -324,7 +332,7 @@ const UserForm: React.FC<UserFormProps> = ({ formType, currPassword }) => {
         provider={authProvider}
         setError={setError}
         newUser={updateAuthUser}
-        />
+      />
     </>
   );
 };
