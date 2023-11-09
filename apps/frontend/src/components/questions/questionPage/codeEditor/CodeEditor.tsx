@@ -1,8 +1,8 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import EditorNav from "./EditorNav";
 import Split from "react-split";
 import { useTheme } from "@/hook/ThemeContext";
-import { Editor } from "@monaco-editor/react";
+import { Editor, Monaco } from "@monaco-editor/react";
 import {
   CodeType,
   Question,
@@ -16,6 +16,7 @@ import { Language } from "@/utils/class/Language";
 import { Status } from "@/utils/enums/Status";
 import ExecPanel from "./execPanel/ExecPanel";
 import EditorFooter from "./execPanel/editorFooter/EditorFooter";
+import { editor } from "monaco-editor";
 
 type CodeEditorProps = {
   onChangeCode?: (value: string | undefined) => void;
@@ -61,8 +62,57 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   const enterPress = useKeyPress("Enter");
   const ctrlPress = useKeyPress("Control");
   const memoizedOutputDetails = useMemo(() => outputDetails, [outputDetails]);
-  if (!onChangeCode) {
-    onChangeCode = (value?: string) => {
+
+  const monacoRef = useRef<editor.IStandaloneCodeEditor>();
+
+  function handleEditorDidMount(
+    editor: editor.IStandaloneCodeEditor,
+    monaco: Monaco
+  ) {
+    // here is another way to get monaco instance
+    // you can also store it in `useRef` for further usage
+    monacoRef.current = editor;
+  }
+
+  //   if (!onChangeCode) {
+  //     onChangeCode = (value?: string) => {
+  //       // find the corresponding language code in codeArray
+  //       const index = codeArray.findIndex(
+  //         (langCode) => langCode.languageId === selectedLanguage.id
+  //       );
+  //       if (index === -1) {
+  //         // take from starter code if not found, add to existing codeArray
+  //         console.log(`selectedLanguage ${selectedLanguage.id} not found.`);
+  //         setCodeArray([
+  //           ...codeArray,
+  //           {
+  //             languageId: selectedLanguage.id,
+  //             code:
+  //               question.starterCode.find(
+  //                 (starterCode) => starterCode.languageId === selectedLanguage.id
+  //               )?.code ?? "",
+  //           },
+  //         ]);
+  //       } else {
+  //         // else just update code in codeArray
+  //         const updatedCodeArray = [...codeArray];
+  //         updatedCodeArray[index].code = value ?? "";
+  //         setCodeArray(updatedCodeArray);
+  //       }
+  //       // change display code as per normal
+  //       setDisplayCode(value ?? "");
+  //     };
+  //     // console.log("Using solo code editor. Current code:", code);
+  //   }
+
+  const changeCodeHandler = (value?: string) => {
+    if (onChangeCode) {
+      const prevCursorPosition = monacoRef.current?.getPosition();
+      onChangeCode(value);
+      if (prevCursorPosition) {
+        monacoRef.current?.setPosition(prevCursorPosition);
+      }
+    } else {
       // find the corresponding language code in codeArray
       const index = codeArray.findIndex(
         (langCode) => langCode.languageId === selectedLanguage.id
@@ -88,9 +138,8 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
       }
       // change display code as per normal
       setDisplayCode(value ?? "");
-    };
-    // console.log("Using solo code editor. Current code:", code);
-  }
+    }
+  };
 
   const handleOutputDetails = (response: any, index: number) => {
     setOutputDetails((prev) => {
@@ -249,11 +298,12 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
       >
         <div className="w-full overflow-auto dark:bg-neutral-800">
           <Editor
-            onChange={onChangeCode}
+            onChange={changeCodeHandler}
             defaultValue={starterCode}
             value={displayCode}
             theme={isDarkMode ? "vs-dark" : "light"}
             language={selectedLanguage.value.toLowerCase()}
+            onMount={handleEditorDidMount}
           />
         </div>
         {/* Exec Panel can still be abstracted to QuestionWorkspace -> future enhancement */}
