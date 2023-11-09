@@ -319,9 +319,12 @@ userRouter.put(
           );
         }
       }
-
-      const saltRounds = 10;
-      const hashedPassword = await bcrypt.hash(cleanedPassword, saltRounds);
+      
+      let hashedPassword = null;
+      if (cleanedPassword !== undefined) {
+        const saltRounds = 10;
+        hashedPassword = await bcrypt.hash(cleanedPassword, saltRounds);
+      }
 
       const updatedUser = await updateUser(parseInt(id), {
         email: cleanedEmail,

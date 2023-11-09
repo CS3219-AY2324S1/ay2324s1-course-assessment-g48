@@ -63,6 +63,12 @@ const QuestionTable: FC<QuestionTableProps> = ({
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedDifficulty, setSelectedDifficulty] = useState("");
 
+  const complexityClass = {
+    [Complexity.Easy]: "text-green-600",
+    [Complexity.Medium]: "text-yellow-600",
+    [Complexity.Hard]: "text-red-600",
+  };
+
   const handleCategoryChange = (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
@@ -192,12 +198,12 @@ const QuestionTable: FC<QuestionTableProps> = ({
         />
       </div>
 
-      <div className="overflow-x-auto shadow-md rounded-lg">
+      <div className="overflow-x-auto shadow-md rounded-lg h-[calc(100vh-270px)]">
         <table
-          className=" relative text-sm text-left text-gray-500 dark:text-gray-400 w-full"
+          className="relative text-sm text-left text-gray-500 dark:text-gray-400 w-full"
           hidden={hidden}
         >
-          <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+          <thead className="text-xs sticky top-0 text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
               <th scope="col" className="px-6 py-3 ">
                 S/N
@@ -230,7 +236,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
           <tbody>
             {currentQuestions.map((question, index) => (
               <tr
-                key={index}
+                key={question._id}
                 className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
               >
                 <th scope="row" className="py-2 center">
@@ -244,13 +250,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
                 </td>
                 <td className="px-6 py-4">{question.categories.join(", ")}</td>
                 <td
-                  className={`px-6 py-4 ${
-                    question.complexity === Complexity.Easy
-                      ? "text-green-600"
-                      : question.complexity === Complexity.Medium
-                      ? " text-yellow-600"
-                      : "text-red-600"
-                  }`}
+                  className={`px-6 py-4 ${complexityClass[question.complexity as Complexity] || ''}`}
                 >
                   {question.complexity}
                 </td>
