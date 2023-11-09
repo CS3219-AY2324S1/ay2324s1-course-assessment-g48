@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
-import { codeExecutionRouter } from "./controllers/api/codeExecutionRouter";
+import { codeExecutionRouter } from "./controllers/codeExecutionRouter";
+import PingRouter from "./routes/pingRouter";
 
 export const app = express();
 const allowedOrigins = [
@@ -36,3 +37,4 @@ app.use(
 app.use(express.json());
 
 app.use("/api/codeExecution", codeExecutionRouter);
+app.use("/ping", new PingRouter().routes());

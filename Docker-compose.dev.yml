@@ -133,6 +133,35 @@ services:
     networks:
       - peerprep-network
 
+  peerprep-chat:
+    container_name: peerprep-chat            
+    image: peerprep-chat  
+    restart: always
+    build:
+      context: ./apps/backend/chat          
+      dockerfile: Dockerfile.chat.dev          
+    ports:
+      - "8082:8082"                            
+    environment:
+      - ./apps/backend/chat/.env.dev
+    networks:
+      - peerprep-network
+  
+  peerprep-codeexec:
+    container_name: peerprep-codeexec           
+    image: peerprep-codeexec                  
+    restart: always
+    build:
+      context: ./apps/backend/codeExecution          
+      dockerfile: Dockerfile.codeexec.dev      
+    ports:
+      - "8420:8420"                           
+    # volumes:
+    #   - ./apps/backend/question:/app      
+    environment:
+      - ./apps/backend/codeExecution/.env.dev
+    networks:
+      - peerprep-network
 
 # Define a custom network for your services
 networks:

@@ -66,6 +66,8 @@ const sessionRouter = new SessionRouter(wss);
 app.use("/session", sessionRouter.router);
 app.use("/ping", testRouter);
 
+console.log('Connecting to MongoDB...');
+
 // MongoDB connection
 mongoose
   .connect(MONGODB_URI || "")
