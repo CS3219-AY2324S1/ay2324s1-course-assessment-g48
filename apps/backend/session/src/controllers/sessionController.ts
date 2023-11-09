@@ -26,7 +26,14 @@ export class SessionController {
   ) {
     logger.info(req.body);
     const [user1, user2] = req.body.users;
-    const sessionId = await this.sessionManager.createNewSession(user1, user2);
+    const difficulty = req.body.difficulty;
+    const language = req.body.language;
+    const sessionId = await this.sessionManager.createNewSession(
+      user1,
+      user2,
+      difficulty,
+      language
+    );
     console.log(`Created a sessionId: ${sessionId}`);
     res.status(200).json({ sessionId: sessionId.toString() });
   }

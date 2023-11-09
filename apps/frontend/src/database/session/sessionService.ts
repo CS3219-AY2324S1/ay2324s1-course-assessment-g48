@@ -3,7 +3,6 @@ import Router from "next/router";
 
 const BASE_URL = process.env.NEXT_PUBLIC_SESSION_URL + "/session/user";
 
-// Get history by id
 export const getSessionsByUserId = async (
   uid: number
   //   accessToken?: string,
@@ -29,3 +28,20 @@ export const getSessionsByUserId = async (
       throw String(error.response.data.error);
     });
 };
+
+export async function getSession(sessionId: string) {
+  return await axios
+    .get(
+      `${process.env.NEXT_PUBLIC_SESSION_URL}/session/get-session/${sessionId}`
+    )
+    .then((res) => res.data)
+    .catch((error) => {
+      if (error.response.status === 401) {
+        Router.push("/401");
+      } else if (error.response.status === 404) {
+        Router.push("/404");
+      }
+      console.error(error);
+      //   throw String(error.response.data.error);
+    });
+}

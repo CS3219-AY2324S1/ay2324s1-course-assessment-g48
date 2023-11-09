@@ -85,7 +85,7 @@ export const MatchStateProvider: React.FC<MatchStateProviderProps> = ({
       localStorage.setItem("matchState", JSON.stringify(matchState));
     }
   }, [matchState]); // This effect runs whenever `matchState` changes
-  
+
   const setToMatchingState = () => {
     // Set the state of the page to looking for match.
     clearError();
@@ -140,12 +140,12 @@ export const MatchStateProvider: React.FC<MatchStateProviderProps> = ({
       .catch((err) => {
         console.log(err);
       });
-    setMatchState(MatchedState.MATCHED);
+    setMatchState(MatchedState.NOT_MATCHING);
     setError({
       type: 4,
       message: "Matched with a peer!",
     });
-    // router.push(`/session/${data.sessionId}`);
+    router.push(`/session/${data.sessionId}`);
   };
 
   const disconnectSocket = () => {
