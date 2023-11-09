@@ -40,6 +40,7 @@ export default function Session() {
           console.log(res.data.docId);
           console.log(res.data.chatroomId);
           console.log("docId received");
+          console.log("res.data", res.data) // need to take a look to see whether contain user id when matching
           setDocUrl(res.data.docId);
           setChatroomId(res.data.chatroomId);
         })

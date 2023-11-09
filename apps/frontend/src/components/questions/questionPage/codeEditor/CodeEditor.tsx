@@ -16,6 +16,7 @@ import { Language } from "@/utils/class/Language";
 import { Status } from "@/utils/enums/Status";
 import ExecPanel from "./execPanel/ExecPanel";
 import EditorFooter from "./execPanel/editorFooter/EditorFooter";
+import { useMatchState } from "@/hook/MatchStateContext";
 
 type CodeEditorProps = {
   onChangeCode?: (value: string | undefined) => void;
@@ -155,7 +156,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
     // eslint-disable-next-line no-async-promise-executor
     return new Promise<boolean>(async (resolve, reject) => {
       try {
-        const response = await axios.get(`/api/codeExecution/status/${token}`);
+        const response = await axios.get(`/api/codeExecution/status/${question._id}/${question.title}/${token}`);
         const statusId = response.data.status_id;
         console.log(
           "response.data outputdetails in checkStatus",

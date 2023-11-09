@@ -1,5 +1,6 @@
 import { Router, NextFunction, Request, Response } from "express";
 import axios from "axios";
+import { HISTORY_URL, RAPID_API_HOST, RAPID_API_KEY, RAPID_API_SUBMISSIONS_URL } from "../../utils/config";
 
 export const codeExecutionRouter = Router();
 
@@ -10,12 +11,12 @@ codeExecutionRouter.post("/compile", async (req: Request, res: Response, next: N
     console.log("req.body: ", req.body)
     const options = {
         method: "POST",
-        url: process.env.RAPID_API_SUBMISSIONS_URL + "/batch",
+        url: RAPID_API_SUBMISSIONS_URL + "/batch",
         params: { base64_encoded: "true", fields: "*" },
         headers: {
         "content-type": "application/json",
-        "X-RapidAPI-Host": process.env.RAPID_API_HOST,
-        "X-RapidAPI-Key": process.env.RAPID_API_KEY,
+        "X-RapidAPI-Host": RAPID_API_HOST,
+        "X-RapidAPI-Key": RAPID_API_KEY,
         },
         data: {
             submissions
@@ -32,20 +33,23 @@ codeExecutionRouter.post("/compile", async (req: Request, res: Response, next: N
 });
 
 // Check status of compilation
-codeExecutionRouter.get("/status/:token", async (req: Request, res: Response, next: NextFunction) => {
-    const { token } = req.params;
+codeExecutionRouter.get("/status/:qid/:title/:token", async (req: Request, res: Response, next: NextFunction) => {
+    const { qid, title, token } = req.params;
     const options = {
         method: "GET",
-        url: `${process.env.RAPID_API_SUBMISSIONS_URL}/${token}`,
+        url: `${RAPID_API_SUBMISSIONS_URL}/${token}`,
         params: { base64_encoded: "true", fields: "*" },
         headers: {
-        "X-RapidAPI-Host": process.env.RAPID_API_HOST,
-        "X-RapidAPI-Key": process.env.RAPID_API_KEY,
+        "X-RapidAPI-Host": RAPID_API_HOST,
+        "X-RapidAPI-Key": RAPID_API_KEY,
         },
     };
 
     try {
         const response = await axios.request(options);
+        // await axios.post(HISTORY_URL + "/api/", {
+
+        // })
         res.json(response.data);
     } catch (err) {
         res.status(500).json(err);
