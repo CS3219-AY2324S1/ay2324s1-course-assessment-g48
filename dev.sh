@@ -37,6 +37,7 @@ else
     ip_address=$(ipconfig.exe | grep -im1 'IPv4 Address' | cut -d ':' -f2 | sed -e 's/^[ \t]*//')
 fi
 
+
 echo "IP address: $ip_address"
 
 count=0
@@ -51,23 +52,36 @@ for dir in "${directories[@]}"; do
 
         # Check if the .env file exists
         if [[ -f "$env_file" ]]; then
-            # Replace the IP addresses in the .env file
-            sed -i "s|NEXT_PUBLIC_QUESTION_SERVICE=.*|NEXT_PUBLIC_QUESTION_SERVICE=http://$ip_address:8000|g" $env_file
-            count=$((count+1))
-            sed -i "s|NEXT_PUBLIC_USER_SERVICE=.*|NEXT_PUBLIC_USER_SERVICE=http://$ip_address:8001|g" $env_file
-            count=$((count+1))
-            sed -i "s|NEXT_PUBLIC_HISTORY_SERVICE=.*|NEXT_PUBLIC_HISTORY_SERVICE=http://$ip_address:8003|g" $env_file
-            count=$((count+1))
-            sed -i "s|NEXT_PUBLIC_CS_SERVICE=.*|NEXT_PUBLIC_CS_SERVICE=http://$ip_address:8420|g" $env_file
-            count=$((count+1))
-            sed -i "s|NEXT_PUBLIC_SESSION_URL=.*|NEXT_PUBLIC_SESSION_URL=http://$ip_address:8251|g" $env_file
-            count=$((count+1))
-            sed -i "s|NEXT_PUBLIC_CHAT_URL=.*|NEXT_PUBLIC_CHAT_URL=http://$ip_address:8082|g" $env_file
-            count=$((count+1))
-            sed -i "s|NEXT_PUBLIC_WS_URL=.*|NEXT_PUBLIC_WS_URL=ws://$ip_address:8080|g" $env_file
-            count=$((count+1))
-            sed -i "s|NEXT_PUBLIC_WS_SESSION_URL=.*|NEXT_PUBLIC_WS_SESSION_URL=ws://$ip_address:8250/ws|g" $env_file
-            count=$((count+1))
+
+            if [[ "$os" == "MINGW"* ]] | [[ "$os" == "MSYS"* ]] | [[ "$os" == "CYGWIN"* ]]; then
+                powershell -Command "(Get-Content $env_file) -replace 'NEXT_PUBLIC_QUESTION_SERVICE=.*', 'NEXT_PUBLIC_QUESTION_SERVICE=http://$ip_address:8000' | Set-Content $env_file"
+                powershell -Command "(Get-Content $env_file) -replace 'NEXT_PUBLIC_USER_SERVICE=.*', 'NEXT_PUBLIC_USER_SERVICE=http://$ip_address:8001' | Set-Content $env_file"
+                powershell -Command "(Get-Content $env_file) -replace 'NEXT_PUBLIC_HISTORY_SERVICE=.*', 'NEXT_PUBLIC_HISTORY_SERVICE=http://$ip_address:8003' | Set-Content $env_file"
+                powershell -Command "(Get-Content $env_file) -replace 'NEXT_PUBLIC_CS_SERVICE=.*', 'NEXT_PUBLIC_CS_SERVICE=http://$ip_address:8420' | Set-Content $env_file"
+                powershell -Command "(Get-Content $env_file) -replace 'NEXT_PUBLIC_SESSION_URL=.*', 'NEXT_PUBLIC_SESSION_URL=http://$ip_address:8251' | Set-Content $env_file"
+                powershell -Command "(Get-Content $env_file) -replace 'NEXT_PUBLIC_CHAT_URL=.*', 'NEXT_PUBLIC_CHAT_URL=http://$ip_address:8082' | Set-Content $env_file"
+                powershell -Command "(Get-Content $env_file) -replace 'NEXT_PUBLIC_WS_URL=.*', 'NEXT_PUBLIC_WS_URL=ws://$ip_address:8080' | Set-Content $env_file"
+                powershell -Command "(Get-Content $env_file) -replace 'NEXT_PUBLIC_WS_SESSION_URL=.*', 'NEXT_PUBLIC_WS_SESSION_URL=ws://$ip_address:8250/ws' | Set-Content $env_file"
+            elif [[ "$os" == "Darwin" ]]; then
+                sed -i '' "s|NEXT_PUBLIC_QUESTION_SERVICE=.*|NEXT_PUBLIC_QUESTION_SERVICE=http://$ip_address:8000|g" $env_file
+                sed -i '' "s|NEXT_PUBLIC_USER_SERVICE=.*|NEXT_PUBLIC_USER_SERVICE=http://$ip_address:8001|g" $env_file
+                sed -i '' "s|NEXT_PUBLIC_HISTORY_SERVICE=.*|NEXT_PUBLIC_HISTORY_SERVICE=http://$ip_address:8003|g" $env_file
+                sed -i '' "s|NEXT_PUBLIC_CS_SERVICE=.*|NEXT_PUBLIC_CS_SERVICE=http://$ip_address:8420|g" $env_file
+                sed -i '' "s|NEXT_PUBLIC_SESSION_URL=.*|NEXT_PUBLIC_SESSION_URL=http://$ip_address:8251|g" $env_file
+                sed -i '' "s|NEXT_PUBLIC_CHAT_URL=.*|NEXT_PUBLIC_CHAT_URL=http://$ip_address:8082|g" $env_file
+                sed -i '' "s|NEXT_PUBLIC_WS_URL=.*|NEXT_PUBLIC_WS_URL=ws://$ip_address:8080|g" $env_file
+                sed -i '' "s|NEXT_PUBLIC_WS_SESSION_URL=.*|NEXT_PUBLIC_WS_SESSION_URL=ws://$ip_address:8250/ws|g" $env_file
+            else 
+                sed -i "s|NEXT_PUBLIC_QUESTION_SERVICE=.*|NEXT_PUBLIC_QUESTION_SERVICE=http://$ip_address:8000|g" $env_file
+                sed -i "s|NEXT_PUBLIC_USER_SERVICE=.*|NEXT_PUBLIC_USER_SERVICE=http://$ip_address:8001|g" $env_file
+                sed -i "s|NEXT_PUBLIC_HISTORY_SERVICE=.*|NEXT_PUBLIC_HISTORY_SERVICE=http://$ip_address:8003|g" $env_file
+                sed -i "s|NEXT_PUBLIC_CS_SERVICE=.*|NEXT_PUBLIC_CS_SERVICE=http://$ip_address:8420|g" $env_file
+                sed -i "s|NEXT_PUBLIC_SESSION_URL=.*|NEXT_PUBLIC_SESSION_URL=http://$ip_address:8251|g" $env_file
+                sed -i "s|NEXT_PUBLIC_CHAT_URL=.*|NEXT_PUBLIC_CHAT_URL=http://$ip_address:8082|g" $env_file
+                sed -i "s|NEXT_PUBLIC_WS_URL=.*|NEXT_PUBLIC_WS_URL=ws://$ip_address:8080|g" $env_file
+                sed -i "s|NEXT_PUBLIC_WS_SESSION_URL=.*|NEXT_PUBLIC_WS_SESSION_URL=ws://$ip_address:8250/ws|g" $env_file
+            fi
+            count=$((count+8))
         else
             echo "No .env.local file found in $dir"
         fi
@@ -80,27 +94,60 @@ for dir in "${directories[@]}"; do
 
         # Check if the .env file exists
         if [[ -f "$env_file" ]]; then
+            # Session service
             if [[ "$dir" == *"apps/backend/session"* ]]; then
-                # Replace the IP addresses in the .env file
-                sed -i "s|HOST=.*|HOST=ws://$ip_address|g" $env_file
-                count=$((count+1))
-                sed -i "s|CHAT_URL=.*|CHAT_URL=http://$ip_address:8082/create-chatroom|g" $env_file
+
+                if [[ "$os" == "MINGW"* ]] | [[ "$os" == "MSYS"* ]] | [[ "$os" == "CYGWIN"* ]]; then
+                    powershell -Command "(Get-Content $env_file) -replace 'HOST=.*', 'HOST=ws://$ip_address' | Set-Content $env_file"
+                    powershell -Command "(Get-Content $env_file) -replace 'CHAT_URL=.*', 'CHAT_URL=http://$ip_address:8082/create-chatroom' | Set-Content $env_file"
+                elif [[ "$os" == "Darwin" ]]; then
+                    sed -i '' "s|HOST=.*|HOST=ws://$ip_address|g" $env_file
+                    sed -i '' "s|CHAT_URL=.*|CHAT_URL=http://$ip_address:8082/create-chatroom|g" $env_file
+                else
+                    sed -i "s|HOST=.*|HOST=ws://$ip_address|g" $env_file
+                    sed -i "s|CHAT_URL=.*|CHAT_URL=http://$ip_address:8082/create-chatroom|g" $env_file
+                fi
+                count=$((count+2))
+
+            # Queue service
+            elif [[ "$dir" == *"apps/backend/queue"* ]]; then
+
+                if [[ "$os" == "MINGW"* ]] | [[ "$os" == "MSYS"* ]] | [[ "$os" == "CYGWIN"* ]]; then
+                    powershell -Command "(Get-Content $env_file) -replace 'SESSION_URL=.*', 'SESSION_URL=http://$ip_address:8251/session/create-session' | Set-Content $env_file"
+                    powershell -Command "(Get-Content $env_file) -replace 'RABBITMQ_URL=.*', 'RABBITMQ_URL=amqp://$ip_address:5672' | Set-Content $env_file"
+                elif [[ "$os" == "Darwin" ]]; then
+                    sed -i '' "s|SESSION_URL=.*|SESSION_URL=http://$ip_address:8251/session/create-session|g" $env_file
+                    sed -i '' "s|RABBITMQ_URL=.*|RABBITMQ_URL=amqp://$ip_address:5672|g" $env_file
+                else 
+                    sed -i "s|SESSION_URL=.*|SESSION_URL=http://$ip_address:8251/session/create-session|g" $env_file
+                    sed -i "s|RABBITMQ_URL=.*|RABBITMQ_URL=amqp://$ip_address:5672|g" $env_file
+                fi
+                count=$((count+2))
+
+            # Question service
+            elif [[ "$dir" == *"apps/backend/question"* ]]; then
+
+                if [[ "$os" == "MINGW"* ]] | [[ "$os" == "MSYS"* ]] | [[ "$os" == "CYGWIN"* ]]; then
+                    powershell -Command "(Get-Content $env_file) -replace 'USER_SERVICE_URL=.*', 'USER_SERVICE_URL=http://$ip_address:8001' | Set-Content $env_file"
+                elif [[ "$os" == "Darwin" ]]; then
+                    sed -i '' "s|USER_SERVICE_URL=.*|USER_SERVICE_URL=http://$ip_address:8001|g" $env_file
+                else
+                    sed -i "s|USER_SERVICE_URL=.*|USER_SERVICE_URL=http://$ip_address:8001|g" $env_file
+                fi
                 count=$((count+1))
 
-            elif [[ "$dir" == *"apps/backend/queue"* ]]; then
-                # Replace the IP addresses in the .env file
-                sed -i "s|SESSION_URL=.*|SESSION_URL=http://$ip_address:8251/session/create-session|g" $env_file
-                count=$((count+1))
-                sed -i "s|RABBITMQ_URL=.*|RABBITMQ_URL=amqp://$ip_address:5672|g" $env_file
-                count=$((count+1))
-            elif [[ "$dir" == *"apps/backend/question"* ]]; then
-                # Replace the IP addresses in the .env file
-                sed -i "s|USER_SERVICE_URL=.*|USER_SERVICE_URL=http://$ip_address:8001|g" $env_file
-                count=$((count+1))
+            # History service
             elif [[ "$dir" == *"apps/backend/history"* ]]; then
-                # Replace the IP addresses in the .env file
-                sed -i "s|USER_SERVICE_URL=.*|USER_SERVICE_URL=http://$ip_address:8001|g" $env_file
+
+                if [[ "$os" == "MINGW"* ]] | [[ "$os" == "MSYS"* ]] | [[ "$os" == "CYGWIN"* ]]; then
+                    powershell -Command "(Get-Content $env_file) -replace 'USER_SERVICE_URL=.*', 'USER_SERVICE_URL=http://$ip_address:8001' | Set-Content $env_file"
+                elif [[ "$os" == "Darwin" ]]; then
+                    sed -i '' "s|USER_SERVICE_URL=.*|USER_SERVICE_URL=http://$ip_address:8001|g" $env_file
+                else
+                    sed -i "s|USER_SERVICE_URL=.*|USER_SERVICE_URL=http://$ip_address:8001|g" $env_file
+                fi
                 count=$((count+1))
+
             else
                 echo -e "${RED}Update error for $svc!${RESET}"
             fi
