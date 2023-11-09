@@ -2,7 +2,6 @@ import {
   Question,
   CodeType,
 } from "@/database/question/entities/question.entity";
-import { useHorizontalScroll } from "@/hook/useHorizontalScroll";
 import { classNames } from "@/utils/classnames/classnames";
 import { languageOptions } from "@/utils/constants/LanguageOptions";
 import { Tab } from "@headlessui/react";
@@ -18,7 +17,6 @@ const StarterCodeInput: React.FC<StarterCodeInputProps> = ({
   newQuestion,
   setNewQuestion,
 }) => {
-  const scrollRef = useHorizontalScroll();
   const [currStarterCode, setCurrStarterCode] = React.useState<CodeType[]>(
     newQuestion.starterCode
   );
@@ -58,7 +56,6 @@ const StarterCodeInput: React.FC<StarterCodeInputProps> = ({
       <Tab.Group as="div" className="mt-2">
         <div className="border-b border-gray-200">
           <Tab.List
-            ref={scrollRef}
             className="-mb-px flex space-x-8 py-1 overflow-x-auto"
           >
             {languageOptions.map((language) => (

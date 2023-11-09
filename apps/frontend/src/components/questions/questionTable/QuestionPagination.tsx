@@ -23,6 +23,7 @@ const QuestionPagination: React.FC<QuestionPaginationProps> = ({
   indexOfLastRecord,
 }) => {
   const [pageNumber, setPageNumber] = useState<string>("1");
+  
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputNumber = parseInt(e.target.value, 10);

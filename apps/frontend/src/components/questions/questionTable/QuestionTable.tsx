@@ -77,6 +77,12 @@ const QuestionTable: FC<QuestionTableProps> = ({
   };
 
   useEffect(() => {
+    if (currentQuestions.length===1) {
+      setCurrentPage(currentPage-1)
+    }
+  }, [questions])
+
+  useEffect(() => {
     setUserRole(sessionUser.role);
     setAccessToken(sessionUser.accessToken);
     setRefreshToken(sessionUser.refreshToken);

@@ -155,26 +155,6 @@ body {
   outline: none !important;
 }
 
-::-webkit-scrollbar {
-  height: 0.5rem; /* height of the horizontal scrollbar */
-  width: 0.5rem; /* width of the vertical scrollbar */
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #4d4d4d;
-  border-radius: 10px;
-}
-
-/** horizontal scrollbar **/
-
-::-webkit-scrollbar-thumb:horizontal{
-  background: rgb(79 70 229);
-}
-
 /* Chat Window */
 /* Dark Mode */
 .dark-chat .cs-message-list, .dark-chat .cs-message-input {
@@ -220,11 +200,13 @@ body {
   /* Hide scrollbar for webkit browsers */
   scrollbar-width: none;
   scrollbar-color: transparent transparent;
+   -ms-overflow-style: none;  /* IE and Edge */
 }
 
 /* For Firefox */
 .scrollbar-hidden::-webkit-scrollbar {
   width: 0.5em;
+  display: none;
 }
 
 .scrollbar-hidden::-webkit-scrollbar-thumb {
