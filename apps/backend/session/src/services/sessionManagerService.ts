@@ -20,7 +20,7 @@ export class SessionManagerService {
   }
 
   public async createNewSession(user1: number, user2: number) {
-    const chatroomId =  "123" // await this.createNewChatroom([user1, user2]);
+    const chatroomId =  await this.createNewChatroom([user1, user2]);
     const newSession = new SessionModel({
       users: [user1, user2],
       chatroomId,
@@ -55,6 +55,7 @@ export class SessionManagerService {
   }
 
   private async createNewChatroom(users: number[]) {
+    console.log("Creating new chatroom");
     return axios
       .post(CHAT_URL, { users })
       .then((res) => res.data.chatroomId)
