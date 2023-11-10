@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: peerprep-chat
+spec:
+  selector:
+    app: peerprep-chat
+  ports:
+  - protocol: TCP
+    port: 8082
+    targetPort: 8082
+  type: ClusterIP
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chat-deployment
+spec:
+  selector:
+    matchLabels:
+      app: peerprep-chat
+  template:
+    metadata:
+      labels:
+        app: peerprep-chat
+    spec:
+      containers:
+      - name: peerprep-chat
+        image: deployment87/dply87:peerprep-chat-v1.1.0
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 8082
+        livenessProbe:
+          httpGet:
+            path: /ping
+            port: 8082
+          initialDelaySeconds: 10
+          timeoutSeconds: 10
+        readinessProbe:
+          httpGet:  
+            path: /ping
+            port: 8082
+          initialDelaySeconds: 10
+          timeoutSeconds: 10

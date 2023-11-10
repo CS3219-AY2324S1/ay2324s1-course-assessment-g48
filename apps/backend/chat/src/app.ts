@@ -5,11 +5,26 @@ import express, { json } from "express";
 import MessageController from "./controllers/messageController";
 import { chatroomRouter } from "./routes/chatroomRouter";
 import cors from "cors";
+import PingRouter from "./routes/pingRouter";
+
+const allowedOrigins = [
+  "http://localhost",
+  "http://localhost:80",
+  "http://localhost:3000",
+  "http://localhost:8000",
+  "http://localhost:8080",
+  "http://localhost:8001",
+  "http://localhost:8080",
+  "http://localhost:9000",
+  "http://leetpal.com",
+  "http://www.leetpal.com",
+  "https://www.leetpal.com",
+];
 
 const app = express();
 const io = new Server(app.listen(PORT), {
   cors: {
-    origin: "*",
+    origin: allowedOrigins,
   },
 });
 
@@ -18,21 +33,6 @@ const messageController = new MessageController(io);
 io.on("connect", (socket) => messageController.handleConnection(socket));
 app.use(json());
 app.use(chatroomRouter);
-
-const allowedOrigins: string[] = [
-  "http://localhost",
-  "http://localhost:80",
-  "http://localhost:3000",
-  "http://localhost:8000",
-  "http://localhost:8080",
-  "http://localhost:8001",
-  "http://localhost:8022",
-  "http://localhost:8500",
-  "http://localhost:9000",
-  "http://peerprep-user:8001",
-  "http://peerprep-question:8000",
-  "http://peerprep-frontend:3000",
-];
 
 app.use(
   cors({
@@ -64,3 +64,5 @@ process.on("SIGINT", () => {
     sockets.forEach((socket) => socket.disconnect())
   );
 });
+
+app.use("/ping", new PingRouter().routes());
