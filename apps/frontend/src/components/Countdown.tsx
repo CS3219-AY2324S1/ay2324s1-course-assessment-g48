@@ -10,12 +10,10 @@ const Countdown: React.FC<CountdownProps> = (
     {counter}
 ) => {
   return (
-    <div className="mx-auto w-10 center">
       <CircularProgressbar
         value={(counter / 30) * 100}
         text={String(counter)}
       ></CircularProgressbar>
-    </div>
   );
 };
 export default Countdown;

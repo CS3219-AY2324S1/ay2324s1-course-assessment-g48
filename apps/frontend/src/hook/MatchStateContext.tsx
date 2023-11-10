@@ -27,7 +27,6 @@ type MatchStateContextType = {
   disableBtnCancel?: boolean;
   difficulty: Complexity;
   setDifficulty: React.Dispatch<React.SetStateAction<Complexity>>;
-  seconds: number;
   language: string;
   setLanguage: React.Dispatch<React.SetStateAction<string>>;
 };
@@ -51,7 +50,7 @@ type MatchStateProviderProps = {
 export const MatchStateProvider: React.FC<MatchStateProviderProps> = ({
   children,
 }) => {
-  const { toggleTimer, seconds, reset, isRunning } = useTimer();
+  const { toggleTimer, reset, isRunning } = useTimer();
   const [matchState, setMatchState] = useState<MatchedState>(() => {
         return isRunning ? MatchedState.MATCHING : MatchedState.NOT_MATCHING;
   });
@@ -168,7 +167,6 @@ export const MatchStateProvider: React.FC<MatchStateProviderProps> = ({
         disableBtnCancel,
         difficulty,
         setDifficulty,
-        seconds,
         language,
         setLanguage,
       }}
