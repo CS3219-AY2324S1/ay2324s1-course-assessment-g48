@@ -68,3 +68,17 @@ spec:
             name: peerprep-session
             port:
               number: 8251
+      - pathType: Prefix
+        path: /chat
+        backend:
+          service:
+            name: peerprep-chat
+            port:
+              number: 8082
+      - pathType: Prefix
+        path: /api/codeExecution
+        backend:
+          service:
+            name: peerprep-codeexec
+            port:
+              number: 8420

@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # Define the name of your Docker image
-IMAGE_NAMES=("peerprep-frontend" "peerprep-user" "peerprep-question" "peerprep-queue" "peerprep-session" "peerprep-history")
+IMAGE_NAMES=("peerprep-frontend" "peerprep-user" "peerprep-question" "peerprep-queue" "peerprep-session" "peerprep-history" "peerprep-chat" "peerprep-codeexec")
 # Define the Docker registry URL (e.g., Docker Hub or a private registry)
 DOCKER_REGISTRY="deployment87/dply87"
 # Define the tag for your Docker image
-IMAGE_TAG="v1.1.0"
+IMAGE_TAG="v1.2.4"
 # Define the path to your Docker Compose file for production
 DOCKER_COMPOSE_FILE="Docker-compose.prod.yml"
 

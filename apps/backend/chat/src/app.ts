@@ -5,6 +5,7 @@ import express, { json } from "express";
 import MessageController from "./controllers/messageController";
 import { chatroomRouter } from "./routes/chatroomRouter";
 import cors from "cors";
+import http from "http";
 import PingRouter from "./routes/pingRouter";
 
 const allowedOrigins = [
@@ -14,15 +15,19 @@ const allowedOrigins = [
   "http://localhost:8000",
   "http://localhost:8080",
   "http://localhost:8001",
-  "http://localhost:8080",
+  "http://localhost:8022",
+  "http://localhost:8500",
   "http://localhost:9000",
+  "http://34.120.70.36",
   "http://leetpal.com",
   "http://www.leetpal.com",
   "https://www.leetpal.com",
 ];
 
 const app = express();
-const io = new Server(app.listen(PORT), {
+const server = http.createServer(app);
+const io = new Server(server, {
+  path: "/chat",
   cors: {
     origin: allowedOrigins,
   },
@@ -47,6 +52,10 @@ app.use(
     exposedHeaders: ["set-cookie"],
   })
 );
+
+server.listen(PORT, () => {
+  console.log(`Chat Server is listening on ${PORT}`);
+});
 
 mongoose
   .connect(MONGODB_URI || "")

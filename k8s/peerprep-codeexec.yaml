@@ -1,14 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: peerprep-user
+  name: peerprep-codeexec
 spec:
   selector:
-    app: peerprep-user
+    app: peerprep-codeexec
   ports:
   - protocol: TCP
-    port: 8001
-    targetPort: 8001
+    port: 8420
+    targetPort: 8420
   type: ClusterIP
 
 ---
@@ -16,36 +16,34 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: user-deployment
+  name: codeexec-deployment
 spec:
   selector:
     matchLabels:
-      app: peerprep-user
+      app: peerprep-codeexec
   template:
     metadata:
       labels:
-        app: peerprep-user
+        app: peerprep-codeexec
     spec:
       containers:
-      - name: peerprep-user
-        image: deployment87/dply87:peerprep-user-v1.2.4
+      - name: peerprep-codeexec
+        image: deployment87/dply87:peerprep-codeexec-v1.2.4
         resources:
           limits:
             memory: "256Mi"
             cpu: "500m"
         ports:
-        - containerPort: 8001
+        - containerPort: 8420
         livenessProbe:
           httpGet:
             path: /ping
-            port: 8001
+            port: 8420
           initialDelaySeconds: 10
           timeoutSeconds: 10
         readinessProbe:
-          httpGet:
+          httpGet:  
             path: /ping
-            port: 8001
+            port: 8420
           initialDelaySeconds: 10
           timeoutSeconds: 10
-      # dnsPolicy: ClusterFirst
-
