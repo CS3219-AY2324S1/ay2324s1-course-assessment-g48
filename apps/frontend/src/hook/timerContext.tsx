@@ -70,7 +70,7 @@ export const TimerProvider: React.FC<TimerProviderProps> = ({ children }) => {
   };
 
   const reset = () => {
-    setCountDown(30 * 1000); // 30 seconds in milliseconds
+    setCountDown(0); // 30 seconds in milliseconds
     setIsRunning(false);
   };
 

@@ -4,6 +4,8 @@ interface Session extends Document {
   users: number[];
   chatroomId: string;
   code: string;
+  question: string;
+  language: string;
 }
 
 const sessionSchema = new Schema({
@@ -20,6 +22,14 @@ const sessionSchema = new Schema({
   },
   code: {
     type: String,
+  },
+  question: {
+    type: String,
+    required: true,
+  },
+  language: {
+    type: String,
+    required: true,
   },
 });
 

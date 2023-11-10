@@ -27,7 +27,7 @@ const QuestionWorkspace: React.FC<QuestionWorkspaceProps> = ({
   users
 }) => {
   const {sessionUser} = useSessionUser();
-
+  console.log(doc)
   return (
     <>
       <Split className="split flex-1 h-[calc(100vh-60px)]">

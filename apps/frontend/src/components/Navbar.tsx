@@ -11,6 +11,8 @@ import Stopwatch from "./Stopwatch";
 import { classNames } from "@/utils/classnames/classnames";
 import { useMatchState } from "@/hook/MatchStateContext";
 import { MatchedState } from "@/utils/enums/MatchingState";
+import Countdown from "./Countdown";
+import { useTimer } from "@/hook/timerContext";
 
 const navigation = [
   { name: "Question", href: "/questions", current: false },
@@ -35,6 +37,8 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
   }
   const { matchState, peer } = useMatchState();
   const [isTooltipVisible, setTooltipVisible] = useState(false);
+  const isSessionPage = router.asPath.includes("/session/");
+  const { seconds } = useTimer();
 
   const handleMouseEnter = () => {
     setTooltipVisible(true);
@@ -96,33 +100,38 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
                         </span>
                       </a>
                     </div>
-                    <div className="hidden sm:ml-6 sm:block">
-                      <div className="flex space-x-4">
-                        {navigation.map((item) => (
-                          <a
-                            key={item.name}
-                            // href={item.href}
-                            onClick={() => router.push(item.href)}
-                            className={classNames(
-                              currentPath === item.href
-                                ? "bg-gray-900 text-white"
-                                : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                              "rounded-md px-3 py-2 text-sm font-medium cursor-pointer"
-                            )}
-                            aria-current={
-                              currentPath === item.href ? "page" : undefined
-                            }
-                          >
-                            {item.name}
-                          </a>
-                        ))}
+                    {!isSessionPage && (
+                      <div className="hidden sm:ml-6 sm:block">
+                        <div className="flex space-x-4">
+                          {navigation.map((item) => (
+                            <a
+                              key={item.name}
+                              // href={item.href}
+                              onClick={() => router.push(item.href)}
+                              className={classNames(
+                                currentPath === item.href
+                                  ? "bg-gray-900 text-white"
+                                  : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                                "rounded-md px-3 py-2 text-sm font-medium cursor-pointer"
+                              )}
+                              aria-current={
+                                currentPath === item.href ? "page" : undefined
+                              }
+                            >
+                              {item.name}
+                            </a>
+                          ))}
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </div>
 
                   <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 space-x-2">
-                    <div className="tooltip-container">
-                      {matchState===MatchedState.MATCHED && peer ? (
+                      { 
+                        <Countdown counter={seconds} />
+                      }
+                    {/* <div className="tooltip-container">
+                      {matchState === MatchedState.MATCHED && peer ? (
                         <div className="flex">
                           <div
                             className="rounded-full transition duration-300 ease-in-out"
@@ -141,11 +150,9 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
                         <></>
                       )}
                       {isTooltipVisible && peer && (
-                        <div className="tooltip">
-                          {peer.username}
-                        </div>
+                        <div className="tooltip">{peer.username}</div>
                       )}
-                    </div>
+                    </div> */}
                     {isQuestionPage && <Stopwatch />}
                     <ModeToggleButton />
 
@@ -210,26 +217,28 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
             </div>
           </div>
 
-          <Disclosure.Panel className={"sm:hidden"}>
-            <div className="space-y-1 px-2 pb-3 pt-2">
-              {navigation.map((item) => (
-                <Disclosure.Button
-                  key={item.name}
-                  as="a"
-                  onClick={() => router.push(item.href)}
-                  className={classNames(
-                    item.current
-                      ? "bg-gray-900 text-white"
-                      : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                    "block rounded-md px-3 py-2 text-base font-medium cursor-pointer"
-                  )}
-                  aria-current={item.current ? "page" : undefined}
-                >
-                  {item.name}
-                </Disclosure.Button>
-              ))}
-            </div>
-          </Disclosure.Panel>
+          {!isSessionPage && (
+            <Disclosure.Panel className={"sm:hidden"}>
+              <div className="space-y-1 px-2 pb-3 pt-2">
+                {navigation.map((item) => (
+                  <Disclosure.Button
+                    key={item.name}
+                    as="a"
+                    onClick={() => router.push(item.href)}
+                    className={classNames(
+                      item.current
+                        ? "bg-gray-900 text-white"
+                        : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                      "block rounded-md px-3 py-2 text-base font-medium cursor-pointer"
+                    )}
+                    aria-current={item.current ? "page" : undefined}
+                  >
+                    {item.name}
+                  </Disclosure.Button>
+                ))}
+              </div>
+            </Disclosure.Panel>
+          )}
         </>
       )}
     </Disclosure>

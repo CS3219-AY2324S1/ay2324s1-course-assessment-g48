@@ -178,7 +178,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
       _id: ""
     }
 
-    postNewHistory(newHistory, sessionUser.accessToken??undefined, sessionUser.refreshToken??undefined).then((data) => {
+    await postNewHistory(newHistory, sessionUser.accessToken??undefined, sessionUser.refreshToken??undefined).then((data) => {
       console.log("success", data);
     }).catch((err) => {
       console.log("error", err);

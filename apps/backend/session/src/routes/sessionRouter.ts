@@ -23,6 +23,10 @@ export class SessionRouter {
       sessionController.clearAllSessions(req, res, next)
     );
 
+    this.router.get("/user/:user", (req, res, next) =>
+      sessionController.handleGetSessionsForUser(req, res, next)
+    );
+
     process.on("SIGINT", () => {
       sessionController.handleCleanup().then((res) => process.exit(0));
     });

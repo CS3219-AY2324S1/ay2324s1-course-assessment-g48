@@ -5,6 +5,7 @@ import CodeViewer from "@/components/history/historyPage/CodeViewer";
 import useHistoryQuestionById from "@/hook/useHistoryQuestionById";
 import TestcaseIndicator from "@/components/history/historyPage/TestcaseIndicator";
 import ParticipantsIcon from "@/components/history/historyPage/ParticipantsIcon";
+import { Status } from "@/utils/enums/Status";
 
 type HistoryQuestionPageProps = {};
 
@@ -15,6 +16,15 @@ const HistoryQuestionPage: React.FC<HistoryQuestionPageProps> = () => {
   const [accessToken, setAccessToken] = useState(sessionUser.accessToken);
   const [refreshToken, setRefreshToken] = useState(sessionUser.refreshToken);
   const { historyQuestion, participants } = useHistoryQuestionById(qid[0], qid[1], accessToken, refreshToken);
+  const [correct, setCorrect] = useState(0);
+
+  if (historyQuestion?.testcases) {
+    historyQuestion.testcases.forEach((testcase) => {
+      if (testcase.outcome === Status.Accepted) {
+        setCorrect((prev) => prev + 1);
+      }
+    });
+  }
     
 
   useEffect(() => {
@@ -91,7 +101,7 @@ const HistoryQuestionPage: React.FC<HistoryQuestionPageProps> = () => {
       <CodeViewer answer={historyQuestion?.answer ?? ""} />
       <div className="mt-2">
         <legend className="block text-base font-semibold leading-6 text-gray-900 dark:text-white">
-          Result: {historyQuestion?.testcases?.outcome as string}
+          Result: {correct}/{historyQuestion?.testcases.length}
         </legend>
         <div className="pt-5 px-5">
           <TestcaseIndicator testCases={historyQuestion?.testcases ?? []} />
