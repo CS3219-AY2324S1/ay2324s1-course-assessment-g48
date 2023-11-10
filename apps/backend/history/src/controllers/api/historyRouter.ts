@@ -76,7 +76,11 @@ historyRouter.get("/:id", jwtGuard, async (req: AuthenticatedRequest, res: Respo
                 res.status(404).json({ error: `A history with history question id ${questionid} does not exist.` });
                 return;
             }
-            res.status(200).json(data)
+            const newData = {
+                ...data, 
+                    userIds: history.userIds
+            }
+            res.status(200).json(newData)
             return;
         }
         res.status(200).json(history);
