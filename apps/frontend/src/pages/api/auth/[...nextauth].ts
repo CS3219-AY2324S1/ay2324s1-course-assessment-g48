@@ -1,6 +1,6 @@
 import NextAuth from "next-auth";
 import { User } from "../../../database/user/entities/user.entity";
-import { login, updateUserById } from "@/database/user/userService";
+import { login, refreshJwt, updateUserById, verifyJwt } from "@/database/user/userService";
 import { OAuthType } from "@/utils/enums/OAuthType";
 import { Role } from "@/utils/enums/Role";
 import { ErrorKey } from "@/utils/enums/ErrorKey";
@@ -95,6 +95,14 @@ export default NextAuth({
       if (trigger === "update") {
         if (session.user) {
           token.user = session.user;
+        }
+      }
+      const isVerified = await verifyJwt((token.user as User).accessToken as string);
+      if (!isVerified) {
+        const response = await refreshJwt((token.user as User).refreshToken!);
+        if (token.user) {
+          (token.user as User).accessToken = response.accessToken;
+          console.log("Refresh access token: ", response.accessToken);
         }
       }
       return token;

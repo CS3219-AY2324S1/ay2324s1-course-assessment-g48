@@ -85,3 +85,33 @@ export const updateUserById = async (
     return e.response.data;
   }
 };
+
+export const verifyJwt = async (accessToken: string) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  };
+  try {
+    await axios.get(BASE_URL + "/verifyJwt", config);
+    return true;
+  } catch (e: any) {
+    console.error(e.response.data);
+    return false;
+  }
+}
+
+export const refreshJwt = async (refreshToken: string) => {
+  const config = {
+    headers: {
+      ['refresh-token']: refreshToken,
+    },
+  };
+  try {
+    const response = await axios.get(BASE_URL + "/refreshJwt", config);
+    return response.data;
+  } catch (e: any) {
+    console.error(e.response);
+    return null;
+  }
+}
