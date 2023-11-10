@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useError } from "./ErrorContext";
 
 function useHistoryQuestionById(hid: string, qid: string, accessToken?: string | null, refreshToken?: string | null) {
-  const {data: session} = useSession();
+  const {data: session, update} = useSession();
   const [isLoading, setIsLoading] = useState(false);
   const [historyQuestion, setHistoryQuestion] = useState<CompletedQuestion | null>(null);
   const { setError, clearError } = useError();
@@ -19,8 +19,7 @@ function useHistoryQuestionById(hid: string, qid: string, accessToken?: string |
         try {
           const data = await getHistoryById(hid, qid, accessToken, refreshToken);
           if (data.accessToken) {
-            session!.user!.accessToken = data.accessToken;
-            console.log("Refresh accessToken", session);
+            update({ accessToken: data.accessToken });
         }
           setHistoryQuestion(data);
           setIsLoading(false);

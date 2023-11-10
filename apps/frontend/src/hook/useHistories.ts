@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react";
 
 
 function useHistories(userId: number, accessToken?: string | null, refreshToken?: string | null) {
-    const {data: session} = useSession();
+    const {data: session, update} = useSession();
     const [isLoading, setIsLoading] = useState(false);
     const [histories, setHistories] = useState<History[]>([]);
     const [trigger, setTrigger] = useState(false);
@@ -34,8 +34,7 @@ function useHistories(userId: number, accessToken?: string | null, refreshToken?
         if (accessToken === null || refreshToken === null) return;
         getHistoryByUserId(userId, accessToken, refreshToken).then((histories) => {
             if (histories.accessToken) {
-                session!.user!.accessToken = histories.accessToken;
-                console.log("Refresh accessToken", session);
+                update({ accessToken: histories.accessToken });
             }
             setHistories(histories);
             console.log("history ", histories);

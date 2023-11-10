@@ -9,7 +9,7 @@ function useQuestionById(
   accessToken?: string | null,
   refreshToken?: string | null
 ) {
-  const { data: session } = useSession();
+  const { data: session, update } = useSession();
   const [isLoading, setIsLoading] = useState(true);
   const [question, setQuestion] = useState<Question | null>(null);
   const { setError, clearError } = useError();
@@ -28,8 +28,7 @@ function useQuestionById(
       try {
         const data = await getQuestionById(qid, accessToken, refreshToken);
         if (data.accessToken) {
-          session!.user!.accessToken = data.accessToken;
-          console.log("Refresh accessToken", session);
+          update({ accessToken: data.accessToken });
         }
         setQuestion(data);
         setIsLoading(false);

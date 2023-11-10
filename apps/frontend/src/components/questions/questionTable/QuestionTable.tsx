@@ -44,7 +44,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
   handleTrigger,
 }) => {
   const questionsPerPage = useMemo(() => 10, []);
-  const { data: session } = useSession();
+  const { data: session, update } = useSession();
   const [searchResults, setSearchResults] = useState("");
   const [viewQuestion, setViewQuestion] = useState<Question>(initialQuestion);
   const [questionToEdit, setQuestionToEdit] =
@@ -106,8 +106,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
       .then((data) => {
         handleTrigger();
         if (data.accessToken) {
-          session!.user!.accessToken = data.accessToken;
-          console.log("Refresh accessToken", session);
+          update({ accessToken: data.accessToken });
         }
         setOpenAdd(false);
       })
@@ -121,8 +120,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
       .then((data) => {
         handleTrigger();
         if (data.accessToken) {
-          session!.user!.accessToken = data.accessToken;
-          console.log("Refresh accessToken", session);
+          update({ accessToken: data.accessToken });
         }
         setOpenDelCfm(false);
       })
@@ -141,8 +139,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
       .then((data) => {
         handleTrigger();
         if (data.accessToken) {
-          session!.user!.accessToken = data.accessToken;
-          console.log("Refresh accessToken", session);
+          update({ accessToken: data.accessToken });
         }
         setOpenEdit(false);
       })

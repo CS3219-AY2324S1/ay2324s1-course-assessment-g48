@@ -93,6 +93,10 @@ export default NextAuth({
         token.user = user;
       }
       if (trigger === "update") {
+        if (session.accessToken) {
+          (token.user as User).accessToken = session.accessToken;
+          console.log("Refresh access token: ", session.accessToken);
+        }
         if (session.user) {
           token.user = session.user;
         }
