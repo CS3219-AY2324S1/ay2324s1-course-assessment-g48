@@ -14,7 +14,7 @@ const CodeViewer: React.FC<CodeViewerProps> = ({ answer }) => {
       <div className="flex justify-center items-center overflow-y-hidden dark:bg-neutral-800 border border-gray-500 p-5">
         <Editor
           height="50vh"
-          value={answer}
+          value={atob(answer)}
           theme={isDarkMode ? "vs-dark" : "light"}
           defaultLanguage="javascript"
           options={{ readOnly: true }}

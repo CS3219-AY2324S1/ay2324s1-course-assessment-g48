@@ -145,7 +145,7 @@ export const MatchStateProvider: React.FC<MatchStateProviderProps> = ({
       type: 4,
       message: "Matched with a peer!",
     });
-    // router.push(`/session/${data.sessionId}`);
+    router.push(`/session/${data.sessionId}`);
   };
 
   const disconnectSocket = () => {

@@ -1,9 +1,12 @@
-import { CompletedQuestion } from "@/database/history/entities/history.entity";
+import { CompletedQuestion, History, initialHistory } from "@/database/history/entities/history.entity";
+import { deleteHistoryById } from "@/database/history/historyService";
 import useHistories from "@/hook/useHistories";
 import useSessionUser from "@/hook/useSessionUser";
 import { Role } from "@/utils/enums/Role";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+import DeleteCfmModal from "./DeleteCfmModal";
 
 type HistoryTableProps = {
   hidden?: boolean;
@@ -11,9 +14,12 @@ type HistoryTableProps = {
 
 const HistoryTable: React.FC<HistoryTableProps> = ({ hidden }) => {
   const { sessionUser } = useSessionUser();
+  const {data: session} = useSession();
   const [userRole, setUserRole] = useState(sessionUser.role);
   const [accessToken, setAccessToken] = useState(sessionUser.accessToken);
   const [refreshToken, setRefreshToken] = useState(sessionUser.refreshToken);
+  const [historyToDelete, setHistoryToDelete] = useState<History>(initialHistory);
+  const [openDelCfm, setOpenDelCfm] = useState(false);
   const router = useRouter();
 
   const { histories, totalHistories } = useHistories(
@@ -31,6 +37,20 @@ const HistoryTable: React.FC<HistoryTableProps> = ({ hidden }) => {
     router.push(`/history/detail/${historyId}${seperator}${historyQuestionId}`);
   }
 
+  const handleDeleteHistory = async (id: string) => {
+    await deleteHistoryById(id, accessToken!, refreshToken!)
+      .then((data) => {
+        if (data.accessToken) {
+          session!.user!.accessToken = data.accessToken;
+          console.log("Refresh accessToken", session);
+        }
+        setOpenDelCfm(false);
+      })
+      .catch((e) => {
+        throw String(e);
+      });
+  };
+
   useEffect(() => {
     setUserRole(sessionUser.role);
     setAccessToken(sessionUser.accessToken);
@@ -38,6 +58,7 @@ const HistoryTable: React.FC<HistoryTableProps> = ({ hidden }) => {
   }, [sessionUser]);
 
   return (
+    <>
     <div className="overflow-auto shadow-md sm:rounded-lg">
       <table
         className="relative text-sm text-left text-gray-500 dark:text-gray-400 w-full"
@@ -93,11 +114,16 @@ const HistoryTable: React.FC<HistoryTableProps> = ({ hidden }) => {
                 >
                   {question.result}
                 </td>
-                <td className={"px-6 py-4"}>{question.runTime}</td>
+                {/* <td className={"px-6 py-4"}>{question.runTime}</td> */}
                 <td className="px-6 py-4">{question.language}</td>
                 {userRole === Role.Admin && (
                   <td className="px-6 py-4 center">
-                    <button className="bg-red-600 hover:bg-red-800 text-white font-bold py-2 px-4 rounded-full">
+                    <button className="bg-red-600 hover:bg-red-800 text-white font-bold py-2 px-4 rounded-full"
+                    onClick={() => {
+                      setHistoryToDelete(history);
+                      setOpenDelCfm(true);
+                    }}
+                    >
                       Delete
                     </button>
                   </td>
@@ -108,6 +134,12 @@ const HistoryTable: React.FC<HistoryTableProps> = ({ hidden }) => {
         </tbody>
       </table>
     </div>
+    <DeleteCfmModal 
+    setOpen={setOpenDelCfm}
+    open={openDelCfm}
+    onDelete={handleDeleteHistory}
+    onDeleteHistory={historyToDelete} />
+    </>
   );
 };
 export default HistoryTable;

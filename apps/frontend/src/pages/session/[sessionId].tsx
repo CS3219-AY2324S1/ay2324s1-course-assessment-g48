@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import useQuestionById from "@/hook/useQuestionById";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import useSessionUser from "@/hook/useSessionUser";
 import { languageOptions } from "@/utils/constants/LanguageOptions";
 import QuestionWorkspace from "@/components/questions/questionPage/QuestionWorkspace";
@@ -25,6 +25,7 @@ export default function Session() {
   const [docUrl, setDocUrl] = useState<AutomergeUrl>();
   const [doc, changeDoc] = useDocument<Doc<any>>(docUrl);
   const [chatroomId, setChatroomId] = useState<string>("");
+  const [users, setUsers] = useState<number[]>([]);
   let increment: (value: string) => void = (value: string) => {
     console.log("reflecting changes in code editor through changeDoc...");
     changeDoc((d : any) => (d.text = value));
@@ -40,7 +41,7 @@ export default function Session() {
           console.log(res.data.docId);
           console.log(res.data.chatroomId);
           console.log("docId received");
-          console.log("res.data", res.data) // need to take a look to see whether contain user id when matching
+          setUsers(res.data.users);
           setDocUrl(res.data.docId);
           setChatroomId(res.data.chatroomId);
         })
@@ -60,6 +61,7 @@ export default function Session() {
           increment={increment}
           initialLanguage={languageSelected}
           chatroomId={chatroomId}
+          users={users}
         />
       )}
     </div>

@@ -25,16 +25,14 @@ codeExecutionRouter.post("/compile", async (req: Request, res: Response, next: N
 
     try {
         const response = await axios.request(options);
-        console.log("res.json({ token }): ", response.data)
         res.json( response.data );
     } catch (err) {
         res.status(500).json(err);
     }
 });
-
 // Check status of compilation
-codeExecutionRouter.get("/status/:qid/:title/:token", async (req: Request, res: Response, next: NextFunction) => {
-    const { qid, title, token } = req.params;
+codeExecutionRouter.get("/status/:token", async (req: Request, res: Response, next: NextFunction) => {
+    const {  token } = req.params;
     const options = {
         method: "GET",
         url: `${RAPID_API_SUBMISSIONS_URL}/${token}`,
@@ -44,12 +42,10 @@ codeExecutionRouter.get("/status/:qid/:title/:token", async (req: Request, res: 
         "X-RapidAPI-Key": RAPID_API_KEY,
         },
     };
+    
 
     try {
         const response = await axios.request(options);
-        // await axios.post(HISTORY_URL + "/api/", {
-
-        // })
         res.json(response.data);
     } catch (err) {
         res.status(500).json(err);

@@ -16,7 +16,10 @@ import { Language } from "@/utils/class/Language";
 import { Status } from "@/utils/enums/Status";
 import ExecPanel from "./execPanel/ExecPanel";
 import EditorFooter from "./execPanel/editorFooter/EditorFooter";
-import { useMatchState } from "@/hook/MatchStateContext";
+import useSessionUser from "@/hook/useSessionUser";
+import { useRouter } from "next/router";
+import { HistoryQuestionTestcase } from "@/database/history/entities/history.entity";
+import { postNewHistory } from "@/database/history/historyService";
 
 type CodeEditorProps = {
   onChangeCode?: (value: string | undefined) => void;
@@ -24,6 +27,7 @@ type CodeEditorProps = {
   question: Question;
   initialLanguage?: Language;
   hasSession?: boolean;
+  users: number[]
 };
 
 const CodeEditor: React.FC<CodeEditorProps> = ({
@@ -32,8 +36,10 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   question,
   initialLanguage,
   hasSession,
+  users
 }) => {
   const { isDarkMode } = useTheme();
+  const sessionID = useRouter().query?.sessionId as string;
   const defaultLanguage : Language|undefined = languageOptions.find((lang) => lang.id === 71)
   // current language selected by user
   const [selectedLanguage, setSelectedLanguage] = useState<Language>(
@@ -59,6 +65,11 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
     new Array(question.testcases.length)
   );
   const [processing, setProcessing] = useState(false);
+  const {sessionUser} = useSessionUser();
+  const [historyTestCase, setHistoryTestCase] = useState<HistoryQuestionTestcase[]>([{
+    runTime: 0,
+    outcome: 0,
+  }]);
 
   const enterPress = useKeyPress("Enter");
   const ctrlPress = useKeyPress("Control");
@@ -143,9 +154,35 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
       }
       if (allSuccess) {
         showSuccessToast(`Compiled Successfully!`);
+        
       } else {
         showErrorToast("A testcase failed, please try again!");
       }
+  
+    console.log("asdasdasdad", outputDetails);
+
+    const newCompletedQuestion = {
+      questionId: question._id,
+      questionTitle: question.title,
+      language: selectedLanguage.label,
+      answer: btoa(displayCode),
+      testcases: historyTestCase,
+      completedAt: new Date(),
+      result: allSuccess ? "Correct" : "Incorrect",
+    }
+    const newHistory = {
+      userIds: users,
+      sessionId: sessionID??String(users[0]),
+      completed: [newCompletedQuestion],
+      date: new Date(),
+      _id: ""
+    }
+
+    postNewHistory(newHistory, sessionUser.accessToken??undefined, sessionUser.refreshToken??undefined).then((data) => {
+      console.log("success", data);
+    }).catch((err) => {
+      console.log("error", err);
+    })
     } catch (err) {
       setProcessing(false);
       console.log(err);
@@ -156,7 +193,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
     // eslint-disable-next-line no-async-promise-executor
     return new Promise<boolean>(async (resolve, reject) => {
       try {
-        const response = await axios.get(`/api/codeExecution/status/${question._id}/${question.title}/${token}`);
+        const response = await axios.get(`/api/codeExecution/status/${token}`);
         const statusId = response.data.status_id;
         console.log(
           "response.data outputdetails in checkStatus",
@@ -168,15 +205,22 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
           setTimeout(() => {
             resolve(checkStatus(token, index));
           }, 2000);
-        } else if (statusId === Status.Accepted) {
-          setProcessing(false);
-          handleOutputDetails(response.data, index);
-          resolve(true);
         } else {
           setProcessing(false);
           handleOutputDetails(response.data, index);
-          resolve(false);
+          console.log("response.data", response.data.id);
+          setHistoryTestCase((prev) => [
+            ...prev,{
+              runTime: response.data.time,
+              outcome: response.data.status.id,
+            }]
+          )
+          if (statusId === Status.Accepted) {
+            resolve(true);
+          } else {
+            resolve(false);
         }
+      }
       } catch (err) {
         setProcessing(false);
         showErrorToast((err as Error).message);

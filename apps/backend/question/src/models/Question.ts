@@ -101,14 +101,6 @@ const questionSchema = new Schema({
 questionSchema.set('toJSON', {
   transform: (document, returnedObject) => {
       returnedObject.id = returnedObject._id.toString()
-    // // Remove _id from the testcases array
-    // if (Array.isArray(returnedObject.testcases)) {
-    //   returnedObject.testcases = returnedObject.testcases.map((tc) => {
-    //     const { _id, ...rest } = tc;
-    //     delete tc.__v;
-    //     return rest;
-    //   });
-    // }
   }
 })
 

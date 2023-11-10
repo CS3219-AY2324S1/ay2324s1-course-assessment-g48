@@ -5,10 +5,11 @@ import { AuthenticatedRequest, jwtGuard } from "../../guard/jwtGuard";
 
 export const historyRouter = Router();
     
-// Creates history in mongodb
+// Creates or update history in mongodb
 historyRouter.post("/", jwtGuard, async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const body = req.body;
     const user = req.user;
+    const { completed } = body;
 
     if (!Object.values(Role).includes(user?.role as Role)) {
         res.status(401).json({ error: "Only registered users are allowed to create history." });
@@ -17,11 +18,17 @@ historyRouter.post("/", jwtGuard, async (req: AuthenticatedRequest, res: Respons
     const isExisting = await History.findOne({ sessionId: body.sessionId });
 
     if (isExisting) {
-        res
-            .status(400)
-            .json({ error: "A history with this session already exists." });
-        return;
-    }
+      await History.findOneAndUpdate({ sessionId: body.sessionId }, {
+        $push: { completed: completed },
+        date: Date.now(),
+    }, { new: true })
+        .then((history) => {
+            console.log("Update history");
+            res.status(200).json(history);
+            return;
+        })
+        .catch((e) => next(e));
+    } else {
     console.log(body);
 
     const history = new History({
@@ -32,6 +39,7 @@ historyRouter.post("/", jwtGuard, async (req: AuthenticatedRequest, res: Respons
     });
     history.save().then((savedHistory) => res.status(201).json(savedHistory))
         .catch((e) => next(e));
+  }
 });
 
 // Gets all histories from mongodb

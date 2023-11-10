@@ -1,11 +1,20 @@
 import mongoose, { Document, Schema } from "mongoose";
 
 interface CompletedQuestion extends Document {
-  id: string;
   questionId: string;
+  questionTitle: string;
+  language: string
   answer: string;
   result: string;
+  testcases: HistoryQuestionTestcase[];
   completedAt: Date;
+  id: string;
+}
+
+interface HistoryQuestionTestcase extends Document {
+  runTime: number;
+  outcome: string;
+  id:string
 }
 
 interface History extends Document {
@@ -16,6 +25,19 @@ interface History extends Document {
   date: Date;
 }
 
+
+
+const historyQuestionTestcaseSchema = new Schema({
+  runTime: {
+    type: Number,
+    required: true,
+  },
+  outcome: {
+    type: String,
+    required: true,
+  },
+});
+
 const completedQuestionSchema = new Schema({
   questionId: {
     type: String,
@@ -23,10 +45,6 @@ const completedQuestionSchema = new Schema({
   },
   questionTitle: {
     type: String,
-    required: true,
-  },
-  runTime: {
-    type: Number,
     required: true,
   },
   language: {
@@ -37,9 +55,12 @@ const completedQuestionSchema = new Schema({
     type: String,
     required: true,
   },
+  testcases: {
+    type: [historyQuestionTestcaseSchema],
+    required: true,
+  },
   result: {
     type: String,
-    enum: ["correct", "incorrect"],
     required: true,
   },
   completedAt: {
@@ -58,7 +79,7 @@ const historySchema = new Schema({
   },
   sessionId: {
     type: String,
-    required: true,
+    required: false,
       
   },
   completed: {
@@ -71,6 +92,11 @@ const historySchema = new Schema({
     default: () => Date.now(),
   },
 });
+
+completedQuestionSchema.virtual('id').get(function() {
+  return this._id.toHexString();
+});
+completedQuestionSchema.set('toJSON', { virtuals: true });
 
 const HistoryModel = mongoose.model("History", historySchema);
 
