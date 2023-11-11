@@ -12,7 +12,6 @@ export enum Role {
 }
 
 export async function createUser(data: User) {
-  console.log(data);
   return prisma.user.create({
     data: {
       email: data.email,

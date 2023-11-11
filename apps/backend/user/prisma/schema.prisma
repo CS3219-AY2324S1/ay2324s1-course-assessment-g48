@@ -19,8 +19,6 @@ model User {
   oauth OAuth[]
   role Role
   image String?
-  //   posts   Post[]
-  //   profile Profile?
 }
 
 model Question {
