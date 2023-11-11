@@ -33,7 +33,9 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   hasSession,
 }) => {
   const { isDarkMode } = useTheme();
-  const defaultLanguage : Language|undefined = languageOptions.find((lang) => lang.id === 71)
+  const defaultLanguage: Language | undefined = languageOptions.find(
+    (lang) => lang.id === 71
+  );
   // current language selected by user
   const [selectedLanguage, setSelectedLanguage] = useState<Language>(
     initialLanguage ?? defaultLanguage!

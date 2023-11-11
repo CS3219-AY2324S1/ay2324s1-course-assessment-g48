@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema } from "mongoose";
 
-interface Session extends Document {
+export interface SessionEntity extends Document {
   users: number[];
   chatroomId: string;
   code: string;
@@ -33,7 +33,7 @@ const sessionSchema = new Schema({
   },
 });
 
-const SessionModel = mongoose.model<Session>(
+const SessionModel = mongoose.model<SessionEntity>(
   "Session",
   sessionSchema,
   "sessions"

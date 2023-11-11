@@ -26,9 +26,12 @@ export default function Session() {
     language,
   } = useSessionCollab(
     sessionId,
+    isLoadingUser,
     sessionUser.refreshToken,
     sessionUser.accessToken
   );
+
+  console.log("wtf");
 
   return (
     <div>

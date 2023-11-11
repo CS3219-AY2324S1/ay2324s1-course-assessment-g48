@@ -15,6 +15,7 @@ import { getSession } from "@/database/session/sessionService";
 
 function useSessionCollab(
   sessionId: string,
+  isLoadingUser: boolean,
   accessToken?: string | null,
   refreshToken?: string | null
 ) {
@@ -48,6 +49,10 @@ function useSessionCollab(
         String(accessToken),
         String(refreshToken)
       );
+      console.log("Session got");
+      if (!session) {
+        return;
+      }
       console.log(session.docId);
       console.log(session.chatroomId);
       console.log("docId received");
@@ -59,9 +64,11 @@ function useSessionCollab(
       setDocUrl(session.docId);
       setChatroomId(session.chatroomId);
     }
-    setIsLoading(true);
-    fetchSession();
-    setIsLoading(false);
+    if (!isLoadingUser && sessionId) {
+      setIsLoading(true);
+      fetchSession();
+      setIsLoading(false);
+    }
   }, [sessionId]);
 
   return { question, doc, chatroomId, isLoading, increment, language };

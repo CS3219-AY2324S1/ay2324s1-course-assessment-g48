@@ -46,6 +46,7 @@ export const jwtGuard = async (
   res: Response,
   next: NextFunction
 ) => {
+  console.log("Checking JWT");
   const accessToken = req.headers.authorization?.split(" ")[1];
   if (!accessToken) {
     res.status(401).json({ error: "No access token was provided." });
@@ -54,9 +55,11 @@ export const jwtGuard = async (
 
   try {
     req.user = await verifyAccessToken(accessToken);
+    console.log(req.user);
     next();
   } catch (error) {
     const errorMessage = getAxiosErrorMessage(error);
+    console.log(errorMessage);
     res.status(401).json({ error: errorMessage });
   }
 };
