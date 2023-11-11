@@ -179,9 +179,9 @@ userRouter.post(
         return;
       }
 
-      const isCorrectPassword = await bcrypt.compare(user?.password!, cleanedPassword);
+      const isCorrectPassword = await bcrypt.compare(cleanedPassword, user?.password!);
 
-      if (isCorrectPassword) {
+      if (!isCorrectPassword) {
         res.status(401).json({
           error: "401: Incorrect password, please try again."
         });
