@@ -22,8 +22,7 @@ const TestcaseIndicator: React.FC<TestcaseIndicatorProps> = ({ testCases }) => {
             />
             <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 text-xs text-center p-1 rounded bg-gray-700 text-white opacity-0 hover:opacity-100 transition-opacity duration-200">
                     {testcase.runTime}ms
-                    {/* { "\n" + testcase.outcome}
-                    {"\n" + statuses.find((status) => status.id === testcase.outcome)} */}
+                    {"\n" + statuses.find((status) => status.id === Number(testcase.outcome))?.description}
             </div>
           </div>
         );

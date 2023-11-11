@@ -16,7 +16,7 @@ import { useTimer } from "@/hook/timerContext";
 
 const navigation = [
   { name: "Question", href: "/questions", current: false },
-  { name: "Matching", href: "/matching", current: false },
+  { name: "Collaboration", href: "/collaboration", current: false },
   { name: "History", href: "/history/user", current: false },
 ];
 

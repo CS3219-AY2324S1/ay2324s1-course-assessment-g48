@@ -34,7 +34,7 @@ export class SessionManagerService {
     diff: Difficulty,
     language: ProgrammingLanguage
   ) {
-    const chatroomId =  "123" // await this.createNewChatroom([user1, user2]);
+    const chatroomId =  await this.createNewChatroom([user1, user2]);
     const languageId = languageOptions.get(language);
     const questions = await this.getRandomQuestion(diff, language);
     console.log(questions);
@@ -60,7 +60,7 @@ export class SessionManagerService {
     await newSession
       .save()
       .then((session) => console.log(session))
-      .catch((error) => console.error("Error saving session:", error));
+      .catch((error) => console.error("Error saving session:", error)); // May have error here
 
     const sessionId = newSession._id.toString();
     const handle = this.getDoc(sessionId);
@@ -95,8 +95,15 @@ export class SessionManagerService {
   }
 
   public async getDocId(sessionId: string) {
+    console.log(`Getting docIdsad for ${sessionId}`);
+    if (!sessionId) {
+      return;
+    }
     if (!this.sessionToUserMap.has(sessionId)) {
-      const session = await SessionModel.findById(sessionId);
+      const session = await SessionModel.findById(sessionId).then((res) => {
+        console.log("can get", res);
+        return res
+      }).catch((err) => console.error("ERRRROR", err));
       if (!session) {
         console.log("No session of this sessionId has been found");
         return;
@@ -137,8 +144,9 @@ export class SessionManagerService {
       if (isValidAutomergeUrl(docId)) {
         const doc = this.repo.find<Doc>(docId);
         const value = (await doc.doc())?.text;
-        console.log(value);
-        console.log(docId);
+        // console.log(value);
+        // console.log(docId);
+        console.log(`Saving ${sessionId} to database`);
 
         //TODO Save to database
         await SessionModel.updateOne(

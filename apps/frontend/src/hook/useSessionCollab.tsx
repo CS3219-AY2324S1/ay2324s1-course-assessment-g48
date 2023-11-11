@@ -39,7 +39,9 @@ function useSessionCollab(
 
   useEffect(() => {
     async function fetchSession() {
-      const session = await getSession(sessionID);
+      const session = await getSession(sessionID).then((res) => {
+        return res
+      });
       console.log(session);
       console.log(session.chatroomId);
       console.log("docId received");

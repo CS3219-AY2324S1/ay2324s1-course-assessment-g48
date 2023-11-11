@@ -5,6 +5,7 @@ import React, {
   useState,
   ReactNode,
   useEffect,
+  useCallback,
 } from "react";
 import { MatchedState } from "@/utils/enums/MatchingState";
 import { User } from "@/database/user/entities/user.entity";
@@ -29,6 +30,7 @@ type MatchStateContextType = {
   setDifficulty: React.Dispatch<React.SetStateAction<Complexity>>;
   language: string;
   setLanguage: React.Dispatch<React.SetStateAction<string>>;
+  sessionId: string | undefined;
 };
 
 const MatchStateContext = createContext<MatchStateContextType | undefined>(
@@ -59,8 +61,8 @@ export const MatchStateProvider: React.FC<MatchStateProviderProps> = ({
   const [disableBtnCancel, setDisableBtnCancel] = useState(true);
   const [difficulty, setDifficulty] = useState<Complexity>(Complexity.Easy);
   const [language, setLanguage] = useState<string>(languageOptions[0].label);
+  const [sessionId, setSessionId] = useState();
   const { sessionUser } = useSessionUser();
-  const router = useRouter();
 
   const setToNotMatchingState = () => {
     // Set the state of the page to not looking for match.
@@ -114,6 +116,7 @@ export const MatchStateProvider: React.FC<MatchStateProviderProps> = ({
     disconnectSocket();
     reset();
     console.log(data.sessionId);
+    setSessionId(data.sessionId);
     console.log("peer id", data.peerId);
     getUserById(data.peerId)
       .then((peer) => {
@@ -129,8 +132,8 @@ export const MatchStateProvider: React.FC<MatchStateProviderProps> = ({
       message: "Matched with a peer!",
     });
     // router.push(`/session/${data.sessionId}`);
-    window.open(`/session/${data.sessionId}`);
-  };
+    // window.open(`/session/${data.sessionId}`);
+  }
 
   const disconnectSocket = () => {
     console.log("disconnecting");
@@ -153,7 +156,7 @@ export const MatchStateProvider: React.FC<MatchStateProviderProps> = ({
         disconnectSocket();
       });
     };
-  }, [isRunning, matchState]);
+  }, [isRunning]);
 
   return (
     <MatchStateContext.Provider
@@ -169,6 +172,7 @@ export const MatchStateProvider: React.FC<MatchStateProviderProps> = ({
         setDifficulty,
         language,
         setLanguage,
+        sessionId,
       }}
     >
       {children}

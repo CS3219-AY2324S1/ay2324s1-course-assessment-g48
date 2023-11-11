@@ -42,8 +42,6 @@ codeExecutionRouter.get("/status/:token", async (req: Request, res: Response, ne
         "X-RapidAPI-Key": RAPID_API_KEY,
         },
     };
-    
-
     try {
         const response = await axios.request(options);
         res.json(response.data);

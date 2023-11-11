@@ -28,6 +28,7 @@ export class SessionRouter {
     );
 
     process.on("SIGINT", () => {
+      console.log("SIGINT");
       sessionController.handleCleanup().then((res) => process.exit(0));
     });
 

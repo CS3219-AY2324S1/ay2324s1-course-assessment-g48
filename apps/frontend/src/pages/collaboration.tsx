@@ -10,9 +10,9 @@ import { languageOptions } from "@/utils/constants/LanguageOptions";
 import { useMatchState } from "@/hook/MatchStateContext";
 import { PlusIcon, RocketLaunchIcon } from "@heroicons/react/24/solid";
 import MatchingModal from "@/components/session/MatchingModal";
-type matchingProps = {};
+type collaborationProps = {};
 
-const MatchingPage: React.FC<matchingProps> = () => {
+const CollaborationPage: React.FC<collaborationProps> = () => {
   const [openModal, setOpenModal] = useState(false);
   const { sessionUser } = useSessionUser();
   const [userRole, setUserRole] = useState(sessionUser.role);
@@ -22,12 +22,8 @@ const MatchingPage: React.FC<matchingProps> = () => {
     matchState,
     setToNotMatchingState,
     setToMatchingState,
-    peer,
-    disableBtnCancel,
     difficulty,
-    setDifficulty,
-    language,
-    setLanguage
+    sessionId,
   } = useMatchState();
 
 const handleMatchConnection: FormEventHandler = (e) => {
@@ -40,6 +36,13 @@ const handleMatchConnection: FormEventHandler = (e) => {
   setToMatchingState();
 };
 
+  useEffect(() => {
+    if (sessionId) {
+      console.log("matched");
+      window.open(`/session/${sessionId}`);
+    }
+  }, [sessionId]);
+  
   useEffect(() => {
     setUserRole(sessionUser.role);
   }, [sessionUser]);
@@ -63,7 +66,7 @@ const handleMatchConnection: FormEventHandler = (e) => {
         <RocketLaunchIcon className="-ml-0.5 mr-1.5 h-5 w-5" aria-hidden="true" />
         Match
       </button>
-      <form
+      {/* <form
         className="mx-auto mt-16 max-w-xl sm:mt-20"
         onSubmit={handleMatchConnection}
       >
@@ -157,9 +160,9 @@ const handleMatchConnection: FormEventHandler = (e) => {
             <label>{peer?.username}</label>
           </>
         )}
-      </form>
+      </form> */}
       <MatchingModal setOpen={setOpenModal} open={ openModal} handleMatchConnection={handleMatchConnection} />
     </>
   );
 };
-export default MatchingPage;
+export default CollaborationPage;
