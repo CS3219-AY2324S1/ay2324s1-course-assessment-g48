@@ -19,6 +19,7 @@ export interface AuthenticatedRequest extends Request {
 }
 
 function getAxiosErrorMessage(error: unknown) {
+  //   console.log(error);
   if (error instanceof AxiosError) {
     if (error.code === "ECONNREFUSED") {
       return "Unable to connect with user service.";

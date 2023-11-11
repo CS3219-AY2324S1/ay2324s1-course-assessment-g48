@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
-import { getAllQuestions } from "../database/question/questionService";
+import {
+  getAllQuestions,
+  getQuestionById,
+} from "../database/question/questionService";
 import { Question } from "@/database/question/entities/question.entity";
 import { useSession } from "next-auth/react";
 import { Language } from "@/utils/class/Language";
@@ -22,12 +25,8 @@ function useSessionCollab(
   const [isLoading, setIsLoading] = useState(false);
 
   const { sessionUser } = useSessionUser();
-  const [questionId, setQuestionId] = useState<string>("");
-  const { question } = useQuestionById(
-    questionId,
-    sessionUser.accessToken,
-    sessionUser.refreshToken
-  );
+  //   const [questionId, setQuestionId] = useState<string>("");
+  const [question, setQuestion] = useState<Question>();
   const [language, setLanguage] = useState<Language>(); // hardcoded, to be changed
   const [docUrl, setDocUrl] = useState<AutomergeUrl>();
   const [doc, changeDoc] = useDocument<Doc<any>>(docUrl);
@@ -57,19 +56,27 @@ function useSessionCollab(
       console.log(session.chatroomId);
       console.log("docId received");
       console.log(session);
-      setQuestionId(session.question);
+      session.question;
+      setQuestion(
+        await getQuestionById(
+          session.question,
+          sessionUser.accessToken!,
+          sessionUser.refreshToken!
+        )
+      );
       setLanguage(
         languageOptions.filter((language) => language.id == session.language)[0]
       );
       setDocUrl(session.docId);
       setChatroomId(session.chatroomId);
+      console.log("Session:", session);
     }
+    setIsLoading(true);
     if (!isLoadingUser && sessionId) {
-      setIsLoading(true);
-      fetchSession();
-      setIsLoading(false);
+      fetchSession().then((res) => setIsLoading(false));
+      //   setIsLoading(false);
     }
-  }, [sessionId]);
+  }, [sessionId, isLoadingUser]);
 
   return { question, doc, chatroomId, isLoading, increment, language };
 }

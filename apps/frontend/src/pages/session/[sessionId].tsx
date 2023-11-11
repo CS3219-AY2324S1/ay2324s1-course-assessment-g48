@@ -27,8 +27,8 @@ export default function Session() {
   } = useSessionCollab(
     sessionId,
     isLoadingUser,
-    sessionUser.refreshToken,
-    sessionUser.accessToken
+    sessionUser.accessToken,
+    sessionUser.refreshToken
   );
 
   console.log("wtf");
