@@ -96,9 +96,6 @@ export class SessionManagerService {
 
   public async getDocId(sessionId: string) {
     console.log(`Getting docIdsad for ${sessionId}`);
-    if (!sessionId) {
-      return;
-    }
     if (!this.sessionToUserMap.has(sessionId)) {
       const session = await SessionModel.findById(sessionId).then((res) => {
         console.log("can get", res);

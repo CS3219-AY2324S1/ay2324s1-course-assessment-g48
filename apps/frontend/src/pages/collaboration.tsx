@@ -23,7 +23,6 @@ const CollaborationPage: React.FC<collaborationProps> = () => {
     setToNotMatchingState,
     setToMatchingState,
     difficulty,
-    sessionId,
   } = useMatchState();
 
 const handleMatchConnection: FormEventHandler = (e) => {
@@ -36,12 +35,6 @@ const handleMatchConnection: FormEventHandler = (e) => {
   setToMatchingState();
 };
 
-  useEffect(() => {
-    if (sessionId) {
-      console.log("matched");
-      window.open(`/session/${sessionId}`);
-    }
-  }, [sessionId]);
   
   useEffect(() => {
     setUserRole(sessionUser.role);

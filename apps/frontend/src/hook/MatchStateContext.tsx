@@ -24,7 +24,6 @@ type MatchStateContextType = {
   setToNotMatchingState: () => void;
   setToMatchingState: () => void;
   disconnectSocket: () => void;
-  peer: User | null;
   disableBtnCancel?: boolean;
   difficulty: Complexity;
   setDifficulty: React.Dispatch<React.SetStateAction<Complexity>>;
@@ -56,7 +55,6 @@ export const MatchStateProvider: React.FC<MatchStateProviderProps> = ({
   const [matchState, setMatchState] = useState<MatchedState>(() => {
         return isRunning ? MatchedState.MATCHING : MatchedState.NOT_MATCHING;
   });
-  const [peer, setPeer] = useState<User | null>(null);
   const { setError, clearError } = useError();
   const [disableBtnCancel, setDisableBtnCancel] = useState(true);
   const [difficulty, setDifficulty] = useState<Complexity>(Complexity.Easy);
@@ -118,14 +116,6 @@ export const MatchStateProvider: React.FC<MatchStateProviderProps> = ({
     console.log(data.sessionId);
     setSessionId(data.sessionId);
     console.log("peer id", data.peerId);
-    getUserById(data.peerId)
-      .then((peer) => {
-        setPeer(peer);
-        console.log("pic", peer);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
     setMatchState(MatchedState.NOT_MATCHING);
     setError({
       type: 4,
@@ -158,6 +148,13 @@ export const MatchStateProvider: React.FC<MatchStateProviderProps> = ({
     };
   }, [isRunning]);
 
+      useEffect(() => {
+        if (sessionId) {
+          console.log("matched");
+          window.open(`/session/${sessionId}`);
+        }
+      }, [sessionId]);
+
   return (
     <MatchStateContext.Provider
       value={{
@@ -166,7 +163,6 @@ export const MatchStateProvider: React.FC<MatchStateProviderProps> = ({
         setToNotMatchingState,
         setToMatchingState,
         disconnectSocket,
-        peer,
         disableBtnCancel,
         difficulty,
         setDifficulty,

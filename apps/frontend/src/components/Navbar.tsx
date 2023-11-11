@@ -35,18 +35,10 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
   function handleSignOutClick() {
     signOut({ callbackUrl: "/" });
   }
-  const { matchState, peer } = useMatchState();
-  const [isTooltipVisible, setTooltipVisible] = useState(false);
-  const isSessionPage = router.asPath.includes("/session/");
+  const { matchState } = useMatchState();
   const { seconds } = useTimer();
 
-  const handleMouseEnter = () => {
-    setTooltipVisible(true);
-  };
-
-  const handleMouseLeave = () => {
-    setTooltipVisible(false);
-  };
+  
 
   return (
     <Disclosure as="nav" className="bg-gray-900 ">
@@ -100,7 +92,6 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
                         </span>
                       </a>
                     </div>
-                    {!isSessionPage && (
                       <div className="hidden sm:ml-6 sm:block">
                         <div className="flex space-x-4">
                           {navigation.map((item) => (
@@ -123,7 +114,6 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
                           ))}
                         </div>
                       </div>
-                    )}
                   </div>
 
                   <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 space-x-2">
@@ -219,7 +209,6 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
             </div>
           </div>
 
-          {!isSessionPage && (
             <Disclosure.Panel className={"sm:hidden"}>
               <div className="space-y-1 px-2 pb-3 pt-2">
                 {navigation.map((item) => (
@@ -240,7 +229,6 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
                 ))}
               </div>
             </Disclosure.Panel>
-          )}
         </>
       )}
     </Disclosure>

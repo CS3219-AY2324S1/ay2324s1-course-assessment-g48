@@ -26,7 +26,6 @@ export default function MatchingModal({
     matchState,
     setToNotMatchingState,
     setToMatchingState,
-    peer,
     disableBtnCancel,
     difficulty,
     setDifficulty,

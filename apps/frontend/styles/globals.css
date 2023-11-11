@@ -234,6 +234,7 @@ body {
 .tooltip-container {
   position: relative;
   display: inline-block;
+  word-wrap: break-word;
 }
 
 .tooltip {

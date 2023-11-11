@@ -32,10 +32,10 @@ export class SessionRouter {
       sessionController.handleCleanup().then((res) => process.exit(0));
     });
 
-    process.on("uncaughtException", () => {
-      //   sessionController.saveToDatabase();
-      sessionController.handleCleanup().then((res) => process.exit(0));
-    });
+    // process.on("uncaughtException", () => {
+    //   //   sessionController.saveToDatabase();
+    //   sessionController.handleCleanup().then((res) => process.exit(0));
+    // });
 
     setInterval(() => sessionController.saveToDatabase(), 1000 * 60 * 60);
   }

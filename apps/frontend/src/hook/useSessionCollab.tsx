@@ -14,12 +14,13 @@ import useSessionUser from "./useSessionUser";
 import { getSession } from "@/database/session/sessionService";
 
 function useSessionCollab(
+  sessionId: string,
   accessToken?: string | null,
   refreshToken?: string | null
 ) {
+  console.log("1", sessionId)
   const [isLoading, setIsLoading] = useState(false);
 
-  const sessionID = useRouter().query.sessionId as string;
   const { sessionUser } = useSessionUser();
   const [questionId, setQuestionId] = useState<string>("");
   const { question } = useQuestionById(
@@ -29,7 +30,7 @@ function useSessionCollab(
   );
   const [language, setLanguage] = useState<Language>(); // hardcoded, to be changed
   const [docUrl, setDocUrl] = useState<AutomergeUrl>();
-  const [users, setUsers] = useState<number[]>([]);
+  const [users, setUsers] = useState<number[]>([])
   const [doc, changeDoc] = useDocument<Doc<any>>(docUrl);
   const [chatroomId, setChatroomId] = useState<string>("");
   let increment: (value: string) => void = (value: string) => {
@@ -39,10 +40,15 @@ function useSessionCollab(
 
   useEffect(() => {
     async function fetchSession() {
-      const session = await getSession(sessionID).then((res) => {
+      //   if (!accessToken || !refreshToken) {
+      //     router.push("/404");
+      //     return;
+      //   }
+      console.log("2", sessionId)
+      const session = await getSession(sessionId).then(res => {
         return res
       });
-      console.log(session);
+      console.log(session.docId);
       console.log(session.chatroomId);
       console.log("docId received");
       console.log(session);
@@ -57,7 +63,7 @@ function useSessionCollab(
     setIsLoading(true);
     fetchSession();
     setIsLoading(false);
-  }, [sessionID]);
+  }, [sessionId]);
 
   return { question, doc, chatroomId, isLoading, increment, language, users };
 }
