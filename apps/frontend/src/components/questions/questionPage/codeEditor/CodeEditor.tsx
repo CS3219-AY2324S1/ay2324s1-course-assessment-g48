@@ -66,10 +66,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   );
   const [processing, setProcessing] = useState(false);
   const {sessionUser} = useSessionUser();
-  const [historyTestCase, setHistoryTestCase] = useState<HistoryQuestionTestcase[]>([{
-    runTime: 0,
-    outcome: 0,
-  }]);
+  const [historyTestCase, setHistoryTestCase] = useState<HistoryQuestionTestcase[]>([]);
 
   const enterPress = useKeyPress("Enter");
   const ctrlPress = useKeyPress("Control");
@@ -210,7 +207,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
           handleOutputDetails(response.data, index);
           console.log("response.data", response.data.id);
           setHistoryTestCase((prev) => [
-            ...prev,{
+            ...prev, {
               runTime: response.data.time,
               outcome: response.data.status.id,
             }]

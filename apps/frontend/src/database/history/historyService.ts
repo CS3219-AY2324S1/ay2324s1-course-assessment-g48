@@ -24,6 +24,7 @@ export const postNewHistory = async(
             completed: newHistory.completed,
         }, config)
         .then((response) => {
+            console.log("test", response.data)
             return response.data;
         })
         .catch((error) => {

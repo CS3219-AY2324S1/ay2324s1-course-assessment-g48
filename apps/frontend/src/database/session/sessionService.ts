@@ -30,7 +30,6 @@ export const getSessionsByUserId = async (
 };
 
 export async function getSession(sessionId: string) {
-  console.log("WHTTTTT", sessionId)
   return await axios
     .get(
       `${process.env.NEXT_PUBLIC_SESSION_URL}/session/get-session/${sessionId}`
@@ -44,7 +43,6 @@ export async function getSession(sessionId: string) {
       } else if (error.response.status === 404) {
         Router.push("/404");
       }
-      console.error(error);
-      //   throw String(error.response.data.error);
+        throw String(error.response.data.error);
     });
 }

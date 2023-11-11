@@ -15,17 +15,24 @@ const HistoryQuestionPage: React.FC<HistoryQuestionPageProps> = () => {
   const { sessionUser } = useSessionUser();
   const [accessToken, setAccessToken] = useState(sessionUser.accessToken);
   const [refreshToken, setRefreshToken] = useState(sessionUser.refreshToken);
-  const { historyQuestion, participants } = useHistoryQuestionById(qid[0], qid[1], accessToken, refreshToken);
-  const [correct, setCorrect] = useState(0);
+  const { historyQuestion, participants } = useHistoryQuestionById(
+    qid[0],
+    qid[1],
+    accessToken,
+    refreshToken
+  );
 
-  if (historyQuestion?.testcases) {
-    historyQuestion.testcases.forEach((testcase) => {
-      if (testcase.outcome === Status.Accepted) {
-        setCorrect((prev) => prev + 1);
+    function countCorrect() {
+      let counter = 0
+      if (historyQuestion?.testcases) {
+        historyQuestion.testcases.forEach((testcase) => {
+          if (Number(testcase.outcome) === Status.Accepted) {
+            counter++
+          }
+        });
       }
-    });
-  }
-    
+      return counter
+    }
 
   useEffect(() => {
     setAccessToken(sessionUser.accessToken);
@@ -101,7 +108,7 @@ const HistoryQuestionPage: React.FC<HistoryQuestionPageProps> = () => {
       <CodeViewer answer={historyQuestion?.answer ?? ""} />
       <div className="mt-2">
         <legend className="block text-base font-semibold leading-6 text-gray-900 dark:text-white">
-          Result: {correct}/{historyQuestion?.testcases.length}
+          Result: {countCorrect()}/{historyQuestion?.testcases.length}
         </legend>
         <div className="pt-5 px-5">
           <TestcaseIndicator testCases={historyQuestion?.testcases ?? []} />
