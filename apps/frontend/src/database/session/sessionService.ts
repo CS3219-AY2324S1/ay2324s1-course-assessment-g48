@@ -4,19 +4,18 @@ import Router from "next/router";
 const BASE_URL = process.env.NEXT_PUBLIC_SESSION_URL + "/session/user";
 
 export const getSessionsByUserId = async (
-  uid: number
-  //   accessToken?: string,
-  //   refreshToken?: string
+  uid: number,
+  accessToken: string,
+  refreshToken: string
 ) => {
-  //   const config = {
-  //     headers: {
-  //       Authorization: `Bearer ${accessToken}`,
-  //       ["refresh-token"]: refreshToken,
-  //       questionid: qid,
-  //     },
-  //   };
+  const config = {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      ["refresh-token"]: refreshToken,
+    },
+  };
   return await axios
-    .get(BASE_URL + `/${uid}`)
+    .get(BASE_URL + `/${uid}`, config)
     .then((response) => {
       return response.data;
     })
@@ -29,10 +28,21 @@ export const getSessionsByUserId = async (
     });
 };
 
-export async function getSession(sessionId: string) {
+export async function getSession(
+  sessionId: string,
+  accessToken: string,
+  refreshToken: string
+) {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      ["refresh-token"]: refreshToken,
+    },
+  };
   return await axios
     .get(
-      `${process.env.NEXT_PUBLIC_SESSION_URL}/session/get-session/${sessionId}`
+      `${process.env.NEXT_PUBLIC_SESSION_URL}/session/get-session/${sessionId}`,
+      config
     )
     .then((res) => res.data)
     .catch((error) => {

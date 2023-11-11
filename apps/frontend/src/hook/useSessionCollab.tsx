@@ -14,12 +14,12 @@ import useSessionUser from "./useSessionUser";
 import { getSession } from "@/database/session/sessionService";
 
 function useSessionCollab(
+  sessionId: string,
   accessToken?: string | null,
   refreshToken?: string | null
 ) {
   const [isLoading, setIsLoading] = useState(false);
 
-  const sessionID = useRouter().query.sessionId as string;
   const { sessionUser } = useSessionUser();
   const [questionId, setQuestionId] = useState<string>("");
   const { question } = useQuestionById(
@@ -38,7 +38,12 @@ function useSessionCollab(
 
   useEffect(() => {
     async function fetchSession() {
-      const session = await getSession(sessionID);
+      if (!accessToken || !refreshToken) {
+        router.push("404");
+        return;
+      }
+
+      const session = await getSession(sessionId, accessToken, refreshToken);
       console.log(session.docId);
       console.log(session.chatroomId);
       console.log("docId received");
@@ -53,7 +58,7 @@ function useSessionCollab(
     setIsLoading(true);
     fetchSession();
     setIsLoading(false);
-  }, [sessionID]);
+  }, [sessionId]);
 
   return { question, doc, chatroomId, isLoading, increment, language };
 }

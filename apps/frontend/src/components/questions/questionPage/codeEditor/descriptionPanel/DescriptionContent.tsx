@@ -51,7 +51,7 @@ const DescriptionContent: React.FC<DescriptionContentProps> = ({
           </ReactMarkdown>
         </div>
 
-        {question.examples.map((example, index) => (
+        {question.examples?.map((example, index) => (
           <div key={index} className="">
             <div className="dark:text-white font-bold mt-3">
               Example {index + 1}:
