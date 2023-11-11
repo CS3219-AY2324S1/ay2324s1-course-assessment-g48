@@ -38,12 +38,16 @@ function useSessionCollab(
 
   useEffect(() => {
     async function fetchSession() {
-      if (!accessToken || !refreshToken) {
-        router.push("404");
-        return;
-      }
+      //   if (!accessToken || !refreshToken) {
+      //     router.push("/404");
+      //     return;
+      //   }
 
-      const session = await getSession(sessionId, accessToken, refreshToken);
+      const session = await getSession(
+        sessionId,
+        String(accessToken),
+        String(refreshToken)
+      );
       console.log(session.docId);
       console.log(session.chatroomId);
       console.log("docId received");

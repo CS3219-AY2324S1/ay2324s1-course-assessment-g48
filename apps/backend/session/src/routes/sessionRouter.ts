@@ -2,6 +2,7 @@ import Router, { Express } from "express";
 import { SessionController } from "../controllers/sessionController.ts";
 import { WebSocketServer } from "ws";
 import mongoose from "mongoose";
+import { jwtGuard } from "../guards/jwtGuard.ts";
 
 export class SessionRouter {
   public router: Express;
@@ -15,7 +16,7 @@ export class SessionRouter {
       sessionController.createSessionHandler(req, res, next)
     );
 
-    this.router.get("/get-session/:sessionId", (req, res, next) =>
+    this.router.get("/get-session/:sessionId", jwtGuard, (req, res, next) =>
       sessionController.getSessionHandler(req, res, next)
     );
 

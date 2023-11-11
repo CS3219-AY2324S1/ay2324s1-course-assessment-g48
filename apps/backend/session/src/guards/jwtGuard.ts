@@ -37,6 +37,7 @@ const verifyAccessToken = async (accessToken?: string) => {
       },
     }
   );
+  console.log("Verified User: ", response.data);
   return response.data;
 };
 
