@@ -13,8 +13,6 @@ import useSessionCollab from "@/hook/useSessionCollab";
 import LoadingModal from "@/components/LoadingModal";
 
 export default function Session() {
-  const { sessionUser, isLoading: isLoadingUser } = useSessionUser();
-
   const sessionId = useRouter().query.sessionId as string;
 
   const {
@@ -24,19 +22,14 @@ export default function Session() {
     isLoading: isLoadingSession,
     increment,
     language,
-  } = useSessionCollab(
-    sessionId,
-    isLoadingUser,
-    sessionUser.accessToken,
-    sessionUser.refreshToken
-  );
+  } = useSessionCollab(sessionId);
 
   console.log("wtf");
 
   return (
     <div>
-      {isLoadingSession || isLoadingUser ? (
-        <LoadingModal isLoading={isLoadingSession || isLoadingUser} />
+      {isLoadingSession ? (
+        <LoadingModal isLoading={isLoadingSession} />
       ) : (
         question && (
           <QuestionWorkspace

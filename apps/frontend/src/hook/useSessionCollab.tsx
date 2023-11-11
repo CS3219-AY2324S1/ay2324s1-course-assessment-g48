@@ -16,15 +16,11 @@ import useQuestionById from "./useQuestionById";
 import useSessionUser from "./useSessionUser";
 import { getSession } from "@/database/session/sessionService";
 
-function useSessionCollab(
-  sessionId: string,
-  isLoadingUser: boolean,
-  accessToken?: string | null,
-  refreshToken?: string | null
-) {
+function useSessionCollab(sessionId: string) {
   const [isLoading, setIsLoading] = useState(false);
 
-  const { sessionUser } = useSessionUser();
+  const { sessionUser, isLoading: isLoadingUser } = useSessionUser();
+  const { accessToken, refreshToken } = sessionUser;
   //   const [questionId, setQuestionId] = useState<string>("");
   const [question, setQuestion] = useState<Question>();
   const [language, setLanguage] = useState<Language>(); // hardcoded, to be changed
@@ -74,7 +70,6 @@ function useSessionCollab(
     setIsLoading(true);
     if (!isLoadingUser && sessionId) {
       fetchSession().then((res) => setIsLoading(false));
-      //   setIsLoading(false);
     }
   }, [sessionId, isLoadingUser]);
 
