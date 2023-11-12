@@ -14,7 +14,7 @@ append_env_file() {
     local BASE_NAME=$(basename "${DIR_NAME}")
 
     # Append the name of the folder
-    echo "${BASE_NAME} .env variables: " >> $OUTPUT_ENV
+    echo "${BASE_NAME} $(basename "${ENV_PATH}") variables: " >> $OUTPUT_ENV
     echo "-----------------------------------" >> $OUTPUT_ENV
     # Append the .env file contents to the root .env file
     cat "$ENV_PATH" >> $OUTPUT_ENV
@@ -23,7 +23,7 @@ append_env_file() {
 }
 
 # Find all .env files in the directory tree and iterate over them
-find $ROOT_DIR -name '.env' | while read ENV_FILE; do
+find $ROOT_DIR \( -name '.env' -o -name '.env.dev' -o -name '.env.development.local' -o -name '.env.local' \) | while read ENV_FILE; do
     append_env_file "$ENV_FILE"
 done
 
