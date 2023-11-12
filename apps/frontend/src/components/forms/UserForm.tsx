@@ -1,7 +1,7 @@
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import router from "next/router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { UserManagement } from "../../utils/enums/UserManagement";
 import FormInput from "./FormInput";
 import { UpdateUserDto, User } from "@/database/user/entities/user.entity";
@@ -21,19 +21,16 @@ import { useError } from "@/hook/ErrorContext";
 
 interface UserFormProps {
   formType: string;
-  currPassword?: string;
 }
 
-const UserForm: React.FC<UserFormProps> = ({ formType, currPassword }) => {
+const UserForm: React.FC<UserFormProps> = ({ formType }) => {
   const { status, update } = useSession();
   const { sessionUser } = useSessionUser();
   const { setError } = useError();
-  const [newId, setNewId] = useState(sessionUser.id);
+  const newId = React.useMemo(() => sessionUser.id, [sessionUser.id]);
   const [newUsername, setNewUsername] = useState(sessionUser.username);
   const [newEmail, setNewEmail] = useState(sessionUser.email);
-  const [newPassword, setNewPassword] = useState(
-    currPassword ?? sessionUser.password
-  );
+  const [newPassword, setNewPassword] = useState(sessionUser.password);
 
   const [openAuthInfo, setOpenAuthInfo] = useState(false);
   const [authProvider, setAuthProvider] = useState(
