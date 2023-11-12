@@ -28,7 +28,8 @@ spec:
     spec:
       containers:
       - name: peerprep-chat
-        image: deployment87/dply87:peerprep-chat-v1.2.4
+        image: deployment87/dply87:peerprep-chat-v1.2.10
+        imagePullPolicy: Always
         resources:
           limits:
             memory: "256Mi"

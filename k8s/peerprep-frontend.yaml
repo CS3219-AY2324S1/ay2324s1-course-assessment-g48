@@ -32,7 +32,8 @@ spec:
     spec:
       containers:
       - name: peerprep-frontend
-        image: deployment87/dply87:peerprep-frontend-v1.2.4
+        image: deployment87/dply87:peerprep-frontend-v1.2.8
+        imagePullPolicy: Always
         resources:
           limits:
             memory: "256Mi"

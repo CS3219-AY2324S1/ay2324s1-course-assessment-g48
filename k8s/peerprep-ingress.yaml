@@ -76,6 +76,13 @@ spec:
             port:
               number: 8082
       - pathType: Prefix
+        path: /create-chatroom
+        backend:
+          service:
+            name: peerprep-chat
+            port:
+              number: 8082
+      - pathType: Prefix
         path: /api/codeExecution
         backend:
           service:
