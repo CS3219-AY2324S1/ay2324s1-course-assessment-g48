@@ -12,7 +12,7 @@ function HistoryRepo() {
     }, [sessionUser]);
 
     if (sessionUser.id) {
-            router.push(`/history/user/${userId}`);
+        router.push(`/history/user/${userId}`);
     } else {
         router.push("/401");
     }

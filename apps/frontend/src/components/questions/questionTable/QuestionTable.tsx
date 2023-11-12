@@ -44,7 +44,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
   handleTrigger,
 }) => {
   const questionsPerPage = useMemo(() => 10, []);
-  const { data: session, update } = useSession();
+  const { update } = useSession();
   const [searchResults, setSearchResults] = useState("");
   const [viewQuestion, setViewQuestion] = useState<Question>(initialQuestion);
   const [questionToEdit, setQuestionToEdit] =
@@ -78,7 +78,6 @@ const QuestionTable: FC<QuestionTableProps> = ({
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
     setSelectedCategory(event.target.value);
-    console.log(event.target.value);
   };
 
   const handleDifficultyChange = (

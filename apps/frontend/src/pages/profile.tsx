@@ -9,7 +9,7 @@ import React, { useEffect, useState } from "react";
 type profileProps = {};
 
 const Profile: React.FC<profileProps> = () => {
-  const { sessionUser } = useSessionUser();
+  const { sessionUser, isLoadingUser } = useSessionUser();
   const [currPassword, setCurrPassword] = useState(sessionUser.password);
   const [accessToken, setAccessToken] = useState(sessionUser.accessToken);
 
@@ -25,7 +25,7 @@ const Profile: React.FC<profileProps> = () => {
     getUser();
   }, [sessionUser.id]); 
 
-  if (!accessToken) {
+  if (isLoadingUser) {
     return <LoadingModal isLoading={true} />;
   }
 

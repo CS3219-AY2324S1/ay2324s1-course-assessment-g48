@@ -3,38 +3,40 @@ import { getHistoryById } from "@/database/history/historyService";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useError } from "./ErrorContext";
+import useSessionUser from "./useSessionUser";
 
-function useHistoryQuestionById(hid: string, qid: string, accessToken?: string | null, refreshToken?: string | null) {
-  const {data: session, update} = useSession();
-  const [isLoading, setIsLoading] = useState(false);
+function useHistoryQuestionById(hid: string, qid: string) {
+  const { update } = useSession();
+  const {isLoadingUser, sessionUser} = useSessionUser();
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const [historyQuestion, setHistoryQuestion] = useState<CompletedQuestion | null>(null);
   const { setError, clearError } = useError();
 
   useEffect(() => {
     async function fetchData() {
       if (hid) {
-        setIsLoading(true);
+        setIsLoadingHistory(true);
         clearError()
-        if (accessToken === null || refreshToken === null) return;
+        if (isLoadingUser) return;
         try {
-          const data = await getHistoryById(hid, qid, accessToken, refreshToken);
+          const data = await getHistoryById(hid, qid, sessionUser.accessToken, sessionUser.refreshToken);
           if (data.accessToken) {
             update({ accessToken: data.accessToken });
         }
           setHistoryQuestion(data);
-          setIsLoading(false);
+          setIsLoadingHistory(false);
         } catch (error) {
           setError({
             type: 1,
             message: `Error fetching question:, ${error}`});
-          setIsLoading(false);
+          setIsLoadingHistory(false);
         }
       }
     }
     fetchData();
-  }, [hid, qid, accessToken, refreshToken, session]);
+  }, [hid, qid, isLoadingUser, update]);
 
-  return { historyQuestion, isLoading };
+  return { historyQuestion, isLoadingHistory };
 }
 
 export default useHistoryQuestionById;

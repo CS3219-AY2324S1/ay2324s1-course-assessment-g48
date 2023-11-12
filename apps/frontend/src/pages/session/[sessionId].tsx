@@ -1,7 +1,6 @@
 import { useRouter } from "next/router";
 import useQuestionById from "@/hook/useQuestionById";
 import { useEffect, useState } from "react";
-import useSessionUser from "@/hook/useSessionUser";
 import { languageOptions } from "@/utils/constants/LanguageOptions";
 import QuestionWorkspace from "@/components/questions/questionPage/QuestionWorkspace";
 import { AutomergeUrl } from "@automerge/automerge-repo";
@@ -11,15 +10,10 @@ import axios from "axios";
 
 export default function Session() {
   const router = useRouter();
-
-  const { sessionUser } = useSessionUser();
-
   const sessionID = useRouter().query.sessionId as string;
   const questionId = "6544a293176b84aafd37817a"; // hardcoded, to be changed
   const { question } = useQuestionById(
     questionId,
-    sessionUser.accessToken,
-    sessionUser.refreshToken
   );
   const languageSelected = languageOptions[0]; // hardcoded, to be changed
   const [docUrl, setDocUrl] = useState<AutomergeUrl>();
