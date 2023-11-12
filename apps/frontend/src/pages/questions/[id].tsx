@@ -9,8 +9,8 @@ const QuestionPage: React.FC<QuestionPageProps> = () => {
   const router = useRouter();
   const qid = router.query.id;
   const { question } = useQuestionById(qid as string);
-  return <div className='flex'>
+  return <>
     {question && <QuestionWorkspace question={question} />}
-  </div>
+  </>
 }
 export default QuestionPage;
