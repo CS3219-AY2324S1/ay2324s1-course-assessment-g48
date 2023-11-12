@@ -30,7 +30,10 @@ function useQuestionById(qid: string) {
           sessionUser.refreshToken
         );
         if (data.accessToken) {
-          update({ accessToken: data.accessToken });
+          update({
+            accessToken: data.accessToken,
+            accessTokenExpiry: data.accessTokenExpiry,
+          });
         }
         setQuestion(data);
         setIsLoadingQuestion(false);

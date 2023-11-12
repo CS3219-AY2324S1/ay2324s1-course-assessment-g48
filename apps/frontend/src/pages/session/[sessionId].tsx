@@ -15,8 +15,6 @@ export default function Session() {
     language,
   } = useSessionCollab(sessionId);
 
-  console.log("wtf");
-
   return (
     <div>
       {isLoadingSession ? (

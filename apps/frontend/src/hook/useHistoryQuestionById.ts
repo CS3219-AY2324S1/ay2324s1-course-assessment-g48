@@ -7,28 +7,38 @@ import useSessionUser from "./useSessionUser";
 
 function useHistoryQuestionById(hid: string, qid: string) {
   const { update } = useSession();
-  const {isLoadingUser, sessionUser} = useSessionUser();
+  const { isLoadingUser, sessionUser } = useSessionUser();
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
-  const [historyQuestion, setHistoryQuestion] = useState<CompletedQuestion | null>(null);
+  const [historyQuestion, setHistoryQuestion] =
+    useState<CompletedQuestion | null>(null);
   const { setError, clearError } = useError();
 
   useEffect(() => {
     async function fetchData() {
       if (hid) {
         setIsLoadingHistory(true);
-        clearError()
+        clearError();
         if (isLoadingUser) return;
         try {
-          const data = await getHistoryById(hid, qid, sessionUser.accessToken, sessionUser.refreshToken);
+          const data = await getHistoryById(
+            hid,
+            qid,
+            sessionUser.accessToken,
+            sessionUser.refreshToken
+          );
           if (data.accessToken) {
-            update({ accessToken: data.accessToken });
-        }
+            update({
+              accessToken: data.accessToken,
+              accessTokenExpiry: data.accessTokenExpiry,
+            });
+          }
           setHistoryQuestion(data);
           setIsLoadingHistory(false);
         } catch (error) {
           setError({
             type: 1,
-            message: `Error fetching question:, ${error}`});
+            message: `Error fetching question:, ${error}`,
+          });
           setIsLoadingHistory(false);
         }
       }

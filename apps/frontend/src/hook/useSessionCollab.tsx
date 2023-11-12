@@ -42,7 +42,10 @@ function useSessionCollab(sessionId: string) {
         return;
       }
       if (session.accessToken) {
-        update({ accessToken: session.accessToken });
+        update({
+          accessToken: session.accessToken,
+          accessTokenExpiry: session.accessTokenExpiry,
+        });
       }
       console.log(session.docId);
       console.log(session.chatroomId);

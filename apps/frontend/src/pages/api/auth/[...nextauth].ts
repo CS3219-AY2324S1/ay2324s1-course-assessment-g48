@@ -1,34 +1,12 @@
 import NextAuth from "next-auth";
 import { User } from "../../../database/user/entities/user.entity";
-import { login, refreshJwt, updateUserById, verifyJwt } from "@/database/user/userService";
+import { login, refreshJwt, updateUserById } from "@/database/user/userService";
 import { OAuthType } from "@/utils/enums/OAuthType";
-import { Role } from "@/utils/enums/Role";
 import { ErrorKey } from "@/utils/enums/ErrorKey";
 import { authOptions } from "./authOptions";
 
-declare module "next-auth" {
-  interface User {
-    id: number;
-    username?: string;
-    email?: string;
-    password?: string;
-    oauth?: OAuthType[];
-    role?: Role;
-    image?: string;
-    accessToken?: string;
-    refreshToken?: string;
-  }
-}
-
-declare module "next-auth" {
-  interface Session {
-    id: number;
-    user?: User;
-  }
-}
-
 export default NextAuth({
-  ...authOptions, 
+  ...authOptions,
   callbacks: {
     async signIn({ user, account }) {
       try {
@@ -38,12 +16,11 @@ export default NextAuth({
         ) {
           return true;
         }
-  
+
         const findOAuthUser = await login({
           email: user.email,
           oauth: account.provider as OAuthType,
         });
-        console.log("findOAuthUser:" , findOAuthUser)
 
         if (findOAuthUser) {
           // if existing user is signing in with a new oauth
@@ -61,7 +38,9 @@ export default NextAuth({
           return true;
         }
 
-        return `/oauthsignup?email=${user.email}&oauth=${account.provider as OAuthType}&image=${user.image}`
+        return `/oauthsignup?email=${user.email}&oauth=${
+          account.provider as OAuthType
+        }&image=${user.image}`;
       } catch (error) {
         console.error(error);
         return true;
@@ -86,6 +65,7 @@ export default NextAuth({
           user.role = findOAuthUser.role;
           user.accessToken = findOAuthUser.accessToken;
           user.refreshToken = findOAuthUser.refreshToken;
+          user.accessTokenExpiry = findOAuthUser.accessTokenExpiry;
         }
       }
       if (user) {
@@ -94,20 +74,26 @@ export default NextAuth({
       }
       if (trigger === "update") {
         if (session.accessToken) {
+          console.log("Expired access token successfully refreshed on API call, saving new access token...");
           (token.user as User).accessToken = session.accessToken;
-          console.log("Refresh access token: ", session.accessToken);
+          (token.user as User).accessTokenExpiry = session.accessTokenExpiry;
+          console.log("New access token expiry:", session.accessTokenExpiry);
         }
         if (session.user) {
           token.user = session.user;
         }
       }
-      const isVerified = await verifyJwt((token.user as User).accessToken as string);
-      if (!isVerified) {
-        const response = await refreshJwt((token.user as User).refreshToken!);
-        if (token.user) {
-          (token.user as User).accessToken = response.accessToken;
-          console.log("Refresh access token: ", response.accessToken);
-        }
+      const expiry = (token.user as User).accessTokenExpiry;
+      if (expiry !== undefined && Date.now() < expiry) {
+        return token;
+      }
+      console.log(`Access token past expiry time, attempting to refresh...`);
+      console.log(`Date.now(): ${Date.now()} > Expiry: ${expiry}`);
+      const response = await refreshJwt((token.user as User).refreshToken!);
+      if (token.user) {
+        (token.user as User).accessToken = response.accessToken;
+        (token.user as User).accessTokenExpiry = response.accessTokenExpiry;
+        console.log("New access token expiry:", response.accessTokenExpiry);
       }
       return token;
     },

@@ -22,7 +22,10 @@ function useQuestions() {
     getAllQuestions(sessionUser.accessToken, sessionUser.refreshToken)
       .then((questions) => {
         if (questions.accessToken) {
-          update({ accessToken: questions.accessToken });
+          update({
+            accessToken: questions.accessToken,
+            accessTokenExpiry: questions.accessTokenExpiry,
+          });
         }
         setQuestions(questions);
         setTotalQuestions(questions.length);

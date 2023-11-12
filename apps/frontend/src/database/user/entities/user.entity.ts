@@ -11,6 +11,7 @@ export type User = {
   role?: Role;
   accessToken?: string;
   refreshToken?: string;
+  accessTokenExpiry?: number;
 };
 
 export type CreateUserDto = Omit<User, "id">;

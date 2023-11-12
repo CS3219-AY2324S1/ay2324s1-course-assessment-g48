@@ -44,7 +44,7 @@ function useHistories(userId: number) {
     )
       .then((histories) => {
         if (histories.accessToken) {
-          update({ accessToken: histories.accessToken });
+          update({ accessToken: histories.accessToken, accessTokenExpiry: histories.accessTokenExpiry });
         }
         setHistories(histories);
         setTimeout(() => {

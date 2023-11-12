@@ -60,7 +60,6 @@ export const login = async ({
 
 export const deleteUserById = async (id: number) => {
   const response = await axios.delete(BASE_URL + "/" + id);
-  console.log(response);
   return response.data;
 };
 

@@ -22,7 +22,7 @@ function useSessionByUid() {
       getSessionsByUserId(sessionUser.id, sessionUser.accessToken, sessionUser.refreshToken)
         .then((data) => {
           if (data.accessToken) {
-            update({ accessToken: data.accessToken });
+            update({ accessToken: data.accessToken, accessTokenExpiry: data.accessTokenExpiry });
           }
           setSessions(data.sessions);
           setIsLoading(false);

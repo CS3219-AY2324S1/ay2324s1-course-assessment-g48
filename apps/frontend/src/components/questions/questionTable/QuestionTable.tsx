@@ -105,7 +105,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
       .then((data) => {
         handleTrigger();
         if (data.accessToken) {
-          update({ accessToken: data.accessToken });
+          update({ accessToken: data.accessToken, accessTokenExpiry: data.accessTokenExpiry });
         }
         setOpenAdd(false);
       })
@@ -119,7 +119,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
       .then((data) => {
         handleTrigger();
         if (data.accessToken) {
-          update({ accessToken: data.accessToken });
+          update({ accessToken: data.accessToken, accessTokenExpiry: data.accessTokenExpiry });
         }
         setOpenDelCfm(false);
       })
@@ -138,7 +138,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
       .then((data) => {
         handleTrigger();
         if (data.accessToken) {
-          update({ accessToken: data.accessToken });
+          update({ accessToken: data.accessToken, accessTokenExpiry: data.accessTokenExpiry });
         }
         setOpenEdit(false);
       })

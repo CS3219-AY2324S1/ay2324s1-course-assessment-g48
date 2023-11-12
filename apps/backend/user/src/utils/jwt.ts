@@ -5,7 +5,7 @@ interface SignOptions {
 }
 
 const DEFAULT_ACCESS_TOKEN_SIGN_OPTIONS: SignOptions = {
-  expiresIn: "15m",
+  expiresIn: "30s",
 };
 
 const DEFAULT_REFRESH_TOKEN_SIGN_OPTIONS: SignOptions = {
@@ -57,5 +57,15 @@ export function verifyJwtRefreshToken(token?: string) {
   } catch (error) {
     console.error(error);
     return null;
+  }
+}
+
+export function getAccessTokenExpiry(token?: string) {
+  try {
+    // Decode the JWT without verifying the signature
+    const decoded = jwt.decode(token!, { json: true });
+    return decoded?.exp;
+  } catch (error) {
+    console.error(error);
   }
 }
