@@ -53,7 +53,7 @@ export const MatchStateProvider: React.FC<MatchStateProviderProps> = ({
 }) => {
   const { toggleTimer, reset, isRunning } = useTimer();
   const [matchState, setMatchState] = useState<MatchedState>(() => {
-        return isRunning ? MatchedState.MATCHING : MatchedState.NOT_MATCHING;
+    return isRunning ? MatchedState.MATCHING : MatchedState.NOT_MATCHING;
   });
   const { setError, clearError } = useError();
   const [disableBtnCancel, setDisableBtnCancel] = useState(true);
@@ -68,7 +68,7 @@ export const MatchStateProvider: React.FC<MatchStateProviderProps> = ({
     reset();
     setMatchState(MatchedState.NOT_MATCHING);
   };
-  
+
   const setToMatchingState = () => {
     // Set the state of the page to looking for match.
     clearError();
@@ -123,7 +123,7 @@ export const MatchStateProvider: React.FC<MatchStateProviderProps> = ({
     });
     // router.push(`/session/${data.sessionId}`);
     // window.open(`/session/${data.sessionId}`);
-  }
+  };
 
   const disconnectSocket = () => {
     console.log("disconnecting");
@@ -148,12 +148,12 @@ export const MatchStateProvider: React.FC<MatchStateProviderProps> = ({
     };
   }, [isRunning]);
 
-      useEffect(() => {
-        if (sessionId) {
-          console.log("matched");
-          window.open(`/session/${sessionId}`);
-        }
-      }, [sessionId]);
+  useEffect(() => {
+    if (sessionId) {
+      console.log("matched");
+      window.open(`/session/${sessionId}`);
+    }
+  }, [sessionId]);
 
   return (
     <MatchStateContext.Provider

@@ -1,5 +1,6 @@
 import { getSessionsByUserId } from "@/database/session/sessionService";
 import { useEffect, useState } from "react";
+import useSessionUser from "./useSessionUser";
 
 export interface Session {
   _id: string;
@@ -8,28 +9,25 @@ export interface Session {
   code: string;
 }
 
-function useSessionByUid(
-  uid: number
-  //   accessToken?: string | null,
-  //   refreshToken?: string | null
-) {
-  //   const { data: session } = useSession();
+function useSessionByUid() {
+  const { sessionUser, isLoading: isLoadingUser } = useSessionUser();
+  const { id: uid, accessToken, refreshToken } = sessionUser;
   const [isLoading, setIsLoading] = useState(false);
   const [sessions, setSessions] = useState<Session[]>([]);
 
   useEffect(() => {
     setIsLoading(true);
-    // if (accessToken === null || refreshToken === null) return;
-    getSessionsByUserId(uid)
-      .then((data) => {
-        setSessions(data.sessions);
-        setTimeout(() => {
+    if (!isLoadingUser) {
+      // if (accessToken === null || refreshToken === null) return;
+      getSessionsByUserId(uid, accessToken!, refreshToken!)
+        .then((data) => {
+          setSessions(data.sessions);
           setIsLoading(false);
-        }, 50);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
   }, []);
   return {
     sessions,

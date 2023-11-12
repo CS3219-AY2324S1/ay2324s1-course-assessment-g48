@@ -58,7 +58,7 @@ const EditorNav: React.FC<EditorNavProps> = ({
         </button>
       </div>
 
-      <div className="flex">
+      {/* <div className="flex">
         <div className="flex items-center">
           <button className="preferenceBtn group">
             <div className="h-6 w-6 dark:text-white">
@@ -76,7 +76,7 @@ const EditorNav: React.FC<EditorNavProps> = ({
             <div className="btnTooltip">Fullscreen</div>
           </button>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

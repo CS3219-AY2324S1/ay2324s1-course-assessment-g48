@@ -1,22 +1,21 @@
-import axios from "axios";
+import { axiosInstance } from "@/utils/axios/AxiosInstance";
 import Router from "next/router";
 
 const BASE_URL = process.env.NEXT_PUBLIC_SESSION_URL + "/session/user";
 
 export const getSessionsByUserId = async (
-  uid: number
-  //   accessToken?: string,
-  //   refreshToken?: string
+  uid: number,
+  accessToken: string,
+  refreshToken: string
 ) => {
-  //   const config = {
-  //     headers: {
-  //       Authorization: `Bearer ${accessToken}`,
-  //       ["refresh-token"]: refreshToken,
-  //       questionid: qid,
-  //     },
-  //   };
-  return await axios
-    .get(BASE_URL + `/${uid}`)
+  const config = {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      ["refresh-token"]: refreshToken,
+    },
+  };
+  return await axiosInstance
+    .get(BASE_URL + `/${uid}`, config)
     .then((response) => {
       return response.data;
     })
@@ -29,13 +28,24 @@ export const getSessionsByUserId = async (
     });
 };
 
-export async function getSession(sessionId: string) {
-  return await axios
+export async function getSession(
+  sessionId: string,
+  accessToken: string,
+  refreshToken: string
+) {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      ["refresh-token"]: refreshToken,
+    },
+  };
+  return await axiosInstance  
     .get(
-      `${process.env.NEXT_PUBLIC_SESSION_URL}/session/get-session/${sessionId}`
+      `${process.env.NEXT_PUBLIC_SESSION_URL}/session/get-session/${sessionId}`,
+      config
     )
     .then((res) => {
-      return res.data
+      return res.data;
     })
     .catch((error) => {
       if (error.response.status === 401) {
@@ -43,6 +53,6 @@ export async function getSession(sessionId: string) {
       } else if (error.response.status === 404) {
         Router.push("/404");
       }
-        throw String(error.response.data.error);
+      throw String(error.response.data.error);
     });
 }

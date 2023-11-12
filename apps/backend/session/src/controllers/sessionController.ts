@@ -78,7 +78,7 @@ export class SessionController {
     res: Response,
     next: NextFunction
   ) {
-    console.log(req.params.user);
+    console.log("asdad", req.params.user);
     const uid = Number(req.params.user);
     if (!uid) {
       return res.status(500).json({ err: "UID passed in was not valid." });

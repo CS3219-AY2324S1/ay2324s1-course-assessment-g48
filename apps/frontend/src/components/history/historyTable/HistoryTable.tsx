@@ -23,7 +23,7 @@ const HistoryTable: React.FC<HistoryTableProps> = ({ hidden }) => {
   const [openDelCfm, setOpenDelCfm] = useState(false);
   const router = useRouter();
 
-  const { histories, totalHistories } = useHistories(
+  const { histories, isLoading } = useHistories(
     sessionUser.id,
     accessToken,
     refreshToken
@@ -59,6 +59,7 @@ const HistoryTable: React.FC<HistoryTableProps> = ({ hidden }) => {
   }, [sessionUser]);
 
   return (
+    isLoading ? <></> :
     <>
       <div className="overflow-auto shadow-md sm:rounded-lg">
         <table

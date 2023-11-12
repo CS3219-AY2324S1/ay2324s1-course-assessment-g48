@@ -5,8 +5,8 @@ import LoadingModal from "@/components/LoadingModal";
 import { useRouter } from "next/router";
 
 export default function Session() {
-  const {  isLoading: isLoadingUser } = useSessionUser();
   const sessionId = useRouter().query.sessionId as string;
+
   const {
     question,
     doc,
@@ -16,10 +16,12 @@ export default function Session() {
     language,
   } = useSessionCollab(sessionId);
 
+  console.log("wtf");
+
   return (
     <div>
-      {isLoadingSession  || isLoadingUser ? (
-        <LoadingModal isLoading={isLoadingSession ||  isLoadingUser} />
+      {isLoadingSession ? (
+        <LoadingModal isLoading={isLoadingSession} />
       ) : (
         question && (
           <QuestionWorkspace

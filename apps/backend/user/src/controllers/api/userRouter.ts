@@ -72,7 +72,6 @@ userRouter.post(
         return;
       }
 
-
       const cleanedOauth: OAuth[] = [];
       const invalidOauth: string[] = [];
       if (oauth !== undefined) {
@@ -84,7 +83,6 @@ userRouter.post(
           cleanedOauth.push(auth as OAuthType);
         }
       }
-
 
       if (invalidOauth.length !== 0) {
         logger.info(
@@ -98,7 +96,6 @@ userRouter.post(
         hashedPassword = await bcrypt.hash(cleanedPassword, saltRounds);
       }
 
-      
       const cleanedUserData = {
         id: -1, // not used, placeholder id
         email: cleanedEmail,
@@ -179,11 +176,14 @@ userRouter.post(
         return;
       }
 
-      const isCorrectPassword = await bcrypt.compare(user?.password!, cleanedPassword);
+      const isCorrectPassword = await bcrypt.compare(
+        user?.password!,
+        cleanedPassword
+      );
 
       if (isCorrectPassword) {
         res.status(401).json({
-          error: "401: Incorrect password, please try again."
+          error: "401: Incorrect password, please try again.",
         });
         return;
       }
@@ -202,6 +202,7 @@ userRouter.post(
 
 userRouter.get("/verifyJwt", async (req: Request, res: Response) => {
   const accessToken = req.headers.authorization?.split(" ")[1];
+  console.log("Access Token: ", accessToken);
   try {
     const userPayload = verifyJwtAccessToken(accessToken);
     res.status(200).json(userPayload);
@@ -374,7 +375,7 @@ userRouter.get(
       const { id } = req.params;
       const user = await findOneUser(
         { id: Number(id) },
-        { email: true, username: true, image:true }
+        { email: true, username: true, image: true }
       );
       if (!user) {
         res.status(404).json({

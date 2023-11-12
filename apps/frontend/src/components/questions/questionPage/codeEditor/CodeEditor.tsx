@@ -279,7 +279,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   }, [ctrlPress, enterPress]);
 
   return (
-    <div className="flex flex-col h-full dark:bg-gray-800 relative overflow-hidden">
+    <div className="flex flex-col h-full w-full dark:bg-gray-800 relative overflow-hidden">
       <EditorNav
         selectedLanguage={selectedLanguage}
         setSelectedLanguage={setSelectedLanguage}
