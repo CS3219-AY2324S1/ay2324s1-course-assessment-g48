@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: peerprep-judge0
+spec:
+  selector:
+    app: peerprep-judge0
+  ports:
+    - protocol: TCP
+      port: 2358
+      targetPort: 2358
+  type: ClusterIP
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: judge0-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: peerprep-judge0
+  template:
+    metadata:
+      labels:
+        app: peerprep-judge0
+    spec:
+      containers:
+        - name: peerprep-judge0
+          image: judge0/judge0
+          ports:
+            - containerPort: 2358
+          resources:
+            limits:
+              memory: "11264Mi"
+              cpu: "500m"
+          env:
+            - name: DATABASE_URL
+              value: "postgresql://postgres:qShhYgujF3MbMP@peerprep-postgres:5432/peerprep"
+            - name: REDIS_URL
+              value: "redis://redis-service:6379"
