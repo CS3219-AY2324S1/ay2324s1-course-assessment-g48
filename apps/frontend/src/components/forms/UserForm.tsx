@@ -8,6 +8,7 @@ import { UpdateUserDto, User } from "@/database/user/entities/user.entity";
 import {
   createNewUser,
   deleteUserById,
+  getUserById,
   updateUserById,
 } from "@/database/user/userService";
 import useSessionUser from "@/hook/useSessionUser";
@@ -214,7 +215,8 @@ const UserForm: React.FC<UserFormProps> = ({ formType }) => {
     e.preventDefault();
     const newOAuth = sessionUser.oauth?.filter((oauth) => oauth !== provider);
     if (newOAuth == undefined || newOAuth.length == 0) {
-      if (newPassword == undefined || newPassword.trim().length == 0) {
+      const currUser = await getUserById(sessionUser.id);
+      if (!currUser.password && (newPassword == undefined || newPassword.trim().length == 0)) {
         setError({
           type: 1,
           message:

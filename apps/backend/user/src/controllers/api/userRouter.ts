@@ -374,7 +374,7 @@ userRouter.get(
       const { id } = req.params;
       const user = await findOneUser(
         { id: Number(id) },
-        { email: true, username: true, image:true }
+        { email: true, username: true, password: true, image: true }
       );
       if (!user) {
         res.status(404).json({
