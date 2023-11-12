@@ -1,9 +1,8 @@
 import Link from "next/link";
 
 const Custom401 = () => {
-
-return (
-  <main className="grid h-full place-items-center bg-white px-6 py-24 sm:py-32 lg:px-8 dark:bg-gray-900">
+  return (
+    <main className="grid h-full place-items-center bg-white px-6 py-24 sm:py-32 lg:px-8 dark:bg-gray-900">
       <div className="text-center">
         <p className="text-2xl font-semibold text-indigo-600">401</p>
         <h1 className="mt-4 text-3xl font-bold tracking-tight text-gray-900 sm:text-5xl dark:text-slate-200">
@@ -29,7 +28,7 @@ return (
         </div>
       </div>
     </main>
-);
+  );
 };
 
 export default Custom401;

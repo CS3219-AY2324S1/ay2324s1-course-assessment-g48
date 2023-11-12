@@ -1,5 +1,5 @@
 import React from "react";
-import Modal from "./Modal";
+import Modal from "../Modal";
 import { AuthInfo } from "@/utils/enums/AuthInfo";
 import { UpdateUserDto } from "@/database/user/entities/user.entity";
 import { updateUserById } from "@/database/user/userService";
@@ -27,17 +27,22 @@ const AuthInfoModal: React.FC<AuthInfoModalProps> = ({
 }) => {
   const unauthorisedMessage =
     "Please sign in first to access PeerPrep features!";
-  const unlinkOAuthMessage = `Are you sure you want to unlink your ${provider?.charAt(0).toUpperCase()}${provider?.slice(1)} account?`;
+  const unlinkOAuthMessage = `Are you sure you want to unlink your ${provider
+    ?.charAt(0)
+    .toUpperCase()}${provider?.slice(1)} account?`;
   const { update } = useSession();
   const { sessionUser } = useSessionUser();
 
-  async function handleConfirmUnlinkOAuth(newUser: UpdateUserDto, setError: (error: Error) => void) {
+  async function handleConfirmUnlinkOAuth(
+    newUser: UpdateUserDto,
+    setError: (error: Error) => void
+  ) {
     const newId = newUser.id;
     const response = await updateUserById(newId, newUser);
     if (response.error) {
       setError({
         type: 1,
-        message: response.error
+        message: response.error,
       });
       return;
     }

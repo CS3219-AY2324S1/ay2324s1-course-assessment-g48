@@ -3,6 +3,8 @@ import axios from "axios";
 import { SESSION_URL } from "../utils/config";
 import Producer from "../message-queue/Producer";
 import Consumer from "../message-queue/Consumer";
+import { ProgrammingLanguages } from "../enum/ProgrammingLanguages";
+import { Difficulty } from "../enum/Difficulty";
 
 export class Queue {
   waitList: number[];
@@ -10,14 +12,23 @@ export class Queue {
   nameSpace: string;
   producer: Producer;
   consumer: Consumer;
+  diff: Difficulty;
+  language: ProgrammingLanguages;
   next?: Queue;
 
-  constructor(nameSpace: string, nextQueue?: Queue) {
+  constructor(
+    nameSpace: string,
+    diff: Difficulty,
+    language: ProgrammingLanguages,
+    nextQueue?: Queue
+  ) {
     this.nameSpace = nameSpace;
     this.waitList = [];
     this.socketMap = new Map();
     this.producer = new Producer(nameSpace);
     this.consumer = new Consumer(nameSpace, (uid) => this.matchUsers(uid));
+    this.diff = diff;
+    this.language = language;
     this.next = nextQueue;
   }
 
@@ -118,7 +129,11 @@ export class Queue {
 
   private async generateSession(user1: number, user2: number) {
     const sessionID = await axios
-      .post(SESSION_URL, { users: [user1, user2] })
+      .post(SESSION_URL, {
+        users: [user1, user2],
+        difficulty: this.diff,
+        language: this.language,
+      })
       .then((response) => {
         return response.data.sessionId;
       })

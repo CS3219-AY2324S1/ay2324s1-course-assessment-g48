@@ -44,7 +44,19 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
 
     await onSave(newQuestion)
       .then(() => {
-        setNewQuestion(initialQuestion);
+        setNewQuestion({
+          _id: "",
+          title: "",
+          description: "",
+          categories: [],
+          complexity: "",
+          examples: [],
+          testcases: [],
+          constraints: "",
+          followUp: "",
+          starterCode: [],
+          dateCreated: new Date(),
+        });
         reset();
         setOpen(false);
       })
