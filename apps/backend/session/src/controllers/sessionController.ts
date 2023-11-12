@@ -78,12 +78,12 @@ export class SessionController {
     res: Response,
     next: NextFunction
   ) {
-    console.log("asdad", req.params.user);
     const uid = Number(req.params.user);
+    const { startIndex, endIndex } = req.body
     if (!uid) {
       return res.status(500).json({ err: "UID passed in was not valid." });
     }
-    const sessions = await this.sessionManager.getAllSessionsForUser(uid);
+    const sessions = await this.sessionManager.getAllSessionsForUser(uid, Number(startIndex), Number(endIndex));
     if (!sessions) {
       return res.status(500).json({
         err: "Something went wrong when searching for the sessions for this user.",

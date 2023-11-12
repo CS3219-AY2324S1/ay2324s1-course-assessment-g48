@@ -28,7 +28,7 @@ export class SessionRouter {
       sessionController.clearAllSessions(req, res, next)
     );
 
-    this.router.get("/user/:user", jwtGuard, (req, res, next) =>
+    this.router.post("/user/:user", jwtGuard, (req, res, next) =>
       sessionController.handleGetSessionsForUser(req, res, next)
     );
 

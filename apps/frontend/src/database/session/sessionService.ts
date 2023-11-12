@@ -5,6 +5,8 @@ const BASE_URL = process.env.NEXT_PUBLIC_SESSION_URL + "/session/user";
 
 export const getSessionsByUserId = async (
   uid: number,
+  startIndex: number,
+  endIndex: number,
   accessToken: string,
   refreshToken: string
 ) => {
@@ -15,7 +17,10 @@ export const getSessionsByUserId = async (
     },
   };
   return await axiosInstance
-    .get(BASE_URL + `/${uid}`, config)
+    .post(BASE_URL + `/${uid}`, {
+      startIndex: startIndex,
+      endIndex: endIndex
+    },config)
     .then((response) => {
       return response.data;
     })

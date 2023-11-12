@@ -34,7 +34,7 @@ export class SessionManagerService {
     diff: Difficulty,
     language: ProgrammingLanguage
   ) {
-    const chatroomId =  await this.createNewChatroom([user1, user2]);
+    const chatroomId = await this.createNewChatroom([user1, user2]);
     const languageId = languageOptions.get(language);
     const questions = await this.getRandomQuestion(diff, language);
     console.log(questions);
@@ -97,10 +97,12 @@ export class SessionManagerService {
   public async getDocId(sessionId: string) {
     console.log(`Getting docIdsad for ${sessionId}`);
     if (!this.sessionToUserMap.has(sessionId)) {
-      const session = await SessionModel.findById(sessionId).then((res) => {
-        console.log("can get", res);
-        return res
-      }).catch((err) => console.error("ERRRROR", err));
+      const session = await SessionModel.findById(sessionId)
+        .then((res) => {
+          console.log("can get", res);
+          return res;
+        })
+        .catch((err) => console.error("ERRRROR", err));
       if (!session) {
         console.log("No session of this sessionId has been found");
         return;
@@ -154,9 +156,16 @@ export class SessionManagerService {
     });
   }
 
-  public async getAllSessionsForUser(uid: number) {
+  public async getAllSessionsForUser(
+    uid: number,
+    startIndex: number,
+    endIndex: number
+  ) {
     try {
-      const sessions = await SessionModel.find({ users: uid });
+      console.log("first", startIndex, endIndex)
+      const sessions = await SessionModel.find({ users: uid })
+        .skip(startIndex)
+        .limit(endIndex - startIndex);
       return sessions;
     } catch (e) {
       console.error(e);

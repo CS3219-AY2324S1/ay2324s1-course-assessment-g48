@@ -9,17 +9,17 @@ export interface Session {
   code: string;
 }
 
-function useSessionByUid() {
+function useSessionByUid(startIndex:number, endIndex:number) {
   const { sessionUser, isLoading: isLoadingUser } = useSessionUser();
   const { id: uid, accessToken, refreshToken } = sessionUser;
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [sessions, setSessions] = useState<Session[]>([]);
 
   useEffect(() => {
     setIsLoading(true);
     if (!isLoadingUser) {
       // if (accessToken === null || refreshToken === null) return;
-      getSessionsByUserId(uid, accessToken!, refreshToken!)
+      getSessionsByUserId(uid, startIndex, endIndex, accessToken!, refreshToken!)
         .then((data) => {
           setSessions(data.sessions);
           setIsLoading(false);
@@ -28,11 +28,12 @@ function useSessionByUid() {
           console.error(error);
         });
     }
-  }, []);
+  }, [startIndex, endIndex, isLoadingUser]);
   return {
     sessions,
     isLoading,
   };
+        
 }
 
 export default useSessionByUid;
