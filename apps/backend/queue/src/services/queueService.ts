@@ -8,14 +8,14 @@ class QueueService {
 
   constructor() {
     this.queues = new Map();
-    this.queues.set(Difficulty.EASY, new Queue(Difficulty.EASY));
-    this.queues.set(Difficulty.MEDIUM, new Queue(Difficulty.MEDIUM));
-    this.queues.set(Difficulty.HARD, new Queue(Difficulty.HARD));
+    // this.queues.set(Difficulty.EASY, new Queue(Difficulty.EASY));
+    // this.queues.set(Difficulty.MEDIUM, new Queue(Difficulty.MEDIUM));
+    // this.queues.set(Difficulty.HARD, new Queue(Difficulty.HARD));
 
     for (const diff of Object.values(Difficulty)) {
       for (const language of Object.values(ProgrammingLanguages)) {
         const nameSpace = diff + "/" + language;
-        this.queues.set(nameSpace, new Queue(nameSpace, this.queues.get(diff)));
+        this.queues.set(nameSpace, new Queue(nameSpace, diff, language));
       }
     }
   }

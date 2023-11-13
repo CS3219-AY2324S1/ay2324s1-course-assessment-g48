@@ -1,6 +1,7 @@
 import axios, { AxiosInstance } from "axios";
 
-const REFRESH_URL = process.env.NEXT_PUBLIC_USER_SERVICE + "/api/users/refreshJwt";
+const REFRESH_URL =
+  process.env.NEXT_PUBLIC_USER_SERVICE + "/api/users/refreshJwt";
 
 export const axiosInstance: AxiosInstance = axios.create({});
 
@@ -22,11 +23,11 @@ axiosInstance.interceptors.response.use(
       try {
         const response = await axios.get(REFRESH_URL, {
           headers: {
-            'refresh-token': error.config.headers['refresh-token'],
+            "refresh-token": error.config.headers["refresh-token"],
           },
         });
         const newAccessToken = response.data.accessToken;
-        error.config.headers['Authorization'] = `Bearer ${newAccessToken}`;
+        error.config.headers["Authorization"] = `Bearer ${newAccessToken}`;
         const newResponse = await axios.request(error.config);
         newResponse.data.accessToken = newAccessToken;
         return newResponse;
@@ -37,4 +38,4 @@ axiosInstance.interceptors.response.use(
     }
     return Promise.reject(error);
   }
-)
+);

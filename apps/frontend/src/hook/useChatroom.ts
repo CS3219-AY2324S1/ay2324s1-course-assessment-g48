@@ -5,6 +5,7 @@ import {
   ChangeEventHandler,
   MouseEventHandler,
 } from "react";
+import { useError } from "./ErrorContext";
 
 export interface Message {
   id: string;
@@ -15,13 +16,12 @@ export interface Message {
 
 export const useChatroom = (chatroomId: string, userId: number) => {
   const [messages, setMessages] = useState<Message[]>([]);
-
+  const { setError, clearError } = useError();
   useEffect(() => {
     if (chatroomId && chatroomId.length != 0) {
       setMessages([]);
       chatroomSocket.connect();
       chatroomSocket.on("receiveMessage", ({ messages }) => {
-        console.log(messages);
         setMessages((pastMessages) => [...pastMessages, ...messages]);
         // messages.forEach((message: Message) => {
         //   callback(message);
@@ -29,9 +29,25 @@ export const useChatroom = (chatroomId: string, userId: number) => {
       });
       chatroomSocket.emit("connectToChatroom", { chatroomId });
 
-      console.log(messages);
+      chatroomSocket.on("other user connecting", () => {
+        clearError();
+        setError({
+          type: 4,
+          message: "Another user has connected.",
+        });
+      });
+
+      chatroomSocket.on("other user disconnecting", () => {
+        clearError();
+        setError({
+          type: 4,
+          message: "A user has disconnected.",
+        });
+      });
 
       return () => {
+        console.log("disconnecting chat");
+        chatroomSocket.emit("starting to disconnect");
         chatroomSocket.disconnect();
       };
     }
