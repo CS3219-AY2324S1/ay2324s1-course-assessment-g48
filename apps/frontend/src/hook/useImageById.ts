@@ -1,12 +1,10 @@
 import { getUserById } from "@/database/user/userService";
-import { useSession } from "next-auth/react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import useSessionUser from "./useSessionUser";
 import { useError } from "./ErrorContext";
-import { number } from "prop-types";
 
 function useImageById(userIds: number[]) {
-  const { isLoading: isLoadingUser } = useSessionUser();
+  const { isLoadingUser } = useSessionUser();
   const [isLoading, setIsLoading] = useState(true);
   const [imageMap, setImageMap] = useState(new Map<number, string>());
   const { setError } = useError();
@@ -41,7 +39,7 @@ function useImageById(userIds: number[]) {
           });
         });
     }
-  }, [userIds, isLoadingUser, setError]);
+  }, [userIds, isLoadingUser]);
 
   return {
     isLoading,

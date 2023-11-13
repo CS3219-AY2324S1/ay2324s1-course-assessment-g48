@@ -19,34 +19,28 @@ function SessionTable({}: Props) {
   );
 
   useEffect(() => {
-      if (!isLoadingSession) {
-          console.log(sessions);
-          const set = new Set<number>();
-          sessions.map((session) => {
-              session.users.map(id => {
-                  set.add(id);
-              })
-              console.log("user", set);
-          })
-          console.log("WTF", Array.from(set))
-          const uniqueUsers = Array.from(set);
-          setUsers(uniqueUsers);
-
-      }
+    if (!isLoadingSession) {
+      const set = new Set<number>();
+      sessions.forEach((session) => {
+        session.users.forEach((id) => {
+          set.add(id);
+        });
+      });
+      const uniqueUsers = Array.from(set);
+      setUsers(uniqueUsers);
+    }
   }, [isLoadingSession, sessions, currentPage, setUsers]);
-useEffect(() => {
-      console.log("test", users);
-}, [users]);
-    const { imageMap, isLoading: isLoadingImage } = useImageById(users);
-    
+  const { imageMap, isLoading: isLoadingImage } = useImageById(users);
+
 
   return isLoadingImage && isLoadingSession ? (
     <></>
   ) : (
     <>
-      <div className="overflow-x-auto shadow-md rounded-lg">
-        <table className=" relative text-sm text-left text-gray-500 dark:text-gray-400 w-full">
-          <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+      <div className="overflow-x-auto shadow-md rounded-lg dark:bg-gray-800 max-h-[calc(100vh-190px)]">
+        <table
+          className="relative table-auto text-sm text-left text-gray-500 dark:text-gray-400 w-full">
+          <thead className="text-xs sticky top-0 text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
               <th scope="col" className="px-6 py-3 ">
                 S/N

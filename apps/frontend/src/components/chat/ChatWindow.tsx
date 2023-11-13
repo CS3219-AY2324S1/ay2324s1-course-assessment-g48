@@ -24,8 +24,6 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
 }) => {
   const opacity = "opacity-100";
   const zIndex = "z-20";
-  const { isDarkMode } = useTheme();
-  const chatTheme = isDarkMode ? "dark-chat" : "";
   const { messages, handleSubmit } = useChatroom(chatroomId, chatUserId);
 
   const handleSend = (text: string) => {
@@ -37,7 +35,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
   }
 
   return (
-    <div className={`chatWindow ${zIndex} ${opacity} ${chatTheme}`}>
+    <div className={`chatWindow ${zIndex} ${opacity}`}>
       <MainContainer responsive>
         <ChatContainer>
           <MessageList>
