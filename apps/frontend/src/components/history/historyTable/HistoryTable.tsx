@@ -12,15 +12,9 @@ type HistoryTableProps = {
 const HistoryTable: React.FC<HistoryTableProps> = ({ hidden }) => {
   const { sessionUser } = useSessionUser();
   const [userRole, setUserRole] = useState(sessionUser.role);
-  const [accessToken, setAccessToken] = useState(sessionUser.accessToken);
-  const [refreshToken, setRefreshToken] = useState(sessionUser.refreshToken);
   const router = useRouter();
 
-  const { histories, totalHistories } = useHistories(
-    sessionUser.id,
-    accessToken,
-    refreshToken
-  );
+  const { histories, totalHistories } = useHistories(sessionUser.id);
   const [historyPerPage, setHistoryPerPage] = useState(10);
 
   function handleQuestionClick(
@@ -33,8 +27,6 @@ const HistoryTable: React.FC<HistoryTableProps> = ({ hidden }) => {
 
   useEffect(() => {
     setUserRole(sessionUser.role);
-    setAccessToken(sessionUser.accessToken);
-    setRefreshToken(sessionUser.refreshToken);
   }, [sessionUser]);
 
   return (

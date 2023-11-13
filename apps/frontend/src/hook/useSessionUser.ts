@@ -5,6 +5,7 @@ import { Role } from "@/utils/enums/Role";
 
 function useSessionUser() {
   const { data: session } = useSession();
+  const [isLoadingUser, setIsLoadingUser] = useState(true);
   const [sessionUser, setSessionUser] = useState<User>(
     session?.user ?? {
       id: -1,
@@ -13,7 +14,6 @@ function useSessionUser() {
       password: "",
     }
   );
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const checkSession = setInterval(() => {
@@ -24,13 +24,13 @@ function useSessionUser() {
         }));
         console.log("session", session);
         clearInterval(checkSession);
-        setIsLoading(false);
+        setIsLoadingUser(false);
       }
     }, 500); // Check every 0.5s
 
     const timeout = setTimeout(() => {
       clearInterval(checkSession);
-      setIsLoading(false);
+      setIsLoadingUser(false);
     }, 2000); // Stop checking after 2s
 
     return () => {
@@ -38,22 +38,26 @@ function useSessionUser() {
       clearInterval(checkSession);
     };
   }, [session]);
-  return {
-    sessionUser: !isLoading
-      ? {
+  return !isLoadingUser
+    ? {
+        sessionUser: {
           ...sessionUser,
           accessToken: session?.user?.accessToken ?? undefined,
           refreshToken: session?.user?.refreshToken ?? undefined,
-        }
-      : {
+        },
+        setSessionUser,
+        isLoadingUser
+      }
+    : {
+        sessionUser: {
           ...sessionUser,
           role: Role.Unknown,
           accessToken: null,
           refreshToken: null,
         },
-    isLoading,
-    setSessionUser,
-  };
+        setSessionUser,
+        isLoadingUser
+      };
 }
 
 export default useSessionUser;

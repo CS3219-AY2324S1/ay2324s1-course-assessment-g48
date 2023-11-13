@@ -26,9 +26,11 @@ axiosInstance.interceptors.response.use(
           },
         });
         const newAccessToken = response.data.accessToken;
+        const newAccessTokenExpiry = response.data.accessTokenExpiry;
         error.config.headers['Authorization'] = `Bearer ${newAccessToken}`;
         const newResponse = await axios.request(error.config);
         newResponse.data.accessToken = newAccessToken;
+        newResponse.data.accessTokenExpiry = newAccessTokenExpiry;
         return newResponse;
       } catch (error) {
         console.log(error);

@@ -1,13 +1,14 @@
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import router from "next/router";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { UserManagement } from "../../utils/enums/UserManagement";
 import FormInput from "./FormInput";
 import { UpdateUserDto, User } from "@/database/user/entities/user.entity";
 import {
   createNewUser,
   deleteUserById,
+  getUserById,
   updateUserById,
 } from "@/database/user/userService";
 import useSessionUser from "@/hook/useSessionUser";
@@ -15,25 +16,22 @@ import OAuthButton from "./OAuthButton";
 import { Role } from "@/utils/enums/Role";
 import Image from "next/image";
 import { OAuthType } from "@/utils/enums/OAuthType";
-import AuthInfoModal from "../AuthInfoModal";
+import AuthInfoModal from "./AuthInfoModal";
 import { AuthInfo } from "@/utils/enums/AuthInfo";
 import { useError } from "@/hook/ErrorContext";
 
 interface UserFormProps {
   formType: string;
-  currPassword?: string;
 }
 
-const UserForm: React.FC<UserFormProps> = ({ formType, currPassword }) => {
+const UserForm: React.FC<UserFormProps> = ({ formType }) => {
   const { status, update } = useSession();
   const { sessionUser } = useSessionUser();
   const { setError } = useError();
-  const [newId, setNewId] = useState(sessionUser.id);
+  const newId = React.useMemo(() => sessionUser.id, [sessionUser.id]);
   const [newUsername, setNewUsername] = useState(sessionUser.username);
   const [newEmail, setNewEmail] = useState(sessionUser.email);
-  const [newPassword, setNewPassword] = useState(
-    currPassword ?? sessionUser.password
-  );
+  const [newPassword, setNewPassword] = useState(sessionUser.password);
 
   const [openAuthInfo, setOpenAuthInfo] = useState(false);
   const [authProvider, setAuthProvider] = useState(
@@ -65,9 +63,7 @@ const UserForm: React.FC<UserFormProps> = ({ formType, currPassword }) => {
 
   const handleSignIn = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    console.log("signing in");
     try {
-      console.log("Details", newEmail, newPassword, callbackUrl);
       const result = await signIn("credentials", {
         redirect: false,
         email: newEmail,
@@ -75,7 +71,6 @@ const UserForm: React.FC<UserFormProps> = ({ formType, currPassword }) => {
         callbackUrl,
       });
       if (result?.error) {
-        console.log("Something wrong", result.error);
         setError({
           type: 1,
           message: "Invalid email or password.",
@@ -98,7 +93,6 @@ const UserForm: React.FC<UserFormProps> = ({ formType, currPassword }) => {
 
   const handleSignUp = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    console.log("signing up", newUsername, newEmail, newPassword, Role.Normal);
     try {
       const newUser: Omit<User, "id"> = {
         username: newUsername,
@@ -117,7 +111,6 @@ const UserForm: React.FC<UserFormProps> = ({ formType, currPassword }) => {
         return;
       }
 
-      console.log("Sign up successful, now trying to sign in");
 
       const result = await signIn("credentials", {
         redirect: false,
@@ -140,7 +133,6 @@ const UserForm: React.FC<UserFormProps> = ({ formType, currPassword }) => {
         router.push("/questions");
       }
     } catch (err) {
-      console.log(err || "Error undefined???");
       setError({
         type: 1,
         message: err as string,
@@ -217,7 +209,11 @@ const UserForm: React.FC<UserFormProps> = ({ formType, currPassword }) => {
     e.preventDefault();
     const newOAuth = sessionUser.oauth?.filter((oauth) => oauth !== provider);
     if (newOAuth == undefined || newOAuth.length == 0) {
-      if (newPassword == undefined || newPassword.trim().length == 0) {
+      const currUser = await getUserById(sessionUser.id);
+      if (
+        !currUser.password &&
+        (newPassword == undefined || newPassword.trim().length == 0)
+      ) {
         setError({
           type: 1,
           message:
@@ -252,7 +248,6 @@ const UserForm: React.FC<UserFormProps> = ({ formType, currPassword }) => {
             />
           </div>
         )}
-        {/* TODO: add tooltip when email is disabled due to Oauth for signup*/}
         <div>
           <FormInput
             type="email"
@@ -279,28 +274,28 @@ const UserForm: React.FC<UserFormProps> = ({ formType, currPassword }) => {
           />
         </div>
         {formType === UserManagement.Profile && hasOAuth && (
-            <div className="flex flex-col items-center space-y-4">
-              <p className="block text-sm font-medium leading-6 text-gray-900 dark:text-white">
-                Linked accounts:
-              </p>
-              <div className="flex w-1/2 justify-center dark:bg-white bg-gray-200 rounded py-2 space-x-3">
-                {sessionUser.oauth?.map((oauth) => (
-                  <Image
-                    key={oauth}
-                    src={`/${oauth}.svg`}
-                    alt={oauth}
-                    height={25}
-                    width={25}
-                    className="cursor-pointer"
-                    onClick={(e) => handleUnlinkOAuth(e, oauth)}
-                  />
-                ))}
-              </div>
-              <p className="block text-xs leading-6 text-gray-900 dark:text-white">
-                Click on an icon to unlink account
-              </p>
+          <div className="flex flex-col items-center space-y-4">
+            <p className="block text-sm font-medium leading-6 text-gray-900 dark:text-white">
+              Linked accounts:
+            </p>
+            <div className="flex w-1/2 justify-center dark:bg-white bg-gray-200 rounded py-2 space-x-3">
+              {sessionUser.oauth?.map((oauth) => (
+                <Image
+                  key={oauth}
+                  src={`/${oauth}.svg`}
+                  alt={oauth}
+                  height={25}
+                  width={25}
+                  className="cursor-pointer"
+                  onClick={(e) => handleUnlinkOAuth(e, oauth)}
+                />
+              ))}
             </div>
-          )}
+            <p className="block text-xs leading-6 text-gray-900 dark:text-white">
+              Click on an icon to unlink account
+            </p>
+          </div>
+        )}
         <div className="flex flex-col text-center justify-center items-center d-flex space-y-6">
           <button
             type="submit"

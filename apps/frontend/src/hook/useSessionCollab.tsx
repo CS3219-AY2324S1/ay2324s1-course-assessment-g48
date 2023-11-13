@@ -10,20 +10,16 @@ import { languageOptions } from "@/utils/constants/LanguageOptions";
 import { AutomergeUrl } from "@automerge/automerge-repo";
 import { useDocument } from "@automerge/automerge-repo-react-hooks";
 import { Doc } from "@automerge/automerge/next";
-import axios from "axios";
-import router, { useRouter } from "next/router";
-import useQuestionById from "./useQuestionById";
 import useSessionUser from "./useSessionUser";
 import { getSession } from "@/database/session/sessionService";
 
 function useSessionCollab(sessionId: string) {
   const [isLoading, setIsLoading] = useState(false);
-
-  const { sessionUser, isLoading: isLoadingUser } = useSessionUser();
-  const { accessToken, refreshToken } = sessionUser;
+  const { update } = useSession();
+  const { sessionUser, isLoadingUser } = useSessionUser();
   //   const [questionId, setQuestionId] = useState<string>("");
   const [question, setQuestion] = useState<Question>();
-  const [language, setLanguage] = useState<Language>(); // hardcoded, to be changed
+  const [language, setLanguage] = useState<Language>();
   const [docUrl, setDocUrl] = useState<AutomergeUrl>();
   const [doc, changeDoc] = useDocument<Doc<any>>(docUrl);
   const [chatroomId, setChatroomId] = useState<string>("");
@@ -34,30 +30,32 @@ function useSessionCollab(sessionId: string) {
 
   useEffect(() => {
     async function fetchSession() {
-      //   if (!accessToken || !refreshToken) {
-      //     router.push("/404");
-      //     return;
-      //   }
-
+      if (isLoadingUser) return;
+      // possible to change to sessionResponse? might confuse with next-auth session variable
       const session = await getSession(
         sessionId,
-        String(accessToken),
-        String(refreshToken)
+        sessionUser.accessToken,
+        sessionUser.refreshToken
       );
       console.log("Session got");
       if (!session) {
         return;
       }
+      if (session.accessToken) {
+        update({
+          accessToken: session.accessToken,
+          accessTokenExpiry: session.accessTokenExpiry,
+        });
+      }
       console.log(session.docId);
       console.log(session.chatroomId);
       console.log("docId received");
       console.log(session);
-      session.question;
       setQuestion(
         await getQuestionById(
           session.question,
-          sessionUser.accessToken!,
-          sessionUser.refreshToken!
+          sessionUser.accessToken,
+          sessionUser.refreshToken
         )
       );
       setLanguage(
@@ -71,7 +69,7 @@ function useSessionCollab(sessionId: string) {
     if (!isLoadingUser && sessionId) {
       fetchSession().then((res) => setIsLoading(false));
     }
-  }, [sessionId, isLoadingUser]);
+  }, [sessionId, isLoadingUser, update]);
 
   return { question, doc, chatroomId, isLoading, increment, language };
 }

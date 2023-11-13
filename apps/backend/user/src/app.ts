@@ -2,6 +2,7 @@ import express from "express";
 import { userRouter } from "./controllers/api/userRouter";
 import cors from "cors";
 import { testRouter } from "./controllers/api/testRouter";
+import helmet from "helmet";
 
 export const app = express();
 
@@ -32,6 +33,6 @@ app.use(
     exposedHeaders: ["set-cookie"],
   })
 );
-
+app.use(helmet());
 app.use(express.json());
 app.use("/api/users", userRouter);

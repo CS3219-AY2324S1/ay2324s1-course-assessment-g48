@@ -1,6 +1,7 @@
 import { getSessionsByUserId } from "@/database/session/sessionService";
 import { useEffect, useState } from "react";
 import useSessionUser from "./useSessionUser";
+import { useSession } from "next-auth/react";
 
 export interface Session {
   _id: string;
@@ -10,17 +11,19 @@ export interface Session {
 }
 
 function useSessionByUid() {
-  const { sessionUser, isLoading: isLoadingUser } = useSessionUser();
-  const { id: uid, accessToken, refreshToken } = sessionUser;
+  const { update } = useSession();
+  const { sessionUser, isLoadingUser } = useSessionUser();
   const [isLoading, setIsLoading] = useState(false);
   const [sessions, setSessions] = useState<Session[]>([]);
 
   useEffect(() => {
     setIsLoading(true);
     if (!isLoadingUser) {
-      // if (accessToken === null || refreshToken === null) return;
-      getSessionsByUserId(uid, accessToken!, refreshToken!)
+      getSessionsByUserId(sessionUser.id, sessionUser.accessToken, sessionUser.refreshToken)
         .then((data) => {
+          if (data.accessToken) {
+            update({ accessToken: data.accessToken, accessTokenExpiry: data.accessTokenExpiry });
+          }
           setSessions(data.sessions);
           setIsLoading(false);
         })
@@ -28,7 +31,7 @@ function useSessionByUid() {
           console.error(error);
         });
     }
-  }, []);
+  }, [isLoadingUser, update]);
   return {
     sessions,
     isLoading,

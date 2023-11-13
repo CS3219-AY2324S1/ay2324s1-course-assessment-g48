@@ -72,3 +72,13 @@ export function verifyJwtRefreshToken(token?: string) {
     return null;
   }
 }
+
+export function getAccessTokenExpiry(token?: string) {
+  try {
+    // Decode the JWT without verifying the signature
+    const decoded = jwt.decode(token!, { json: true });
+    return decoded?.exp;
+  } catch (error) {
+    console.error(error);
+  }
+}

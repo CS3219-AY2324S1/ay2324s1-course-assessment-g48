@@ -1,12 +1,12 @@
-import axios from "axios";
+import { axiosInstance } from "@/utils/axios/AxiosInstance";
 import Router from "next/router";
 
 const BASE_URL = process.env.NEXT_PUBLIC_SESSION_URL + "/session/user";
 
 export const getSessionsByUserId = async (
   uid: number,
-  accessToken: string,
-  refreshToken: string
+  accessToken?: string,
+  refreshToken?: string
 ) => {
   const config = {
     headers: {
@@ -14,7 +14,7 @@ export const getSessionsByUserId = async (
       ["refresh-token"]: refreshToken,
     },
   };
-  return await axios
+  return await axiosInstance
     .get(BASE_URL + `/${uid}`, config)
     .then((response) => {
       return response.data;
@@ -30,8 +30,8 @@ export const getSessionsByUserId = async (
 
 export async function getSession(
   sessionId: string,
-  accessToken: string,
-  refreshToken: string
+  accessToken?: string,
+  refreshToken?: string
 ) {
   const config = {
     headers: {
@@ -39,7 +39,7 @@ export async function getSession(
       ["refresh-token"]: refreshToken,
     },
   };
-  return await axios
+  return await axiosInstance
     .get(
       `${process.env.NEXT_PUBLIC_SESSION_URL}/session/get-session/${sessionId}`,
       config

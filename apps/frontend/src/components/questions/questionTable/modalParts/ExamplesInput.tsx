@@ -26,7 +26,6 @@ const ExamplesInput: React.FC<ExamplesInputProps> = ({
   }, [newQuestion, setCurrExamples]);
 
   const handleAddExample = () => {
-    // TODO: not sure why initialTestCase is mutated
     setCurrExamples([
       ...currExamples,
       ""
@@ -107,7 +106,7 @@ const ExamplesInput: React.FC<ExamplesInputProps> = ({
                         ]);
                       } else {
                         setCurrExamples(
-                          currExamples.filter((item) => item !== example)
+                          currExamples.slice(0, index).concat(currExamples.slice(index + 1))
                         );
                       }
                     }}

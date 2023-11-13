@@ -10,6 +10,7 @@ import {
 import { OAuth, Role } from "@prisma/client";
 import logger from "../../utils/logger";
 import {
+  getAccessTokenExpiry,
   getJwtErrorMessage,
   signJwtAccessToken,
   signJwtRefreshToken,
@@ -162,10 +163,21 @@ userRouter.post(
           const { password: userPassword, ...userExcludePassword } = user;
           const accessToken = signJwtAccessToken(userExcludePassword);
           const refreshToken = signJwtRefreshToken(userExcludePassword);
-
-          res
-            .status(200)
-            .json({ ...userExcludePassword, accessToken, refreshToken });
+          try {
+            const accessTokenExpiry = getAccessTokenExpiry(accessToken)! * 1000;
+            res.status(200).json({
+              ...userExcludePassword,
+              accessToken,
+              refreshToken,
+              accessTokenExpiry,
+            });
+            return;
+          } catch (error) {
+            console.error(error);
+            res
+              .status(500)
+              .json({ error: "500: Unable to get access token expiry." });
+          }
           return;
         }
 
@@ -177,11 +189,11 @@ userRouter.post(
       }
 
       const isCorrectPassword = await bcrypt.compare(
-        user?.password!,
-        cleanedPassword
+        cleanedPassword,
+        user?.password!
       );
 
-      if (isCorrectPassword) {
+      if (!isCorrectPassword) {
         res.status(401).json({
           error: "401: Incorrect password, please try again.",
         });
@@ -190,9 +202,21 @@ userRouter.post(
       const { password: userPassword, ...userExcludePassword } = user;
       const accessToken = signJwtAccessToken(userExcludePassword);
       const refreshToken = signJwtRefreshToken(userExcludePassword);
-      res
-        .status(200)
-        .json({ ...userExcludePassword, accessToken, refreshToken });
+      try {
+        const accessTokenExpiry = getAccessTokenExpiry(accessToken)! * 1000;
+        res.status(200).json({
+          ...userExcludePassword,
+          accessToken,
+          refreshToken,
+          accessTokenExpiry,
+        });
+        return;
+      } catch (error) {
+        console.error(error);
+        res
+          .status(500)
+          .json({ error: "500: Unable to get access token expiry." });
+      }
     } catch (error) {
       console.error("UserRouter login error:", error);
       next(error);
@@ -230,9 +254,18 @@ userRouter.get("/refreshJwt", async (req: Request, res: Response) => {
   delete userPayload.iat;
   delete userPayload.exp;
   const newAccessToken = signJwtAccessToken(userPayload);
-  res
+  try {
+    const accessTokenExpiry = getAccessTokenExpiry(newAccessToken)! * 1000;
+    res
     .status(200)
-    .json({ ...userPayload, accessToken: newAccessToken, refreshToken });
+    .json({ ...userPayload, accessToken: newAccessToken, refreshToken, accessTokenExpiry });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: "500: Unable to get access token expiry." });
+  }
+
 });
 
 // Update a user
@@ -321,8 +354,11 @@ userRouter.put(
         }
       }
 
-      const saltRounds = 10;
-      const hashedPassword = await bcrypt.hash(cleanedPassword, saltRounds);
+      let hashedPassword = null;
+      if (cleanedPassword !== undefined) {
+        const saltRounds = 10;
+        hashedPassword = await bcrypt.hash(cleanedPassword, saltRounds);
+      }
 
       const updatedUser = await updateUser(parseInt(id), {
         email: cleanedEmail,
@@ -372,7 +408,7 @@ userRouter.get(
       const { id } = req.params;
       const user = await findOneUser(
         { id: Number(id) },
-        { email: true, username: true, image: true }
+        { email: true, username: true, password: true, image: true }
       );
       if (!user) {
         res.status(404).json({

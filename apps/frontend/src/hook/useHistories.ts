@@ -5,14 +5,12 @@ import {
 } from "@/database/history/entities/history.entity";
 import { getHistoryByUserId } from "@/database/history/historyService";
 import { useSession } from "next-auth/react";
+import useSessionUser from "./useSessionUser";
 
-function useHistories(
-  userId: number,
-  accessToken?: string | null,
-  refreshToken?: string | null
-) {
-  const { data: session } = useSession();
-  const [isLoading, setIsLoading] = useState(false);
+function useHistories(userId: number) {
+  const { update } = useSession();
+  const { isLoadingUser, sessionUser } = useSessionUser();
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const [histories, setHistories] = useState<History[]>([]);
   const [trigger, setTrigger] = useState(false);
   const totalHistories = useMemo(() => 0, []);
@@ -37,30 +35,32 @@ function useHistories(
   }, [histories]);
 
   useEffect(() => {
-    setIsLoading(true);
-    if (accessToken === null || refreshToken === null) return;
-    getHistoryByUserId(userId, accessToken, refreshToken)
+    setIsLoadingHistory(true);
+    if (isLoadingUser) return;
+    getHistoryByUserId(
+      userId,
+      sessionUser.accessToken,
+      sessionUser.refreshToken
+    )
       .then((histories) => {
         if (histories.accessToken) {
-          session!.user!.accessToken = histories.accessToken;
-          console.log("Refresh accessToken", session);
+          update({ accessToken: histories.accessToken, accessTokenExpiry: histories.accessTokenExpiry });
         }
         setHistories(histories);
-        console.log("history ", histories);
         setTimeout(() => {
-          setIsLoading(false);
+          setIsLoadingHistory(false);
         }, 50);
       })
       .catch((error) => {
         console.error(error);
       });
-  }, [trigger, userId, accessToken, refreshToken, session]);
+  }, [trigger, userId, isLoadingUser, update]);
 
   return {
     histories,
     totalHistories,
     setHistories,
-    isLoading,
+    isLoadingHistory,
     handleTrigger,
     completedQuestion,
   };

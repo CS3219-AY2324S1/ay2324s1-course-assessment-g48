@@ -18,10 +18,6 @@ const navigation = [
   { name: "History", href: "/history/user", current: false },
 ];
 
-// function classNames(...classes: string[]) {
-//   return classes.filter(Boolean).join(" ");
-// }
-
 type NavbarProps = {
   session: Session | null;
 };
@@ -87,22 +83,20 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
                 <>
                   <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                     <div className="flex flex-shrink-0 items-center">
-                      <a
+                      <Link href={"/"}
                         className="cursor-pointer"
-                        onClick={() => router.push("/")}
                       >
                         <span className="self-center text-2xl font-semibold whitespace-nowrap text-white">
                           LeetPal
                         </span>
-                      </a>
+                      </Link>
                     </div>
                     <div className="hidden sm:ml-6 sm:block">
                       <div className="flex space-x-4">
                         {navigation.map((item) => (
-                          <a
+                          <Link
                             key={item.name}
-                            // href={item.href}
-                            onClick={() => router.push(item.href)}
+                            href={item.href}
                             className={classNames(
                               currentPath === item.href
                                 ? "bg-gray-900 text-white"
@@ -114,7 +108,7 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
                             }
                           >
                             {item.name}
-                          </a>
+                          </Link>
                         ))}
                       </div>
                     </div>
@@ -176,29 +170,29 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
                         <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                           <Menu.Item>
                             {({ active }) => (
-                              <a
-                                // href="/profile"
-                                onClick={() => router.push("/profile")}
+                              <Link
+                                href="/profile"
                                 className={classNames(
                                   active ? "bg-gray-100" : "",
                                   "block px-4 py-2 text-sm text-gray-700 cursor-pointer"
                                 )}
                               >
                                 Your Profile
-                              </a>
+                              </Link>
                             )}
                           </Menu.Item>
                           <Menu.Item>
                             {({ active }) => (
-                              <a
+                              <Link
+                                href="#"
                                 onClick={() => handleSignOutClick()}
                                 className={classNames(
                                   active ? "bg-gray-100" : "",
-                                  "block px-4 py-2 text-sm text-white bg-red-600 rounded-md cursor-pointer"
+                                  "block px-4 py-2 text-sm text-white bg-red-600 hover:bg-red-700 rounded-md cursor-pointer"
                                 )}
                               >
                                 Sign out
-                              </a>
+                              </Link>
                             )}
                           </Menu.Item>
                         </Menu.Items>
