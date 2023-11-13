@@ -239,14 +239,15 @@ body {
 
 .tooltip {
   visibility: hidden;
-  width: 200px;
+  width: auto; /* Adjust the width */
+  white-space: nowrap; /* Prevent text wrapping */
   background-color: #333;
   color: #fff;
   text-align: center;
   border-radius: 8px;
   padding: 8px;
   position: absolute;
-  bottom: -60px; /* Position the tooltip below the image */
+  bottom: -80px; /* Position the tooltip below the image */
   left: 50%;
   transform: translateX(-50%);
   opacity: 0;

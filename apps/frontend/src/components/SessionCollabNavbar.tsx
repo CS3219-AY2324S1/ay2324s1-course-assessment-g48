@@ -1,21 +1,18 @@
 import useSessionCollab from "@/hook/useSessionCollab";
-import { Session } from "next-auth";
 import { useRouter } from "next/router";
-import React, { Fragment, use, useEffect, useState } from "react";
+import React, {  useEffect, useState } from "react";
 import ModeToggleButton from "./ModeToggleButton";
 import Image from "next/image";
 import { Disclosure } from "@headlessui/react";
 import { getUserById } from "@/database/user/userService";
 import { User } from "@/database/user/entities/user.entity";
 import useSessionUser from "@/hook/useSessionUser";
-import LoadingModal from "./LoadingModal";
 
 type Props = {
 };
 
 export default function SessionCollabNavbar({ }: Props) {
-  const { sessionUser, isLoading } = useSessionUser();
-  const router = useRouter();
+  const { sessionUser, isLoadingUser: isLoading } = useSessionUser();
   const sessionId = useRouter().query.sessionId as string;
   const { users } = useSessionCollab(sessionId);
   const [peer, setPeer] = useState<User | null>(null);
@@ -47,10 +44,9 @@ export default function SessionCollabNavbar({ }: Props) {
   const handleMouseLeave = () => {
     setTooltipVisible(false);
   };
-  return (
-    isLoading || isLoadingUser ? (
-     <></>
-    ) : (
+  return isLoading || isLoadingUser ? (
+    <></>
+  ) : (
     <Disclosure as="nav" className="bg-gray-900">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="relative flex h-16 items-center justify-between">
@@ -81,7 +77,10 @@ export default function SessionCollabNavbar({ }: Props) {
                 </div>
               </div>
               {isTooltipVisible && (
-                <div className="tooltip">{peer?.username}</div>
+                <div className="tooltip">
+                  <div>{peer?.username}</div>
+                  <div>{peer?.email}</div>
+                </div>
               )}
             </div>
 
@@ -111,7 +110,6 @@ export default function SessionCollabNavbar({ }: Props) {
           </div>
         </div>
       </div>
-        </Disclosure>
-    )
+    </Disclosure>
   );
 }
