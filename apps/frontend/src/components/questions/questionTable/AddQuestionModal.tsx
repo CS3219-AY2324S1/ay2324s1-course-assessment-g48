@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import useInput from "../../../hook/useInput";
 import {
   Question,
-  initialQuestion,
+  emptyQuestion,
 } from "../../../database/question/entities/question.entity";
 import Modal from "../../Modal";
 import { useError } from "@/hook/ErrorContext";
@@ -27,9 +27,11 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
   setOpen,
   open,
 }) => {
+  const initialQuestion = {...emptyQuestion};
   const [newQuestion, setNewQuestion] = useState<Question>(initialQuestion);
   const { setError } = useError();
   const [blank, setBlank] = useState(true);
+  const modalRef = useRef<HTMLDivElement>(null);
 
   const {
     value,
@@ -44,19 +46,7 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
 
     await onSave(newQuestion)
       .then(() => {
-        setNewQuestion({
-          _id: "",
-          title: "",
-          description: "",
-          categories: [],
-          complexity: "",
-          examples: [],
-          testcases: [],
-          constraints: "",
-          followUp: "",
-          starterCode: [],
-          dateCreated: new Date(),
-        });
+        setNewQuestion(emptyQuestion);
         reset();
         setOpen(false);
       })
@@ -68,36 +58,25 @@ const AddQuestionModal: React.FC<AddQuestionModalProps> = ({
       });
   };
 
-  const ref = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     function handleOutsideModalClick(event: MouseEvent) {
-      if (ref.current && !ref.current.contains(event.target as Node)) {
-        setNewQuestion({
-          _id: "",
-          title: "",
-          description: "",
-          categories: [],
-          complexity: "",
-          examples: [],
-          testcases: [],
-          constraints: "",
-          followUp: "",
-          starterCode: [],
-          dateCreated: new Date(),
-        });
+      if (
+        modalRef.current &&
+        !modalRef.current.contains(event.target as Node)
+      ) {
+        setNewQuestion(emptyQuestion);
       }
     }
     document.addEventListener("mousedown", handleOutsideModalClick);
     return () => {
       document.removeEventListener("mousedown", handleOutsideModalClick);
     };
-  }, [ref]);
+  }, [modalRef]);
 
   return (
     <Modal title="Add Question" setOpen={setOpen} open={open}>
       <form onSubmit={handleAddQuestion}>
-        <div ref={ref}>
+        <div ref={modalRef}>
           <div className="space-y-12">
             <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
               <TitleInput

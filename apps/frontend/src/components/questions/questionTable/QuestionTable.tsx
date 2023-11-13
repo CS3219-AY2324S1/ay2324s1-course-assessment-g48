@@ -12,7 +12,7 @@ import { Role } from "@/utils/enums/Role";
 import { useRouter } from "next/router";
 import {
   Question,
-  initialQuestion,
+  emptyQuestion,
 } from "@/database/question/entities/question.entity";
 import QuestionPagination from "./QuestionPagination";
 import DeleteCfmModal from "./DeleteCfmModal";
@@ -46,11 +46,10 @@ const QuestionTable: FC<QuestionTableProps> = ({
   const questionsPerPage = useMemo(() => 10, []);
   const { update } = useSession();
   const [searchResults, setSearchResults] = useState("");
-  const [viewQuestion, setViewQuestion] = useState<Question>(initialQuestion);
-  const [questionToEdit, setQuestionToEdit] =
-    useState<Question>(initialQuestion);
+  const [viewQuestion, setViewQuestion] = useState<Question>(emptyQuestion);
+  const [questionToEdit, setQuestionToEdit] = useState<Question>(emptyQuestion);
   const [questionToDelete, setQuestionToDelete] =
-    useState<Question>(initialQuestion);
+    useState<Question>(emptyQuestion);
 
   const [openEdit, setOpenEdit] = useState(false);
   const [openView, setOpenView] = useState(false);
@@ -105,7 +104,10 @@ const QuestionTable: FC<QuestionTableProps> = ({
       .then((data) => {
         handleTrigger();
         if (data.accessToken) {
-          update({ accessToken: data.accessToken, accessTokenExpiry: data.accessTokenExpiry });
+          update({
+            accessToken: data.accessToken,
+            accessTokenExpiry: data.accessTokenExpiry,
+          });
         }
         setOpenAdd(false);
       })
@@ -119,7 +121,10 @@ const QuestionTable: FC<QuestionTableProps> = ({
       .then((data) => {
         handleTrigger();
         if (data.accessToken) {
-          update({ accessToken: data.accessToken, accessTokenExpiry: data.accessTokenExpiry });
+          update({
+            accessToken: data.accessToken,
+            accessTokenExpiry: data.accessTokenExpiry,
+          });
         }
         setOpenDelCfm(false);
       })
@@ -138,7 +143,10 @@ const QuestionTable: FC<QuestionTableProps> = ({
       .then((data) => {
         handleTrigger();
         if (data.accessToken) {
-          update({ accessToken: data.accessToken, accessTokenExpiry: data.accessTokenExpiry });
+          update({
+            accessToken: data.accessToken,
+            accessTokenExpiry: data.accessTokenExpiry,
+          });
         }
         setOpenEdit(false);
       })

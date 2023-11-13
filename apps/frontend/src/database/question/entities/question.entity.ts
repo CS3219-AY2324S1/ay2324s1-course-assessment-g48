@@ -22,7 +22,7 @@ export type CodeType = {
   code: string;
 };
 
-export const initialQuestion = {
+export const emptyQuestion = {
   _id: "",
   title: "",
   description: "",
