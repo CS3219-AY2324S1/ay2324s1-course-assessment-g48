@@ -6,6 +6,7 @@ import {
 import { classNames } from "@/utils/classnames/classnames";
 import { Tab } from "@headlessui/react";
 import { PlusSmallIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import _ from "lodash";
 import React, { Fragment, useEffect, useState } from "react";
 
 type TestCasesInputProps = {
@@ -21,11 +22,12 @@ const TestCasesInput: React.FC<TestCasesInputProps> = ({
   blank,
   setBlank,
 }) => {
+  const initialTestCase = _.cloneDeep(emptyTestCase);
   const [currTestCases, setCurrTestCases] = useState<TestCase[]>([emptyTestCase]);
 
   useEffect(() => {
-    setCurrTestCases(newQuestion.testcases.length === 0 ? [emptyTestCase] : newQuestion.testcases);
-  }, [newQuestion, setCurrTestCases]);
+    setCurrTestCases(newQuestion.testcases.length === 0 ? [initialTestCase] : newQuestion.testcases);
+  }, [initialTestCase, newQuestion, setCurrTestCases]);
 
   useEffect(() => {
     setBlank(
@@ -35,13 +37,9 @@ const TestCasesInput: React.FC<TestCasesInputProps> = ({
   }, [currTestCases, setBlank]);
 
   const handleAddTestCase = () => {
-    // TODO: not sure why initialTestCase is mutated
     setCurrTestCases([
       ...currTestCases,
-      {
-        input: "",
-        output: "",
-      },
+      initialTestCase,
     ]);
   };
   const handleInputChange = (index: number, inputValue: string) => {

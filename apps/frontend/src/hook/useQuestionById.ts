@@ -3,14 +3,12 @@ import { getQuestionById } from "@/database/question/questionService";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useError } from "./ErrorContext";
+import useSessionUser from "./useSessionUser";
 
-function useQuestionById(
-  qid: string,
-  accessToken?: string | null,
-  refreshToken?: string | null
-) {
-  const { data: session } = useSession();
-  const [isLoading, setIsLoading] = useState(true);
+function useQuestionById(qid: string) {
+  const { update } = useSession();
+  const { isLoadingUser, sessionUser } = useSessionUser();
+  const [isLoadingQuestion, setIsLoadingQuestion] = useState(true);
   const [question, setQuestion] = useState<Question | null>(null);
   const { setError, clearError } = useError();
 
@@ -21,34 +19,40 @@ function useQuestionById(
           type: 1,
           message: "No question id provided",
         });
-        setIsLoading(false);
+        setIsLoadingQuestion(false);
       }
       clearError();
-      if (accessToken === null || refreshToken == null) return;
+      if (isLoadingUser) return;
       try {
-        const data = await getQuestionById(qid, accessToken, refreshToken);
+        const data = await getQuestionById(
+          qid,
+          sessionUser.accessToken,
+          sessionUser.refreshToken
+        );
         if (data.accessToken) {
-          session!.user!.accessToken = data.accessToken;
-          console.log("Refresh accessToken", session);
+          update({
+            accessToken: data.accessToken,
+            accessTokenExpiry: data.accessTokenExpiry,
+          });
         }
         setQuestion(data);
-        setIsLoading(false);
+        setIsLoadingQuestion(false);
       } catch (error) {
         setError({
           type: 1,
           message: `Error fetching question:, ${error}`,
         });
-        setIsLoading(false);
+        setIsLoadingQuestion(false);
       }
     }
     fetchData();
-  }, [qid, accessToken, refreshToken, session]);
+  }, [qid, update, isLoadingUser]);
 
-  return !isLoading
-    ? { question, isLoading }
+  return !isLoadingQuestion
+    ? { question, isLoadingQuestion }
     : {
         question: undefined,
-        isLoading,
+        isLoadingQuestion,
       };
 }
 

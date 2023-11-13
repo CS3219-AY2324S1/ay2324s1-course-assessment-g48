@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useRouter } from "next/router";
-import useSessionUser from "@/hook/useSessionUser";
 import CodeViewer from "@/components/history/historyPage/CodeViewer";
 import useHistoryQuestionById from "@/hook/useHistoryQuestionById";
 import TestcaseIndicator from "@/components/history/historyPage/TestcaseIndicator";
@@ -12,14 +11,9 @@ type HistoryQuestionPageProps = {};
 const HistoryQuestionPage: React.FC<HistoryQuestionPageProps> = () => {
   const router = useRouter();
   const qid = String(router.query.id).split("&");
-  const { sessionUser } = useSessionUser();
-  const [accessToken, setAccessToken] = useState(sessionUser.accessToken);
-  const [refreshToken, setRefreshToken] = useState(sessionUser.refreshToken);
   const { historyQuestion, participants } = useHistoryQuestionById(
     qid[0],
     qid[1],
-    accessToken,
-    refreshToken
   );
 
     function countCorrect() {
@@ -33,11 +27,6 @@ const HistoryQuestionPage: React.FC<HistoryQuestionPageProps> = () => {
       }
       return counter
     }
-
-  useEffect(() => {
-    setAccessToken(sessionUser.accessToken);
-    setRefreshToken(sessionUser.refreshToken);
-  }, [sessionUser]);
 
   return (
     <div className=" lg:mx-52 lg:mt-20 mt-20 mx-5 h-full space-y-5 dark:bg-gray-900 pb-10">

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import {
   ArrowsPointingOutIcon,
-  Cog6ToothIcon,
 } from "@heroicons/react/24/outline";
 import { languageOptions } from "@/utils/constants/LanguageOptions";
 import { Language } from "@/utils/class/Language";
@@ -26,6 +25,20 @@ const EditorNav: React.FC<EditorNavProps> = ({
   const selectLanguage = (language: Language) => {
     setSelectedLanguage(language);
     setIsDropdownOpen(false); // Close the dropdown after selecting an option
+  };
+
+  const handleFullScreen = () => {
+    const element = document.documentElement;
+
+    if (document.fullscreenElement) {
+      // If fullscreen is currently active, exit fullscreen
+      document.exitFullscreen();
+    } else {
+      // If fullscreen is not active, request fullscreen
+      element.requestFullscreen().catch((error) => {
+        console.error("Error entering fullscreen mode:", error);
+      });
+    }
   };
 
   return (
@@ -58,25 +71,14 @@ const EditorNav: React.FC<EditorNavProps> = ({
         </button>
       </div>
 
-      {/* <div className="flex">
-        <div className="flex items-center">
-          <button className="preferenceBtn group">
-            <div className="h-6 w-6 dark:text-white">
-              <Cog6ToothIcon />
-            </div>
-            <div className="btnTooltip">Settings</div>
-          </button>
-        </div>
-
-        <div className="flex items-center">
-          <button className="preferenceBtn group">
-            <div className="h-6 w-6 dark:text-white">
-              <ArrowsPointingOutIcon />
-            </div>
-            <div className="btnTooltip">Fullscreen</div>
-          </button>
-        </div>
-      </div> */}
+      <div className="flex items-center">
+        <button className="preferenceBtn group" onClick={handleFullScreen}>
+          <div className="h-6 w-6 dark:text-white">
+            <ArrowsPointingOutIcon />
+          </div>
+          <div className="btnTooltip">Fullscreen</div>
+        </button>
+      </div>
     </div>
   );
 };
