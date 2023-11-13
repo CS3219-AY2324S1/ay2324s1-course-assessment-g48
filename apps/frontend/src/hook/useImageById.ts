@@ -39,7 +39,7 @@ function useImageById(userIds: number[]) {
           });
         });
     }
-  }, [userIds, isLoadingUser, setError]);
+  }, [userIds, isLoadingUser]);
 
   return {
     isLoading,

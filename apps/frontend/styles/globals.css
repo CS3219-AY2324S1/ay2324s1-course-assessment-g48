@@ -127,13 +127,13 @@ body {
 }
 
 .gutter {
-  background-color: #202020;
+  background-color: #eee;
   background-repeat: no-repeat;
   background-position: 50%;
 }
 
 .gutter:hover {
-  background-color: #142197;
+  background-color: #2085c0;
 }
 
 .gutter.gutter-horizontal {
@@ -146,6 +146,13 @@ body {
   cursor: row-resize;
 }
 
+.dark .gutter {
+  background-color: #202020;
+}
+
+.dark .gutter:hover {
+  background-color: #141d97;
+}
 
 /* Dark mode styles */
 .vs-dark>.overflow-guard>.margin,
@@ -159,34 +166,34 @@ body {
 
 /* Chat Window */
 /* Dark Mode */
-.dark-chat .cs-message-list, .dark-chat .cs-message-input {
+.dark .cs-message-list, .dark .cs-message-input {
   background-color: #252525 !important;
 }
 
-.dark-chat .cs-message-input {
+.dark .cs-message-input {
   border-top: 1px solid #ffffff !important;
 }
 
-.dark-chat .cs-message.cs-message--incoming.cs-message--first .cs-message__content {
+.dark .cs-message.cs-message--incoming.cs-message--first .cs-message__content {
   background-color: #383838 !important;
   color: white;
 }
 
-.dark-chat .cs-message.cs-message--outgoing.cs-message--first .cs-message__content {
+.dark .cs-message.cs-message--outgoing.cs-message--first .cs-message__content {
   background-color: rgb(59 130 246) !important;
   color:white;
 }
 
-.dark-chat .cs-message-input__content-editor-wrapper, .dark-chat .cs-message-input__content-editor {
+.dark .cs-message-input__content-editor-wrapper, .dark .cs-message-input__content-editor {
   background-color: #383838 !important;
   color: white;
 }
 
-.dark-chat .cs-message-input__content-editor[data-placeholder]:empty:before {
+.dark .cs-message-input__content-editor[data-placeholder]:empty:before {
   color: rgb(175, 175, 175);
 }
 
-.dark-chat .cs-button--send {
+.dark .cs-button--send {
   color: rgb(59 130 246);
   filter: brightness(1.75);
 }
@@ -208,11 +215,30 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #4d4d4d;
+  background: #dddddd;
   border-radius: 10px;
 }
 
+.dark ::-webkit-scrollbar-thumb {
+  background: #4d4d4d;
+}
 
+.scrollbar-hidden {
+  /* Hide scrollbar for webkit browsers */
+  scrollbar-width: none;
+  scrollbar-color: transparent transparent;
+   -ms-overflow-style: none;  /* IE and Edge */
+}
+
+/* For Firefox */
+.scrollbar-hidden::-webkit-scrollbar {
+  width: 0.5em;
+  display: none;
+}
+
+.scrollbar-hidden::-webkit-scrollbar-thumb {
+  background-color: transparent;
+}
 
 /* SearchComponent.css */
 .truncate-input {

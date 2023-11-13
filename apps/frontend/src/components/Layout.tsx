@@ -6,6 +6,7 @@ import { useError } from "@/hook/ErrorContext";
 import Alert from "./Alert";
 import { useRouter } from "next/router";
 import SessionCollabNavbar from "./SessionCollabNavbar";
+import { useTheme } from "@/hook/ThemeContext";
 
 const Layout = ({ children }: PropsWithChildren) => {
   const { data: session, status } = useSession();
@@ -14,6 +15,8 @@ const Layout = ({ children }: PropsWithChildren) => {
   const router = useRouter();
   const currentPath = router.pathname;
   const isSessionPage = currentPath === "/session/[sessionId]";
+  const { isDarkMode } = useTheme();
+  const theme = isDarkMode ? "dark" : "";
 
   const isLoading = status === "loading";
 
@@ -36,20 +39,16 @@ const Layout = ({ children }: PropsWithChildren) => {
   return (
     <>
       <div className="dark:bg-gray-900 min-h-screen shadow-md overflow-auto">
-        <>
-          <div className="fixed w-screen divide-y top-0 z-20">
-            {isSessionPage ? (
-              <SessionCollabNavbar  />
-            ) : (
-              <Navbar session={session} />
-            )}
+        <div className={` ${theme} fixed w-screen divide-y top-0 z-20`}>
+          {isSessionPage ? (
+            <SessionCollabNavbar />
+          ) : (
+            <Navbar session={session} />
+          )}
 
-            <div className="border-t divider-neutral-500 over"></div>
-          </div>
-          <div className="mt-16 px-5 place-content-center w-full">
-            {children}
-          </div>
-        </>
+          <div className="border-t divider-neutral-500 over"></div>
+        </div>
+        <div className="mt-16 px-5 place-content-center w-full">{children}</div>
       </div>
       {error && (
         <Alert error={error} hidden={openAlert} setHide={setOpenAlert} />
