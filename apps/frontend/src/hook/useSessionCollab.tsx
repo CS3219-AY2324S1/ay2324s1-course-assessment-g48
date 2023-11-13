@@ -10,6 +10,7 @@ import { AutomergeUrl } from "@automerge/automerge-repo";
 import { useDocument } from "@automerge/automerge-repo-react-hooks";
 import { Doc } from "@automerge/automerge/next";
 import useSessionUser from "./useSessionUser";
+import { useSession } from "next-auth/react";
 import { getSession } from "@/database/session/sessionService";
 import { useError } from "./ErrorContext";
 

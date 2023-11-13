@@ -8,7 +8,7 @@ export const getSessionsByUserId = async (
   startIndex: number,
   endIndex: number,
   accessToken?: string,
-  refreshToken:? string
+  refreshToken?: string
 ) => {
   const config = {
     headers: {
