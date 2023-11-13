@@ -21,8 +21,8 @@ export default function QuestionsRepo() {
   }, [sessionUser]);
 
   return (
+    isLoading ? <LoadingModal isLoading={isLoading} /> :
     <div className="grid place-content-center dark:bg-gray-900">
-      <LoadingModal isLoading={isLoading} />
 
       <div className="pl-4 pr-4 rounded-lg w-screen xl:px-60 lg:px-40">
         <div className="flex items-center justify-between">
