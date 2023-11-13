@@ -1,14 +1,13 @@
-import React from 'react'
-import Modal from '../Modal';
-import { useMatchState } from '@/hook/MatchStateContext';
-import { MatchedState } from '@/utils/enums/MatchingState';
-import { languageOptions } from '@/utils/constants/LanguageOptions';
-import { useError } from '@/hook/ErrorContext';
-import { Complexity } from '@/utils/enums/Complexity';
-import Countdown from '../Countdown';
-import { useTimer } from '@/hook/timerContext';
+import React from "react";
+import Modal from "../Modal";
+import { useMatchState } from "@/hook/MatchStateContext";
+import { MatchedState } from "@/utils/enums/MatchingState";
+import { languageOptions } from "@/utils/constants/LanguageOptions";
+import { useError } from "@/hook/ErrorContext";
+import { Complexity } from "@/utils/enums/Complexity";
+import Countdown from "../Countdown";
+import { useTimer } from "@/hook/timerContext";
 import { motion } from "framer-motion";
-
 
 type Props = {
   setOpen: (open: boolean) => void;
@@ -21,7 +20,6 @@ export default function MatchingModal({
   open,
   handleMatchConnection,
 }: Props) {
-  
   const {
     matchState,
     setToNotMatchingState,
@@ -34,8 +32,7 @@ export default function MatchingModal({
   } = useMatchState();
   const { clearError } = useError();
   const { seconds } = useTimer();
-  
-    
+
   return (
     <Modal
       title={`${matchState === MatchedState.MATCHING ? "" : "Match Option"}`}
@@ -72,7 +69,7 @@ export default function MatchingModal({
           <div className="sm:col-span-2 space-y-5 mt-8">
             <label
               htmlFor="language"
-              className="block text-sm font-semibold leading-6 text-gray-900 dark:text-white"
+              className="block text-sm font-semibold leading-6 text-gray-900"
             >
               Language
             </label>
@@ -81,7 +78,7 @@ export default function MatchingModal({
                 disabled={matchState !== MatchedState.NOT_MATCHING}
                 id="language"
                 name="language"
-                className="block w-full rounded-md border-0 px-3.5 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 dark:bg-gray-200 dark:text-gray-800 disabled:bg-gray-300 dark:disabled:bg-gray-400 disabled:cursor-not-allowed"
+                className="block w-full rounded-md border-0 px-3.5 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6   disabled:bg-gray-300 disabled:cursor-not-allowed"
                 onChange={(e) => {
                   console.log(language);
                   setLanguage(e.target.value);
@@ -100,7 +97,7 @@ export default function MatchingModal({
           <div className="sm:col-span-2 space-y-5 mt-8">
             <label
               htmlFor="difficulty"
-              className="block text-sm font-semibold leading-6 text-gray-900 dark:text-white"
+              className="block text-sm font-semibold leading-6 text-gray-900 "
             >
               Difficulty
             </label>
@@ -109,7 +106,7 @@ export default function MatchingModal({
                 id="difficulty"
                 name="difficulty"
                 disabled={matchState !== MatchedState.NOT_MATCHING}
-                className="block w-full rounded-md border-0 px-3.5 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 dark:bg-gray-200 dark:text-gray-800 disabled:bg-gray-300 dark:disabled:bg-gray-400 disabled:cursor-not-allowed"
+                className="block w-full rounded-md border-0 px-3.5 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6  disabled:bg-gray-300 disabled:cursor-not-allowed"
                 value={difficulty}
                 onChange={(e) => {
                   setDifficulty(e.target.value as Complexity);

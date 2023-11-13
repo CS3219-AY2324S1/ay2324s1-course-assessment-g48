@@ -51,13 +51,12 @@ const handleMatchConnection: FormEventHandler = (e) => {
   }
 
   return (
-    <>
-      <div className="p-4 rounded-lg w-screen xl:px-60 lg:px-40">
+    <div className="grid place-content-center dark:bg-gray-900">
+      <div className="pl-4 pr-4 rounded-lg w-screen xl:px-60 lg:px-40">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl dark:text-white my-4" >
             My Workspace
           </h1>
-          {userRole === Role.Admin && (
             <span className="sm:ml-3 space-x-2" >
               <button
                 type="button"
@@ -71,7 +70,6 @@ const handleMatchConnection: FormEventHandler = (e) => {
                 Match
               </button>
             </span>
-          )}
         </div>
         <SessionTable />
       </div>
@@ -80,7 +78,7 @@ const handleMatchConnection: FormEventHandler = (e) => {
         open={openModal}
         handleMatchConnection={handleMatchConnection}
       />
-    </>
+    </div>
   );
 };
 export default CollaborationPage;

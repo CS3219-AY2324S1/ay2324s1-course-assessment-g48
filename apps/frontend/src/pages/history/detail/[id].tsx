@@ -40,7 +40,7 @@ const HistoryQuestionPage: React.FC<HistoryQuestionPageProps> = () => {
   }, [sessionUser]);
 
   return (
-    <div className=" lg:mx-52 lg:mt-20 mt-20 mx-5 h-full space-y-5 dark:bg-gray-900">
+    <div className=" lg:mx-52 lg:mt-20 mt-20 mx-5 h-full space-y-5 dark:bg-gray-900 pb-10">
       <legend className="block text-2xl font-semibold leading-6 text-gray-900 dark:text-white">
         Submission {historyQuestion?._id}
       </legend>

@@ -257,3 +257,7 @@ body {
   visibility: visible;
   opacity: 1;
 }
+
+.light-mode-svg {
+  fill: #000000; /* Set the fill color to black */
+}

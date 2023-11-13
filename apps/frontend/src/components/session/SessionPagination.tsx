@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react'
 
 type Props = {
   hidden?: boolean;
-  numberOfPages: number;
   sessionsPerPage: number;
   currentPage: number;
   setCurrentPage: (page: number) => void;
@@ -82,12 +81,12 @@ export default function SessionPagination({
               <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
             </button>
             {/* Current: "z-10 bg-indigo-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600", Default: "text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-offset-0" */}
-            <input
+            <div
               className="border rounded py-1 px-2 text-center w-16 dark:bg-gray-200 dark:text-gray-800"
-              type="text"
-              value={pageNumber}
-              onKeyPress={handleKeyPress}
-            />
+              style={{ display: "inline-block" }} // Add this style to make it a block element
+            >
+              {pageNumber}
+            </div>
             <button
               disabled={numberOfSession < 10}
               onClick={handleNextPage}
