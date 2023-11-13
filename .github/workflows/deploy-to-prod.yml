@@ -21,5 +21,8 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Make script executable
+        run: chmod +x ./deploy.sh
+        
       - name: Deploy to Production
         run: ./deploy.sh
