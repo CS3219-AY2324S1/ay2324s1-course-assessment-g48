@@ -43,10 +43,8 @@ function useHistories(
       .then((histories) => {
         if (histories.accessToken) {
           session!.user!.accessToken = histories.accessToken;
-          console.log("Refresh accessToken", session);
         }
         setHistories(histories);
-        console.log("history ", histories);
         setTimeout(() => {
           setIsLoading(false);
         }, 50);

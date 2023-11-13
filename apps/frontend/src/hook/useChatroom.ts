@@ -22,7 +22,6 @@ export const useChatroom = (chatroomId: string, userId: number) => {
       setMessages([]);
       chatroomSocket.connect();
       chatroomSocket.on("receiveMessage", ({ messages }) => {
-        console.log(messages);
         setMessages((pastMessages) => [...pastMessages, ...messages]);
         // messages.forEach((message: Message) => {
         //   callback(message);
@@ -41,12 +40,10 @@ export const useChatroom = (chatroomId: string, userId: number) => {
       chatroomSocket.on("other user disconnecting", () => {
         clearError();
         setError({
-          type: 1,
+          type: 4,
           message: "A user has disconnected.",
         });
       });
-
-      console.log(messages);
 
       return () => {
         console.log("disconnecting chat");

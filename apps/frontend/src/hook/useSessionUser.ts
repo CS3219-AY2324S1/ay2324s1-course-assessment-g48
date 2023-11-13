@@ -22,7 +22,6 @@ function useSessionUser() {
           ...prevUser,
           ...session?.user,
         }));
-        console.log("session", session);
         clearInterval(checkSession);
         setIsLoading(false);
       }

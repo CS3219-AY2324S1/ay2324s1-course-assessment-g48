@@ -28,7 +28,6 @@ function useSessionCollab(sessionId: string) {
   const [doc, changeDoc] = useDocument<Doc<any>>(docUrl);
   const [chatroomId, setChatroomId] = useState<string>("");
   let increment: (value: string) => void = (value: string) => {
-    console.log("reflecting changes in code editor through changeDoc...");
     changeDoc((d: any) => (d.text = value));
   };
 
@@ -44,15 +43,9 @@ function useSessionCollab(sessionId: string) {
         String(accessToken),
         String(refreshToken)
       );
-      console.log("Session got");
       if (!session) {
         return;
       }
-      console.log(session.docId);
-      console.log(session.chatroomId);
-      console.log("docId received");
-      console.log(session);
-      session.question;
       setQuestion(
         await getQuestionById(
           session.question,
@@ -65,7 +58,6 @@ function useSessionCollab(sessionId: string) {
       );
       setDocUrl(session.docId);
       setChatroomId(session.chatroomId);
-      console.log("Session:", session);
     }
     setIsLoading(true);
     if (!isLoadingUser && sessionId) {

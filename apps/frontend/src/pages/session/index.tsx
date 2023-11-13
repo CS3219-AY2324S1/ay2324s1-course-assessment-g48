@@ -5,11 +5,9 @@ import { MouseEventHandler } from "react";
 
 export default function SessionsPage() {
   const { sessions, isLoading: isLoadingSession } = useSessionByUid();
-  console.log(sessions);
   const router = useRouter();
 
   const handleClick = (sessionId: string) => {
-    console.log(sessionId);
     router.push(`/session/${sessionId}`);
   };
 

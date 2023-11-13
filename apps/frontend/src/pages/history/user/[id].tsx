@@ -7,8 +7,8 @@ import React, { useEffect, useState } from "react";
 
 function HistoryPage() {
   const { sessionUser } = useSessionUser();
-    const router = useRouter();
-    const uid = Number(router.query.id);
+  const router = useRouter();
+  const uid = Number(router.query.id);
   const [accessToken, setAccessToken] = useState(sessionUser.accessToken);
   const [refreshToken, setRefreshToken] = useState(sessionUser.refreshToken);
   const { isLoading } = useHistories(uid, accessToken, refreshToken);
@@ -19,10 +19,9 @@ function HistoryPage() {
 
     const redirectUser = () => {
       if (uid !== sessionUser.id) {
-        console.log("sessionUser.id: ", sessionUser.id);
         router.push(`/history/user/${sessionUser.id}`);
       }
-    }
+    };
     return () => redirectUser();
   }, [router, sessionUser, uid]);
 
