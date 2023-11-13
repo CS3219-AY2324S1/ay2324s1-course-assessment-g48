@@ -5,6 +5,7 @@ import React, {
   useState,
   ReactNode,
   useEffect,
+  useCallback,
 } from "react";
 import { MatchedState } from "@/utils/enums/MatchingState";
 import { User } from "@/database/user/entities/user.entity";
@@ -23,13 +24,12 @@ type MatchStateContextType = {
   setToNotMatchingState: () => void;
   setToMatchingState: () => void;
   disconnectSocket: () => void;
-  peer: User | null;
   disableBtnCancel?: boolean;
   difficulty: Complexity;
   setDifficulty: React.Dispatch<React.SetStateAction<Complexity>>;
-  seconds: number;
   language: string;
   setLanguage: React.Dispatch<React.SetStateAction<string>>;
+  sessionId: string | undefined;
 };
 
 const MatchStateContext = createContext<MatchStateContextType | undefined>(
@@ -51,27 +51,16 @@ type MatchStateProviderProps = {
 export const MatchStateProvider: React.FC<MatchStateProviderProps> = ({
   children,
 }) => {
-  const { toggleTimer, seconds, reset, isRunning } = useTimer();
+  const { toggleTimer, reset, isRunning } = useTimer();
   const [matchState, setMatchState] = useState<MatchedState>(() => {
-    if (typeof window !== "undefined") {
-      console.log(123);
-      const savedState = localStorage.getItem("matchState");
-      return savedState
-        ? JSON.parse(savedState)
-        : isRunning
-        ? MatchedState.MATCHING
-        : MatchedState.NOT_MATCHING;
-    } else {
-      return isRunning ? MatchedState.MATCHING : MatchedState.NOT_MATCHING;
-    }
+    return isRunning ? MatchedState.MATCHING : MatchedState.NOT_MATCHING;
   });
-  const [peer, setPeer] = useState<User | null>(null);
   const { setError, clearError } = useError();
   const [disableBtnCancel, setDisableBtnCancel] = useState(true);
   const [difficulty, setDifficulty] = useState<Complexity>(Complexity.Easy);
   const [language, setLanguage] = useState<string>(languageOptions[0].label);
+  const [sessionId, setSessionId] = useState();
   const { sessionUser } = useSessionUser();
-  const router = useRouter();
 
   const setToNotMatchingState = () => {
     // Set the state of the page to not looking for match.
@@ -79,12 +68,6 @@ export const MatchStateProvider: React.FC<MatchStateProviderProps> = ({
     reset();
     setMatchState(MatchedState.NOT_MATCHING);
   };
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem("matchState", JSON.stringify(matchState));
-    }
-  }, [matchState]); // This effect runs whenever `matchState` changes
 
   const setToMatchingState = () => {
     // Set the state of the page to looking for match.
@@ -131,21 +114,15 @@ export const MatchStateProvider: React.FC<MatchStateProviderProps> = ({
     disconnectSocket();
     reset();
     console.log(data.sessionId);
+    setSessionId(data.sessionId);
     console.log("peer id", data.peerId);
-    getUserById(data.peerId)
-      .then((peer) => {
-        setPeer(peer);
-        console.log("pic", peer);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
     setMatchState(MatchedState.NOT_MATCHING);
     setError({
       type: 4,
       message: "Matched with a peer!",
     });
-    router.push(`/session/${data.sessionId}`);
+    // router.push(`/session/${data.sessionId}`);
+    // window.open(`/session/${data.sessionId}`);
   };
 
   const disconnectSocket = () => {
@@ -169,7 +146,14 @@ export const MatchStateProvider: React.FC<MatchStateProviderProps> = ({
         disconnectSocket();
       });
     };
-  }, [isRunning, matchState]);
+  }, [isRunning]);
+
+  useEffect(() => {
+    if (sessionId) {
+      console.log("matched");
+      window.open(`/session/${sessionId}`);
+    }
+  }, [sessionId]);
 
   return (
     <MatchStateContext.Provider
@@ -179,13 +163,12 @@ export const MatchStateProvider: React.FC<MatchStateProviderProps> = ({
         setToNotMatchingState,
         setToMatchingState,
         disconnectSocket,
-        peer,
         disableBtnCancel,
         difficulty,
         setDifficulty,
-        seconds,
         language,
         setLanguage,
+        sessionId,
       }}
     >
       {children}

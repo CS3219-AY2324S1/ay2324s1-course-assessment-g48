@@ -5,6 +5,8 @@ const BASE_URL = process.env.NEXT_PUBLIC_SESSION_URL + "/session/user";
 
 export const getSessionsByUserId = async (
   uid: number,
+  startIndex: number,
+  endIndex: number,
   accessToken?: string,
   refreshToken?: string
 ) => {
@@ -15,7 +17,10 @@ export const getSessionsByUserId = async (
     },
   };
   return await axiosInstance
-    .get(BASE_URL + `/${uid}`, config)
+    .post(BASE_URL + `/${uid}`, {
+      startIndex: startIndex,
+      endIndex: endIndex
+    },config)
     .then((response) => {
       return response.data;
     })
@@ -39,19 +44,20 @@ export async function getSession(
       ["refresh-token"]: refreshToken,
     },
   };
-  return await axiosInstance
+  return await axiosInstance  
     .get(
       `${process.env.NEXT_PUBLIC_SESSION_URL}/session/get-session/${sessionId}`,
       config
     )
-    .then((res) => res.data)
+    .then((res) => {
+      return res.data;
+    })
     .catch((error) => {
       if (error.response.status === 401) {
         Router.push("/401");
       } else if (error.response.status === 404) {
         Router.push("/404");
       }
-      console.error(error);
-      //   throw String(error.response.data.error);
+      throw String(error.response.data.error);
     });
 }

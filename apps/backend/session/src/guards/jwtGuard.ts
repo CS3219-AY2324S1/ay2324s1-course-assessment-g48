@@ -55,12 +55,13 @@ export const jwtGuard = async (
   }
 
   try {
+    console.log("fkkk", accessToken);
     req.user = await verifyAccessToken(accessToken);
-    console.log(req.user);
+    console.log("asdasdasd", req.user);
     next();
   } catch (error) {
     const errorMessage = getAxiosErrorMessage(error);
-    console.log(errorMessage);
+    console.log("asdasd", errorMessage);
     res.status(401).json({ error: errorMessage });
   }
 };

@@ -28,18 +28,19 @@ export class SessionRouter {
       sessionController.clearAllSessions(req, res, next)
     );
 
-    this.router.get("/user/:user", jwtGuard, (req, res, next) =>
+    this.router.post("/user/:user", jwtGuard, (req, res, next) =>
       sessionController.handleGetSessionsForUser(req, res, next)
     );
 
     process.on("SIGINT", () => {
+      console.log("SIGINT");
       sessionController.handleCleanup().then((res) => process.exit(0));
     });
 
-    process.on("uncaughtException", () => {
-      //   sessionController.saveToDatabase();
-      sessionController.handleCleanup().then((res) => process.exit(0));
-    });
+    // process.on("uncaughtException", () => {
+    //   //   sessionController.saveToDatabase();
+    //   sessionController.handleCleanup().then((res) => process.exit(0));
+    // });
 
     setInterval(() => sessionController.saveToDatabase(), 1000 * 60 * 60);
   }

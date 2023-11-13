@@ -2,16 +2,34 @@ import React from "react";
 import { useRouter } from "next/router";
 import CodeViewer from "@/components/history/historyPage/CodeViewer";
 import useHistoryQuestionById from "@/hook/useHistoryQuestionById";
+import TestcaseIndicator from "@/components/history/historyPage/TestcaseIndicator";
+import ParticipantsIcon from "@/components/history/historyPage/ParticipantsIcon";
+import { Status } from "@/utils/enums/Status";
 
 type HistoryQuestionPageProps = {};
 
 const HistoryQuestionPage: React.FC<HistoryQuestionPageProps> = () => {
   const router = useRouter();
   const qid = String(router.query.id).split("&");
-  const { historyQuestion } = useHistoryQuestionById(qid[0], qid[1]);
+  const { historyQuestion, participants } = useHistoryQuestionById(
+    qid[0],
+    qid[1],
+  );
+
+    function countCorrect() {
+      let counter = 0
+      if (historyQuestion?.testcases) {
+        historyQuestion.testcases.forEach((testcase) => {
+          if (Number(testcase.outcome) === Status.Accepted) {
+            counter++
+          }
+        });
+      }
+      return counter
+    }
 
   return (
-    <div className=" lg:mx-52 lg:mt-20 mt-20 mx-5 h-full space-y-5 dark:bg-gray-900">
+    <div className=" lg:mx-52 lg:mt-20 mt-20 mx-5 h-full space-y-5 dark:bg-gray-900 pb-10">
       <legend className="block text-2xl font-semibold leading-6 text-gray-900 dark:text-white">
         Submission {historyQuestion?._id}
       </legend>
@@ -39,10 +57,21 @@ const HistoryQuestionPage: React.FC<HistoryQuestionPageProps> = () => {
               ${
                 historyQuestion?.result === "correct"
                   ? "text-green-600"
-                  : "text-red-600" }`}
+                  : "text-red-600"
+              }`}
             >
               {historyQuestion?.result}
             </label>
+          </div>
+          <div className="mt-2">
+            {participants.length === 2 && (
+              <>
+                <legend className="block text-base font-semibold leading-6 text-gray-900 dark:text-white">
+                  Participant(s):
+                </legend>
+                <ParticipantsIcon participants={participants} />
+              </>
+            )}
           </div>
         </div>
         <div className="flex flex-col lg:w-1/2 justify-end">
@@ -66,6 +95,14 @@ const HistoryQuestionPage: React.FC<HistoryQuestionPageProps> = () => {
       </div>
 
       <CodeViewer answer={historyQuestion?.answer ?? ""} />
+      <div className="mt-2">
+        <legend className="block text-base font-semibold leading-6 text-gray-900 dark:text-white">
+          Result: {countCorrect()}/{historyQuestion?.testcases.length}
+        </legend>
+        <div className="pt-5 px-5">
+          <TestcaseIndicator testCases={historyQuestion?.testcases ?? []} />
+        </div>
+      </div>
     </div>
   );
 };

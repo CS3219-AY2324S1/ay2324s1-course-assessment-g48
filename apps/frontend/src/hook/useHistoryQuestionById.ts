@@ -4,6 +4,8 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useError } from "./ErrorContext";
 import useSessionUser from "./useSessionUser";
+import { User } from "@/database/user/entities/user.entity";
+import { getUserById } from "@/database/user/userService";
 
 function useHistoryQuestionById(hid: string, qid: string) {
   const { update } = useSession();
@@ -11,6 +13,7 @@ function useHistoryQuestionById(hid: string, qid: string) {
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const [historyQuestion, setHistoryQuestion] =
     useState<CompletedQuestion | null>(null);
+  const [participants, setParticipants] = useState<User[]>([]);
   const { setError, clearError } = useError();
 
   useEffect(() => {
@@ -33,6 +36,12 @@ function useHistoryQuestionById(hid: string, qid: string) {
             });
           }
           setHistoryQuestion(data);
+          setHistoryQuestion(data._doc);
+          const users = await Promise.all(data.userIds.map(async (userId:number) => {
+            const user = await getUserById(userId);
+            return user;
+          }));
+          setParticipants(users);
           setIsLoadingHistory(false);
         } catch (error) {
           setError({
@@ -46,7 +55,7 @@ function useHistoryQuestionById(hid: string, qid: string) {
     fetchData();
   }, [hid, qid, isLoadingUser, update]);
 
-  return { historyQuestion, isLoadingHistory };
+  return { historyQuestion, isLoadingHistory, participants };
 }
 
 export default useHistoryQuestionById;

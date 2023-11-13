@@ -16,6 +16,10 @@ import { Language } from "@/utils/class/Language";
 import { Status } from "@/utils/enums/Status";
 import ExecPanel from "./execPanel/ExecPanel";
 import EditorFooter from "./execPanel/editorFooter/EditorFooter";
+import useSessionUser from "@/hook/useSessionUser";
+import { useRouter } from "next/router";
+import { HistoryQuestionTestcase } from "@/database/history/entities/history.entity";
+import { postNewHistory } from "@/database/history/historyService";
 
 type CodeEditorProps = {
   onChangeCode?: (value: string | undefined) => void;
@@ -23,6 +27,7 @@ type CodeEditorProps = {
   question: Question;
   initialLanguage?: Language;
   hasSession?: boolean;
+  users: number[]
 };
 
 const CodeEditor: React.FC<CodeEditorProps> = ({
@@ -31,11 +36,11 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   question,
   initialLanguage,
   hasSession,
+  users
 }) => {
   const { isDarkMode } = useTheme();
-  const defaultLanguage: Language | undefined = languageOptions.find(
-    (lang) => lang.id === 71
-  );
+  const sessionID = useRouter().query?.sessionId as string;
+  const defaultLanguage : Language|undefined = languageOptions.find((lang) => lang.id === 71)
   // current language selected by user
   const [selectedLanguage, setSelectedLanguage] = useState<Language>(
     initialLanguage ?? defaultLanguage!
@@ -60,6 +65,8 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
     new Array(question.testcases.length)
   );
   const [processing, setProcessing] = useState(false);
+  const {sessionUser} = useSessionUser();
+  const [historyTestCase, setHistoryTestCase] = useState<HistoryQuestionTestcase[]>([]);
 
   const enterPress = useKeyPress("Enter");
   const ctrlPress = useKeyPress("Control");
@@ -144,9 +151,35 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
       }
       if (allSuccess) {
         showSuccessToast(`Compiled Successfully!`);
+        
       } else {
         showErrorToast("A testcase failed, please try again!");
       }
+  
+    console.log("asdasdasdad", outputDetails);
+
+    const newCompletedQuestion = {
+      questionId: question._id,
+      questionTitle: question.title,
+      language: selectedLanguage.label,
+      answer: btoa(displayCode),
+      testcases: historyTestCase,
+      completedAt: new Date(),
+      result: allSuccess ? "Correct" : "Incorrect",
+    }
+    const newHistory = {
+      userIds: users,
+      sessionId: sessionID??String(users[0]),
+      completed: [newCompletedQuestion],
+      date: new Date(),
+      _id: ""
+    }
+
+    await postNewHistory(newHistory, sessionUser.accessToken??undefined, sessionUser.refreshToken??undefined).then((data) => {
+      console.log("success", data);
+    }).catch((err) => {
+      console.log("error", err);
+    })
     } catch (err) {
       setProcessing(false);
       console.log(err);
@@ -169,15 +202,22 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
           setTimeout(() => {
             resolve(checkStatus(token, index));
           }, 2000);
-        } else if (statusId === Status.Accepted) {
-          setProcessing(false);
-          handleOutputDetails(response.data, index);
-          resolve(true);
         } else {
           setProcessing(false);
           handleOutputDetails(response.data, index);
-          resolve(false);
+          console.log("response.data", response.data.id);
+          setHistoryTestCase((prev) => [
+            ...prev, {
+              runTime: response.data.time,
+              outcome: response.data.status.id,
+            }]
+          )
+          if (statusId === Status.Accepted) {
+            resolve(true);
+          } else {
+            resolve(false);
         }
+      }
       } catch (err) {
         setProcessing(false);
         showErrorToast((err as Error).message);
@@ -239,7 +279,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   }, [ctrlPress, enterPress]);
 
   return (
-    <div className="flex flex-col h-full dark:bg-gray-800 relative overflow-hidden">
+    <div className="flex flex-col h-full w-full dark:bg-gray-800 relative overflow-hidden">
       <EditorNav
         selectedLanguage={selectedLanguage}
         setSelectedLanguage={setSelectedLanguage}

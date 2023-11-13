@@ -22,10 +22,14 @@ function HistoryPage() {
     return () => redirectUser();
   }, [router, sessionUser, uid]);
 
-  return (
-    <div className="grid place-content-center dark:bg-gray-900">
-      <LoadingModal isLoading={isLoadingHistory} />
+  return isLoadingHistory ? (
+    <LoadingModal isLoading={isLoadingHistory} />
+  ) : (
+    <div className="grid place-content-center dark:bg-gray-900 center">
       <div className="p-4 rounded-lg w-screen xl:px-60 lg:px-40">
+        <h1 className="text-2xl dark:text-white my-4">My History</h1>
+      </div>
+      <div className=" rounded-lg w-screen xl:px-60 lg:px-40">
         <HistoryTable hidden={isLoadingHistory} />
       </div>
     </div>

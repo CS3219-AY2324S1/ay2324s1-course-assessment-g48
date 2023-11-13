@@ -26,10 +26,10 @@ export default function QuestionsRepo() {
   }, [sessionUser]);
 
   return (
+    isLoadingQuestion ? <LoadingModal isLoading={isLoadingQuestion} /> :
     <div className="grid place-content-center dark:bg-gray-900">
-      <LoadingModal isLoading={isLoadingQuestion} />
 
-      <div className="p-4 rounded-lg w-screen xl:px-60 lg:px-40">
+      <div className="pl-4 pr-4 rounded-lg w-screen xl:px-60 lg:px-40">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl dark:text-white my-4" hidden={isLoadingQuestion}>
             It&apos;s grinding time!

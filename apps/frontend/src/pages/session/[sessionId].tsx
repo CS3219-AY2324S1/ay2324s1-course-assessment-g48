@@ -1,7 +1,7 @@
-import { useRouter } from "next/router";
 import QuestionWorkspace from "@/components/questions/questionPage/QuestionWorkspace";
 import useSessionCollab from "@/hook/useSessionCollab";
 import LoadingModal from "@/components/LoadingModal";
+import { useRouter } from "next/router";
 
 export default function Session() {
   const sessionId = useRouter().query.sessionId as string;

@@ -12,6 +12,7 @@ type SessionCodeEditorProps = {
   onChangeCode?: (value: string) => void;
   currSessionCode?: CodeType[];
   initialLanguage?: Language;
+  users: number[];
 };
 
 const SessionCodeEditor: React.FC<SessionCodeEditorProps> = ({
@@ -19,6 +20,7 @@ const SessionCodeEditor: React.FC<SessionCodeEditorProps> = ({
   currSessionCode,
   onChangeCode,
   initialLanguage,
+  users
 }) => {
   return (
     <CodeEditor
@@ -27,6 +29,7 @@ const SessionCodeEditor: React.FC<SessionCodeEditorProps> = ({
       onChangeCode={(value: string | undefined) => onChangeCode?.(value ?? "")}
       initialLanguage={initialLanguage}
       hasSession={true}
+      users={users}
     />
   );
 };

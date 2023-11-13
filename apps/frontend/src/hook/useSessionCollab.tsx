@@ -4,14 +4,15 @@ import {
   getQuestionById,
 } from "../database/question/questionService";
 import { Question } from "@/database/question/entities/question.entity";
-import { useSession } from "next-auth/react";
 import { Language } from "@/utils/class/Language";
 import { languageOptions } from "@/utils/constants/LanguageOptions";
 import { AutomergeUrl } from "@automerge/automerge-repo";
 import { useDocument } from "@automerge/automerge-repo-react-hooks";
 import { Doc } from "@automerge/automerge/next";
 import useSessionUser from "./useSessionUser";
+import { useSession } from "next-auth/react";
 import { getSession } from "@/database/session/sessionService";
+import { useError } from "./ErrorContext";
 
 function useSessionCollab(sessionId: string) {
   const [isLoading, setIsLoading] = useState(false);
@@ -21,6 +22,7 @@ function useSessionCollab(sessionId: string) {
   const [question, setQuestion] = useState<Question>();
   const [language, setLanguage] = useState<Language>();
   const [docUrl, setDocUrl] = useState<AutomergeUrl>();
+  const [users, setUsers] = useState<number[]>([]);
   const [doc, changeDoc] = useDocument<Doc<any>>(docUrl);
   const [chatroomId, setChatroomId] = useState<string>("");
   let increment: (value: string) => void = (value: string) => {
@@ -58,6 +60,7 @@ function useSessionCollab(sessionId: string) {
           sessionUser.refreshToken
         )
       );
+      setUsers(session.users);
       setLanguage(
         languageOptions.filter((language) => language.id == session.language)[0]
       );
@@ -71,7 +74,7 @@ function useSessionCollab(sessionId: string) {
     }
   }, [sessionId, isLoadingUser, update]);
 
-  return { question, doc, chatroomId, isLoading, increment, language };
+  return { question, doc, chatroomId, isLoading, increment, language, users };
 }
 
 export default useSessionCollab;
