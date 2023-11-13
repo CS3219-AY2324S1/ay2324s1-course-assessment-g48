@@ -22,6 +22,7 @@ function useSessionUser() {
           ...prevUser,
           ...session?.user,
         }));
+        console.log("session", session);
         clearInterval(checkSession);
         setIsLoading(false);
       }
@@ -37,22 +38,24 @@ function useSessionUser() {
       clearInterval(checkSession);
     };
   }, [session]);
-  return {
-    sessionUser: !isLoading
-      ? {
+  return !isLoading
+    ? {
+        sessionUser: {
           ...sessionUser,
           accessToken: session?.user?.accessToken ?? undefined,
           refreshToken: session?.user?.refreshToken ?? undefined,
-        }
-      : {
+        },
+        setSessionUser,
+      }
+    : {
+        sessionUser: {
           ...sessionUser,
           role: Role.Unknown,
           accessToken: null,
           refreshToken: null,
         },
-    isLoading,
-    setSessionUser,
-  };
+        setSessionUser,
+      };
 }
 
 export default useSessionUser;

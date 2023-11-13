@@ -28,7 +28,7 @@ declare module "next-auth" {
 }
 
 export default NextAuth({
-  ...authOptions,
+  ...authOptions, 
   callbacks: {
     async signIn({ user, account }) {
       try {
@@ -38,11 +38,12 @@ export default NextAuth({
         ) {
           return true;
         }
-
+  
         const findOAuthUser = await login({
           email: user.email,
           oauth: account.provider as OAuthType,
         });
+        console.log("findOAuthUser:" , findOAuthUser)
 
         if (findOAuthUser) {
           // if existing user is signing in with a new oauth
@@ -60,9 +61,7 @@ export default NextAuth({
           return true;
         }
 
-        return `/oauthsignup?email=${user.email}&oauth=${
-          account.provider as OAuthType
-        }&image=${user.image}`;
+        return `/oauthsignup?email=${user.email}&oauth=${account.provider as OAuthType}&image=${user.image}`
       } catch (error) {
         console.error(error);
         return true;

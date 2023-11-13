@@ -179,20 +179,7 @@ questionRouter.put(
   }
 );
 
-questionRouter.get(
-  "/random-question/:difficulty/:language",
-  async (req, res, next) => {
-    const difficulty = req.params.difficulty;
-    console.log(difficulty);
-    const languageId = req.params.language
-
-    const questions = await Question.aggregate([{ 
-      $match: { 
-        complexity: difficulty,
-        'starterCode.languageId': Number(languageId),
-      }
-    },
-    { $sample: { size: 1 } }]);
-    res.status(200).json({questions});
-  }
+questionRouter.post(
+  "/:id/run",
+  
 )

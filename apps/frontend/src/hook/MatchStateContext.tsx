@@ -54,6 +54,7 @@ export const MatchStateProvider: React.FC<MatchStateProviderProps> = ({
   const { toggleTimer, seconds, reset, isRunning } = useTimer();
   const [matchState, setMatchState] = useState<MatchedState>(() => {
     if (typeof window !== "undefined") {
+      console.log(123);
       const savedState = localStorage.getItem("matchState");
       return savedState
         ? JSON.parse(savedState)
@@ -84,7 +85,7 @@ export const MatchStateProvider: React.FC<MatchStateProviderProps> = ({
       localStorage.setItem("matchState", JSON.stringify(matchState));
     }
   }, [matchState]); // This effect runs whenever `matchState` changes
-
+  
   const setToMatchingState = () => {
     // Set the state of the page to looking for match.
     clearError();
@@ -104,6 +105,7 @@ export const MatchStateProvider: React.FC<MatchStateProviderProps> = ({
       disconnectSocket();
     });
 
+    console.log("set matching", matchingSocket);
     matchingSocket.emit("matching", {
       nameSpace: difficulty + "/" + language,
       user: sessionUser,
@@ -128,22 +130,26 @@ export const MatchStateProvider: React.FC<MatchStateProviderProps> = ({
     // Do something like route to the new session.
     disconnectSocket();
     reset();
+    console.log(data.sessionId);
+    console.log("peer id", data.peerId);
     getUserById(data.peerId)
       .then((peer) => {
         setPeer(peer);
+        console.log("pic", peer);
       })
       .catch((err) => {
         console.log(err);
       });
-    setMatchState(MatchedState.NOT_MATCHING);
+    setMatchState(MatchedState.MATCHED);
     setError({
       type: 4,
       message: "Matched with a peer!",
     });
-    router.push(`/session/${data.sessionId}`);
+    // router.push(`/session/${data.sessionId}`);
   };
 
   const disconnectSocket = () => {
+    console.log("disconnecting");
     matchingSocket.disconnect();
   };
 

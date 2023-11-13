@@ -7,16 +7,20 @@ const BASE_URL = process.env.NEXT_PUBLIC_QUESTION_SERVICE + "/api/question";
 export const postNewQuestion = async (
   accessToken: string,
   refreshToken: string,
-  newQuestion: Question
+  newQuestion: Question,
 ) => {
   const config = {
     headers: {
       Authorization: `Bearer ${accessToken}`,
-      ["refresh-token"]: refreshToken,
+      ['refresh-token']: refreshToken,
     },
   };
   return await axiosInstance
-    .post(BASE_URL, newQuestion, config)
+    .post(
+      BASE_URL,
+      newQuestion,
+      config
+    )
     .then((response) => {
       return response.data;
     })
@@ -29,14 +33,11 @@ export const postNewQuestion = async (
     });
 };
 
-export const getAllQuestions = async (
-  accessToken?: string,
-  refreshToken?: string
-) => {
+export const getAllQuestions = async (accessToken?: string, refreshToken?: string) => {
   const config = {
     headers: {
       Authorization: `Bearer ${accessToken}`,
-      ["refresh-token"]: refreshToken,
+      ['refresh-token']: refreshToken,
     },
   };
   return await axiosInstance
@@ -53,15 +54,11 @@ export const getAllQuestions = async (
     });
 };
 
-export const getQuestionById = async (
-  id: string,
-  accessToken?: string,
-  refreshToken?: string
-) => {
+export const getQuestionById = async (id: string, accessToken?: string, refreshToken?: string) => {
   const config = {
     headers: {
       Authorization: `Bearer ${accessToken}`,
-      ["refresh-token"]: refreshToken,
+      ['refresh-token']: refreshToken,
     },
   };
   return await axiosInstance
@@ -86,15 +83,11 @@ export const getQuestionById = async (
     });
 };
 
-export const deleteQuestionById = async (
-  id: string,
-  accessToken: string,
-  refreshToken: string
-) => {
+export const deleteQuestionById = async (id: string, accessToken:string, refreshToken: string) => {
   const config = {
     headers: {
       Authorization: `Bearer ${accessToken}`,
-      ["refresh-token"]: refreshToken,
+      ['refresh-token']: refreshToken,
     },
   };
   return await axiosInstance
@@ -123,16 +116,20 @@ export const updateQuestionById = async (
   id: string,
   accessToken: string,
   refreshToken: string,
-  updatedQuestion: Partial<Question>
+  updatedQuestion: Partial<Question>,
 ) => {
   const config = {
     headers: {
       Authorization: `Bearer ${accessToken}`,
-      ["refresh-token"]: refreshToken,
+      ['refresh-token']: refreshToken,
     },
   };
   return await axiosInstance
-    .put(BASE_URL + "/" + id, updatedQuestion, config)
+    .put(
+      BASE_URL + "/" + id,
+      updatedQuestion,
+      config
+    )
     .then((response) => {
       return response.data;
     })

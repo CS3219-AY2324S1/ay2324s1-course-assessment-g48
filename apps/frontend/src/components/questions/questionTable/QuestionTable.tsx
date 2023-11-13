@@ -34,15 +34,12 @@ const QuestionTable: FC<QuestionTableProps> = ({
   hidden,
 }) => {
   const questionsPerPage = useMemo(() => 10, []);
-  const { data: session } = useSession();
+  const {data: session} = useSession();
   const { sessionUser } = useSessionUser();
   const [userRole, setUserRole] = useState(sessionUser.role);
   const [accessToken, setAccessToken] = useState(sessionUser.accessToken);
   const [refreshToken, setRefreshToken] = useState(sessionUser.refreshToken);
-  const { questions, totalQuestions, handleTrigger } = useQuestions(
-    sessionUser.accessToken,
-    sessionUser.refreshToken
-  );
+  const { questions, totalQuestions, handleTrigger } = useQuestions(sessionUser.accessToken, sessionUser.refreshToken);
   const [searchResults, setSearchResults] = useState("");
   const [viewQuestion, setViewQuestion] = useState<Question>(initialQuestion);
   const [questionToEdit, setQuestionToEdit] =
@@ -130,12 +127,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
   };
 
   const handleEditQuestion = async (editQuestion: Question) => {
-    await updateQuestionById(
-      editQuestion._id,
-      accessToken!,
-      refreshToken!,
-      editQuestion
-    )
+    await updateQuestionById(editQuestion._id, accessToken!, refreshToken!, editQuestion)
       .then((data) => {
         handleTrigger();
         if (data.accessToken) {
