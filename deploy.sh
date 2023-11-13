@@ -5,7 +5,7 @@ IMAGE_NAMES=("peerprep-frontend" "peerprep-user" "peerprep-question" "peerprep-q
 # Define the Docker registry URL (e.g., Docker Hub or a private registry)
 DOCKER_REGISTRY="deployment87/dply87"
 # Define the tag for your Docker image
-IMAGE_TAG="v1.2.6"
+IMAGE_TAG="v1.3.0"
 # Define the path to your Docker Compose file for production
 DOCKER_COMPOSE_FILE="Docker-compose.prod.yml"
 

@@ -32,11 +32,11 @@ spec:
     spec:
       containers:
       - name: peerprep-session
-        image: deployment87/dply87:peerprep-session-v1.2.6
+        image: deployment87/dply87:peerprep-session-v1.3.0
         resources:
           limits:
-            memory: "512Mi"
-            cpu: "500m"
+            memory: "256Mi"
+            cpu: "200m"
         ports:
         - containerPort: 8250
         - containerPort: 8251
@@ -59,3 +59,24 @@ spec:
             memory: "256Mi"
             cpu: "500m"
         command: ["/bin/sh", "-c", "while true; do sleep 5; wget -q --spider http://localhost:8251/ping || exit 1; done"]
+
+---
+
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: session-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: session-deployment
+  minReplicas: 1
+  maxReplicas: 3
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 50

@@ -89,3 +89,13 @@ spec:
             name: peerprep-codeexec
             port:
               number: 8420
+  - host: leetpal.com
+    http:
+      paths:
+      - pathType: Prefix
+        path: /
+        backend:
+          service:
+            name: peerprep-frontend
+            port:
+              number: 3000

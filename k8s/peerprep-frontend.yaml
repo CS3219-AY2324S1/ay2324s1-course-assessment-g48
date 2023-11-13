@@ -32,12 +32,12 @@ spec:
     spec:
       containers:
       - name: peerprep-frontend
-        image: deployment87/dply87:peerprep-frontend-v1.2.8
+        image: deployment87/dply87:peerprep-frontend-v1.3.1
         imagePullPolicy: Always
         resources:
           limits:
             memory: "256Mi"
-            cpu: "500m"
+            cpu: "200m"
         ports:
         - containerPort: 3000
 
@@ -53,7 +53,7 @@ spec:
     kind: Deployment
     name: frontend-deployment
   minReplicas: 1
-  maxReplicas: 5
+  maxReplicas: 3
   metrics:
   - type: Resource
     resource:

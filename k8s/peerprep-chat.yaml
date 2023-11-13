@@ -28,23 +28,44 @@ spec:
     spec:
       containers:
       - name: peerprep-chat
-        image: deployment87/dply87:peerprep-chat-v1.2.10
+        image: deployment87/dply87:peerprep-chat-v1.3.1
         imagePullPolicy: Always
         resources:
           limits:
             memory: "256Mi"
-            cpu: "500m"
+            cpu: "200m"
         ports:
         - containerPort: 8082
         livenessProbe:
           httpGet:
             path: /ping
             port: 8082
-          initialDelaySeconds: 10
+          initialDelaySeconds: 60
           timeoutSeconds: 10
         readinessProbe:
           httpGet:  
             path: /ping
             port: 8082
-          initialDelaySeconds: 10
+          initialDelaySeconds: 60
           timeoutSeconds: 10
+
+---
+
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: chat-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: chat-deployment
+  minReplicas: 1
+  maxReplicas: 3
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 50

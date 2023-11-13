@@ -28,22 +28,43 @@ spec:
     spec:
       containers:
       - name: peerprep-question
-        image: deployment87/dply87:peerprep-question-v1.2.6
+        image: deployment87/dply87:peerprep-question-v1.3.0
         resources:
           limits:
             memory: "256Mi"
-            cpu: "500m"
+            cpu: "200m"
         ports:
         - containerPort: 8000
         livenessProbe:
           httpGet:
             path: /ping
             port: 8000
-          initialDelaySeconds: 10
+          initialDelaySeconds: 60
           timeoutSeconds: 10
         readinessProbe:
           httpGet:  
             path: /ping
             port: 8000
-          initialDelaySeconds: 10
+          initialDelaySeconds: 60
           timeoutSeconds: 10
+
+---
+
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: question-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: question-deployment
+  minReplicas: 1
+  maxReplicas: 3
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 50
