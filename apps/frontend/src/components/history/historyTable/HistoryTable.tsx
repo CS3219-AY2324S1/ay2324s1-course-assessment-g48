@@ -55,12 +55,12 @@ const HistoryTable: React.FC<HistoryTableProps> = ({ hidden }) => {
   return (
     isLoadingHistory ? <></> :
     <>
-      <div className="overflow-auto shadow-md sm:rounded-lg">
+      <div className="overflow-x-auto shadow-md rounded-lg dark:bg-gray-800 max-h-[calc(100vh-270px)]">
         <table
-          className="relative text-sm text-left text-gray-500 dark:text-gray-400 w-full"
+          className="relative table-auto text-sm text-left text-gray-500 dark:text-gray-400 w-full"
           hidden={hidden}
         >
-          <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+          <thead className="text-xs sticky top-0 text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
               <th scope="col" className="px-6 py-3 center w-1/5">
                 Time Submitted

@@ -198,22 +198,21 @@ body {
   max-height: 400px; /* Set the maximum height of the container */
 }
 
-.scrollbar-hidden {
-  /* Hide scrollbar for webkit browsers */
-  scrollbar-width: none;
-  scrollbar-color: transparent transparent;
-   -ms-overflow-style: none;  /* IE and Edge */
+::-webkit-scrollbar {
+  height: 0.5rem; /* height of the horizontal scrollbar */
+  width: 0.5rem; /* width of the vertical scrollbar */
 }
 
-/* For Firefox */
-.scrollbar-hidden::-webkit-scrollbar {
-  width: 0.5em;
-  display: none;
+::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-.scrollbar-hidden::-webkit-scrollbar-thumb {
-  background-color: transparent;
+::-webkit-scrollbar-thumb {
+  background: #4d4d4d;
+  border-radius: 10px;
 }
+
+
 
 /* SearchComponent.css */
 .truncate-input {

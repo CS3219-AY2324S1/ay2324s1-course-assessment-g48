@@ -27,7 +27,7 @@ const TestCasesInput: React.FC<TestCasesInputProps> = ({
 
   useEffect(() => {
     setCurrTestCases(newQuestion.testcases.length === 0 ? [initialTestCase] : newQuestion.testcases);
-  }, [initialTestCase, newQuestion, setCurrTestCases]);
+  }, [newQuestion]);
 
   useEffect(() => {
     setBlank(
