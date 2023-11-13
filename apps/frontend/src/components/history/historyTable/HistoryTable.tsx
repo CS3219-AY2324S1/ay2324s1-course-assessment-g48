@@ -7,7 +7,6 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import DeleteCfmModal from "./DeleteCfmModal";
-import { getUserById } from "@/database/user/userService";
 
 type HistoryTableProps = {
   hidden?: boolean;
@@ -15,7 +14,7 @@ type HistoryTableProps = {
 
 const HistoryTable: React.FC<HistoryTableProps> = ({ hidden }) => {
   const { sessionUser } = useSessionUser();
-  const {data: session} = useSession();
+  const {update} = useSession();
   const [userRole, setUserRole] = useState(sessionUser.role);
   const [accessToken, setAccessToken] = useState(sessionUser.accessToken);
   const [refreshToken, setRefreshToken] = useState(sessionUser.refreshToken);
@@ -40,8 +39,7 @@ const HistoryTable: React.FC<HistoryTableProps> = ({ hidden }) => {
     await deleteHistoryById(id, accessToken!, refreshToken!)
       .then((data) => {
         if (data.accessToken) {
-          session!.user!.accessToken = data.accessToken;
-          console.log("Refresh accessToken", session);
+          update({ accessToken: data.accessToken, accessTokenExpiry: data.accessTokenExpiry });
         }
         setOpenDelCfm(false);
       })
