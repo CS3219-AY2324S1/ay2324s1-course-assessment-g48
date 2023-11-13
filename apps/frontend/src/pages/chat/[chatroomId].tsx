@@ -23,9 +23,12 @@ export default function Chat() {
     setMessages([]);
     chatroomSocket.connect();
     chatroomSocket.on("receiveMessage", ({ messages }) => {
+      console.log(messages);
       setMessages((pastMessages) => [...pastMessages, ...messages]);
     });
     chatroomSocket.emit("connectToChatroom", { chatroomId });
+
+    console.log(messages);
 
     return () => {
       chatroomSocket.disconnect();
@@ -45,6 +48,7 @@ export default function Chat() {
       content: newMessage,
       timestamp: new Date(),
     });
+    console.log("HELLO");
     setNewMessage("");
   };
 

@@ -29,6 +29,7 @@ function useQuestionById(
         const data = await getQuestionById(qid, accessToken, refreshToken);
         if (data.accessToken) {
           session!.user!.accessToken = data.accessToken;
+          console.log("Refresh accessToken", session);
         }
         setQuestion(data);
         setIsLoading(false);

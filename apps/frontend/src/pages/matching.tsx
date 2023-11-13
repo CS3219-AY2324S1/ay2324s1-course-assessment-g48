@@ -14,7 +14,7 @@ type matchingProps = {};
 const MatchingPage: React.FC<matchingProps> = () => {
   const { sessionUser } = useSessionUser();
   const [userRole, setUserRole] = useState(sessionUser.role);
-  const { clearError } = useError();
+  const {  clearError } = useError();
   const router = useRouter();
   const {
     matchState,
@@ -27,17 +27,18 @@ const MatchingPage: React.FC<matchingProps> = () => {
     setDifficulty,
     seconds,
     language,
-    setLanguage,
+    setLanguage
   } = useMatchState();
 
-  const handleMatchConnection: FormEventHandler = (e) => {
-    e.preventDefault();
-    if (matchState == MatchedState.MATCHING) {
-      setToNotMatchingState();
-      return;
-    }
-    setToMatchingState();
-  };
+const handleMatchConnection: FormEventHandler = (e) => {
+  e.preventDefault();
+  console.log(difficulty);
+  if (matchState == MatchedState.MATCHING) {
+    setToNotMatchingState();
+    return;
+  }
+  setToMatchingState();
+};
 
   useEffect(() => {
     setUserRole(sessionUser.role);
@@ -73,13 +74,12 @@ const MatchingPage: React.FC<matchingProps> = () => {
                 name="language"
                 className="block w-full rounded-md border-0 px-3.5 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 dark:bg-gray-200 dark:text-gray-800 disabled:bg-gray-300 dark:disabled:bg-gray-400 disabled:cursor-not-allowed"
                 onChange={(e) => {
+                  console.log(language);
                   setLanguage(e.target.value);
                 }}
               >
                 {languageOptions
-                  .filter((language) =>
-                    [63, 54, 62, 71, 74].includes(language.id)
-                  )
+                  .filter((language) => [63, 54, 62, 71, 74].includes(language.id))
                   .map((languageOption, index) => (
                     <option key={index}>{languageOption.label}</option>
                   ))}

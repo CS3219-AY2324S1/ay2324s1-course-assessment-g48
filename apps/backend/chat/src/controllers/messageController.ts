@@ -13,7 +13,6 @@ class MessageController {
 
   handleConnection(socket: Socket) {
     socket.on("connectToChatroom", async ({ chatroomId }) => {
-      this.io.to(chatroomId).emit("other user connecting");
       socket.join(chatroomId);
       const messages = await this.chatroomService.getMessages(chatroomId);
       console.log(messages);
@@ -21,10 +20,6 @@ class MessageController {
       socket.on("sendMessage", (message) =>
         this.handleSendMessage(message, chatroomId)
       );
-      socket.on("disconnect", () => {
-        console.log("starting to disconnect");
-        this.io.to(chatroomId).emit("other user disconnecting");
-      });
     });
     socket.emit("connected");
   }

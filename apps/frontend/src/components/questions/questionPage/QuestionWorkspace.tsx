@@ -23,13 +23,6 @@ const QuestionWorkspace: React.FC<QuestionWorkspaceProps> = ({
   increment,
   chatroomId,
 }) => {
-  console.log({
-    question,
-    doc,
-    initialLanguage,
-    increment,
-    chatroomId,
-  });
   return (
     <>
       <Split className="split flex-1 h-[calc(100vh-60px)]">

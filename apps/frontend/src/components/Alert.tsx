@@ -10,13 +10,6 @@ type AlertProps = {
 };
 
 const Alert: React.FC<AlertProps> = ({ error, hidden, setHide }) => {
-  const type: string = String(
-    error
-      ? errorType.find((item) => {
-          return item.type === error.type;
-        })?.color
-      : ""
-  );
   return (
     <Transition.Root show={hidden} as={Fragment}>
       <Dialog
@@ -34,7 +27,11 @@ const Alert: React.FC<AlertProps> = ({ error, hidden, setHide }) => {
           leaveTo="translate-y-full"
         >
           <div
-            className={`fixed bottom-0 left-0 p-4 ml-4 mb-4 font-regular  rounded-lg ${type} text-base leading-5 text-white opacity-100`}
+            className={`fixed bottom-0 left-0 p-4 ml-4 mb-4 font-regular  rounded-lg ${errorType.find(
+              (item) => {
+                return item.type === error.type;
+              }
+            )?.color} text-base leading-5 text-white opacity-100`}
             role="alert"
           >
             {error.message}
