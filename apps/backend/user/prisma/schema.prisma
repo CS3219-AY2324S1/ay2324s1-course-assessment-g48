@@ -19,28 +19,6 @@ model User {
   oauth OAuth[]
   role Role
   image String?
-  //   posts   Post[]
-  //   profile Profile?
-}
-
-model Question {
-  id Int      @id @default(autoincrement())
-  title String
-  description String
-  categories Category[]
-  complexity Complexity
-}
-
-model Category {
-  id Int @id @default(autoincrement())
-  name String
-  questions Question[]
-}
-
-enum Complexity {
-  Easy
-  Medium
-  Hard
 }
 
 enum OAuth {
