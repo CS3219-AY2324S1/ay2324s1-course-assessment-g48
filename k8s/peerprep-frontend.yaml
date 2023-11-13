@@ -32,7 +32,7 @@ spec:
     spec:
       containers:
       - name: peerprep-frontend
-        image: deployment87/dply87:peerprep-frontend-v1.3.4
+        image: deployment87/dply87:peerprep-frontend-v1.3.10
         imagePullPolicy: Always
         resources:
           limits:
@@ -41,23 +41,23 @@ spec:
         ports:
         - containerPort: 3000
 
----
+# ---
 
-apiVersion: autoscaling/v2
-kind: HorizontalPodAutoscaler
-metadata:
-  name: frontend-hpa
-spec:
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: frontend-deployment
-  minReplicas: 1
-  maxReplicas: 3
-  metrics:
-  - type: Resource
-    resource:
-      name: cpu
-      target:
-        type: Utilization
-        averageUtilization: 50
+# apiVersion: autoscaling/v2
+# kind: HorizontalPodAutoscaler
+# metadata:
+#   name: frontend-hpa
+# spec:
+#   scaleTargetRef:
+#     apiVersion: apps/v1
+#     kind: Deployment
+#     name: frontend-deployment
+#   minReplicas: 1
+#   maxReplicas: 3
+#   metrics:
+#   - type: Resource
+#     resource:
+#       name: cpu
+#       target:
+#         type: Utilization
+#         averageUtilization: 50
