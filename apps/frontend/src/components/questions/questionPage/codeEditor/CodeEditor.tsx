@@ -1,8 +1,8 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import EditorNav from "./EditorNav";
 import Split from "react-split";
 import { useTheme } from "@/hook/ThemeContext";
-import { Editor, Monaco } from "@monaco-editor/react";
+import { Editor } from "@monaco-editor/react";
 import {
   CodeType,
   Question,
@@ -16,7 +16,10 @@ import { Language } from "@/utils/class/Language";
 import { Status } from "@/utils/enums/Status";
 import ExecPanel from "./execPanel/ExecPanel";
 import EditorFooter from "./execPanel/editorFooter/EditorFooter";
-import { editor } from "monaco-editor";
+import useSessionUser from "@/hook/useSessionUser";
+import { useRouter } from "next/router";
+import { HistoryQuestionTestcase } from "@/database/history/entities/history.entity";
+import { postNewHistory } from "@/database/history/historyService";
 
 type CodeEditorProps = {
   onChangeCode?: (value: string | undefined) => void;
@@ -24,6 +27,7 @@ type CodeEditorProps = {
   question: Question;
   initialLanguage?: Language;
   hasSession?: boolean;
+  users: number[]
 };
 
 const CodeEditor: React.FC<CodeEditorProps> = ({
@@ -32,8 +36,10 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   question,
   initialLanguage,
   hasSession,
+  users
 }) => {
   const { isDarkMode } = useTheme();
+  const sessionID = useRouter().query?.sessionId as string;
   const defaultLanguage : Language|undefined = languageOptions.find((lang) => lang.id === 71)
   // current language selected by user
   const [selectedLanguage, setSelectedLanguage] = useState<Language>(
@@ -59,61 +65,14 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
     new Array(question.testcases.length)
   );
   const [processing, setProcessing] = useState(false);
+  const {sessionUser} = useSessionUser();
+  const [historyTestCase, setHistoryTestCase] = useState<HistoryQuestionTestcase[]>([]);
 
   const enterPress = useKeyPress("Enter");
   const ctrlPress = useKeyPress("Control");
   const memoizedOutputDetails = useMemo(() => outputDetails, [outputDetails]);
-
-  const monacoRef = useRef<editor.IStandaloneCodeEditor>();
-
-  function handleEditorDidMount(
-    editor: editor.IStandaloneCodeEditor,
-    monaco: Monaco
-  ) {
-    // here is another way to get monaco instance
-    // you can also store it in `useRef` for further usage
-    monacoRef.current = editor;
-  }
-
-  //   if (!onChangeCode) {
-  //     onChangeCode = (value?: string) => {
-  //       // find the corresponding language code in codeArray
-  //       const index = codeArray.findIndex(
-  //         (langCode) => langCode.languageId === selectedLanguage.id
-  //       );
-  //       if (index === -1) {
-  //         // take from starter code if not found, add to existing codeArray
-  //         console.log(`selectedLanguage ${selectedLanguage.id} not found.`);
-  //         setCodeArray([
-  //           ...codeArray,
-  //           {
-  //             languageId: selectedLanguage.id,
-  //             code:
-  //               question.starterCode.find(
-  //                 (starterCode) => starterCode.languageId === selectedLanguage.id
-  //               )?.code ?? "",
-  //           },
-  //         ]);
-  //       } else {
-  //         // else just update code in codeArray
-  //         const updatedCodeArray = [...codeArray];
-  //         updatedCodeArray[index].code = value ?? "";
-  //         setCodeArray(updatedCodeArray);
-  //       }
-  //       // change display code as per normal
-  //       setDisplayCode(value ?? "");
-  //     };
-  //     // console.log("Using solo code editor. Current code:", code);
-  //   }
-
-  const changeCodeHandler = (value?: string) => {
-    if (onChangeCode) {
-      const prevCursorPosition = monacoRef.current?.getPosition();
-      onChangeCode(value);
-      if (prevCursorPosition) {
-        monacoRef.current?.setPosition(prevCursorPosition);
-      }
-    } else {
+  if (!onChangeCode) {
+    onChangeCode = (value?: string) => {
       // find the corresponding language code in codeArray
       const index = codeArray.findIndex(
         (langCode) => langCode.languageId === selectedLanguage.id
@@ -139,8 +98,9 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
       }
       // change display code as per normal
       setDisplayCode(value ?? "");
-    }
-  };
+    };
+    // console.log("Using solo code editor. Current code:", code);
+  }
 
   const handleOutputDetails = (response: any, index: number) => {
     setOutputDetails((prev) => {
@@ -191,9 +151,35 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
       }
       if (allSuccess) {
         showSuccessToast(`Compiled Successfully!`);
+        
       } else {
         showErrorToast("A testcase failed, please try again!");
       }
+  
+    console.log("asdasdasdad", outputDetails);
+
+    const newCompletedQuestion = {
+      questionId: question._id,
+      questionTitle: question.title,
+      language: selectedLanguage.label,
+      answer: btoa(displayCode),
+      testcases: historyTestCase,
+      completedAt: new Date(),
+      result: allSuccess ? "Correct" : "Incorrect",
+    }
+    const newHistory = {
+      userIds: users,
+      sessionId: sessionID??String(users[0]),
+      completed: [newCompletedQuestion],
+      date: new Date(),
+      _id: ""
+    }
+
+    await postNewHistory(newHistory, sessionUser.accessToken??undefined, sessionUser.refreshToken??undefined).then((data) => {
+      console.log("success", data);
+    }).catch((err) => {
+      console.log("error", err);
+    })
     } catch (err) {
       setProcessing(false);
       console.log(err);
@@ -216,15 +202,22 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
           setTimeout(() => {
             resolve(checkStatus(token, index));
           }, 2000);
-        } else if (statusId === Status.Accepted) {
-          setProcessing(false);
-          handleOutputDetails(response.data, index);
-          resolve(true);
         } else {
           setProcessing(false);
           handleOutputDetails(response.data, index);
-          resolve(false);
+          console.log("response.data", response.data.id);
+          setHistoryTestCase((prev) => [
+            ...prev, {
+              runTime: response.data.time,
+              outcome: response.data.status.id,
+            }]
+          )
+          if (statusId === Status.Accepted) {
+            resolve(true);
+          } else {
+            resolve(false);
         }
+      }
       } catch (err) {
         setProcessing(false);
         showErrorToast((err as Error).message);
@@ -286,7 +279,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   }, [ctrlPress, enterPress]);
 
   return (
-    <div className="flex flex-col h-full dark:bg-gray-800 relative overflow-hidden">
+    <div className="flex flex-col h-full w-full dark:bg-gray-800 relative overflow-hidden">
       <EditorNav
         selectedLanguage={selectedLanguage}
         setSelectedLanguage={setSelectedLanguage}
@@ -299,12 +292,11 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
       >
         <div className="w-full overflow-auto dark:bg-neutral-800">
           <Editor
-            onChange={changeCodeHandler}
+            onChange={onChangeCode}
             defaultValue={starterCode}
             value={displayCode}
             theme={isDarkMode ? "vs-dark" : "light"}
             language={selectedLanguage.value.toLowerCase()}
-            onMount={handleEditorDidMount}
           />
         </div>
         {/* Exec Panel can still be abstracted to QuestionWorkspace -> future enhancement */}

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Split from "react-split";
 import { Question } from "@/database/question/entities/question.entity";
 import CodeEditor from "./codeEditor/CodeEditor";
@@ -7,6 +7,7 @@ import DescriptionPanel from "./codeEditor/descriptionPanel/DescriptionPanel";
 import SessionCodeEditor from "./codeEditor/SessionCodeEditor";
 import { Language } from "@/utils/class/Language";
 import { Doc } from "@automerge/automerge/next";
+import useSessionUser from "@/hook/useSessionUser";
 
 type QuestionWorkspaceProps = {
   question: Question;
@@ -14,6 +15,7 @@ type QuestionWorkspaceProps = {
   initialLanguage?: Language;
   increment?: (value: string) => void;
   chatroomId?: string;
+  users?: number[];
 };
 
 const QuestionWorkspace: React.FC<QuestionWorkspaceProps> = ({
@@ -22,7 +24,16 @@ const QuestionWorkspace: React.FC<QuestionWorkspaceProps> = ({
   initialLanguage,
   increment,
   chatroomId,
+  users
 }) => {
+  const {sessionUser} = useSessionUser();
+  console.log({
+    question,
+    doc,
+    initialLanguage,
+    increment,
+    chatroomId,
+  });
   return (
     <>
       <Split className="split flex-1 h-[calc(100vh-60px)]">
@@ -38,9 +49,10 @@ const QuestionWorkspace: React.FC<QuestionWorkspaceProps> = ({
             ]}
             onChangeCode={increment}
             initialLanguage={initialLanguage}
+            users={users!}
           />
         ) : (
-          <CodeEditor question={question} />
+          <CodeEditor question={question} users={[sessionUser.id]} />
         )}
       </Split>
       {doc && <ChatWidget chatroomId={chatroomId} />}

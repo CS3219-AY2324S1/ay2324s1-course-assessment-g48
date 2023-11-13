@@ -1,16 +1,25 @@
 import crypto from "crypto";
 import { Repo, isValidAutomergeUrl } from "@automerge/automerge-repo";
 import axios from "axios";
-import { CHAT_URL } from "../utils/config.ts";
+import { CHAT_URL, QUESTION_URL } from "../utils/config.ts";
 import SessionModel from "../model/Session.ts";
 import mongoose from "mongoose";
+import { Difficulty } from "../enums/Difficulty.ts";
+import { ProgrammingLanguage } from "../enums/ProgrammingLanguage.ts";
+import { languageOptions } from "../utils/languages/languageMap.ts";
 
 export type Doc = { text: string };
 
 export class SessionManagerService {
   private sessionToUserMap: Map<
     string,
-    { users: number[]; docId: string; chatroomId: string }
+    {
+      users: number[];
+      docId: string;
+      chatroomId: string;
+      question: string;
+      language: number;
+    }
   >;
   private repo: Repo;
 
@@ -19,17 +28,39 @@ export class SessionManagerService {
     this.repo = serverRepo;
   }
 
-  public async createNewSession(user1: number, user2: number) {
-    const chatroomId =  await this.createNewChatroom([user1, user2]);
+  public async createNewSession(
+    user1: number,
+    user2: number,
+    diff: Difficulty,
+    language: ProgrammingLanguage
+  ) {
+    const chatroomId = await this.createNewChatroom([user1, user2]);
+    const languageId = languageOptions.get(language);
+    const questions = await this.getRandomQuestion(diff, language);
+    console.log(questions);
+    let questionId: string;
+    if (!questions.length) {
+      console.log(
+        "For some reason a question with that specific language and complexity does not exist. Replacing questionId with default one"
+      );
+      questionId = "6544a293176b84aafd37817a";
+    } else {
+      questionId = questions[0]._id;
+    }
+
     const newSession = new SessionModel({
       users: [user1, user2],
       chatroomId,
-      code: "",
+      code: questions[0].starterCode.filter(
+        (starter) => starter.languageId == languageId
+      )[0].code,
+      question: questionId,
+      language: languageId,
     });
     await newSession
       .save()
       .then((session) => console.log(session))
-      .catch((error) => console.error("Error saving session:", error));
+      .catch((error) => console.error("Error saving session:", error)); // May have error here
 
     const sessionId = newSession._id.toString();
     const handle = this.getDoc(sessionId);
@@ -42,6 +73,8 @@ export class SessionManagerService {
       users: [user1, user2],
       docId: handle.url,
       chatroomId,
+      question: questionId,
+      language: languageOptions.get(language) ?? 63,
     });
 
     return sessionId;
@@ -63,8 +96,14 @@ export class SessionManagerService {
   }
 
   public async getDocId(sessionId: string) {
+    console.log(`Getting docIdsad for ${sessionId}`);
     if (!this.sessionToUserMap.has(sessionId)) {
-      const session = await SessionModel.findById(sessionId);
+      const session = await SessionModel.findById(sessionId)
+        .then((res) => {
+          console.log("can get", res);
+          return res;
+        })
+        .catch((err) => console.error("ERRRROR", err));
       if (!session) {
         console.log("No session of this sessionId has been found");
         return;
@@ -72,14 +111,15 @@ export class SessionManagerService {
       const code = session?.code;
       const handle = this.createDoc(code);
       // console.info("handle", handle);
-  
+
       // Wait for the document to be ready before accessing it
       await handle.whenReady();
       this.sessionToUserMap.set(sessionId, {
-        
         users: session.users,
         docId: handle.url,
         chatroomId: session.chatroomId,
+        question: session.question,
+        language: Number(session.language),
       });
     }
     return this.sessionToUserMap.get(sessionId);
@@ -104,8 +144,9 @@ export class SessionManagerService {
       if (isValidAutomergeUrl(docId)) {
         const doc = this.repo.find<Doc>(docId);
         const value = (await doc.doc())?.text;
-        console.log(value);
-        console.log(docId);
+        // console.log(value);
+        // console.log(docId);
+        console.log(`Saving ${sessionId} to database`);
 
         //TODO Save to database
         await SessionModel.updateOne(
@@ -114,5 +155,42 @@ export class SessionManagerService {
         );
       }
     });
+  }
+
+  public async getAllSessionsForUser(
+    uid: number,
+    startIndex: number,
+    endIndex: number
+  ) {
+    try {
+      console.log("first", startIndex, endIndex)
+      const sessions = await SessionModel.find({ users: uid })
+        .skip(startIndex)
+        .limit(endIndex - startIndex);
+      return sessions;
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  public async getRandomQuestion(
+    difficulty: Difficulty,
+    language: ProgrammingLanguage
+  ) {
+    console.log(
+      QUESTION_URL +
+        `/api/question/random-question/${difficulty}/${languageOptions.get(
+          language
+        )}`
+    );
+    return axios
+      .get(
+        QUESTION_URL +
+          `/api/question/random-question/${difficulty}/${languageOptions.get(
+            language
+          )}`
+      )
+      .then((res) => res.data.questions)
+      .catch((err) => console.error(err));
   }
 }

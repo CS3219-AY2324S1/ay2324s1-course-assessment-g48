@@ -1,7 +1,6 @@
 import {
   Question,
 } from "@/database/question/entities/question.entity";
-import { useHorizontalScroll } from "@/hook/useHorizontalScroll";
 import { classNames } from "@/utils/classnames/classnames";
 import { Tab } from "@headlessui/react";
 import { PlusSmallIcon, XMarkIcon } from "@heroicons/react/24/outline";
@@ -18,7 +17,6 @@ const ExamplesInput: React.FC<ExamplesInputProps> = ({
   newQuestion,
   setNewQuestion,
 }) => {
-  const scrollRef = useHorizontalScroll();
   const [currExamples, setCurrExamples] = useState<string[]>([""]);
 
   useEffect(() => {
@@ -26,7 +24,6 @@ const ExamplesInput: React.FC<ExamplesInputProps> = ({
   }, [newQuestion, setCurrExamples]);
 
   const handleAddExample = () => {
-    // TODO: not sure why initialTestCase is mutated
     setCurrExamples([
       ...currExamples,
       ""
@@ -64,7 +61,6 @@ const ExamplesInput: React.FC<ExamplesInputProps> = ({
       <Tab.Group as="div" className="mt-2">
         <div className="border-b border-gray-200">
           <Tab.List
-            ref={scrollRef}
             className="-mb-px flex space-x-8 py-1 overflow-x-auto"
           >
             {currExamples.map((example, index) => (
@@ -107,7 +103,7 @@ const ExamplesInput: React.FC<ExamplesInputProps> = ({
                         ]);
                       } else {
                         setCurrExamples(
-                          currExamples.filter((item) => item !== example)
+                          currExamples.slice(0, index).concat(currExamples.slice(index + 1))
                         );
                       }
                     }}

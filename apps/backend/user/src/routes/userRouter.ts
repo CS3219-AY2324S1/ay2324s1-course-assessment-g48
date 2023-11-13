@@ -10,6 +10,7 @@ import {
 import { OAuth, Role } from "@prisma/client";
 import logger from "../utils/logger";
 import {
+  getAccessTokenExpiry,
   getJwtErrorMessage,
   signJwtAccessToken,
   signJwtRefreshToken,
@@ -72,7 +73,6 @@ userRouter.post(
         return;
       }
 
-
       const cleanedOauth: OAuth[] = [];
       const invalidOauth: string[] = [];
       if (oauth !== undefined) {
@@ -84,7 +84,6 @@ userRouter.post(
           cleanedOauth.push(auth as OAuthType);
         }
       }
-
 
       if (invalidOauth.length !== 0) {
         logger.info(
@@ -98,7 +97,6 @@ userRouter.post(
         hashedPassword = await bcrypt.hash(cleanedPassword, saltRounds);
       }
 
-      
       const cleanedUserData = {
         id: -1, // not used, placeholder id
         email: cleanedEmail,
@@ -165,10 +163,21 @@ userRouter.post(
           const { password: userPassword, ...userExcludePassword } = user;
           const accessToken = signJwtAccessToken(userExcludePassword);
           const refreshToken = signJwtRefreshToken(userExcludePassword);
-
-          res
-            .status(200)
-            .json({ ...userExcludePassword, accessToken, refreshToken });
+          try {
+            const accessTokenExpiry = getAccessTokenExpiry(accessToken)! * 1000;
+            res.status(200).json({
+              ...userExcludePassword,
+              accessToken,
+              refreshToken,
+              accessTokenExpiry,
+            });
+            return;
+          } catch (error) {
+            console.error(error);
+            res
+              .status(500)
+              .json({ error: "500: Unable to get access token expiry." });
+          }
           return;
         }
 
@@ -179,20 +188,35 @@ userRouter.post(
         return;
       }
 
-      const isCorrectPassword = await bcrypt.compare(user?.password!, cleanedPassword);
+      const isCorrectPassword = await bcrypt.compare(
+        cleanedPassword,
+        user?.password!
+      );
 
-      if (isCorrectPassword) {
+      if (!isCorrectPassword) {
         res.status(401).json({
-          error: "401: Incorrect password, please try again."
+          error: "401: Incorrect password, please try again.",
         });
         return;
       }
       const { password: userPassword, ...userExcludePassword } = user;
       const accessToken = signJwtAccessToken(userExcludePassword);
       const refreshToken = signJwtRefreshToken(userExcludePassword);
-      res
-        .status(200)
-        .json({ ...userExcludePassword, accessToken, refreshToken });
+      try {
+        const accessTokenExpiry = getAccessTokenExpiry(accessToken)! * 1000;
+        res.status(200).json({
+          ...userExcludePassword,
+          accessToken,
+          refreshToken,
+          accessTokenExpiry,
+        });
+        return;
+      } catch (error) {
+        console.error(error);
+        res
+          .status(500)
+          .json({ error: "500: Unable to get access token expiry." });
+      }
     } catch (error) {
       console.error("UserRouter login error:", error);
       next(error);
@@ -202,6 +226,7 @@ userRouter.post(
 
 userRouter.get("/verifyJwt", async (req: Request, res: Response) => {
   const accessToken = req.headers.authorization?.split(" ")[1];
+  console.log("Access Token: ", accessToken);
   try {
     const userPayload = verifyJwtAccessToken(accessToken);
     res.status(200).json(userPayload);
@@ -229,9 +254,18 @@ userRouter.get("/refreshJwt", async (req: Request, res: Response) => {
   delete userPayload.iat;
   delete userPayload.exp;
   const newAccessToken = signJwtAccessToken(userPayload);
-  res
+  try {
+    const accessTokenExpiry = getAccessTokenExpiry(newAccessToken)! * 1000;
+    res
     .status(200)
-    .json({ ...userPayload, accessToken: newAccessToken, refreshToken });
+    .json({ ...userPayload, accessToken: newAccessToken, refreshToken, accessTokenExpiry });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: "500: Unable to get access token expiry." });
+  }
+
 });
 
 // Update a user
@@ -320,8 +354,11 @@ userRouter.put(
         }
       }
 
-      const saltRounds = 10;
-      const hashedPassword = await bcrypt.hash(cleanedPassword, saltRounds);
+      let hashedPassword = null;
+      if (cleanedPassword !== undefined) {
+        const saltRounds = 10;
+        hashedPassword = await bcrypt.hash(cleanedPassword, saltRounds);
+      }
 
       const updatedUser = await updateUser(parseInt(id), {
         email: cleanedEmail,
@@ -371,7 +408,7 @@ userRouter.get(
       const { id } = req.params;
       const user = await findOneUser(
         { id: Number(id) },
-        { email: true, username: true, image:true }
+        { email: true, username: true, password: true, image: true }
       );
       if (!user) {
         res.status(404).json({

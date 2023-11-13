@@ -2,13 +2,17 @@ import React from "react";
 
 import CodeEditor from "./CodeEditor";
 import { Language } from "@/utils/class/Language";
-import { CodeType, Question } from "@/database/question/entities/question.entity";
+import {
+  CodeType,
+  Question,
+} from "@/database/question/entities/question.entity";
 
 type SessionCodeEditorProps = {
   question: Question;
   onChangeCode?: (value: string) => void;
   currSessionCode?: CodeType[];
   initialLanguage?: Language;
+  users: number[];
 };
 
 const SessionCodeEditor: React.FC<SessionCodeEditorProps> = ({
@@ -16,14 +20,16 @@ const SessionCodeEditor: React.FC<SessionCodeEditorProps> = ({
   currSessionCode,
   onChangeCode,
   initialLanguage,
+  users
 }) => {
   return (
     <CodeEditor
       question={question}
       currSessionCode={currSessionCode}
-      onChangeCode={(value: string | undefined) => onChangeCode?.(value ?? '')}
+      onChangeCode={(value: string | undefined) => onChangeCode?.(value ?? "")}
       initialLanguage={initialLanguage}
       hasSession={true}
+      users={users}
     />
   );
 };

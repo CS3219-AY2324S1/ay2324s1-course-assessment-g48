@@ -11,16 +11,14 @@ import Stopwatch from "./Stopwatch";
 import { classNames } from "@/utils/classnames/classnames";
 import { useMatchState } from "@/hook/MatchStateContext";
 import { MatchedState } from "@/utils/enums/MatchingState";
+import Countdown from "./Countdown";
+import { useTimer } from "@/hook/timerContext";
 
 const navigation = [
   { name: "Question", href: "/questions", current: false },
-  { name: "Matching", href: "/matching", current: false },
+  { name: "Collaboration", href: "/collaboration", current: false },
   { name: "History", href: "/history/user", current: false },
 ];
-
-// function classNames(...classes: string[]) {
-//   return classes.filter(Boolean).join(" ");
-// }
 
 type NavbarProps = {
   session: Session | null;
@@ -33,16 +31,10 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
   function handleSignOutClick() {
     signOut({ callbackUrl: "/" });
   }
-  const { matchState, peer } = useMatchState();
-  const [isTooltipVisible, setTooltipVisible] = useState(false);
+  const { matchState } = useMatchState();
+  const { seconds } = useTimer();
 
-  const handleMouseEnter = () => {
-    setTooltipVisible(true);
-  };
-
-  const handleMouseLeave = () => {
-    setTooltipVisible(false);
-  };
+  
 
   return (
     <Disclosure as="nav" className="bg-gray-900 ">
@@ -87,42 +79,46 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
                 <>
                   <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                     <div className="flex flex-shrink-0 items-center">
-                      <a
+                      <Link href={"/"}
                         className="cursor-pointer"
-                        onClick={() => router.push("/")}
                       >
                         <span className="self-center text-2xl font-semibold whitespace-nowrap text-white">
                           LeetPal
                         </span>
-                      </a>
+                      </Link>
                     </div>
-                    <div className="hidden sm:ml-6 sm:block">
-                      <div className="flex space-x-4">
-                        {navigation.map((item) => (
-                          <a
-                            key={item.name}
-                            // href={item.href}
-                            onClick={() => router.push(item.href)}
-                            className={classNames(
-                              currentPath === item.href
-                                ? "bg-gray-900 text-white"
-                                : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                              "rounded-md px-3 py-2 text-sm font-medium cursor-pointer"
-                            )}
-                            aria-current={
-                              currentPath === item.href ? "page" : undefined
-                            }
-                          >
-                            {item.name}
-                          </a>
-                        ))}
+                      <div className="hidden sm:ml-6 sm:block">
+                        <div className="flex space-x-4">
+                          {navigation.map((item) => (
+                            <a
+                              key={item.name}
+                              // href={item.href}
+                              onClick={() => router.push(item.href)}
+                              className={classNames(
+                                currentPath === item.href
+                                  ? "bg-gray-900 text-white"
+                                  : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                                "rounded-md px-3 py-2 text-sm font-medium cursor-pointer"
+                              )}
+                              aria-current={
+                                currentPath === item.href ? "page" : undefined
+                              }
+                            >
+                              {item.name}
+                            </a>
+                          ))}
+                        </div>
                       </div>
-                    </div>
                   </div>
 
                   <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 space-x-2">
-                    <div className="tooltip-container">
-                      {matchState===MatchedState.MATCHED && peer ? (
+                      { matchState === MatchedState.MATCHING &&
+                        <div className="mx-auto w-10 center">
+                          <Countdown counter={seconds} />
+                        </div>
+                      }
+                    {/* <div className="tooltip-container">
+                      {matchState === MatchedState.MATCHED && peer ? (
                         <div className="flex">
                           <div
                             className="rounded-full transition duration-300 ease-in-out"
@@ -141,11 +137,9 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
                         <></>
                       )}
                       {isTooltipVisible && peer && (
-                        <div className="tooltip">
-                          {peer.username}
-                        </div>
+                        <div className="tooltip">{peer.username}</div>
                       )}
-                    </div>
+                    </div> */}
                     {isQuestionPage && <Stopwatch />}
                     <ModeToggleButton />
 
@@ -176,29 +170,29 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
                         <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                           <Menu.Item>
                             {({ active }) => (
-                              <a
-                                // href="/profile"
-                                onClick={() => router.push("/profile")}
+                              <Link
+                                href="/profile"
                                 className={classNames(
                                   active ? "bg-gray-100" : "",
                                   "block px-4 py-2 text-sm text-gray-700 cursor-pointer"
                                 )}
                               >
                                 Your Profile
-                              </a>
+                              </Link>
                             )}
                           </Menu.Item>
                           <Menu.Item>
                             {({ active }) => (
-                              <a
+                              <Link
+                                href="#"
                                 onClick={() => handleSignOutClick()}
                                 className={classNames(
                                   active ? "bg-gray-100" : "",
-                                  "block px-4 py-2 text-sm text-white bg-red-600 rounded-md cursor-pointer"
+                                  "block px-4 py-2 text-sm text-white bg-red-600 hover:bg-red-700 rounded-md cursor-pointer"
                                 )}
                               >
                                 Sign out
-                              </a>
+                              </Link>
                             )}
                           </Menu.Item>
                         </Menu.Items>
@@ -210,26 +204,26 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
             </div>
           </div>
 
-          <Disclosure.Panel className={"sm:hidden"}>
-            <div className="space-y-1 px-2 pb-3 pt-2">
-              {navigation.map((item) => (
-                <Disclosure.Button
-                  key={item.name}
-                  as="a"
-                  onClick={() => router.push(item.href)}
-                  className={classNames(
-                    item.current
-                      ? "bg-gray-900 text-white"
-                      : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                    "block rounded-md px-3 py-2 text-base font-medium cursor-pointer"
-                  )}
-                  aria-current={item.current ? "page" : undefined}
-                >
-                  {item.name}
-                </Disclosure.Button>
-              ))}
-            </div>
-          </Disclosure.Panel>
+            <Disclosure.Panel className={"sm:hidden"}>
+              <div className="space-y-1 px-2 pb-3 pt-2">
+                {navigation.map((item) => (
+                  <Disclosure.Button
+                    key={item.name}
+                    as="a"
+                    onClick={() => router.push(item.href)}
+                    className={classNames(
+                      item.current
+                        ? "bg-gray-900 text-white"
+                        : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                      "block rounded-md px-3 py-2 text-base font-medium cursor-pointer"
+                    )}
+                    aria-current={item.current ? "page" : undefined}
+                  >
+                    {item.name}
+                  </Disclosure.Button>
+                ))}
+              </div>
+            </Disclosure.Panel>
         </>
       )}
     </Disclosure>

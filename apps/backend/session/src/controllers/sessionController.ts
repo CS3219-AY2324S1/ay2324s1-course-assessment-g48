@@ -26,7 +26,14 @@ export class SessionController {
   ) {
     logger.info(req.body);
     const [user1, user2] = req.body.users;
-    const sessionId = await this.sessionManager.createNewSession(user1, user2);
+    const difficulty = req.body.difficulty;
+    const language = req.body.language;
+    const sessionId = await this.sessionManager.createNewSession(
+      user1,
+      user2,
+      difficulty,
+      language
+    );
     console.log(`Created a sessionId: ${sessionId}`);
     res.status(200).json({ sessionId: sessionId.toString() });
   }
@@ -64,5 +71,24 @@ export class SessionController {
   public async saveToDatabase() {
     console.log("Saving to database");
     await this.sessionManager.saveToDatabase();
+  }
+
+  public async handleGetSessionsForUser(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    const uid = Number(req.params.user);
+    const { startIndex, endIndex } = req.body
+    if (!uid) {
+      return res.status(500).json({ err: "UID passed in was not valid." });
+    }
+    const sessions = await this.sessionManager.getAllSessionsForUser(uid, Number(startIndex), Number(endIndex));
+    if (!sessions) {
+      return res.status(500).json({
+        err: "Something went wrong when searching for the sessions for this user.",
+      });
+    }
+    return res.status(200).json({ sessions });
   }
 }

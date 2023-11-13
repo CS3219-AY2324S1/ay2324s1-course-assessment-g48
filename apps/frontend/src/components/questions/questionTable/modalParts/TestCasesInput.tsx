@@ -3,10 +3,10 @@ import {
   TestCase,
   emptyTestCase,
 } from "@/database/question/entities/question.entity";
-import { useHorizontalScroll } from "@/hook/useHorizontalScroll";
 import { classNames } from "@/utils/classnames/classnames";
 import { Tab } from "@headlessui/react";
 import { PlusSmallIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import _ from "lodash";
 import React, { Fragment, useEffect, useState } from "react";
 
 type TestCasesInputProps = {
@@ -22,12 +22,12 @@ const TestCasesInput: React.FC<TestCasesInputProps> = ({
   blank,
   setBlank,
 }) => {
-  const scrollRef = useHorizontalScroll();
+  const initialTestCase = _.cloneDeep(emptyTestCase);
   const [currTestCases, setCurrTestCases] = useState<TestCase[]>([emptyTestCase]);
 
   useEffect(() => {
-    setCurrTestCases(newQuestion.testcases.length === 0 ? [emptyTestCase] : newQuestion.testcases);
-  }, [newQuestion, setCurrTestCases]);
+    setCurrTestCases(newQuestion.testcases.length === 0 ? [initialTestCase] : newQuestion.testcases);
+  }, [initialTestCase, newQuestion, setCurrTestCases]);
 
   useEffect(() => {
     setBlank(
@@ -37,13 +37,9 @@ const TestCasesInput: React.FC<TestCasesInputProps> = ({
   }, [currTestCases, setBlank]);
 
   const handleAddTestCase = () => {
-    // TODO: not sure why initialTestCase is mutated
     setCurrTestCases([
       ...currTestCases,
-      {
-        input: "",
-        output: "",
-      },
+      initialTestCase,
     ]);
   };
   const handleInputChange = (index: number, inputValue: string) => {
@@ -88,7 +84,7 @@ const TestCasesInput: React.FC<TestCasesInputProps> = ({
       <Tab.Group as="div" className="mt-2">
         <div className="border-b border-gray-200">
           <Tab.List
-            ref={scrollRef}
+
             className="-mb-px flex space-x-8 py-1 overflow-x-auto"
           >
             {currTestCases.map((testcase, index) => (

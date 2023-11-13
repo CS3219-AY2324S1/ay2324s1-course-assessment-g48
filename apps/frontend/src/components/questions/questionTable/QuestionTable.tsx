@@ -5,16 +5,14 @@ import {
   postNewQuestion,
   updateQuestionById,
 } from "@/database/question/questionService";
-import useQuestions from "@/hook/useQuestions";
 import AddQuestionModal from "./AddQuestionModal";
 import EditQuestionModal from "./EditQuestionModal";
 import { Complexity } from "@/utils/enums/Complexity";
-import useSessionUser from "@/hook/useSessionUser";
 import { Role } from "@/utils/enums/Role";
 import { useRouter } from "next/router";
 import {
   Question,
-  initialQuestion,
+  emptyQuestion,
 } from "@/database/question/entities/question.entity";
 import QuestionPagination from "./QuestionPagination";
 import DeleteCfmModal from "./DeleteCfmModal";
@@ -26,26 +24,32 @@ type QuestionTableProps = {
   setOpenAdd: (open: boolean) => void;
   openAdd: boolean;
   hidden?: boolean;
+  userRole?: Role;
+  accessToken?: string | null;
+  refreshToken?: string | null;
+  questions: Question[];
+  totalQuestions: number;
+  handleTrigger: () => void;
 };
 
 const QuestionTable: FC<QuestionTableProps> = ({
   setOpenAdd,
   openAdd,
   hidden,
+  userRole,
+  accessToken,
+  refreshToken,
+  questions,
+  totalQuestions,
+  handleTrigger,
 }) => {
   const questionsPerPage = useMemo(() => 10, []);
-  const {data: session} = useSession();
-  const { sessionUser } = useSessionUser();
-  const [userRole, setUserRole] = useState(sessionUser.role);
-  const [accessToken, setAccessToken] = useState(sessionUser.accessToken);
-  const [refreshToken, setRefreshToken] = useState(sessionUser.refreshToken);
-  const { questions, totalQuestions, handleTrigger } = useQuestions(sessionUser.accessToken, sessionUser.refreshToken);
+  const { update } = useSession();
   const [searchResults, setSearchResults] = useState("");
-  const [viewQuestion, setViewQuestion] = useState<Question>(initialQuestion);
-  const [questionToEdit, setQuestionToEdit] =
-    useState<Question>(initialQuestion);
+  const [viewQuestion, setViewQuestion] = useState<Question>(emptyQuestion);
+  const [questionToEdit, setQuestionToEdit] = useState<Question>(emptyQuestion);
   const [questionToDelete, setQuestionToDelete] =
-    useState<Question>(initialQuestion);
+    useState<Question>(emptyQuestion);
 
   const [openEdit, setOpenEdit] = useState(false);
   const [openView, setOpenView] = useState(false);
@@ -63,11 +67,16 @@ const QuestionTable: FC<QuestionTableProps> = ({
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedDifficulty, setSelectedDifficulty] = useState("");
 
+  const complexityClass = {
+    [Complexity.Easy]: "text-green-600",
+    [Complexity.Medium]: "text-yellow-600",
+    [Complexity.Hard]: "text-red-600",
+  };
+
   const handleCategoryChange = (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
     setSelectedCategory(event.target.value);
-    console.log(event.target.value);
   };
 
   const handleDifficultyChange = (
@@ -77,10 +86,10 @@ const QuestionTable: FC<QuestionTableProps> = ({
   };
 
   useEffect(() => {
-    setUserRole(sessionUser.role);
-    setAccessToken(sessionUser.accessToken);
-    setRefreshToken(sessionUser.refreshToken);
-  }, [sessionUser]);
+    if (currentQuestions.length===1) {
+      setCurrentPage(currentPage-1)
+    }
+  }, [questions])
 
   useEffect(() => {
     setFilteredQuestions(
@@ -101,8 +110,10 @@ const QuestionTable: FC<QuestionTableProps> = ({
       .then((data) => {
         handleTrigger();
         if (data.accessToken) {
-          session!.user!.accessToken = data.accessToken;
-          console.log("Refresh accessToken", session);
+          update({
+            accessToken: data.accessToken,
+            accessTokenExpiry: data.accessTokenExpiry,
+          });
         }
         setOpenAdd(false);
       })
@@ -116,8 +127,10 @@ const QuestionTable: FC<QuestionTableProps> = ({
       .then((data) => {
         handleTrigger();
         if (data.accessToken) {
-          session!.user!.accessToken = data.accessToken;
-          console.log("Refresh accessToken", session);
+          update({
+            accessToken: data.accessToken,
+            accessTokenExpiry: data.accessTokenExpiry,
+          });
         }
         setOpenDelCfm(false);
       })
@@ -127,12 +140,19 @@ const QuestionTable: FC<QuestionTableProps> = ({
   };
 
   const handleEditQuestion = async (editQuestion: Question) => {
-    await updateQuestionById(editQuestion._id, accessToken!, refreshToken!, editQuestion)
+    await updateQuestionById(
+      editQuestion._id,
+      accessToken!,
+      refreshToken!,
+      editQuestion
+    )
       .then((data) => {
         handleTrigger();
         if (data.accessToken) {
-          session!.user!.accessToken = data.accessToken;
-          console.log("Refresh accessToken", session);
+          update({
+            accessToken: data.accessToken,
+            accessTokenExpiry: data.accessTokenExpiry,
+          });
         }
         setOpenEdit(false);
       })
@@ -192,12 +212,12 @@ const QuestionTable: FC<QuestionTableProps> = ({
         />
       </div>
 
-      <div className="overflow-x-auto shadow-md rounded-lg">
+      <div className="overflow-x-auto shadow-md rounded-lg dark:bg-gray-800 max-h-[calc(100vh-270px)]">
         <table
-          className=" relative text-sm text-left text-gray-500 dark:text-gray-400 w-full"
+          className="relative table-auto text-sm text-left text-gray-500 dark:text-gray-400 w-full"
           hidden={hidden}
         >
-          <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+          <thead className="text-xs sticky top-0 text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
               <th scope="col" className="px-6 py-3 ">
                 S/N
@@ -230,7 +250,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
           <tbody>
             {currentQuestions.map((question, index) => (
               <tr
-                key={index}
+                key={question._id}
                 className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
               >
                 <th scope="row" className="py-2 center">
@@ -245,11 +265,7 @@ const QuestionTable: FC<QuestionTableProps> = ({
                 <td className="px-6 py-4">{question.categories.join(", ")}</td>
                 <td
                   className={`px-6 py-4 ${
-                    question.complexity === Complexity.Easy
-                      ? "text-green-600"
-                      : question.complexity === Complexity.Medium
-                      ? " text-yellow-600"
-                      : "text-red-600"
+                    complexityClass[question.complexity as Complexity] || ""
                   }`}
                 >
                   {question.complexity}

@@ -14,8 +14,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const isErrorCallback = req.query?.error && req.query?.error_description;
     if (isErrorCallback) {
       const query = req.query;
-      console.error("Provider error: ", query.error);
-      console.error("Provider error_description: ", query.error_description);
+      console.error("Provider error:", query.error);
+      console.error("Provider error_description:", query.error_description);
       res.redirect("/signin");
       return;
     }
