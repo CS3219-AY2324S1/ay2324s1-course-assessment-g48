@@ -6,7 +6,7 @@ import { useError } from "./ErrorContext";
 import { number } from "prop-types";
 
 function useImageById(userIds: number[]) {
-  const { isLoading: isLoadingUser } = useSessionUser();
+  const { isLoadingUser } = useSessionUser();
   const [isLoading, setIsLoading] = useState(true);
   const [imageMap, setImageMap] = useState(new Map<number, string>());
   const { setError } = useError();
@@ -18,10 +18,6 @@ function useImageById(userIds: number[]) {
         getUserById(user)
           .then((data) => data.image)
           .catch((err) => {
-            setError({
-              type: 1,
-              message: "Cannot load user image",
-            });
           })
       );
 
@@ -35,10 +31,6 @@ function useImageById(userIds: number[]) {
           setIsLoading(false);
         })
         .catch((err) => {
-          setError({
-            type: 1,
-            message: "Error fetching user images",
-          });
         });
     }
   }, [userIds, isLoadingUser, setError]);
