@@ -62,7 +62,7 @@ spec:
             port:
               number: 8250
       - pathType: Prefix
-        path: /session
+        path: /api/session
         backend:
           service:
             name: peerprep-session

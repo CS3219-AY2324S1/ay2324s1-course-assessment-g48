@@ -28,8 +28,8 @@ spec:
     spec:
       containers:
       - name: peerprep-history
-        image: deployment87/dply87:peerprep-history-v1.1.0
-        
+        image: deployment87/dply87:peerprep-history-v1.3.5
+        imagePullPolicy: Always
         resources:
           limits:
             memory: "256Mi"

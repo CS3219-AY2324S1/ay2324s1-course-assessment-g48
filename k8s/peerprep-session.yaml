@@ -32,7 +32,8 @@ spec:
     spec:
       containers:
       - name: peerprep-session
-        image: deployment87/dply87:peerprep-session-v1.3.0
+        image: deployment87/dply87:peerprep-session-v1.3.5
+        imagePullPolicy: Always
         resources:
           limits:
             memory: "256Mi"

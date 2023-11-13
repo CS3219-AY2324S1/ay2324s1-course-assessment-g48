@@ -28,7 +28,7 @@ spec:
     spec:
       containers:
       - name: peerprep-user
-        image: deployment87/dply87:peerprep-user-v1.3.0
+        image: deployment87/dply87:peerprep-user-v1.3.2
         imagePullPolicy: Always
         resources:
           limits:

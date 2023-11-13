@@ -28,7 +28,7 @@ spec:
     spec:
       containers:
       - name: peerprep-codeexec
-        image: deployment87/dply87:peerprep-codeexec-v1.3.0
+        image: deployment87/dply87:peerprep-codeexec-v1.3.3
         resources:
           limits:
             memory: "256Mi"
@@ -39,13 +39,13 @@ spec:
           httpGet:
             path: /ping
             port: 8420
-          initialDelaySeconds: 10
+          initialDelaySeconds: 60
           timeoutSeconds: 10
         readinessProbe:
           httpGet:  
             path: /ping
             port: 8420
-          initialDelaySeconds: 10
+          initialDelaySeconds: 60
           timeoutSeconds: 10
 
 ---
