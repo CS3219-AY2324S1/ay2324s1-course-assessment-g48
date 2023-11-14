@@ -18,6 +18,7 @@ import {
   verifyJwtRefreshToken,
 } from "../utils/jwt";
 import bcrypt from "bcrypt";
+import { emailSchema, passwordSchema } from "../utils/validator";
 
 export const userRouter = Router();
 
@@ -33,8 +34,9 @@ userRouter.post(
       const cleanedRole = role?.trim();
       const cleanedImage = image?.trim();
 
-      if (!cleanedEmail?.length) {
-        res.status(400).send({ error: "Your email cannot be blank." });
+      const emailValidation = emailSchema.validate({ email: cleanedEmail });
+      if (emailValidation.error) {
+        res.status(400).send({ error: emailValidation.error.message });
         return;
       }
 
@@ -43,9 +45,14 @@ userRouter.post(
         return;
       }
 
-      if (oauth === undefined && !cleanedPassword?.length) {
-        res.status(400).send({ error: "Your password cannot be blank." });
-        return;
+      if (oauth === undefined) {
+        const passwordValidation = passwordSchema.validate({
+          password: cleanedPassword,
+        });
+        if (passwordValidation.error) {
+          res.status(400).send({ error: passwordValidation.error.message });
+          return;
+        }
       }
 
       if (!cleanedRole?.length) {
@@ -257,15 +264,17 @@ userRouter.get("/refreshJwt", async (req: Request, res: Response) => {
   try {
     const accessTokenExpiry = getAccessTokenExpiry(newAccessToken)! * 1000;
     res
-    .status(200)
-    .json({ ...userPayload, accessToken: newAccessToken, refreshToken, accessTokenExpiry });
+      .status(200)
+      .json({
+        ...userPayload,
+        accessToken: newAccessToken,
+        refreshToken,
+        accessTokenExpiry,
+      });
   } catch (error) {
     console.error(error);
-    res
-      .status(500)
-      .json({ error: "500: Unable to get access token expiry." });
+    res.status(500).json({ error: "500: Unable to get access token expiry." });
   }
-
 });
 
 // Update a user
@@ -294,8 +303,9 @@ userRouter.put(
           return;
         }
 
-        if (!cleanedEmail.length) {
-          res.status(400).send({ error: "Your email cannot be blank." });
+        const emailValidation = emailSchema.validate({ email: cleanedEmail });
+        if (emailValidation.error) {
+          res.status(400).send({ error: emailValidation.error.message });
           return;
         }
       }
@@ -317,10 +327,20 @@ userRouter.put(
         }
       }
 
-      if (cleanedPassword !== undefined && !cleanedPassword.length) {
-        const user = await findOneUser({ id: Number(id) });
-        if (user?.oauth.length === 0) {
+      const userinDB = await findOneUser({ id: Number(id) });
+      if (cleanedPassword !== undefined && cleanedPassword.length === 0) {
+        if (userinDB?.oauth.length === 0) {
           res.status(400).send({ error: "Your password cannot be blank." });
+          return;
+        }
+      } 
+      if (cleanedPassword !== undefined && cleanedPassword.length > 0) {
+        const passwordValidation = passwordSchema.validate({
+          password: cleanedPassword,
+        });
+      
+        if (passwordValidation.error) {
+          res.status(400).send({ error: passwordValidation.error.message });
           return;
         }
       }
@@ -354,7 +374,7 @@ userRouter.put(
         }
       }
 
-      let hashedPassword = null;
+      let hashedPassword = undefined;
       if (cleanedPassword !== undefined) {
         const saltRounds = 10;
         hashedPassword = await bcrypt.hash(cleanedPassword, saltRounds);

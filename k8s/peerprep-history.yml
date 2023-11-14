@@ -28,7 +28,7 @@ spec:
     spec:
       containers:
       - name: peerprep-history
-        image: deployment87/dply87:peerprep-history-v1.3.5
+        image: deployment87/dply87:peerprep-history-v1.4.1
         imagePullPolicy: Always
         resources:
           limits:

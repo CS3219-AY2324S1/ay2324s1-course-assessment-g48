@@ -38,22 +38,24 @@ const QuestionWorkspace: React.FC<QuestionWorkspaceProps> = ({
     <>
       <Split className="split flex-1 h-[calc(100vh-60px)]">
         <DescriptionPanel question={question} />
-        {doc ? (
-          <SessionCodeEditor
-            question={question}
-            currSessionCode={[
-              {
-                languageId: initialLanguage!.id,
-                code: doc?.text ?? "",
-              },
-            ]}
-            onChangeCode={increment}
-            initialLanguage={initialLanguage}
-            users={users!}
-          />
-        ) : (
-          <CodeEditor question={question} users={[sessionUser.id]} />
-        )}
+        <div>
+          {doc ? (
+            <SessionCodeEditor
+              question={question}
+              currSessionCode={[
+                {
+                  languageId: initialLanguage!.id,
+                  code: doc?.text ?? "",
+                },
+              ]}
+              onChangeCode={increment}
+              initialLanguage={initialLanguage}
+              users={users!}
+            />
+          ) : (
+            <CodeEditor question={question} users={[sessionUser.id]} />
+          )}
+        </div>
       </Split>
       {doc && <ChatWidget chatroomId={chatroomId} />}
     </>

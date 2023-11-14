@@ -20,6 +20,7 @@ import useSessionUser from "@/hook/useSessionUser";
 import { useRouter } from "next/router";
 import { HistoryQuestionTestcase } from "@/database/history/entities/history.entity";
 import { postNewHistory } from "@/database/history/historyService";
+import { useSession } from "next-auth/react";
 
 type CodeEditorProps = {
   onChangeCode?: (value: string | undefined) => void;
@@ -27,7 +28,7 @@ type CodeEditorProps = {
   question: Question;
   initialLanguage?: Language;
   hasSession?: boolean;
-  users: number[]
+  users: number[];
 };
 
 const CodeEditor: React.FC<CodeEditorProps> = ({
@@ -36,15 +37,18 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   question,
   initialLanguage,
   hasSession,
-  users
+  users,
 }) => {
   const { isDarkMode } = useTheme();
+  const { update } = useSession();
   const sessionID = useRouter().query?.sessionId as string;
-  const defaultLanguage : Language|undefined = languageOptions.find((lang) => lang.id === 71)
+  const defaultLanguage: Language | undefined = languageOptions.find(
+    (lang) => lang.id === 71 // "python language"
+  );
   // current language selected by user
   const [selectedLanguage, setSelectedLanguage] = useState<Language>(
     initialLanguage ?? defaultLanguage!
-  ); // "python language"
+  ); 
   // default code for the language selected by user
   const starterCode = useMemo(
     () =>
@@ -65,8 +69,10 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
     new Array(question.testcases.length)
   );
   const [processing, setProcessing] = useState(false);
-  const {sessionUser} = useSessionUser();
-  const [historyTestCase, setHistoryTestCase] = useState<HistoryQuestionTestcase[]>([]);
+  const { sessionUser } = useSessionUser();
+  const [historyTestCase, setHistoryTestCase] = useState<
+    HistoryQuestionTestcase[]
+  >([]);
 
   const enterPress = useKeyPress("Enter");
   const ctrlPress = useKeyPress("Control");
@@ -99,7 +105,6 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
       // change display code as per normal
       setDisplayCode(value ?? "");
     };
-    // console.log("Using solo code editor. Current code:", code);
   }
 
   const handleOutputDetails = (response: any, index: number) => {
@@ -109,10 +114,6 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
       return newOutputDetails;
     });
   };
-
-  // const findLanguage = (language: Language) => {
-  //   return languageOptions.find((lang) => lang.label === language.label);
-  // };
 
   const handleCompile = async () => {
     setProcessing(true);
@@ -151,38 +152,46 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
       }
       if (allSuccess) {
         showSuccessToast(`Compiled Successfully!`);
-        
       } else {
         showErrorToast("A testcase failed, please try again!");
       }
-  
-    console.log("asdasdasdad", outputDetails);
 
-    const newCompletedQuestion = {
-      questionId: question._id,
-      questionTitle: question.title,
-      language: selectedLanguage.label,
-      answer: btoa(displayCode),
-      testcases: historyTestCase,
-      completedAt: new Date(),
-      result: allSuccess ? "Correct" : "Incorrect",
-    }
-    const newHistory = {
-      userIds: users,
-      sessionId: sessionID??String(users[0]),
-      completed: [newCompletedQuestion],
-      date: new Date(),
-      _id: ""
-    }
+      const newCompletedQuestion = {
+        questionId: question._id,
+        questionTitle: question.title,
+        language: selectedLanguage.label,
+        answer: btoa(displayCode),
+        testcases: historyTestCase,
+        completedAt: new Date(),
+        result: allSuccess ? "Correct" : "Incorrect",
+      };
+      const newHistory = {
+        userIds: users,
+        sessionId: sessionID ?? String(users[0]),
+        completed: [newCompletedQuestion],
+        date: new Date(),
+        _id: "",
+      };
 
-    await postNewHistory(newHistory, sessionUser.accessToken??undefined, sessionUser.refreshToken??undefined).then((data) => {
-      console.log("success", data);
-    }).catch((err) => {
-      console.log("error", err);
-    })
+      await postNewHistory(
+        newHistory,
+        sessionUser.accessToken!,
+        sessionUser.refreshToken!
+      )
+        .then((data) => {
+          if (data.accessToken) {
+            update({
+              accessToken: data.accessToken,
+              accessTokenExpiry: data.accessTokenExpiry,
+            });
+          }
+        })
+        .catch((err) => {
+          console.error("error", err);
+        });
     } catch (err) {
       setProcessing(false);
-      console.log(err);
+      console.error(err);
     }
   };
 
@@ -193,7 +202,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
         const response = await axios.get(`/api/codeExecution/status/${token}`);
         const statusId = response.data.status_id;
         console.log(
-          "response.data outputdetails in checkStatus",
+          "response.data output details in checkStatus",
           response.data
         );
         // Processed - we have a result
@@ -207,17 +216,18 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
           handleOutputDetails(response.data, index);
           console.log("response.data", response.data.id);
           setHistoryTestCase((prev) => [
-            ...prev, {
+            ...prev,
+            {
               runTime: response.data.time,
               outcome: response.data.status.id,
-            }]
-          )
+            },
+          ]);
           if (statusId === Status.Accepted) {
             resolve(true);
           } else {
             resolve(false);
+          }
         }
-      }
       } catch (err) {
         setProcessing(false);
         showErrorToast((err as Error).message);

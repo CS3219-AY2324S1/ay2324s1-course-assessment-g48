@@ -19,11 +19,19 @@ function useSessionByUid(startIndex: number, endIndex: number) {
   useEffect(() => {
     setIsLoading(true);
     if (!isLoadingUser) {
-      // if (accessToken === null || refreshToken === null) return;
-      getSessionsByUserId(sessionUser.id, startIndex, endIndex, sessionUser.accessToken, sessionUser.refreshToken)
+      getSessionsByUserId(
+        sessionUser.id,
+        startIndex,
+        endIndex,
+        sessionUser.accessToken,
+        sessionUser.refreshToken
+      )
         .then((data) => {
           if (data.accessToken) {
-            update({ accessToken: data.accessToken, accessTokenExpiry: data.accessTokenExpiry });
+            update({
+              accessToken: data.accessToken,
+              accessTokenExpiry: data.accessTokenExpiry,
+            });
           }
           setSessions(data.sessions);
           setIsLoading(false);
@@ -37,7 +45,6 @@ function useSessionByUid(startIndex: number, endIndex: number) {
     sessions,
     isLoading,
   };
-        
 }
 
 export default useSessionByUid;

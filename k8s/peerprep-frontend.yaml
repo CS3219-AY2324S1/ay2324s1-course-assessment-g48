@@ -32,7 +32,7 @@ spec:
     spec:
       containers:
       - name: peerprep-frontend
-        image: deployment87/dply87:peerprep-frontend-v1.3.19
+        image: deployment87/dply87:peerprep-frontend-v1.4.0
         imagePullPolicy: Always
         resources:
           limits:
