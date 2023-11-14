@@ -29,7 +29,7 @@ export default function useNewHistory(
       questionId: question._id,
       questionTitle: question.title,
       language: language ?? "",
-      answer: atob(code ?? ""),
+      answer: code ?? "",
       testcases: historyTestCase,
       completedAt: new Date(),
       result: allSuccess ? "Correct" : "Incorrect",
