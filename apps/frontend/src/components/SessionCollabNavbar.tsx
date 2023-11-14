@@ -1,6 +1,6 @@
 import useSessionCollab from "@/hook/useSessionCollab";
 import { useRouter } from "next/router";
-import React, {  useState } from "react";
+import React, { useState } from "react";
 import ModeToggleButton from "./ModeToggleButton";
 import Image from "next/image";
 import { Disclosure } from "@headlessui/react";
@@ -10,7 +10,7 @@ import useUserById from "@/hook/useUserById";
 type Props = {};
 
 export default function SessionCollabNavbar({}: Props) {
-  const {  isLoadingUser: isLoading } = useSessionUser();
+  const { isLoadingUser: isLoading } = useSessionUser();
   const sessionId = useRouter().query.sessionId as string;
   const { users } = useSessionCollab(sessionId);
   const { userMap, isLoading: isLoadingUserMap } = useUserById(users);
@@ -23,9 +23,7 @@ export default function SessionCollabNavbar({}: Props) {
   const handleMouseLeave = () => {
     setTooltipVisible(false);
   };
-  return isLoading || isLoadingUserMap ? (
-    <></>
-  ) : (
+  return (
     <Disclosure as="nav" className="bg-gray-900">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="relative flex h-16 items-center justify-between">
@@ -39,6 +37,8 @@ export default function SessionCollabNavbar({}: Props) {
 
           <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 space-x-2">
             <ModeToggleButton />
+           
+            isLoading || isLoadingUserMap ?<> </> : (
             {users.map((id) => (
               <div className="tooltip-container" key={id}>
                 <div className="flex">
@@ -64,6 +64,8 @@ export default function SessionCollabNavbar({}: Props) {
                 )}
               </div>
             ))}
+            )
+            
           </div>
         </div>
       </div>
