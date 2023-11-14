@@ -1,40 +1,19 @@
 import useSessionCollab from "@/hook/useSessionCollab";
 import { useRouter } from "next/router";
-import React, {  useEffect, useState } from "react";
+import React, {  useState } from "react";
 import ModeToggleButton from "./ModeToggleButton";
 import Image from "next/image";
 import { Disclosure } from "@headlessui/react";
-import { getUserById } from "@/database/user/userService";
-import { User } from "@/database/user/entities/user.entity";
 import useSessionUser from "@/hook/useSessionUser";
+import useUserById from "@/hook/useUserById";
 
-type Props = {
-};
+type Props = {};
 
-export default function SessionCollabNavbar({ }: Props) {
-  const { sessionUser, isLoadingUser: isLoading } = useSessionUser();
+export default function SessionCollabNavbar({}: Props) {
+  const {  isLoadingUser: isLoading } = useSessionUser();
   const sessionId = useRouter().query.sessionId as string;
   const { users } = useSessionCollab(sessionId);
-  const [peer, setPeer] = useState<User | null>(null);
-  const [isLoadingUser, setIsloadingUser] = useState<boolean>(false)
-
-  useEffect(() => {
-
-    async function getPeerInfo() {
-      await getUserById(users.filter((user) => user !== sessionUser.id)[0])
-        .then((res) => {
-          setPeer(res);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-    if (!isLoading) {
-      setIsloadingUser(true);
-      getPeerInfo();
-      setIsloadingUser(false);
-    }
-  }, [isLoading, sessionUser]);
+  const { userMap, isLoading: isLoadingUserMap } = useUserById(users);
 
   const [isTooltipVisible, setTooltipVisible] = useState(false);
   const handleMouseEnter = () => {
@@ -44,7 +23,7 @@ export default function SessionCollabNavbar({ }: Props) {
   const handleMouseLeave = () => {
     setTooltipVisible(false);
   };
-  return isLoading || isLoadingUser ? (
+  return isLoading || isLoadingUserMap ? (
     <></>
   ) : (
     <Disclosure as="nav" className="bg-gray-900">
@@ -60,53 +39,31 @@ export default function SessionCollabNavbar({ }: Props) {
 
           <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 space-x-2">
             <ModeToggleButton />
-            <div className="tooltip-container">
-              <div className="flex">
-                <div
-                  className="rounded-full transition duration-300 ease-in-out border-2 border-blue-500 p-1"
-                  onMouseEnter={handleMouseEnter}
-                  onMouseLeave={handleMouseLeave}
-                >
-                  <Image
-                    className="rounded-full transition duration-300 ease-in-out"
-                    width="30"
-                    height="30"
-                    src={peer?.image ?? "/avatar.svg"}
-                    alt="/avatar.svg"
-                  />
+            {users.map((id) => (
+              <div className="tooltip-container" key={id}>
+                <div className="flex">
+                  <div
+                    className="rounded-full transition duration-300 ease-in-out border-2 border-blue-500 p-1"
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}
+                  >
+                    <Image
+                      className="rounded-full transition duration-300 ease-in-out"
+                      width="30"
+                      height="30"
+                      src={userMap.get(id)?.image ?? "/avatar.svg"}
+                      alt="/avatar.svg"
+                    />
+                  </div>
                 </div>
+                {isTooltipVisible && (
+                  <div className="tooltip">
+                    <div>{userMap.get(id)?.username}</div>
+                    <div>{userMap.get(id)?.email}</div>
+                  </div>
+                )}
               </div>
-              {isTooltipVisible && (
-                <div className="tooltip">
-                  <div>{peer?.username}</div>
-                  <div>{peer?.email}</div>
-                </div>
-              )}
-            </div>
-
-            <div className="tooltip-container">
-              <div className="flex">
-                <div
-                  className="rounded-full transition duration-300 ease-in-out border-2 border-blue-500 p-1"
-                  onMouseEnter={handleMouseEnter}
-                  onMouseLeave={handleMouseLeave}
-                >
-                  <Image
-                    className="rounded-full transition duration-300 ease-in-out"
-                    width="30"
-                    height="30"
-                    src={sessionUser.image ?? "/avatar.svg"}
-                    alt="/avatar.svg"
-                  />
-                </div>
-              </div>
-              {isTooltipVisible && (
-                <div className="tooltip">
-                  <div>{sessionUser.username}</div>
-                  <div>{sessionUser.email}</div>
-                </div>
-              )}
-            </div>
+            ))}
           </div>
         </div>
       </div>

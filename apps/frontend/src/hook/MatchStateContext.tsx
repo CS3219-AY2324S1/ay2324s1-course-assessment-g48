@@ -17,6 +17,7 @@ import { Complexity } from "@/utils/enums/Complexity";
 import { useRouter } from "next/router";
 import { useTimer } from "./timerContext";
 import { languageOptions } from "@/utils/constants/LanguageOptions";
+import { set } from "lodash";
 
 type MatchStateContextType = {
   matchState: MatchedState;
@@ -100,6 +101,7 @@ export const MatchStateProvider: React.FC<MatchStateProviderProps> = ({
     });
 
     matchingSocket.on("timeout", () => {
+      console.log("TIMING OUTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
       setToNotMatchingState();
       setError({
         type: 1,
@@ -136,17 +138,28 @@ export const MatchStateProvider: React.FC<MatchStateProviderProps> = ({
     } else {
       setDisableBtnCancel(true);
     }
-    return () => {
-      matchingSocket.on("timeout", () => {
-        setToNotMatchingState();
-        setError({
-          type: 1,
-          message: "Timed out, try again.",
-        });
-        disconnectSocket();
-      });
-    };
+    // return () => {
+    //   matchingSocket.on("timeout", () => {
+    //     setToNotMatchingState();
+    //     setError({
+    //       type: 1,
+    //       message: "Timed out, try again.",
+    //     });
+    //     disconnectSocket();
+    //   });
+    // };
   }, [isRunning]);
+
+  useEffect(() => {
+    if (isRunning && !matchingSocket.hasListeners("timeout")) {
+      setToNotMatchingState();
+      disconnectSocket();
+      setError({
+        type: 1,
+        message: "Disconnected due to page refresh.",
+      });
+    }
+  }, []);
 
   useEffect(() => {
     if (sessionId) {

@@ -1,14 +1,13 @@
 import { getUserById } from "@/database/user/userService";
-import { useSession } from "next-auth/react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import useSessionUser from "./useSessionUser";
 import { useError } from "./ErrorContext";
-import { number } from "prop-types";
+import { User } from "@/database/user/entities/user.entity";
 
-function useImageById(userIds: number[]) {
+function useUserById(userIds: number[]) {
   const { isLoadingUser } = useSessionUser();
   const [isLoading, setIsLoading] = useState(true);
-  const [imageMap, setImageMap] = useState(new Map<number, string>());
+  const [userMap, setUserMap] = useState(new Map<number, User>());
   const { setError } = useError();
 
   useEffect(() => {
@@ -16,18 +15,20 @@ function useImageById(userIds: number[]) {
       setIsLoading(true);
       const promises = userIds.map((user) =>
         getUserById(user)
-          .then((data) => data.image)
+          .then((data) => {
+            return data;
+          })
           .catch((err) => {
           })
       );
 
       Promise.all(promises)
-        .then((images) => {
-          const newMap = new Map<number, string>();
-          userIds.forEach((user, index) => {
-            newMap.set(user, images[index]);
+        .then((users) => {
+          const newMap = new Map<number, User>();
+          userIds.forEach((userid, index) => {
+            newMap.set(userid, users[index]);
           });
-          setImageMap(newMap);
+          setUserMap(newMap);
           setIsLoading(false);
         })
         .catch((err) => {
@@ -37,7 +38,7 @@ function useImageById(userIds: number[]) {
 
   return {
     isLoading,
-    imageMap,
+    userMap,
   };
 }
-export default useImageById;
+export default useUserById;
