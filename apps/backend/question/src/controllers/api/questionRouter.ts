@@ -31,7 +31,7 @@ questionRouter.get("/leetcode", async (req: Request, res: Response) => {
     const transformData = response.data.map((question: any) => ({
       id: question.question_id.toString(),
       title: question.question_title,
-      description: "Please go to https://leetcode.com/problems/" + question.question__title_slug + "/description/ for the description.",
+      description: "[Please click here to view the question](https://leetcode.com/problems/" + question.question__title_slug + "/description/)",
       categories: [],
       complexity: (() => {
         switch (question.difficulty) {
@@ -45,9 +45,10 @@ questionRouter.get("/leetcode", async (req: Request, res: Response) => {
             return "";
         }
       })(),
+      examples: [""],
       constraints: "",
       followUp: "",
-      starterCode: "",
+      starterCode: [],
       testcases: [{ input: "", output: "" }],
       dateCreated: new Date()
     }));
