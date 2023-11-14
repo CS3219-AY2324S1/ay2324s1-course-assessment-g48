@@ -28,7 +28,7 @@ spec:
     spec:
       containers:
       - name: peerprep-codeexec
-        image: deployment87/dply87:peerprep-codeexec-v1.4.0
+        image: deployment87/dply87:peerprep-codeexec-v1.4.1
         imagePullPolicy: Always
         resources:
           limits:

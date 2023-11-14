@@ -18,9 +18,8 @@ import ExecPanel from "./execPanel/ExecPanel";
 import EditorFooter from "./execPanel/editorFooter/EditorFooter";
 import useSessionUser from "@/hook/useSessionUser";
 import { useRouter } from "next/router";
-import { HistoryQuestionTestcase } from "@/database/history/entities/history.entity";
-import { postNewHistory } from "@/database/history/historyService";
 import { useSession } from "next-auth/react";
+import useNewHistory from "@/hook/useNewHistory";
 
 type CodeEditorProps = {
   onChangeCode?: (value: string | undefined) => void;
@@ -40,7 +39,6 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   users,
 }) => {
   const { isDarkMode } = useTheme();
-  const { update } = useSession();
   const sessionID = useRouter().query?.sessionId as string;
   const defaultLanguage: Language | undefined = languageOptions.find(
     (lang) => lang.id === 71 // "python language"
@@ -48,7 +46,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   // current language selected by user
   const [selectedLanguage, setSelectedLanguage] = useState<Language>(
     initialLanguage ?? defaultLanguage!
-  ); 
+  );
   // default code for the language selected by user
   const starterCode = useMemo(
     () =>
@@ -65,17 +63,18 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   const [codeArray, setCodeArray] = useState<CodeType[]>(
     currSessionCode ?? [{ languageId: selectedLanguage.id, code: displayCode }]
   );
+
   const [outputDetails, setOutputDetails] = useState(
     new Array(question.testcases.length)
   );
   const [processing, setProcessing] = useState(false);
   const { sessionUser } = useSessionUser();
-  const [historyTestCase, setHistoryTestCase] = useState<
-    HistoryQuestionTestcase[]
-  >([]);
+  const { setHistoryTestCase, setAllSuccess, setCode, setLanguage } =
+    useNewHistory(question, users, sessionID);
 
   const enterPress = useKeyPress("Enter");
   const ctrlPress = useKeyPress("Control");
+
   const memoizedOutputDetails = useMemo(() => outputDetails, [outputDetails]);
   if (!onChangeCode) {
     onChangeCode = (value?: string) => {
@@ -108,6 +107,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   }
 
   const handleOutputDetails = (response: any, index: number) => {
+    console.log("history set");
     setOutputDetails((prev) => {
       const newOutputDetails = [...prev];
       newOutputDetails[index] = response;
@@ -155,40 +155,9 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
       } else {
         showErrorToast("A testcase failed, please try again!");
       }
-
-      const newCompletedQuestion = {
-        questionId: question._id,
-        questionTitle: question.title,
-        language: selectedLanguage.label,
-        answer: btoa(displayCode),
-        testcases: historyTestCase,
-        completedAt: new Date(),
-        result: allSuccess ? "Correct" : "Incorrect",
-      };
-      const newHistory = {
-        userIds: users,
-        sessionId: sessionID ?? String(users[0]),
-        completed: [newCompletedQuestion],
-        date: new Date(),
-        _id: "",
-      };
-
-      await postNewHistory(
-        newHistory,
-        sessionUser.accessToken!,
-        sessionUser.refreshToken!
-      )
-        .then((data) => {
-          if (data.accessToken) {
-            update({
-              accessToken: data.accessToken,
-              accessTokenExpiry: data.accessTokenExpiry,
-            });
-          }
-        })
-        .catch((err) => {
-          console.error("error", err);
-        });
+      setCode(btoa(displayCode));
+      setLanguage(selectedLanguage.label);
+      setAllSuccess(allSuccess);
     } catch (err) {
       setProcessing(false);
       console.error(err);
@@ -214,7 +183,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
         } else {
           setProcessing(false);
           handleOutputDetails(response.data, index);
-          console.log("response.data", response.data.id);
+          // console.log("before set response.data", response.data);
           setHistoryTestCase((prev) => [
             ...prev,
             {
@@ -222,6 +191,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
               outcome: response.data.status.id,
             },
           ]);
+          // console.log("after set status id:", response.data.status.id);
           if (statusId === Status.Accepted) {
             resolve(true);
           } else {
