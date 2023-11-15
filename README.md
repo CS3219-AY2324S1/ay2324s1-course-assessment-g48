@@ -1,4 +1,4 @@
-# CS3219-AY22-23-Project-Group-58
+# CS3219-AY23-24-Project-Group-48
 ---
 
 ![LeetPal Logo](image.png)
