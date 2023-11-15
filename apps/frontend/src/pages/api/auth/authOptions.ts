@@ -152,15 +152,15 @@ export const authOptions: AuthOptions = {
       return session;
     },
   },
-  cookies: {
-    sessionToken: {
-      name: "site-session-token",
-      options: {
-        httpOnly: true,
-        sameSite: "lax", 
-        path: "/",
-        domain: ".leetpal.com",
-      },
-    },
-  }
+  // cookies: {
+  //   sessionToken: {
+  //     name: "site-session-token",
+  //     options: {
+  //       httpOnly: true,
+  //       sameSite: "lax", 
+  //       path: "/",
+  //       domain: ".leetpal.com",
+  //     },
+  //   },
+  // }
 }
