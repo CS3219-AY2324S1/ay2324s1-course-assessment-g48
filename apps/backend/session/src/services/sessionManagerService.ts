@@ -100,7 +100,6 @@ export class SessionManagerService {
     if (!this.sessionToUserMap.has(sessionId)) {
       const session = await SessionModel.findById(sessionId)
         .then((res) => {
-          console.log("can get", res);
           return res;
         })
         .catch((err) => console.error("ERRRROR", err));

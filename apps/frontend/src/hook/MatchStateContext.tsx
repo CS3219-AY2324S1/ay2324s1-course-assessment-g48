@@ -101,7 +101,6 @@ export const MatchStateProvider: React.FC<MatchStateProviderProps> = ({
     });
 
     matchingSocket.on("timeout", () => {
-      console.log("TIMING OUTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
       setToNotMatchingState();
       setError({
         type: 1,

@@ -63,7 +63,6 @@ export const useChatroom = (chatroomId: string, userId: number) => {
       content: message,
       timestamp: new Date(),
     });
-    console.log("HELLO");
   };
 
   return { messages, handleSubmit };

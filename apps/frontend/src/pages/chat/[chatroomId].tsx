@@ -48,7 +48,6 @@ export default function Chat() {
       content: newMessage,
       timestamp: new Date(),
     });
-    console.log("HELLO");
     setNewMessage("");
   };
 

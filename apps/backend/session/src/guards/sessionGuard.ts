@@ -35,7 +35,6 @@ export const sessionGuard = async (
   next: NextFunction
 ) => {
   const sessionId = req.params.sessionId;
-  console.log("HELLO");
   if (!sessionId) {
     res.status(401).json({ error: "No sesionId was provided." });
     return;

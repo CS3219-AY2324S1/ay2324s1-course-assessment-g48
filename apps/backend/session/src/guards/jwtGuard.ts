@@ -59,7 +59,6 @@ export const jwtGuard = async (
     next();
   } catch (error) {
     const errorMessage = getAxiosErrorMessage(error);
-    console.log("asdasd", errorMessage);
     res.status(401).json({ error: errorMessage });
   }
 };

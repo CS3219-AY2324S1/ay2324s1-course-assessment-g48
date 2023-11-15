@@ -122,9 +122,9 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
 
     question.testcases.forEach((testCase) => {
       console.log("testcase", testCase);
-      console.log("testcase base64 Input is:", btoa(testCase.input));
-      console.log("testcase ExpectedOutput is:", btoa(testCase.output));
-      console.log("testcase base64 ExpectedOutput is:", btoa(testCase.output));
+      // console.log("testcase base64 Input is:", btoa(testCase.input));
+      // console.log("testcase ExpectedOutput is:", btoa(testCase.output));
+      // console.log("testcase base64 ExpectedOutput is:", btoa(testCase.output));
     });
     const submissions = question.testcases.map((testCase) => ({
       language_id: language.id,
