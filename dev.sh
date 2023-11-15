@@ -113,13 +113,13 @@ for dir in "${directories[@]}"; do
             elif [[ "$dir" == *"apps/backend/queue"* ]]; then
 
                 if [[ "$os" == "MINGW"* ]] | [[ "$os" == "MSYS"* ]] | [[ "$os" == "CYGWIN"* ]]; then
-                    powershell -Command "(Get-Content $env_file) -replace 'SESSION_URL=.*', 'SESSION_URL=http://$ip_address:8251/session/create-session' | Set-Content $env_file"
+                    powershell -Command "(Get-Content $env_file) -replace 'SESSION_URL=.*', 'SESSION_URL=http://$ip_address:8251/api/session/create-session' | Set-Content $env_file"
                     powershell -Command "(Get-Content $env_file) -replace 'RABBITMQ_URL=.*', 'RABBITMQ_URL=amqp://$ip_address:5672' | Set-Content $env_file"
                 elif [[ "$os" == "Darwin" ]]; then
-                    sed -i '' "s|SESSION_URL=.*|SESSION_URL=http://$ip_address:8251/session/create-session|g" $env_file
+                    sed -i '' "s|SESSION_URL=.*|SESSION_URL=http://$ip_address:8251/api/session/create-session|g" $env_file
                     sed -i '' "s|RABBITMQ_URL=.*|RABBITMQ_URL=amqp://$ip_address:5672|g" $env_file
                 else 
-                    sed -i "s|SESSION_URL=.*|SESSION_URL=http://$ip_address:8251/session/create-session|g" $env_file
+                    sed -i "s|SESSION_URL=.*|SESSION_URL=http://$ip_address:8251/api/session/create-session|g" $env_file
                     sed -i "s|RABBITMQ_URL=.*|RABBITMQ_URL=amqp://$ip_address:5672|g" $env_file
                 fi
                 count=$((count+2))

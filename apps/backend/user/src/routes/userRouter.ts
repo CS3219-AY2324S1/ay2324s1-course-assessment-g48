@@ -6,9 +6,9 @@ import {
   findOneUser,
   getAllUsers,
   updateUser,
-} from "../../database/user";
+} from "../database/user";
 import { OAuth, Role } from "@prisma/client";
-import logger from "../../utils/logger";
+import logger from "../utils/logger";
 import {
   getAccessTokenExpiry,
   getJwtErrorMessage,
@@ -16,9 +16,9 @@ import {
   signJwtRefreshToken,
   verifyJwtAccessToken,
   verifyJwtRefreshToken,
-} from "../../utils/jwt";
+} from "../utils/jwt";
 import bcrypt from "bcrypt";
-import { emailSchema, passwordSchema } from "../../utils/validator";
+import { emailSchema, passwordSchema } from "../utils/validator";
 
 export const userRouter = Router();
 

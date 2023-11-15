@@ -1,7 +1,7 @@
 import { axiosInstance } from "@/utils/axios/AxiosInstance";
 import Router from "next/router";
 
-const BASE_URL = process.env.NEXT_PUBLIC_SESSION_URL + "/session/user";
+const BASE_URL = process.env.NEXT_PUBLIC_SESSION_URL + "/api/session/user";
 
 export const getSessionsByUserId = async (
   uid: number,
@@ -46,7 +46,7 @@ export async function getSession(
   };
   return await axiosInstance  
     .get(
-      `${process.env.NEXT_PUBLIC_SESSION_URL}/session/get-session/${sessionId}`,
+      `${process.env.NEXT_PUBLIC_SESSION_URL}/api/session/get-session/${sessionId}`,
       config
     )
     .then((res) => {

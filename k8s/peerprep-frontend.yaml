@@ -32,10 +32,32 @@ spec:
     spec:
       containers:
       - name: peerprep-frontend
-        image: deployment87/dply87:peerprep-frontend-v1.0.17
+        image: deployment87/dply87:peerprep-frontend-v1.4.11
+        imagePullPolicy: Always
         resources:
           limits:
             memory: "256Mi"
-            cpu: "500m"
+            cpu: "200m"
         ports:
         - containerPort: 3000
+
+---
+
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: frontend-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: frontend-deployment
+  minReplicas: 1
+  maxReplicas: 3
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 50

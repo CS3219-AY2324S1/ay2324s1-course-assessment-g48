@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import ChatroomService from "../services/chatroomService";
+import ChatroomService from "../services/ChatroomService";
 
 class ChatroomController {
   chatroomService: ChatroomService;

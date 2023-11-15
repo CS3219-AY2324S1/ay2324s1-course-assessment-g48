@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
-import { codeExecutionRouter } from "./controllers/api/codeExecutionRouter";
+import { codeExecutionRouter } from "./controllers/codeExecutionRouter";
+import PingRouter from "./routes/pingRouter";
 
 export const app = express();
 const allowedOrigins = [
@@ -8,15 +9,17 @@ const allowedOrigins = [
   "http://localhost:80",
   "http://localhost:3000",
   "http://localhost:8000",
-  "http://localhost:8080",
   "http://localhost:8001",
-  "http://localhost:8022",
+  "http://localhost:8002",
+  "http://localhost:8080",
+  "http://localhost:8082",
   "http://localhost:8420",
-  "http://localhost:8500",
-  "http://localhost:9000",
-  "http://peerprep-user:8001",
-  "http://peerprep-question:8000",
-  "http://peerprep-frontend:3000",
+  "http://localhost:8250",
+  "http://localhost:9251",
+  "http://34.120.70.36",
+  "http://leetpal.com",
+  "http://www.leetpal.com",
+  "https://www.leetpal.com",
 ];
 
 app.use(
@@ -36,3 +39,4 @@ app.use(
 app.use(express.json());
 
 app.use("/api/codeExecution", codeExecutionRouter);
+app.use("/ping", new PingRouter().routes());

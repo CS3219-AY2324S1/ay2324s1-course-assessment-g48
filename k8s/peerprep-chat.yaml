@@ -1,14 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: peerprep-user
+  name: peerprep-chat
 spec:
   selector:
-    app: peerprep-user
+    app: peerprep-chat
   ports:
   - protocol: TCP
-    port: 8001
-    targetPort: 8001
+    port: 8082
+    targetPort: 8082
   type: ClusterIP
 
 ---
@@ -16,51 +16,50 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: user-deployment
+  name: chat-deployment
 spec:
   selector:
     matchLabels:
-      app: peerprep-user
+      app: peerprep-chat
   template:
     metadata:
       labels:
-        app: peerprep-user
+        app: peerprep-chat
     spec:
       containers:
-      - name: peerprep-user
-        image: deployment87/dply87:peerprep-user-v1.4.1
+      - name: peerprep-chat
+        image: deployment87/dply87:peerprep-chat-v1.4.0
         imagePullPolicy: Always
         resources:
           limits:
             memory: "256Mi"
             cpu: "200m"
         ports:
-        - containerPort: 8001
+        - containerPort: 8082
         livenessProbe:
           httpGet:
             path: /ping
-            port: 8001
+            port: 8082
           initialDelaySeconds: 60
           timeoutSeconds: 10
         readinessProbe:
-          httpGet:
+          httpGet:  
             path: /ping
-            port: 8001
+            port: 8082
           initialDelaySeconds: 60
           timeoutSeconds: 10
-      # dnsPolicy: ClusterFirst
 
 ---
 
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: user-hpa
+  name: chat-hpa
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: user-deployment
+    name: chat-deployment
   minReplicas: 1
   maxReplicas: 3
   metrics:

@@ -1,9 +1,8 @@
 import useSessionByUid from "@/hook/useSessionByUid";
-import useSessionUser from "@/hook/useSessionUser";
 import React, { useEffect, useMemo, useState } from "react";
 import SessionPagination from "./SessionPagination";
-import useImageById from "@/hook/useImageById";
 import Image from "next/image";
+import useUserById from "@/hook/useUserById";
 
 type Props = {};
 
@@ -30,10 +29,13 @@ function SessionTable({}: Props) {
       setUsers(uniqueUsers);
     }
   }, [isLoadingSession, sessions, currentPage, setUsers]);
-  const { imageMap, isLoading: isLoadingImage } = useImageById(users);
+useEffect(() => {
+      console.log("test", users);
+}, [users]);
+    const { userMap, isLoading: isLoadingUserMap } = useUserById(users);
+    
 
-
-  return isLoadingImage && isLoadingSession ? (
+  return isLoadingUserMap && isLoadingSession ? (
     <></>
   ) : (
     <>
@@ -51,7 +53,7 @@ function SessionTable({}: Props) {
               <th scope="col" className="px-6 py-3">
                 Participants
               </th>
-              <th scope="col" className="px-6 py-3">
+              <th scope="col" className="px-6 py-3 center">
                 Join
               </th>
             </tr>
@@ -76,12 +78,12 @@ function SessionTable({}: Props) {
                       className="rounded-full transition duration-300 ease-in-out"
                       width="30"
                       height="30"
-                      src={imageMap.get(user) ?? "/light_avatar.svg"}
+                      src={userMap.get(user)?.image ?? "/light_avatar.svg"}
                       alt="/avatar.svg"
                     />
                   ))}
                 </td>
-                <td className="px-6 py-4">
+                <td className="px-6 py-4 center">
                   <button
                     className="bg-green-600 hover:bg-green-800 text-white font-bold py-2 px-4 rounded-full"
                     onClick={() => window.open(`/session/${session._id}`)}

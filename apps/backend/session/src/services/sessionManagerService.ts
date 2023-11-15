@@ -88,6 +88,7 @@ export class SessionManagerService {
   }
 
   private async createNewChatroom(users: number[]) {
+    console.log("Creating new chatroom");
     return axios
       .post(CHAT_URL, { users })
       .then((res) => res.data.chatroomId)

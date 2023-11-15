@@ -5,21 +5,10 @@ import express, { json } from "express";
 import MessageController from "./controllers/messageController";
 import { chatroomRouter } from "./routes/chatroomRouter";
 import cors from "cors";
+import http from "http";
+import PingRouter from "./routes/pingRouter";
 
-const app = express();
-const io = new Server(app.listen(PORT), {
-  cors: {
-    origin: "*",
-  },
-});
-
-const messageController = new MessageController(io);
-
-io.on("connect", (socket) => messageController.handleConnection(socket));
-app.use(json());
-app.use(chatroomRouter);
-
-const allowedOrigins: string[] = [
+const allowedOrigins = [
   "http://localhost",
   "http://localhost:80",
   "http://localhost:3000",
@@ -29,10 +18,26 @@ const allowedOrigins: string[] = [
   "http://localhost:8022",
   "http://localhost:8500",
   "http://localhost:9000",
-  "http://peerprep-user:8001",
-  "http://peerprep-question:8000",
-  "http://peerprep-frontend:3000",
+  "http://34.120.70.36",
+  "http://leetpal.com",
+  "http://www.leetpal.com",
+  "https://www.leetpal.com",
 ];
+
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+  path: "/chat",
+  cors: {
+    origin: allowedOrigins,
+  },
+});
+
+const messageController = new MessageController(io);
+
+io.on("connect", (socket) => messageController.handleConnection(socket));
+app.use(json());
+app.use(chatroomRouter);
 
 app.use(
   cors({
@@ -47,6 +52,10 @@ app.use(
     exposedHeaders: ["set-cookie"],
   })
 );
+
+server.listen(PORT, () => {
+  console.log(`Chat Server is listening on ${PORT}`);
+});
 
 mongoose
   .connect(MONGODB_URI || "")
@@ -64,3 +73,5 @@ process.on("SIGINT", () => {
     sockets.forEach((socket) => socket.disconnect())
   );
 });
+
+app.use("/ping", new PingRouter().routes());

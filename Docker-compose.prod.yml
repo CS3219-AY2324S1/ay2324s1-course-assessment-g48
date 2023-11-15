@@ -1,26 +1,6 @@
 version: '3'
 
 services:
-  # rabbitmq3:
-  #   container_name: peerprep-rabbitmq
-  #   image: rabbitmq:3-management
-  #   environment:
-  #     - ./apps/backend/queue/.env
-  #   ports:
-  #     - '5672:5672'
-  #     - '15672:15672'
-
-  # postgres:
-  #   image: postgres
-  #   container_name: peerprep-postgres
-  #   restart: always
-  #   env_file:
-  #     - ./apps/backend/user/.env
-  #   ports:
-  #     - "5432:5432"                               # Map postgres container's port 5432 to host's port 5432
-  #   networks:
-  #     - peerprep-network
-
   peerprep-frontend:
     container_name: peerprep-frontend
     image: peerprep-frontend                      # Name of the container
@@ -118,6 +98,36 @@ services:
     networks:
       - peerprep-network
 
+  peerprep-chat:
+    container_name: peerprep-chat            
+    image: peerprep-chat  
+    restart: always
+    build:
+      context: ./apps/backend/chat          
+      dockerfile: Dockerfile.chat.dev          
+    ports:
+      - "8082:8082"                            
+    environment:
+      - ./apps/backend/chat/.env.dev
+    networks:
+      - peerprep-network
+  
+  peerprep-codeexec:
+    container_name: peerprep-codeexec           
+    image: peerprep-codeexec                  
+    restart: always
+    build:
+      context: ./apps/backend/codeExecution          
+      dockerfile: Dockerfile.codeexec.dev      
+    ports:
+      - "8420:8420"                           
+    # volumes:
+    #   - ./apps/backend/question:/app      
+    environment:
+      - ./apps/backend/codeExecution/.env.dev
+    networks:
+      - peerprep-network
+      
 # Define a custom network for your services
 networks:
   peerprep-network:

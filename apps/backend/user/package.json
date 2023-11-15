@@ -8,7 +8,7 @@
     "start": "nodemon ./src/index.ts",
     "lint": "eslint . --fix",
     "dev": "npx nodemon",
-    "start:prod": "npx prisma migrate deploy && yarn start"
+    "start:prod": "prisma migrate deploy && yarn start"
   },
   "keywords": [],
   "author": "",

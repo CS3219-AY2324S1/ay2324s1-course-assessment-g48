@@ -55,9 +55,7 @@ export const jwtGuard = async (
   }
 
   try {
-    console.log("fkkk", accessToken);
     req.user = await verifyAccessToken(accessToken);
-    console.log("asdasdasd", req.user);
     next();
   } catch (error) {
     const errorMessage = getAxiosErrorMessage(error);

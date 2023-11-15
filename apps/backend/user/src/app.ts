@@ -1,7 +1,7 @@
 import express from "express";
-import { userRouter } from "./controllers/api/userRouter";
+import { userRouter } from "./routes/userRouter";
 import cors from "cors";
-import { testRouter } from "./controllers/api/testRouter";
+import PingRouter from "./routes/pingRouter";
 import helmet from "helmet";
 
 export const app = express();
@@ -36,3 +36,4 @@ app.use(
 app.use(helmet());
 app.use(express.json());
 app.use("/api/users", userRouter);
+app.use("/ping", new PingRouter().routes());

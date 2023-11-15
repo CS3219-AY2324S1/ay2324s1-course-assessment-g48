@@ -1,6 +1,6 @@
 import { Router, NextFunction, Request, Response } from "express";
 import axios from "axios";
-import { HISTORY_URL, RAPID_API_HOST, RAPID_API_KEY, RAPID_API_SUBMISSIONS_URL } from "../../utils/config";
+import { HISTORY_URL, RAPID_API_HOST, RAPID_API_KEY, RAPID_API_SUBMISSIONS_URL } from "../utils/config";
 
 export const codeExecutionRouter = Router();
 
