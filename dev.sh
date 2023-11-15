@@ -7,6 +7,7 @@ directories=(
     "./apps/backend/queue"
     "./apps/backend/history"
     "./apps/backend/session"
+    "./apps/backend/codeExecution"
 )
 
 # Define the colors for the output 
@@ -100,14 +101,20 @@ for dir in "${directories[@]}"; do
                 if [[ "$os" == "MINGW"* ]] | [[ "$os" == "MSYS"* ]] | [[ "$os" == "CYGWIN"* ]]; then
                     powershell -Command "(Get-Content $env_file) -replace 'HOST=.*', 'HOST=ws://$ip_address' | Set-Content $env_file"
                     powershell -Command "(Get-Content $env_file) -replace 'CHAT_URL=.*', 'CHAT_URL=http://$ip_address:8082/create-chatroom' | Set-Content $env_file"
+                    powershell -Command "(Get-Content $env_file) -replace 'QUESTION_URL=.*', 'QUESTION_URL=http://$ip_address:8000' | Set-Content $env_file"
+                    powershell -Command "(Get-Content $env_file) -replace 'USER_SERVICE_URL=.*', 'USER_SERVICE_URL=http://$ip_address:8001' | Set-Content $env_file"
                 elif [[ "$os" == "Darwin" ]]; then
                     sed -i '' "s|HOST=.*|HOST=ws://$ip_address|g" $env_file
                     sed -i '' "s|CHAT_URL=.*|CHAT_URL=http://$ip_address:8082/create-chatroom|g" $env_file
+                    sed -i '' "s|QUESTION_URL=.*|QUESTION_URL=http://$ip_address:8000|g" $env_file
+                    sed -i '' "s|USER_SERVICE_URL=.*|USER_SERVICE_URL=http://$ip_address:8001|g" $env_file
                 else
                     sed -i "s|HOST=.*|HOST=ws://$ip_address|g" $env_file
                     sed -i "s|CHAT_URL=.*|CHAT_URL=http://$ip_address:8082/create-chatroom|g" $env_file
+                    sed -i "s|QUESTION_URL=.*|QUESTION_URL=http://$ip_address:8000|g" $env_file
+                    sed -i "s|USER_SERVICE_URL=.*|USER_SERVICE_URL=http://$ip_address:8001|g" $env_file
                 fi
-                count=$((count+2))
+                count=$((count+4))
 
             # Queue service
             elif [[ "$dir" == *"apps/backend/queue"* ]]; then
@@ -145,6 +152,18 @@ for dir in "${directories[@]}"; do
                     sed -i '' "s|USER_SERVICE_URL=.*|USER_SERVICE_URL=http://$ip_address:8001|g" $env_file
                 else
                     sed -i "s|USER_SERVICE_URL=.*|USER_SERVICE_URL=http://$ip_address:8001|g" $env_file
+                fi
+                count=$((count+1))
+
+            # Code Execution service
+            elif [[ "$dir" == *"apps/backend/codeExecution"* ]]; then
+
+                if [[ "$os" == "MINGW"* ]] | [[ "$os" == "MSYS"* ]] | [[ "$os" == "CYGWIN"* ]]; then
+                    powershell -Command "(Get-Content $env_file) -replace 'HISTORY_URL=.*', 'HISTORY_URL=http://$ip_address:8001' | Set-Content $env_file"
+                elif [[ "$os" == "Darwin" ]]; then
+                    sed -i '' "s|HISTORY_URL=.*|HISTORY_URL=http://$ip_address:8003/api/history|g" $env_file
+                else
+                    sed -i "s|HISTORY_URL=.*|HISTORY_URL=http://$ip_address:8003/api/history|g" $env_file
                 fi
                 count=$((count+1))
 
