@@ -12,13 +12,6 @@ Key design considerations include MongoDB for its adaptability, Mongoose for str
 2. Install dependencies with `yarn install`.
 Important: This guide only starts the Question service. The endpoint to get user's history depends on the User service as well, so you must make sure User service is up and running.
 3. Run `yarn dev`
-4. The service will be available on http://localhost:8000/api/question.
-5. You should see this page if you go to http://localhost:8000/api/question:
-```JSON
-{
-error: "No access token was provided."
-}
-```
 
 ## Usage
 
