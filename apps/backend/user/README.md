@@ -26,3 +26,10 @@ Our Users API provides a RESTful interface for clients to interact with the User
 - GET /api/users/:id Retrieve a single user by its id.
 - PUT /api/users/:id Update an existing users by its id with the given data in the request body.
 - DELETE /api/users/:id Delete an existing user by involved user id
+
+We also provide an option for you to declare a static JWT token for testing purposes, simply declare it as follows in the `.env` file:
+```
+JWT_STATIC_TOKEN=<Enter anything you want here>
+```
+
+You can simply put this token in the Authorization header, this will return you a default user for testing the Users API and other microservices endpoints. 
