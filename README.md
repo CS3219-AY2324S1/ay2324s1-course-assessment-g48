@@ -1,9 +1,9 @@
 # CS3219-AY23-24-Project-Group-48
 ---
 
-![LeetPal Logo](image.png)
+![LeetPal Logo](LeetPal.png)
 
-LeetPal at http://www.leetpal.com/
+Access LeetPal here at http://www.leetpal.com/
 
 An online platform for interview preparation that offers practice questions and mock interviews with peers. Users can improve their coding, problem-solving, and communication skills in real-time and collaborative setting.
 
