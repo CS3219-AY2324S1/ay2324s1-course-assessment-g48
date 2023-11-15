@@ -16,7 +16,6 @@ import MatchStateProvider from "@/hook/MatchStateContext";
 import TimerProvider from "@/hook/timerContext";
 export default function App({ Component, pageProps }: AppProps) {
   const [repo, setRepo] = useState<Repo>();
-  //   console.log(repo);
 
   useEffect(() => {
     if (typeof window !== "undefined" && "indexedDB" in window) {
@@ -44,18 +43,23 @@ export default function App({ Component, pageProps }: AppProps) {
         ></meta>
         <meta charSet="UTF-8" />
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
+        <link
+          rel="icon"
+          href="/icon/leetpal.png"
+          sizes="any"
+        />
       </Head>
       <ErrorProvider>
         <SessionProvider>
           <ThemeProvider>
             <RepoContext.Provider value={repo as Repo}>
               <TimerProvider>
-              <MatchStateProvider>
-              <Layout>
-                  <Component {...pageProps} />
-                </Layout>
+                <MatchStateProvider>
+                  <Layout>
+                    <Component {...pageProps} />
+                  </Layout>
                 </MatchStateProvider>
-                </TimerProvider>
+              </TimerProvider>
             </RepoContext.Provider>
           </ThemeProvider>
         </SessionProvider>
