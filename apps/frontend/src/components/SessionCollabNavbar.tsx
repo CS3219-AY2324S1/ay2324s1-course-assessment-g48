@@ -37,35 +37,36 @@ export default function SessionCollabNavbar({}: Props) {
 
           <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 space-x-2">
             <ModeToggleButton />
-           
-            isLoading || isLoadingUserMap ?<> </> : (
-            {users.map((id) => (
-              <div className="tooltip-container" key={id}>
-                <div className="flex">
-                  <div
-                    className="rounded-full transition duration-300 ease-in-out border-2 border-blue-500 p-1"
-                    onMouseEnter={handleMouseEnter}
-                    onMouseLeave={handleMouseLeave}
-                  >
-                    <Image
-                      className="rounded-full transition duration-300 ease-in-out"
-                      width="30"
-                      height="30"
-                      src={userMap.get(id)?.image ?? "/avatar.svg"}
-                      alt="/avatar.svg"
-                    />
+
+            {isLoading || isLoadingUserMap ? (
+              <> </>
+            ) : (
+              users.map((id) => (
+                <div className="tooltip-container" key={id}>
+                  <div className="flex">
+                    <div
+                      className="rounded-full transition duration-300 ease-in-out border-2 border-blue-500 p-1"
+                      onMouseEnter={handleMouseEnter}
+                      onMouseLeave={handleMouseLeave}
+                    >
+                      <Image
+                        className="rounded-full transition duration-300 ease-in-out"
+                        width="30"
+                        height="30"
+                        src={userMap.get(id)?.image ?? "/avatar.svg"}
+                        alt="/avatar.svg"
+                      />
+                    </div>
                   </div>
+                  {isTooltipVisible && (
+                    <div className="tooltip">
+                      <div>{userMap.get(id)?.username}</div>
+                      <div>{userMap.get(id)?.email}</div>
+                    </div>
+                  )}
                 </div>
-                {isTooltipVisible && (
-                  <div className="tooltip">
-                    <div>{userMap.get(id)?.username}</div>
-                    <div>{userMap.get(id)?.email}</div>
-                  </div>
-                )}
-              </div>
-            ))}
-            )
-            
+              ))
+            )}
           </div>
         </div>
       </div>
