@@ -55,7 +55,7 @@ const HistoryQuestionPage: React.FC<HistoryQuestionPageProps> = () => {
             <label
               className={`text-gray-900 capitalize 
               ${
-                historyQuestion?.result === "correct"
+                historyQuestion?.result === "Correct"
                   ? "text-green-600"
                   : "text-red-600"
               }`}

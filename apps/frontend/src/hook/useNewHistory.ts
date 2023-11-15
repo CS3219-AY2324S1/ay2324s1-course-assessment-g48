@@ -5,6 +5,7 @@ import useSessionUser from "./useSessionUser";
 import { Question } from "@/database/question/entities/question.entity";
 import { Language } from "@/utils/class/Language";
 import { useSession } from "next-auth/react";
+import { set } from "lodash";
 
 export default function useNewHistory(
   question: Question,
@@ -18,6 +19,7 @@ export default function useNewHistory(
   const [language, setLanguage] = useState<string>();
   const [code, setCode] = useState<string>();
   const [allSuccess, setAllSuccess] = useState<boolean>(false);
+  const [completedComp, setCompletedComp] = useState<boolean>(false);
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const { sessionUser } = useSessionUser();
 
@@ -53,13 +55,15 @@ export default function useNewHistory(
             accessTokenExpiry: data.accessTokenExpiry,
           });
         }
+        setCompletedComp(false);
+        setHistoryTestCase([]);
         console.log("data", data);
         setIsLoadingHistory(false);
       })
       .catch((err) => {
         console.error("error", err);
       });
-  }, [code, language, allSuccess]);
+  }, [completedComp]);
 
   return {
     setHistoryTestCase,
@@ -67,5 +71,6 @@ export default function useNewHistory(
     setCode,
     setAllSuccess,
     isLoadingHistory,
+    setCompletedComp
   };
 }

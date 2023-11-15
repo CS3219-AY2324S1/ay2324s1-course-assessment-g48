@@ -20,6 +20,7 @@ import useSessionUser from "@/hook/useSessionUser";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import useNewHistory from "@/hook/useNewHistory";
+import { set } from "lodash";
 
 type CodeEditorProps = {
   onChangeCode?: (value: string | undefined) => void;
@@ -69,7 +70,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   );
   const [processing, setProcessing] = useState(false);
   const { sessionUser } = useSessionUser();
-  const { setHistoryTestCase, setAllSuccess, setCode, setLanguage } =
+  const { setHistoryTestCase, setAllSuccess, setCode, setLanguage, setCompletedComp } =
     useNewHistory(question, users, sessionID);
 
   const enterPress = useKeyPress("Enter");
@@ -140,12 +141,16 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
       const response = await axios.post("/api/codeExecution/compile", body);
       const tokens = response.data; // tokens becomes an array instead of objects
       let allSuccess = true;
+      let complete = false;
       for (let i = 0; i < tokens.length; i++) {
         const success: boolean | undefined = await checkStatus(
           tokens[i].token,
           i
         );
         console.log("success", success);
+        if (i === tokens.length - 1) {
+            complete = true;
+        }
         if (!success) {
           allSuccess = false;
         }
@@ -158,6 +163,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
       setCode(btoa(displayCode));
       setLanguage(selectedLanguage.label);
       setAllSuccess(allSuccess);
+      setCompletedComp(complete);
     } catch (err) {
       setProcessing(false);
       console.error(err);
