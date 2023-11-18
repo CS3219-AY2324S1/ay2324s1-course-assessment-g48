@@ -1,0 +1,48 @@
+# Development Stage
+FROM node:18 as development
+
+# Set the working directory
+WORKDIR /app
+
+# # Copy the .next directory from your host to your image filesystem at /app
+# COPY .next ./.next
+
+# Copy package.json and package-lock.json to the working directory
+COPY package*.json ./
+
+# Install all dependencies defined in the package.json
+RUN yarn install
+
+# Copy all files from your host to your image filesystem at /app
+COPY . .
+COPY .env.production.local ./.env.production.local
+
+# Build for production.
+RUN yarn build
+
+# Production Stage
+FROM node:18 as production
+
+ARG NODE_ENV=production
+ENV NODE_ENV=${NODE_ENV}
+
+# Set the working directory
+WORKDIR /app
+
+# Copy package.json and yarn.lock from your host to your image filesystem at /app
+COPY package.json yarn.lock ./
+
+# Install all production dependencies from package.json
+RUN yarn install --only=production
+
+# Copy the next build and other necessary files from the development stage
+COPY --from=development /app/.next ./.next
+COPY --from=development /app/public ./public
+COPY --from=development /app/next.config.js ./next.config.js
+COPY --from=development /app/.env.production.local ./.env.production.local
+
+# Informs Docker that the container listens on the specified network ports at runtime.
+EXPOSE 3000
+
+# Provides defaults for an executing container
+CMD ["yarn", "start"]

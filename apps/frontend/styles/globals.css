@@ -1,0 +1,282 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+@layer components {
+
+  .languageBtn {
+    @apply flex cursor-pointer items-center rounded focus:outline-none bg-slate-100 hover:bg-slate-200 dark:bg-gray-600 dark:hover:bg-gray-700 px-2 py-1.5 font-medium;
+  }
+  .preferenceBtn {
+    @apply relative rounded px-3 font-medium items-center transition-all focus:outline-none inline-flex ml-auto p-1 mr-2 hover:bg-slate-300 dark:hover:bg-gray-800;
+  }
+
+  .formTooltip {
+    @apply absolute w-auto p-2 text-sm m-2 min-w-max -translate-x-14 -translate-y-11 z-10 rounded-md shadow-md bg-red-200 dark:text-gray-800 origin-center scale-0 transition-all duration-100 ease-linear group-hover:scale-100;
+  }
+
+  .languageTooltip {
+    @apply absolute w-auto p-2 text-sm m-2 min-w-max left-0 top-5 z-10 rounded-md shadow-md bg-slate-100 dark:text-gray-800 dark:bg-gray-200 origin-center scale-0 transition-all duration-100 ease-linear group-hover:scale-100;
+  }
+
+  .btnTooltip {
+    @apply absolute w-auto p-2 text-sm m-2 min-w-max translate-x-3 right-0 top-5 z-10 rounded-md shadow-md bg-slate-100 dark:text-gray-800 dark:bg-gray-200 origin-center scale-0 transition-all duration-100 ease-linear group-hover:scale-100;
+  }
+
+  .chatWindow {
+    @apply fixed bottom-16 right-10 w-1/4 h-1/2 min-w-fit min-h-fit dark:bg-slate-800 bg-white rounded-lg border-2 border-blue-500 overflow-hidden shadow-xl transition-all duration-300;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.spin {
+  animation: spin 2s linear infinite;
+}
+
+.loading-spinner {
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top: 4px solid #3498db;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+}
+
+.markdown-content img {
+  max-width: 100%; /* Limit the maximum width of images to 100% of their container */
+  height: auto; /* Automatically adjust the height to maintain aspect ratio */
+}
+
+.loader {
+  width: 48px;
+  height: 48px;
+  border: 5px solid #fff;
+  border-bottom-color: #ff3d00;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
+/* styles.css */
+.loading-modal {
+  position: fixed;
+  top: 1;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9990;
+}
+
+.alert {
+  z-index: 9999;
+}
+
+.navbar-menu {
+  z-index: 9995;
+}
+
+/* notification counter*/
+.notification-counter{
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 15px;
+  height: 15px;
+  background-color: #ff3d00;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+  color: #fff;
+  font-weight: 600;
+}
+
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.center {
+  text-align: center;
+}
+
+/* Question Page */
+.split {
+  display: flex;
+}
+
+.gutter {
+  background-color: #eee;
+  background-repeat: no-repeat;
+  background-position: 50%;
+}
+
+.gutter:hover {
+  background-color: #2085c0;
+}
+
+.gutter.gutter-horizontal {
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==');
+  cursor: col-resize;
+}
+
+.gutter.gutter-vertical {
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAFAQMAAABo7865AAAABlBMVEVHcEzMzMzyAv2sAAAAAXRSTlMAQObYZgAAABBJREFUeF5jOAMEEAIEEFwAn3kMwcB6I2AAAAAASUVORK5CYII=');
+  cursor: row-resize;
+}
+
+.dark .gutter {
+  background-color: #202020;
+}
+
+.dark .gutter:hover {
+  background-color: #141d97;
+}
+
+/* Dark mode styles */
+.vs-dark>.overflow-guard>.margin,
+.vs-dark>.monaco-editor-background {
+  background-color: rgb(38 38 38) !important;
+}
+
+.cm-focused {
+  outline: none !important;
+}
+
+/* Chat Window */
+/* Dark Mode */
+.dark .cs-message-list, .dark .cs-message-input {
+  background-color: #252525 !important;
+}
+
+.dark .cs-message-input {
+  border-top: 1px solid #ffffff !important;
+}
+
+.dark .cs-message.cs-message--incoming.cs-message--first .cs-message__content {
+  background-color: #383838 !important;
+  color: white;
+}
+
+.dark .cs-message.cs-message--outgoing.cs-message--first .cs-message__content {
+  background-color: rgb(59 130 246) !important;
+  color:white;
+}
+
+.dark .cs-message-input__content-editor-wrapper, .dark .cs-message-input__content-editor {
+  background-color: #383838 !important;
+  color: white;
+}
+
+.dark .cs-message-input__content-editor[data-placeholder]:empty:before {
+  color: rgb(175, 175, 175);
+}
+
+.dark .cs-button--send {
+  color: rgb(59 130 246);
+  filter: brightness(1.75);
+}
+
+.category-container {
+   /* Align it to center */
+  column-count: 2; /* Set the number of columns you desire */
+  column-gap: 20px; /* Set the gap between columns */
+  max-height: 400px; /* Set the maximum height of the container */
+}
+
+::-webkit-scrollbar {
+  height: 0.5rem; /* height of the horizontal scrollbar */
+  width: 0.5rem; /* width of the vertical scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #dddddd;
+  border-radius: 10px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #4d4d4d;
+}
+
+.scrollbar-hidden {
+  /* Hide scrollbar for webkit browsers */
+  scrollbar-width: none;
+  scrollbar-color: transparent transparent;
+   -ms-overflow-style: none;  /* IE and Edge */
+}
+
+/* For Firefox */
+.scrollbar-hidden::-webkit-scrollbar {
+  width: 0.5em;
+  display: none;
+}
+
+.scrollbar-hidden::-webkit-scrollbar-thumb {
+  background-color: transparent;
+}
+
+/* SearchComponent.css */
+.truncate-input {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%; /* Ensure the input doesn't exceed its parent's width */
+}
+
+/* Add this CSS to your stylesheet */
+.tooltip-container {
+  position: relative;
+  display: inline-block;
+  word-wrap: break-word;
+}
+
+.tooltip {
+  visibility: hidden;
+  width: auto; /* Adjust the width */
+  white-space: nowrap; /* Prevent text wrapping */
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 8px;
+  padding: 8px;
+  position: absolute;
+  bottom: -80px; /* Position the tooltip below the image */
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.tooltip-container:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+
+.light-mode-svg {
+  fill: #000000; /* Set the fill color to black */
+}

@@ -1,0 +1,32 @@
+{
+  "name": "cs3219",
+  "version": "1.0.0",
+  "description": "[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/6BOvYMwN) # AssignmentTemplate",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "concurrently --prefix-colors red,green,yellow,blue,magenta,cyan,white,#FFC0CB --prefix \"{time}-{name}\" --timings --handle-input --kill-others-on-fail --n question,queue,session,user,frontend,history,chat,codeExecution \"yarn --cwd ./apps/backend/question run dev\" \"yarn --cwd ./apps/backend/queue run dev\" \"yarn --cwd ./apps/backend/session run dev\" \"yarn --cwd ./apps/backend/user run dev\" \"yarn --cwd ./apps/frontend run dev\" \"yarn --cwd ./apps/backend/history run dev\" \"yarn --cwd ./apps/backend/chat run dev\" \"yarn --cwd ./apps/backend/codeExecution run dev\"",
+    "install-all": "cd ./apps/frontend && yarn install && cd ../backend/user && yarn install && cd ../chat && yarn install && cd ../history && yarn install && cd ../question && yarn install && cd ../queue && yarn install && cd ../user && yarn install && cd ../history && yarn install && cd ../codeExecution && yarn install && cd ../chat && yarn install",
+    "get-all-env": "./collect-env.sh"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^8.2.1",
+    "dotenv": "^16.3.1",
+    "firebase-admin": "^11.11.0",
+    "firebase-functions": "^4.4.1",
+    "mongoose": "^7.6.3",
+    "telnet": "^0.0.1"
+  },
+  "workspaces": [
+    "./apps/*"
+  ],
+  "private": true,
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.9.0",
+    "@typescript-eslint/parser": "^6.9.0",
+    "eslint": "^8.52.0",
+    "eslint-plugin-react": "^7.33.2"
+  }
+}

@@ -1,0 +1,83 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: peerprep-session
+spec:
+  selector:
+    app: peerprep-session
+  ports:
+    - protocol: TCP
+      name: ws-port
+      port: 8250
+      targetPort: 8250
+    - protocol: TCP
+      name: http-port
+      port: 8251
+      targetPort: 8251
+  type: ClusterIP
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: session-deployment
+spec:
+  selector:
+    matchLabels:
+      app: peerprep-session
+  template:
+    metadata:
+      labels:
+        app: peerprep-session
+    spec:
+      containers:
+      - name: peerprep-session
+        image: deployment87/dply87:peerprep-session-v1.4.0
+        imagePullPolicy: Always
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+        ports:
+        - containerPort: 8250
+        - containerPort: 8251
+        readinessProbe:
+          httpGet:
+            path: /ping
+            port: 8250
+          initialDelaySeconds: 180
+          timeoutSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /ping
+            port: 8250
+          initialDelaySeconds: 180
+          timeoutSeconds: 10
+      - name: health-check-sidecar
+        image: busybox
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+        command: ["/bin/sh", "-c", "while true; do sleep 5; wget -q --spider http://localhost:8251/ping || exit 1; done"]
+
+---
+
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: session-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: session-deployment
+  minReplicas: 1
+  maxReplicas: 3
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 50

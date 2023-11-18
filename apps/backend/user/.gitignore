@@ -1,0 +1,12 @@
+/node_modules
+/prisma/migrations
+# local env files
+.env
+
+# npm
+package-lock.json
+
+# yarn
+yarn-error.log
+.env.prod
+.env.dev

@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: peerprep-history
+spec:
+  selector:
+    app: peerprep-history
+  ports:
+  - protocol: TCP
+    port: 8003
+    targetPort: 8003
+  type: ClusterIP
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: history-deployment
+spec:
+  selector:
+    matchLabels:
+      app: peerprep-history
+  template:
+    metadata:
+      labels:
+        app: peerprep-history
+    spec:
+      containers:
+      - name: peerprep-history
+        image: deployment87/dply87:peerprep-history-v1.4.1
+        imagePullPolicy: Always
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+        ports:
+        - containerPort: 8003
+        livenessProbe:
+          httpGet:
+            path: /ping
+            port: 8003
+          initialDelaySeconds: 60
+          timeoutSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /ping
+            port: 8003
+          initialDelaySeconds: 60
+          timeoutSeconds: 10
+
+---
+
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: history-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: history-deployment
+  minReplicas: 1
+  maxReplicas: 3
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 50

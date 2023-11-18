@@ -1,0 +1,11 @@
+/node_modules
+# local env files
+.env
+
+# npm
+package-lock.json
+
+# yarn
+yarn-error.log
+.env.dev
+.env.prod

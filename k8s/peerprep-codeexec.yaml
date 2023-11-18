@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: peerprep-codeexec
+spec:
+  selector:
+    app: peerprep-codeexec
+  ports:
+  - protocol: TCP
+    port: 8420
+    targetPort: 8420
+  type: ClusterIP
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: codeexec-deployment
+spec:
+  selector:
+    matchLabels:
+      app: peerprep-codeexec
+  template:
+    metadata:
+      labels:
+        app: peerprep-codeexec
+    spec:
+      containers:
+      - name: peerprep-codeexec
+        image: deployment87/dply87:peerprep-codeexec-v1.4.1
+        imagePullPolicy: Always
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+        ports:
+        - containerPort: 8420
+        livenessProbe:
+          httpGet:
+            path: /ping
+            port: 8420
+          initialDelaySeconds: 60
+          timeoutSeconds: 10
+        readinessProbe:
+          httpGet:  
+            path: /ping
+            port: 8420
+          initialDelaySeconds: 60
+          timeoutSeconds: 10
+
+---
+
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: codeexec-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: codeexec-deployment
+  minReplicas: 1
+  maxReplicas: 3
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 50
